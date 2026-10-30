@@ -1,6 +1,6 @@
 # Rallylight
 
-An original real-time paddle game inspired by Pong. Return the ball, steer shots with your paddle, and beat the computer to seven points. This independent kata is not affiliated with or endorsed by Atari.
+An original real-time paddle game inspired by Pong. Return the ball, steer shots with your paddle, and beat the computer to seven points. The computer has a short reaction delay and a limited paddle speed, so well-placed shots can get past it. This independent kata is not affiliated with or endorsed by Atari.
 
 ## Play
 

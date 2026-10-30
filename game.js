@@ -3,10 +3,11 @@
 const W=900,H=500,PADDLE_H=90,PADDLE_W=12,BALL=8, WIN=7;
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 function createGame(random=Math.random){
- const s={player:H/2,cpu:H/2,ball:{x:W/2,y:H/2,vx:0,vy:0},scores:[0,0],state:'ready',serve:0,random};
- s.resetBall=(direction)=>{s.ball={x:W/2,y:H/2,vx:direction*350,vy:(random()-.5)*180};s.serve=.65};
+ const s={player:H/2,cpu:H/2,ball:{x:W/2,y:H/2,vx:0,vy:0},scores:[0,0],state:'ready',serve:0,random,cpuTarget:H/2,cpuReaction:0};
+ s.resetBall=(direction)=>{s.ball={x:W/2,y:H/2,vx:direction*350,vy:(random()-.5)*180};s.serve=.65;s.cpuTarget=H/2;s.cpuReaction=.3};
  s.start=()=>{s.scores=[0,0];s.player=s.cpu=H/2;s.state='playing';s.resetBall(random()<.5?-1:1)};
- s.step=(dt,input=0)=>{if(s.state!=='playing')return;dt=clamp(dt,0,.033);s.player=clamp(s.player+input*470*dt,PADDLE_H/2,H-PADDLE_H/2);const b=s.ball;const target=b.vx>0?b.y:H/2;s.cpu=clamp(s.cpu+clamp(target-s.cpu,-300*dt,300*dt),PADDLE_H/2,H-PADDLE_H/2);if(s.serve>0){s.serve-=dt;return}const oldX=b.x;b.x+=b.vx*dt;b.y+=b.vy*dt;if(b.y<BALL){b.y=2*BALL-b.y;b.vy=Math.abs(b.vy)}if(b.y>H-BALL){b.y=2*(H-BALL)-b.y;b.vy=-Math.abs(b.vy)}
+ s.step=(dt,input=0)=>{if(s.state!=='playing')return;dt=clamp(dt,0,.033);s.player=clamp(s.player+input*470*dt,PADDLE_H/2,H-PADDLE_H/2);const b=s.ball;// The opponent reacts periodically to the ball's current position, with a small aiming error.
+ s.cpuReaction-=dt;if(s.cpuReaction<=0){s.cpuTarget=b.vx>0?clamp(b.y+(random()-.5)*50,PADDLE_H/2,H-PADDLE_H/2):H/2;s.cpuReaction=.3}const cpuSpeed=b.vx>0?190:130;s.cpu=clamp(s.cpu+clamp(s.cpuTarget-s.cpu,-cpuSpeed*dt,cpuSpeed*dt),PADDLE_H/2,H-PADDLE_H/2);if(s.serve>0){s.serve-=dt;return}const oldX=b.x;b.x+=b.vx*dt;b.y+=b.vy*dt;if(b.y<BALL){b.y=2*BALL-b.y;b.vy=Math.abs(b.vy)}if(b.y>H-BALL){b.y=2*(H-BALL)-b.y;b.vy=-Math.abs(b.vy)}
  for(const [x,y,dir] of [[38,s.player,1],[W-38,s.cpu,-1]]){const face=x+dir*(PADDLE_W/2+BALL);if((dir===1?oldX>=face&&b.x<=face:oldX<=face&&b.x>=face)&&Math.abs(b.y-y)<=PADDLE_H/2+BALL){const angle=clamp((b.y-y)/(PADDLE_H/2),-1,1)*1.05;const speed=Math.min(720,Math.hypot(b.vx,b.vy)*1.055);b.x=face;b.vx=dir*speed*Math.cos(angle);b.vy=speed*Math.sin(angle)}}
  if(b.x<-BALL||b.x>W+BALL){const scorer=b.x<0?1:0;s.scores[scorer]++;if(s.scores[scorer]>=WIN){s.state='over'}else s.resetBall(scorer===0?-1:1)} };
  return s;
