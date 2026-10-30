@@ -1,0 +1,5 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const {createGame,H,PADDLE_H}=require('../game');
+test('start, movement and bounds',()=>{const g=createGame(()=>.2);g.start();assert.equal(g.state,'playing');for(let i=0;i<100;i++)g.step(.033,-1);assert.equal(g.player,PADDLE_H/2)});
+test('paddle reflects ball and steers angle',()=>{const g=createGame(()=>.2);g.start();g.serve=0;g.player=H/2;g.ball={x:60,y:H/2+25,vx:-350,vy:0};g.step(.033);assert.ok(g.ball.vx>0);assert.ok(g.ball.vy>0)});
+test('wall reflects and a miss scores, then match ends at seven',()=>{const g=createGame(()=>.2);g.start();g.serve=0;g.ball={x:450,y:9,vx:300,vy:-200};g.step(.033);assert.ok(g.ball.vy>0);g.scores=[6,0];g.ball={x:905,y:20,vx:350,vy:0};g.step(.033);assert.deepEqual(g.scores,[7,0]);assert.equal(g.state,'over');g.start();assert.deepEqual(g.scores,[0,0])});
+test('paused game does not advance',()=>{const g=createGame(()=>.2);g.start();g.state='paused';const x=g.ball.x;g.step(.033,1);assert.equal(g.ball.x,x);assert.equal(g.player,H/2)});
