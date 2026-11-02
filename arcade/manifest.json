@@ -1,6 +1,43 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "gameId": "kata-inspired-by-pong-codex-dot",
   "playUrl": "https://intrepion.github.io/kata-inspired-by-pong-codex-dot/",
-  "screenshots": []
+  "screenshots": [
+    {
+      "path": "arcade/screenshots/view-01.jpg",
+      "sha256": "dbcbac3f8501c0d4d647a5e005bc68112c038c04747f6bd11fe112157e4a5689",
+      "alt": "Rallylight gameplay during a rally, view 1",
+      "provenance": {
+        "kind": "ci_gameplay_capture",
+        "sourcePath": "arcade/capture-evidence/rally-01.png",
+        "sourceSha256": "42e57decf39577abab3d4c1a6419f528ea36c1d84bf5412decc5711a7573b89a",
+        "captureCommit": "f178db7fc83065a95f53f0bf7efc699e26803cf0",
+        "workflowRunId": "41377468630",
+        "inputHashes": {
+          "index.html": "59389d1d9b784a4b585e700543c07640ff51fb0a16fd1f2072ddc539fd8aa632",
+          "style.css": "b972b8172cd60800dd95795bb9a626b75fe2c10891baf247e8aa827e9184bce6",
+          "game.js": "55556cf0d1837da3adea83a0269ba45acd17ce616133092c0e6d4fa246987798"
+        },
+        "publishedFilesVerifiedAt": "2026-11-02T02:27:35Z"
+      }
+    },
+    {
+      "path": "arcade/screenshots/view-02.jpg",
+      "sha256": "cea83affc7f4f01edd10dad27c84d17beba507d07fa93cbefdc27134f7bd7513",
+      "alt": "Rallylight gameplay during a rally, view 2",
+      "provenance": {
+        "kind": "ci_gameplay_capture",
+        "sourcePath": "arcade/capture-evidence/rally-02.png",
+        "sourceSha256": "e4eb57e9cf3e1697474e6d453c754643d22c506a431b3845ed50c851a24cc813",
+        "captureCommit": "f178db7fc83065a95f53f0bf7efc699e26803cf0",
+        "workflowRunId": "41377468630",
+        "inputHashes": {
+          "index.html": "59389d1d9b784a4b585e700543c07640ff51fb0a16fd1f2072ddc539fd8aa632",
+          "style.css": "b972b8172cd60800dd95795bb9a626b75fe2c10891baf247e8aa827e9184bce6",
+          "game.js": "55556cf0d1837da3adea83a0269ba45acd17ce616133092c0e6d4fa246987798"
+        },
+        "publishedFilesVerifiedAt": "2026-11-02T02:27:35Z"
+      }
+    }
+  ]
 }
