@@ -30,3 +30,22 @@ Windows validation is underway. Omarchy ARM64: all nine full builds passed and a
 ## Cross-platform pacing follow-up
 
 nannou now calls `app.set_update_rate(120.0)` to limit work when presentation is non-blocking. This revision compiled and launched on Omarchy; Mac results above predate this tiny patch. CPU improvement has not been measured. Omarchy used an isolated validation folder, shared 5.8 GiB target, one build job and no debug/incremental artifacts; approximately 288 GiB remained free. No user data deleted.
+
+## Windows interactive follow-up (2026-11-11)
+
+Used existing Windows GNU executables from the isolated extra-engine validation snapshot, with supported Computer Use only. These binaries predate the later macOS-specific vendored ggez patch; this pass does not certify a fresh build from the latest checkpoint. Every test window was closed and absence verified afterward. No unrelated applications were closed.
+
+| Variant | Observed native result |
+|---|---|
+| pixels | Clean court; Return started; ball/CPU motion and scores advanced; Space paused/resumed; Return restarted into a new match. |
+| raw wgpu | Clean court; Return started; scoring/ball motion, Space pause/resume, Return score reset passed. |
+| Piston | Clean court; Return start, scoring/ball motion, Space pause/resume, R reset to 0:0 passed. |
+| Blue Engine | Clean court; Return start, scoring/ball motion, Space pause/resume, R reset to 0:0 passed. |
+| Fyrox | Clean court; Return start, scoring/ball motion, Space pause/resume, R reset to 0:0 passed. |
+| nannou | Clean court; Return start, scoring/ball motion, Space pause/resume, Return reset to 0:0 passed. |
+| ggez | Clean court; Return start, scoring/ball motion, Space pause, Return resume, R reset to 0:0 passed. No inspection timeout on Windows. |
+| Miniquad | Clean initial court, but Return did not start visible play, including after clicking the court to focus. Input/gameplay remains unverified; this is not a crash. |
+
+These are bounded interactive checks, NOT full gameplay acceptance. Sustained paddle movement/release, complete matches, resize, focus-loss/minimize, and other physical input remain unverified in this Windows engine pass. A brief W press in pixels/raw-wgpu produced no clearly visible paddle displacement; the native automation API does not support durationMs holds, so no movement success is inferred. Other engines' paddle movement was not attempted here. Browser and WebView pointer tests are recorded separately.
+
+Raylib's separate LLVM-unblock pass is recorded in the Windows validation notes: build/unit test/clean Ready rendering passed, but supported Enter/Space did not start play. Neither Miniquad nor raylib should be labeled a gameplay pass merely because a window rendered.
