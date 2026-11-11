@@ -6,3 +6,7 @@ edition = "2021"
 [dependencies]
 pong-core = { path = "../../crates/pong-core" }
 ggez = { version = "=0.10.0", default-features = false }
+
+# Scoped fix for occluded Metal surfaces starving the event loop.
+[patch.crates-io]
+ggez = { path = "../../vendor/ggez" }

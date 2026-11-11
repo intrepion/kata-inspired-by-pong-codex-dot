@@ -10,7 +10,15 @@ W/S or arrows move; Enter starts/resumes, R restarts, Space toggles pause, Escap
 
 ## Validation (2026-11-11)
 
-Mac cargo check and full build passed, including the 120 FPS pacing patch. Process launches, but repeated native inspection timed out. Process sample was in Metal surface acquisition; the cause is not established. Gameplay is NOT verified. Windows/Omarchy untested. Test processes stopped.
+Mac build and two surface-availability regression tests passed. Native gameplay verified: start/restart, keyboard paddle movement, ball movement, scoring, pause/resume, and window minimize/restore responsiveness. Test processes stopped. Windows gameplay remains unverified; see the Omarchy checkpoint below.
+
+## Surface availability compatibility patch
+
+The scoped `vendor/ggez` patch fixes ggez 0.10.0 repeatedly acquiring an occluded/timed-out surface inside the main event thread. This could starve visibility and accessibility events on macOS Metal. The fix defers drawing until the surface is available, preserving input cleanup and existing error handling. Occlusion checks remain enabled. See `vendor/ggez/PONG-PATCH.md` for provenance and upgrade/removal guidance.
+
+```sh
+cargo test --manifest-path vendor/ggez/Cargo.toml --no-default-features --lib pong_surface_regression_tests
+```
 
 ## Omarchy ARM64 checkpoint
 
