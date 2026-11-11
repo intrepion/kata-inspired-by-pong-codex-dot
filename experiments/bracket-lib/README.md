@@ -49,3 +49,7 @@ On Omarchy ARM64, the original empty-glyph test reproduced the abort; the backpo
 ## Windows verification (2026-11-11)
 
 From checkpoint 4707ee9, locked MSVC full build passed and all five frontend tests passed. Supported Computer Use showed the court, paddles and ball; Space changed Ready to Playing, scoring advanced, Space paused, and R reset scores to 0:0. Escape closed the process/window (absence checked afterward). However, header/control text is visibly overlapping/garbled on this Windows display, so visual quality is NOT a clean pass. Sustained paddle movement/release, focus, resize and complete-match interaction remain unverified. No unsupported input or system changes were used.
+
+### Text-rendering investigation
+
+Tested the bundled 8x8 font at explicit 16x16 and 12x12 display-cell sizes through supported Windows UI. Integer 2x scaling made the text more legible, but the 1440x880 client exceeded this desktop height; 1.5x scaling fit but remained visually uneven. These experiments did not establish a satisfactory fix or a driver-level cause, so their source changes were reverted rather than shipped. The original build was restored. A properly designed readable header/font layout remains follow-up work; no global display/driver changes were attempted.
