@@ -1,0 +1,9 @@
+[package]
+name = "pong-raylib-rs"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+[workspace]
+[dependencies]
+raylib = "=6.0.0"
+pong-core = { path = "../../crates/pong-core" }

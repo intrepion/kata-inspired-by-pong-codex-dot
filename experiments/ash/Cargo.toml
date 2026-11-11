@@ -1,0 +1,11 @@
+[package]
+name = "pong-ash"
+version = "0.1.0"
+edition = "2021"
+[workspace]
+[dependencies]
+pong-low-level-common = { path = "../low-level-common" }
+winit = "=0.30.13"
+ash = "0.38"
+ash-window = "0.13"
+raw-window-handle = "0.6"

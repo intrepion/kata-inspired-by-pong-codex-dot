@@ -1,0 +1,9 @@
+[package]
+name = "pong-pixels"
+version = "0.1.0"
+edition = "2021"
+[workspace]
+[dependencies]
+pixels = "=0.17.2"
+winit = "=0.30.13"
+pong-core = { path = "../../crates/pong-core" }

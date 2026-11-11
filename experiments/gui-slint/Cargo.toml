@@ -1,0 +1,9 @@
+[package]
+name = "pong-slint"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+[workspace]
+[dependencies]
+pong-gui-support = {path="../gui-support"}
+slint = {version="=1.18.1", default-features=false, features=["std", "backend-winit", "renderer-software", "compat-1-2"]}

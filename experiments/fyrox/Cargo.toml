@@ -1,0 +1,8 @@
+[package]
+name = "pong-fyrox"
+version = "0.1.0"
+edition = "2021"
+[workspace]
+[dependencies]
+pong-core = { path = "../../crates/pong-core" }
+fyrox = "=1.0.1"

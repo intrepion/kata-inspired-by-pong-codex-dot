@@ -1,0 +1,20 @@
+[package]
+name = "pong-dioxus"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+[workspace]
+[features]
+default = ["desktop"]
+desktop = ["dioxus/desktop", "dep:tokio"]
+web = ["dioxus/web", "dep:gloo-timers"]
+[dependencies]
+pong-web-ui-common = { path = "../web-ui-common" }
+dioxus = { version = "0.7", default-features = false, features = ["macro", "html", "signals", "hooks", "launch", "document"] }
+tokio = { version = "1", features = ["time"], optional = true }
+gloo-timers = { version = "0.3", features = ["futures"], optional = true }
+web-time = "1"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+# Dioxus web history currently assumes Location is enabled transitively.
+web-sys = { version = "0.3", features = ["Location"] }

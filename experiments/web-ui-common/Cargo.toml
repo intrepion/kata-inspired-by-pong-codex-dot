@@ -1,0 +1,8 @@
+[package]
+name = "pong-web-ui-common"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+[workspace]
+[dependencies]
+pong-core = { path = "../../crates/pong-core" }

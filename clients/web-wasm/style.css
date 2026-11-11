@@ -1,0 +1,8 @@
+:root{color-scheme:dark;font-family:system-ui;background:#0c211e;color:#edf8ee}body{margin:0;padding:24px}main{max-width:1000px;margin:auto}h1{font-size:32px}small{font-size:16px;font-weight:400;color:#b9d2c4}canvas{width:100%;display:block;aspect-ratio:9/5;background:#153f37;border:1px solid #56776a}nav{display:flex;gap:12px;margin-top:18px;flex-wrap:wrap}button{background:#d9ffae;color:#153f37;border:0;border-radius:8px;padding:12px 18px;font:inherit;touch-action:none}p{color:#c5dacc}
+
+/* Mobile shell: comfortable touch targets and safe-area spacing. */
+body{padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+button{min-height:48px;min-width:64px;user-select:none;-webkit-user-select:none}
+#up,#down{min-width:80px;min-height:64px;font-size:24px}
+@media(max-width:600px){h1{font-size:24px}nav{gap:8px}small{display:block}canvas{box-sizing:border-box}}
+@media(max-height:500px) and (orientation:landscape){h1,main>p:last-child{display:none}main{max-width:760px}canvas{max-height:65vh;width:auto;max-width:100%;margin:auto}nav{margin-top:8px;justify-content:center}#up,#down{min-height:48px}p{margin:6px 0}}

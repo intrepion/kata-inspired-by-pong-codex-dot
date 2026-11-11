@@ -1,0 +1,11 @@
+[package]
+name = "pong-sdl3"
+version = "0.1.0"
+edition = "2021"
+[workspace]
+[features]
+default = ["bundled"]
+bundled = ["sdl3/build-from-source-static"]
+[dependencies]
+pong-low-level-common = { path = "../low-level-common" }
+sdl3 = "0.22.1"

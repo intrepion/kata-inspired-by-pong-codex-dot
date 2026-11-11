@@ -1,0 +1,9 @@
+[package]
+name = "pong-softbuffer"
+version = "0.1.0"
+edition = "2021"
+[workspace]
+[dependencies]
+pong-low-level-common = { path = "../low-level-common" }
+winit = "=0.30.13"
+softbuffer = "0.4"

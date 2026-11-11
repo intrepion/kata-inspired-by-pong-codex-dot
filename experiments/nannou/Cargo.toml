@@ -1,0 +1,8 @@
+[package]
+name = "pong-nannou"
+version = "0.1.0"
+edition = "2021"
+[workspace]
+[dependencies]
+nannou = "=0.20.0"
+pong-core = { path = "../../crates/pong-core" }

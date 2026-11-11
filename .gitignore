@@ -95,3 +95,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Rust comparison build outputs
+/target/
+/clients/web-wasm/pong_wasm.wasm

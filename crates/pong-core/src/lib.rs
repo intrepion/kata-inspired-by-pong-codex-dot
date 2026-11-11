@@ -1,0 +1,283 @@
+//! Rendering-independent simulation. Coordinates match the original Canvas game.
+pub const W: f32 = 900.;
+pub const H: f32 = 500.;
+pub const PADDLE_H: f32 = 90.;
+pub const PADDLE_W: f32 = 12.;
+pub const BALL: f32 = 8.;
+pub const WIN: u32 = 7;
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum State {
+    Ready,
+    Playing,
+    Paused,
+    Over,
+}
+#[derive(Clone, Copy, Debug)]
+pub struct Ball {
+    pub x: f32,
+    pub y: f32,
+    pub vx: f32,
+    pub vy: f32,
+}
+#[derive(Clone, Debug)]
+pub struct Game {
+    pub player: f32,
+    pub cpu: f32,
+    pub ball: Ball,
+    pub scores: [u32; 2],
+    pub state: State,
+    pub serve: f32,
+    cpu_target: f32,
+    cpu_reaction: f32,
+    rng: u64,
+}
+impl Game {
+    pub fn new(seed: u64) -> Self {
+        Self {
+            player: H / 2.,
+            cpu: H / 2.,
+            ball: Ball {
+                x: W / 2.,
+                y: H / 2.,
+                vx: 0.,
+                vy: 0.,
+            },
+            scores: [0, 0],
+            state: State::Ready,
+            serve: 0.,
+            cpu_target: H / 2.,
+            cpu_reaction: 0.,
+            rng: seed.max(1),
+        }
+    }
+    fn random(&mut self) -> f32 {
+        self.rng ^= self.rng << 13;
+        self.rng ^= self.rng >> 7;
+        self.rng ^= self.rng << 17;
+        ((self.rng >> 40) as f32) / 16777216.
+    }
+    fn reset_ball(&mut self, dir: f32) {
+        self.ball = Ball {
+            x: W / 2.,
+            y: H / 2.,
+            vx: dir * 350.,
+            vy: (self.random() - 0.5) * 180.,
+        };
+        self.serve = 0.65;
+        self.cpu_target = H / 2.;
+        self.cpu_reaction = 0.3;
+    }
+    pub fn start(&mut self) {
+        self.scores = [0, 0];
+        self.player = H / 2.;
+        self.cpu = H / 2.;
+        self.state = State::Playing;
+        let dir = if self.random() < 0.5 { -1. } else { 1. };
+        self.reset_ball(dir);
+    }
+    pub fn pause(&mut self) {
+        if self.state == State::Playing {
+            self.state = State::Paused
+        }
+    }
+    pub fn toggle_pause(&mut self) {
+        self.state = match self.state {
+            State::Playing => State::Paused,
+            State::Paused => State::Playing,
+            s => s,
+        };
+    }
+    pub fn step(&mut self, dt: f32, input: f32) {
+        if self.state != State::Playing || !dt.is_finite() || !input.is_finite() {
+            return;
+        }
+        let dt = dt.clamp(0., 0.033);
+        self.player = (self.player + input.clamp(-1., 1.) * 470. * dt)
+            .clamp(PADDLE_H / 2., H - PADDLE_H / 2.);
+        self.cpu_reaction -= dt;
+        if self.cpu_reaction <= 0. {
+            self.cpu_target = if self.ball.vx > 0. {
+                (self.ball.y + (self.random() - 0.5) * 50.).clamp(PADDLE_H / 2., H - PADDLE_H / 2.)
+            } else {
+                H / 2.
+            };
+            self.cpu_reaction = 0.3;
+        }
+        let speed = if self.ball.vx > 0. { 190. } else { 130. };
+        self.cpu = (self.cpu + (self.cpu_target - self.cpu).clamp(-speed * dt, speed * dt))
+            .clamp(PADDLE_H / 2., H - PADDLE_H / 2.);
+        if self.serve > 0. {
+            self.serve -= dt;
+            return;
+        }
+        let b = &mut self.ball;
+        let old_x = b.x;
+        b.x += b.vx * dt;
+        b.y += b.vy * dt;
+        if b.y < BALL {
+            b.y = 2. * BALL - b.y;
+            b.vy = b.vy.abs();
+        }
+        if b.y > H - BALL {
+            b.y = 2. * (H - BALL) - b.y;
+            b.vy = -b.vy.abs();
+        }
+        for (x, y, dir) in [(38., self.player, 1.), (W - 38., self.cpu, -1.)] {
+            let face = x + dir * (PADDLE_W / 2. + BALL);
+            if (if dir == 1. {
+                old_x >= face && b.x <= face
+            } else {
+                old_x <= face && b.x >= face
+            }) && (b.y - y).abs() <= PADDLE_H / 2. + BALL
+            {
+                let angle = ((b.y - y) / (PADDLE_H / 2.)).clamp(-1., 1.) * 1.05;
+                let speed = b.vx.hypot(b.vy).mul_add(1.055, 0.).min(720.);
+                b.x = face;
+                b.vx = dir * speed * angle.cos();
+                b.vy = speed * angle.sin();
+            }
+        }
+        if b.x < -BALL || b.x > W + BALL {
+            let scorer = if b.x < 0. { 1 } else { 0 };
+            self.scores[scorer] += 1;
+            if self.scores[scorer] >= WIN {
+                self.state = State::Over
+            } else {
+                self.reset_ball(if scorer == 0 { -1. } else { 1. });
+            }
+        }
+    }
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    fn game() -> Game {
+        let mut g = Game::new(42);
+        g.start();
+        g.serve = 0.;
+        g
+    }
+    #[test]
+    fn start_and_bounds() {
+        let mut g = game();
+        for _ in 0..100 {
+            g.step(0.033, -1.);
+        }
+        assert_eq!(g.player, 45.);
+        assert_eq!(g.state, State::Playing);
+    }
+    #[test]
+    fn paddle_steers() {
+        let mut g = game();
+        g.ball = Ball {
+            x: 60.,
+            y: 275.,
+            vx: -350.,
+            vy: 0.,
+        };
+        g.step(0.033, 0.);
+        assert!(g.ball.vx > 0. && g.ball.vy > 0.);
+    }
+    #[test]
+    fn wall_and_score() {
+        let mut g = game();
+        g.ball = Ball {
+            x: 450.,
+            y: 9.,
+            vx: 300.,
+            vy: -200.,
+        };
+        g.step(0.033, 0.);
+        assert!(g.ball.vy > 0.);
+        g.scores = [6, 0];
+        g.ball = Ball {
+            x: 905.,
+            y: 20.,
+            vx: 350.,
+            vy: 0.,
+        };
+        g.step(0.033, 0.);
+        assert_eq!(g.scores, [7, 0]);
+        assert_eq!(g.state, State::Over);
+        g.start();
+        assert_eq!(g.scores, [0, 0]);
+    }
+    #[test]
+    fn pause_freezes() {
+        let mut g = game();
+        g.pause();
+        let x = g.ball.x;
+        g.step(0.033, 1.);
+        assert_eq!(g.ball.x, x);
+        assert_eq!(g.player, 250.);
+        g.toggle_pause();
+        assert_eq!(g.state, State::Playing);
+    }
+    #[test]
+    fn cpu_delayed() {
+        let mut g = game();
+        g.ball = Ball {
+            x: 500.,
+            y: 400.,
+            vx: 350.,
+            vy: 0.,
+        };
+        g.step(0.033, 0.);
+        assert_eq!(g.cpu, 250.);
+        for _ in 0..10 {
+            g.step(0.033, 0.);
+        }
+        assert!(g.cpu > 250. && g.cpu - 250. <= 190. * 0.363);
+    }
+    #[test]
+    fn cpu_fallible() {
+        let mut g = game();
+        g.ball = Ball {
+            x: 750.,
+            y: 50.,
+            vx: 700.,
+            vy: 0.,
+        };
+        for _ in 0..20 {
+            g.step(0.033, 0.);
+        }
+        assert_eq!(g.scores[0], 1);
+    }
+    #[test]
+    fn cpu_returns_center() {
+        let mut g = game();
+        g.ball = Ball {
+            x: 650.,
+            y: 250.,
+            vx: 350.,
+            vy: 0.,
+        };
+        for _ in 0..40 {
+            if g.ball.vx < 0. {
+                break;
+            }
+            g.step(0.033, 0.);
+        }
+        assert!(g.ball.vx < 0.);
+    }
+    #[test]
+    fn deterministic() {
+        let mut a = game();
+        let mut b = game();
+        for _ in 0..200 {
+            a.step(0.016, 0.);
+            b.step(0.016, 0.);
+        }
+        assert_eq!(a.ball.x, b.ball.x);
+        assert_eq!(a.cpu, b.cpu);
+    }
+    #[test]
+    fn invalid_time_ignored() {
+        let mut g = game();
+        let x = g.ball.x;
+        g.step(f32::NAN, 0.);
+        assert_eq!(g.ball.x, x);
+        g.step(-1., 0.);
+        assert_eq!(g.ball.x, x);
+    }
+}

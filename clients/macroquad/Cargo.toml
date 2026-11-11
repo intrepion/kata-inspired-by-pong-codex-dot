@@ -1,0 +1,8 @@
+[package]
+name="pong-macroquad"
+version="0.1.0"
+edition="2021"
+license="MIT"
+[dependencies]
+macroquad="0.4"
+pong-core={path="../../crates/pong-core"}

@@ -1,0 +1,24 @@
+{
+  "productName": "Pong Yew",
+  "version": "0.1.0",
+  "identifier": "com.intrepion.pong.yew",
+  "build": {
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Pong Yew",
+        "width": 1000,
+        "height": 720
+      }
+    ],
+    "security": {
+      "capabilities": [],
+      "csp": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self'; object-src 'none'"
+    }
+  },
+  "bundle": {
+    "active": false
+  }
+}

@@ -1,0 +1,9 @@
+[package]
+name = "pong-wasm"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+[lib]
+crate-type = ["cdylib", "rlib"]
+[dependencies]
+pong-core = { path = "../pong-core" }
