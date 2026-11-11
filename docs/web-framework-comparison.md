@@ -82,3 +82,5 @@ Shared controller tests also passed 3/3 on Windows: fixed-step consistency, repe
 
 - Windows responsive follow-up: all three variants passed visible layout and pointer-control checks at an explicit 390x844 viewport, with document scroll width equal to viewport width (no horizontal overflow). Default viewport restored afterward. This is browser responsive testing, not a native mobile or physical-touch-device pass.
 - Windows native wrapper follow-up: Yew initially failed because tauri-build requires `icons/icon.ico` for Windows resources. Added ICO containers of the existing 128px Pong PNG to both wrappers. Yew and Leptos now build successfully with the stable MSVC toolchain. The supported Computer Use launch request for Pong Yew timed out awaiting approval, so native visible launch/gameplay is still unverified, not passed.
+
+- Windows Dioxus Desktop follow-up: locked native MSVC build passed (5m05s first build in this target cache). Visible launch/gameplay has not yet been attempted; this is not a native UI pass.
