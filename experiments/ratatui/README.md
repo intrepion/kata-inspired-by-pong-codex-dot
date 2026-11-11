@@ -28,3 +28,7 @@ This is an experiment, not a published package. See the project comparison notes
 - macOS arm64: `cargo test` passed all 4 frontend tests; debug executable built.
 - Isolated macOS pseudo-terminal: fallback label, start, moving-frame output, pause, minimum-size resize warning, Q exit (code 0), alternate-screen leave and canonical/echo restoration exercised. ANSI diff rendering omits unchanged characters, so raw output is not a screenshot.
 - Release-aware input is unit-tested; a real enhanced-terminal session still needs hands-on validation. Windows and Omarchy builds/gameplay remain unverified for this frontend (not inferred from other clients).
+
+## Windows verification (2026-11-11)
+
+From checkpoint 4707ee9, locked MSVC build passed and all four frontend tests passed. Direct supported Computer Use launch did not expose a targetable window; no process remained afterward. The supported Windows Terminal launch alternative was blocked by product policy. No alternate input mechanism was used to bypass that restriction. Windows terminal rendering/gameplay, keyboard release, resize and terminal restoration remain unverified. Build/test success is not an interactive pass.
