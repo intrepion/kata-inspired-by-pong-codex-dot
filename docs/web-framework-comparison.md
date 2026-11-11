@@ -84,3 +84,9 @@ Shared controller tests also passed 3/3 on Windows: fixed-step consistency, repe
 - Windows native wrapper follow-up: Yew initially failed because tauri-build requires `icons/icon.ico` for Windows resources. Added ICO containers of the existing 128px Pong PNG to both wrappers. Yew and Leptos now build successfully with the stable MSVC toolchain. The supported Computer Use launch request for Pong Yew timed out awaiting approval, so native visible launch/gameplay is still unverified, not passed.
 
 - Windows Dioxus Desktop follow-up: locked native MSVC build passed (5m05s first build in this target cache). Visible launch/gameplay has not yet been attempted; this is not a native UI pass.
+
+### Windows native UI follow-up
+
+All three native WebView clients (Yew/Tauri, Leptos/Tauri, Dioxus Desktop) were launched through supported Computer Use and visibly tested. The earlier Yew approval timeout was resolved. For each, screenshots verified a clean court, clicking Start, ball movement/scoring, paddle movement by dragging within the up-hold button, pause/resume, restart returning scores to 0:0, and titlebar close. Dioxus also rendered correctly after maximizing. Test windows were closed without touching other applications.
+
+This is bounded native interactive verification, not exhaustive acceptance. Native held-key keyboard input, focus loss/minimize, full-match win behavior, physical touch, and resize across every native wrapper remain unverified. Windows native automation does not support durationMs key/button holds; the pointer drag exercised real held input briefly without using unsupported APIs. Browser keyboard/full-match results above remain separate.
