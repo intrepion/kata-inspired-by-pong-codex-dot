@@ -57,3 +57,11 @@ Isolated validation snapshot: `/home/intrepion/Code/pong-low-level-validation`, 
 - Source transfer through the current Library helper fails on native Windows Python: `AttributeError: module 'os' has no attribute 'setxattr'`. The helper aborts before installing the source archive. No fallback bypass or user-file overwrite was attempted.
 - Prerequisites observed: Rust1.99.0 windows-gnu, CMake, Vulkan DLL; approximately195GiB free disk.
 - These clients remain **not built, not launched, and not interactively tested on Windows**. The supported transfer must be fixed or the source made available through an authorized repository route first. No source publication has been authorized/performed here.
+
+## Windows verified follow-up (2026-11-11)
+
+The earlier source-transfer blocker is resolved: the approved Git checkpoint was fetched into a separate worktree without overwriting the original Windows checkout. Using stable-x86_64-pc-windows-msvc and two jobs, all three locked full builds passed from checkpoint 797055d. Shared low-level adapter tests passed 3/3. SDL3 bundled build succeeded with linker warning LNK4098 (MSVCRTD conflicts with other libraries); the warning remains, and this pass is not a release-linkage audit.
+
+Through supported Computer Use, **softbuffer, SDL3, and ash** each visibly rendered the complete court, responded to Space start/pause/resume, advanced the ball and score, reset scores to 0:0 with R, and exited with Escape. Each window's disappearance was verified. No source edits, driver/SDK installs, security changes, or synthetic input outside the supported tool were needed. Softbuffer's initial launch approval timed out, then a supported retry succeeded.
+
+These are bounded interactive passes, not full acceptance: sustained paddle movement/release, focus-loss/minimize, resize/DPI, complete matches, and release packaging remain unverified in this Windows pass. In particular, ash's successful simple clear-attachment rendering here does not establish that another Vulkan application or shader pipeline works on this GPU.
