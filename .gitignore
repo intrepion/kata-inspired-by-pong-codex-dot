@@ -99,3 +99,7 @@ $RECYCLE.BIN/
 # Rust comparison build outputs
 /target/
 /clients/web-wasm/pong_wasm.wasm
+
+# Local web-framework build tooling and outputs
+/target-web-frameworks/
+/tools-local/

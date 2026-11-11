@@ -49,5 +49,33 @@ Touch controls are included but mobile packaging/testing is not yet complete. Di
 - macOS Dioxus: WASM build and same localhost keyboard/pointer movement, pause/resume, start checks passed at `/dioxus/dist/`. Added explicit `web-sys/Location` feature because Dioxus 0.7.10 history assumes it transitively.
 - Follow-up (2026-11-11): Yew native wrapper initially failed because Tauri requires `icons/icon.png`, even with bundling disabled. Reused the existing Pong icon in Yew and Leptos wrappers. Both native macOS builds now pass using the existing Tauri target cache and one build job. Native launch/gameplay remains unverified; a compiled wrapper is not a gameplay pass.
 - Dioxus native desktop build/launch remains pending.
-- Windows and Omarchy: these new framework variants not yet checked.
-- No commits, pushes, deployment, or release artifacts created.
+- Omarchy: these new framework variants not yet checked. Windows browser follow-up is below.
+- The initial local prototype was subsequently committed and pushed in the non-main comparison checkpoint; no release artifacts or deployment are implied.
+
+## Windows browser validation (2026-11-11)
+
+Checkpoint `17dcc09` was fetched into a separate Windows Git worktree, leaving the pre-existing dirty checkout untouched. All three locked WASM builds passed using the stable MSVC toolchain and official wasm-bindgen 0.2.130. The published SHA-256 of the downloaded Windows wasm-bindgen archive was verified. No Library helper workaround was used.
+
+PowerShell equivalent (install the WASM target and matching wasm-bindgen first):
+
+```powershell
+$env:RUSTUP_TOOLCHAIN = 'stable-x86_64-pc-windows-msvc'
+# Optional: $env:WASM_BINDGEN = 'C:\path\to\wasm-bindgen.exe'
+.\scripts\build-web-framework.ps1 yew # also leptos or dioxus
+python -m http.server 5191 --bind 127.0.0.1 --directory experiments
+```
+
+Open `http://127.0.0.1:5191/yew/dist/` (or the matching framework path). The script uses two build jobs, locked dependencies, and an ignored target directory by default. It does not install tools or change system settings.
+
+Verified in connected Windows Chrome through the supported browser interface:
+
+| Check | Yew | Leptos | Dioxus |
+|---|---|---|---|
+| Visible court, start, scoring/ball movement | Passed | Passed | Passed |
+| Pointer-held paddle movement | Passed | Passed | Passed |
+| Keyboard paddle movement | Passed | Passed | Passed |
+| Pause/resume | Passed | Passed (button and Space) | Passed (button and Space) |
+| CPU reaches seven / win message | Passed | Passed | Passed |
+| Restart clears scores | Passed | Passed | Passed |
+
+Shared controller tests also passed 3/3 on Windows: fixed-step consistency, repeated-key restart protection, and focus-loss input clearing. These unit tests do not substitute for browser focus-loss validation. Browser resize, focus-loss, touch/mobile packaging, and native desktop wrappers remain unverified on Windows. The running court replaces its SVG repeatedly; one semantic court-click attempt returned a stale-node error, but keyboard testing via the existing focused controls worked. This was not a browser crash.
