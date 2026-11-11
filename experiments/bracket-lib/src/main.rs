@@ -4,7 +4,7 @@ use pong_core::{Game, State, BALL, H, PADDLE_H, PADDLE_W, W};
 use std::collections::HashSet;
 const COLS: i32 = 90;
 const ROWS: i32 = 50;
-const TOP: i32 = 5;
+const TOP: i32 = 10; // Five 16px header rows above the 8px playfield tiles.
 struct Pong {
     game: Game,
     keys: HashSet<VirtualKeyCode>,
@@ -103,6 +103,17 @@ fn rect(ctx: &mut BTerm, x: f32, y: f32, w: f32, h: f32, color: RGB) {
         }
     }
 }
+fn header_lines(game: &Game) -> [String; 4] {
+    [
+        "PONG / BRACKET-LIB - GRAPHICAL RETRO EXPERIMENT".into(),
+        format!(
+            "YOU {}   CPU {}   {:?}   First to 7",
+            game.scores[0], game.scores[1], game.state
+        ),
+        "W/S or arrows: move | Space: start/pause | R: restart | Q/Esc: quit".into(),
+        "Focus loss or resize pauses. Space resumes.".into(),
+    ]
+}
 impl GameState for Pong {
     fn tick(&mut self, ctx: &mut BTerm) {
         let events: Vec<_> = {
@@ -119,32 +130,20 @@ impl GameState for Pong {
             }
         }
         self.advance(ctx.frame_time_ms / 1000.);
+        ctx.set_active_console(0);
         ctx.cls_bg(RGB::from_u8(9, 14, 25));
-        ctx.print_color(
-            2,
-            0,
-            RGB::from_u8(84, 224, 226),
-            BLACK,
-            "PONG / BRACKET-LIB     GRAPHICAL RETRO EXPERIMENT",
-        );
-        ctx.print(
-            2,
-            1,
-            format!(
-                "YOU {}    CPU {}     {:?}     First to 7",
-                self.game.scores[0], self.game.scores[1], self.game.state
-            ),
-        );
-        ctx.print(
-            2,
-            2,
-            "Hold W/S or arrows | Space start/pause | R restart | Q/Esc quit",
-        );
-        ctx.print(
-            2,
-            3,
-            "Focus loss or resize pauses. Space resumes. Shared pong-core physics.",
-        );
+        // Separate transparent VGA console: 16px text without stretching the court.
+        ctx.set_active_console(1);
+        ctx.cls();
+        for (row, line) in header_lines(&self.game).iter().enumerate() {
+            let color = if row == 0 {
+                RGB::from_u8(84, 224, 226)
+            } else {
+                RGB::from_u8(235, 241, 250)
+            };
+            ctx.print_color(2, row as i32, color, BLACK, line);
+        }
+        ctx.set_active_console(0);
         for y in (0..ROWS).step_by(3) {
             ctx.set(
                 COLS / 2,
@@ -198,6 +197,8 @@ fn main() -> BError {
     #[cfg(target_os = "linux")]
     configure_backend();
     let ctx = BTermBuilder::simple(COLS, ROWS + TOP)?
+        .with_font("vga8x16.png", 8, 16)
+        .with_simple_console_no_bg(COLS, (ROWS + TOP) / 2, "vga8x16.png")
         .with_title("Pong bracket-lib")
         .with_fps_cap(60.)
         .with_automatic_console_resize(false)
@@ -214,6 +215,20 @@ mod tests {
         assert!(!prefer_x11(true, true, true));
         assert!(!prefer_x11(false, true, false));
         assert!(!prefer_x11(false, false, true));
+    }
+    #[test]
+    fn header_fits_separate_double_height_console() {
+        for state in [State::Ready, State::Playing, State::Paused, State::Over] {
+            let mut game = Game::new(42);
+            game.state = state;
+            game.scores = [7, 7];
+            let lines = header_lines(&game);
+            assert!(lines
+                .iter()
+                .all(|line| line.is_ascii() && line.len() + 2 <= COLS as usize));
+            assert!(lines.len() * 2 < TOP as usize);
+        }
+        assert_eq!((ROWS + TOP) % 2, 0);
     }
     fn key(k: VirtualKeyCode, pressed: bool) -> BEvent {
         BEvent::KeyboardInput {

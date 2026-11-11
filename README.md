@@ -57,7 +57,7 @@ Each desktop cell is **build / runtime evidence**:
 | Blue Engine | B / I | B / I | B / S; UI blocked |
 | raylib-rs | B / I | B / R; start input unsuccessful; LLVM build blocker resolved | B / S; UI blocked |
 | Godot + Rust GDExtension | B / I for game; **F** in headless editor shutdown | U / U | U / U |
-| bracket-lib (RLTK) | B / I; restart/exit incomplete | B / interaction exercised, **text rendering defect remains** | B / S on X11 and patched Wayland; UI blocked |
+| bracket-lib (RLTK) | B / I; restart/exit incomplete | B / I; separate header improves readability, bitmap quality still rough | B / S on X11 and patched Wayland; UI blocked |
 
 Details: [baseline frontends](docs/desktop-comparison.md), [extra engines](experiments/ENGINE-STATUS.md), [ggez fix](experiments/ggez/README.md), [Godot](experiments/godot/VERIFICATION.md), [bracket-lib](experiments/bracket-lib/README.md).
 
@@ -106,12 +106,12 @@ Details: [native Kotlin/Swift](experiments/NATIVE-MOBILE.md), [Tauri mobile](doc
 | Check or issue | Current evidence / remaining work |
 | --- | --- |
 | Shared simulation | 9 Rust core/WASM tests; 6 original JS tests + 2 compiled-WASM ABI tests passed. This is not frontend input QA. |
-| Adapter regressions | Windows web controller 3/3, low-level controller 3/3, Ratatui 4/4, bracket-lib 5/5; other adapter results linked above. |
+| Adapter regressions | Windows web controller 3/3, low-level controller 3/3, Ratatui 4/4, bracket-lib 6/6; other adapter results linked above. |
 | Windows engine interaction | Most I cells mean start, scoring/ball motion, pause/resume and reset. Sustained paddle movement/release, full matches, focus/minimize and resize/DPI are mostly still unverified. |
 | Windows web interaction | Browser variants exercised keyboard/pointer and CPU win; real focus-loss still unverified. Native wrappers exercised pointer movement and basic controls, not held-key/full-match/physical-touch coverage. |
 | Omarchy visual/input testing | Many builds and smoke launches pass, but the automation connection exposes no native/browser surfaces. This is a tool-access blocker, not proof of a gameplay failure. |
-| Known defects | Windows Bevy graphics; Windows bracket-lib text; Miniquad/raylib supported start input unsuccessful; Godot headless editor shutdown crash. |
-| Snapshot freshness | Windows extra-engine interaction used existing isolated GNU binaries, not a fresh latest-source rebuild. Mac nannou UI predates the pacing patch. Requalification remains necessary before release. |
+| Known defects | Windows Bevy graphics; Windows bracket-lib bitmap text remains rough despite improved layout; Miniquad/raylib supported start input unsuccessful; Godot headless editor shutdown crash. |
+| Snapshot freshness | Windows extra-engine interaction used existing isolated GNU binaries, not a fresh latest-source rebuild. Mac nannou UI predates the pacing patch. bracket-lib header layout has been rechecked on Windows only. Requalification remains necessary before release. |
 | Packaging and compatibility | No complete signed-installer/download-install matrix, physical-mobile coverage, exhaustive OS/DPI/input matrix or accessibility audit. |
 | Performance | No controlled cross-engine benchmark; debug build sizes/timings are not fair comparisons. |
 
