@@ -2,6 +2,9 @@ use piston_window::graphics::{clear, ellipse, rectangle, Transformed};
 
 use piston_window::*;
 use pong_core::*;
+mod clock;
+use clock::UpdateClock;
+use std::time::Instant;
 fn benchmark_args(args: &[String]) -> bool {
     let enabled = args.iter().any(|a| a == "--benchmark");
     assert!(
@@ -28,7 +31,7 @@ fn main() {
     let mut demo = pong_scenario::Demo::from_args();
     let mut held = [false; 4];
     let mut pressed = std::collections::HashSet::new();
-    let mut acc = 0.;
+    let mut clock = UpdateClock::new(Instant::now());
     let mut last_title = String::new();
     while let Some(e) = window.next() {
         if demo.is_none() && !benchmarking {
@@ -39,6 +42,9 @@ fn main() {
                     }
                 }
                 if pressed.insert(key) {
+                    if matches!(key, Key::Return | Key::R | Key::Space | Key::Escape) {
+                        clock.reset(Instant::now());
+                    }
                     match key {
                         Key::Return => {
                             if game.state == State::Paused {
@@ -66,15 +72,15 @@ fn main() {
                 game.pause();
                 held = [false; 4];
                 pressed.clear();
-                acc = 0.;
+                clock.reset(Instant::now());
             }
         }
-        if let Some(u) = e.update_args() {
+        if e.update_args().is_some() {
+            let elapsed = clock.elapsed(Instant::now());
             if let Some(demo) = &mut demo {
-                demo.advance(&mut game, u.dt as f32);
+                demo.advance(&mut game, elapsed as f32);
             } else {
-                acc += u.dt.min(0.1);
-                while acc >= 1. / 120. {
+                for _ in 0..clock.steps(elapsed) {
                     if benchmarking {
                         if scenario.finished() {
                             scenario = pong_scenario::Scenario::default();
@@ -87,7 +93,6 @@ fn main() {
                             (held[2] || held[3]) as u8 as f32 - (held[0] || held[1]) as u8 as f32,
                         );
                     }
-                    acc -= 1. / 120.;
                 }
             }
         }
