@@ -10,7 +10,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 | --- | --- | --- |
 | Windows | Miniquad fresh MSVC build, one test, and scripted replay (1440 ticks / six captures) passed per worker report; native Return/Space start attempts still failed. Bevy scoped fix/evidence was published in `55d0975`. | Reconnected; recovering and publishing [Miniquad evidence](docs/WINDOWS-MINIQUAD-RECHECK.md). No active test window; native input remains unverified. Next target selection in progress. |
 | Mac | Yew and Leptos native-wrapper checks assigned, followed by Dioxus native desktop. Existing test binaries use an older checkpoint. | Preparing visual checks with existing `6ceb22a` binaries; Pong Yew app-access call pending, possibly approval. Gameplay not yet confirmed; Dioxus build queued. |
-| Omarchy ARM64 | Portable smoke-v1 manifest now drives Rust and original TypeScript replay; tests pass and Rust baseline is unchanged. | Publishing implementation/test evidence. Original TypeScript canvas/browser runtime remains unverified: supported browser inventory empty. |
+| Omarchy ARM64 | Swift/Kotlin portable parser/replay source and derived resources prepared; host resource consistency checks pass. | Publishing source candidate only. Swift/Kotlin compiler, native tests, packaged-app resource loading and mobile UI replay remain pending platform toolchains. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -179,6 +179,7 @@ rendering evidence, **not** real keyboard/focus or smooth-motion validation.
 | Yew / Leptos native wrappers | Passed | Six SVG sources each; geometry checked | Source export, not screenshot or visual QA |
 | Dioxus native | Passed | Six SVG sources; geometry checked | Source export, not final DOM presentation or screenshot |
 | Original TypeScript | Portable-action and replay tests pass | Canvas export implemented; browser run unverified | TS physics/RNG trajectory differs from Rust; no visual pass |
+| Independent Swift / Kotlin | Source candidate; compilation/native tests pending | No UI replay/capture wiring yet | Only host resource-consistency checks passed |
 | Remaining Rust / Swift / Kotlin adapters | Not wired yet | Not wired yet | No implied pass |
 
 All twenty render-evidence adapters finish at tick 1440 with the same baseline telemetry. Shared core has
@@ -198,3 +199,5 @@ GPUI Linux state-only replay now builds and completes after a narrow, licensed x
 [Dioxus native shared replay](docs/SCRIPTED-DIOXUS-NATIVE.md) passes source/telemetry validation. Tauri paused label now stays above the playfield and no longer covers the ball, confirmed in a fresh native canvas export.
 
 [Portable scenario and original TypeScript replay](docs/SCRIPTED-ORIGINAL-TYPESCRIPT.md): one manifest drives both timelines; Rust preserves its existing baseline exactly. TypeScript uses its own physics/RNG, so only action/checkpoint semantics are shared. Browser rendering/canvas export remains unverified.
+
+[Portable Swift/Kotlin replay source candidate](docs/SCRIPTED-NATIVE-MOBILE.md) consumes the shared manifest. Derived resource checks pass; native compilation, XCTest/JUnit execution and UI replay are pending. Existing app entry points remain unchanged.

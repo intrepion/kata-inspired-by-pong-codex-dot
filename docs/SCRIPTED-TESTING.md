@@ -151,3 +151,5 @@ Tauri native WebKitGTK replay now verified: [scoped exporter and Canvas evidence
 Dioxus native adds [verified SVG-source replay](SCRIPTED-DIOXUS-NATIVE.md), not a raster or presentation pass. Tauri pause-label overlap is fixed and fresh native canvas evidence confirms the ball is unobscured. No timeline duplication or widened desktop-control permission.
 
 The single [portable smoke-v1 manifest](../scenarios/smoke-v1.txt) now drives Rust and original TypeScript timelines. Rust build-time validation and TS runtime parsing consume it; no copied timeline. [OriginalTS evidence](SCRIPTED-ORIGINAL-TYPESCRIPT.md) is action/state testing only until browser verification. Existing Rust baseline records remain byte-identical.
+
+[Native mobile source candidate](SCRIPTED-NATIVE-MOBILE.md) adds independent Swift/Kotlin manifest consumers and replay APIs, with generated resource consistency checks. Native compilation/tests, installed-resource loading, UI wiring and capture are not verified. No new runtime or render pass is counted.
