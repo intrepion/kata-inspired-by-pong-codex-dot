@@ -44,6 +44,19 @@ impl Model {
         self.last = Instant::now();
     }
     pub fn key(&mut self, key: &str, pressed: bool) {
+        // Toolkit text can change case if Shift changes while a key is held.
+        // Normalize logical identity before repeat suppression and release.
+        let key = match key {
+            "W" => "w",
+            "S" => "s",
+            "R" => "r",
+            "Up" => "up",
+            "Down" => "down",
+            "Enter" | "Return" => "enter",
+            " " => "space",
+            "Escape" => "escape",
+            other => other,
+        };
         if pressed {
             if !self.held.insert(key.to_owned()) {
                 return;
@@ -53,23 +66,19 @@ impl Model {
         }
         // Each direction may have several physical bindings held at once.
         // Releasing one binding must not release the others.
-        self.up = ["w", "W", "Up", "up"]
-            .iter()
-            .any(|key| self.held.contains(*key));
-        self.down = ["s", "S", "Down", "down"]
-            .iter()
-            .any(|key| self.held.contains(*key));
+        self.up = ["w", "up"].iter().any(|key| self.held.contains(*key));
+        self.down = ["s", "down"].iter().any(|key| self.held.contains(*key));
         match key {
-            "Enter" | "Return" | "enter" if pressed => {
+            "enter" if pressed => {
                 if self.game.state == State::Paused {
                     self.game.toggle_pause()
                 } else if self.game.state != State::Playing {
                     self.game.start()
                 }
             }
-            " " | "space" if pressed => self.game.toggle_pause(),
-            "r" | "R" if pressed => self.game.start(),
-            "Escape" | "escape" if pressed => self.blur(),
+            "space" if pressed => self.game.toggle_pause(),
+            "r" if pressed => self.game.start(),
+            "escape" if pressed => self.blur(),
             _ => {}
         }
     }
@@ -160,5 +169,35 @@ mod alias_tests {
         assert!(model.down);
         model.key("S", false);
         assert!(!model.down);
+    }
+}
+
+#[cfg(test)]
+mod key_identity_tests {
+    use super::*;
+    #[test]
+    fn modifier_case_change_on_release_does_not_stick_movement() {
+        for (press, release) in [("w", "W"), ("W", "w"), ("s", "S"), ("S", "s")] {
+            let mut model = Model::default();
+            model.game.start();
+            model.key(press, true);
+            model.advance(0.02);
+            model.key(release, false);
+            let stopped = model.game.player;
+            model.advance(0.02);
+            assert_eq!(model.game.player, stopped, "{press} -> {release}");
+            assert!(!model.up && !model.down);
+        }
+    }
+    #[test]
+    fn case_changed_repeat_is_not_a_second_restart() {
+        let mut model = Model::default();
+        model.key("r", true);
+        model.game.scores = [3, 2];
+        model.key("R", true);
+        assert_eq!(model.game.scores, [3, 2]);
+        model.key("R", false);
+        model.key("r", true);
+        assert_eq!(model.game.scores, [0, 0]);
     }
 }

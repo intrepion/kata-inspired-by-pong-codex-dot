@@ -24,3 +24,11 @@ The planned GPUI package review was deferred to fix this concrete gameplay issue
 All six shared model tests, including both overlapping held-binding regressions, pass on Mac after the correction. Strict Clippy passes with all targets. This is a source-level Mac check only; existing GTK/Slint/GPUI binaries and package hashes have not been requalified, and no new OS keyboard/focus pass is claimed.
 
 Windows follow-up: fresh Slint release and all six shared GUI support release tests passed, including both simultaneous-binding regressions. Extracted Slint scripted replay and six own-window snapshots passed; this does not claim real Windows keyboard dispatch/focus acceptance. See [Slint Windows pilot](packaging/SLINT-WINDOWS-PILOT.md).
+
+## Modifier-case identity follow-up
+
+A second model-boundary regression was reproduced: pressing `w` and releasing `W` (or the reverse; also S/s) left the paddle moving, because the release did not remove the differently cased held-set entry. Repeated `R` after held `r` also incorrectly restarted the game and reset scores again. Both new tests failed before this correction.
+
+The model now normalizes supported key identity before held-state/repeat handling. W and Up remain distinct bindings, so the previous overlapping-key fix is retained. Eight GUI-model tests and strict all-target Clippy pass on Omarchy ARM64. Tests check paddle position after release and score preservation during case-changed repeat, not only boolean flags.
+
+This is direct key-event/model evidence. No claim is made that a particular OS/toolkit generated this exact sequence during native testing, nor that old Slint/GTK/GPUI binaries were rebuilt or requalified by these unit tests. Case-insensitive logical handling is intentionally limited to the documented controls.
