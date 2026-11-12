@@ -4,12 +4,12 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 08:01 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 08:04 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Miniquad fresh release, 3 adapter tests, 11 runner/sanitizer tests and three valid callback repeats passed (08:04 UTC); replay/capture regression passed; processes exited. | [Miniquad Windows evidence](docs/benchmarks/MINIQUAD-WINDOWS-PILOT.md). Macroquad portable package pilot remains partial; no new OS-input or installer claim. |
-| Mac | Miniquad offline release build, 3 adapter tests, 11 runner/sanitizer tests and three valid callback repeats complete; benchmark processes exited. Six Mac timing adapters recorded. | [Miniquad Mac timing](docs/benchmarks/MINIQUAD-MAC-PILOT.md). Supported Mac control and shell retry worked without a permission block. Yew OS-focus check remains inconclusive; packaging partial. |
+| Mac | Piston seventh adapter offline release build running from ebdc9da; timing has not started. Six completed timing adapters remain recorded. | Next: adapter/shared tests, then three bounded Piston repeats after build completes. Yew focus remains inconclusive; packaging partial. |
 | Omarchy ARM64 | Seventh shared benchmark adapter Piston: three valid release callback runs and scripted replay passed; processes exited. | [Piston evidence](docs/benchmarks/PISTON-ADAPTER.md). 2 Rust + 12 Node tests/Clippy pass. Default rendering cadence retained, not a displayed-FPS or real-input claim. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
