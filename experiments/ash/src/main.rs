@@ -11,6 +11,7 @@ use winit::{
 #[derive(Default)]
 struct Frontend {
     app: App,
+    movement_held: [bool; 4],
     benchmarking: bool,
     benchmark: Option<pong_benchmark::Frames>,
     benchmark_done: bool,
@@ -23,6 +24,24 @@ struct Frontend {
     window: Option<Rc<Window>>,
     last: Option<Instant>,
     failed: bool,
+}
+impl Frontend {
+    fn movement_key(&mut self, key: KeyCode, pressed: bool) {
+        let index = match key {
+            KeyCode::KeyW => 0,
+            KeyCode::ArrowUp => 1,
+            KeyCode::KeyS => 2,
+            KeyCode::ArrowDown => 3,
+            _ => return,
+        };
+        self.movement_held[index] = pressed;
+        self.app.up = self.movement_held[0] || self.movement_held[1];
+        self.app.down = self.movement_held[2] || self.movement_held[3];
+    }
+    fn clear_movement(&mut self) {
+        self.movement_held = [false; 4];
+        self.app.blur();
+    }
 }
 impl ApplicationHandler for Frontend {
     fn resumed(&mut self, el: &ActiveEventLoop) {
@@ -62,17 +81,19 @@ impl ApplicationHandler for Frontend {
                 }
             }
             WindowEvent::Focused(false) if self.demo.is_none() && !self.benchmarking => {
-                self.app.blur()
+                self.clear_movement()
             }
             WindowEvent::KeyboardInput { event, .. }
                 if self.demo.is_none() && !self.benchmarking =>
             {
                 let pressed = event.state == ElementState::Pressed;
                 match event.physical_key {
-                    PhysicalKey::Code(KeyCode::KeyW | KeyCode::ArrowUp) => self.app.up = pressed,
-                    PhysicalKey::Code(KeyCode::KeyS | KeyCode::ArrowDown) => {
-                        self.app.down = pressed
-                    }
+                    PhysicalKey::Code(
+                        key @ (KeyCode::KeyW
+                        | KeyCode::ArrowUp
+                        | KeyCode::KeyS
+                        | KeyCode::ArrowDown),
+                    ) => self.movement_key(key, pressed),
                     PhysicalKey::Code(KeyCode::Space) if pressed && !event.repeat => {
                         self.app.action()
                     }
@@ -212,5 +233,49 @@ mod benchmark_tests {
     #[should_panic]
     fn reject_combined_modes() {
         benchmark_args(&["--benchmark".into(), "--scripted-test".into()]);
+    }
+}
+
+#[cfg(test)]
+mod movement_tests {
+    use super::*;
+    #[test]
+    fn aliases_remain_active_until_each_binding_releases() {
+        for (a, b, up) in [
+            (KeyCode::KeyW, KeyCode::ArrowUp, true),
+            (KeyCode::KeyS, KeyCode::ArrowDown, false),
+        ] {
+            for (first, second) in [(a, b), (b, a)] {
+                let mut f = Frontend::default();
+                f.movement_key(first, true);
+                f.movement_key(second, true);
+                f.movement_key(first, false);
+                assert!(
+                    if up { f.app.up } else { f.app.down },
+                    "other alias is still held"
+                );
+                f.movement_key(second, false);
+                assert!(!f.app.up && !f.app.down);
+            }
+        }
+    }
+    #[test]
+    fn repeats_opposites_and_focus_clear_are_safe() {
+        let mut f = Frontend::default();
+        f.movement_key(KeyCode::KeyW, true);
+        f.movement_key(KeyCode::KeyW, true);
+        f.movement_key(KeyCode::KeyW, false);
+        assert!(!f.app.up);
+        f.movement_key(KeyCode::ArrowUp, true);
+        f.movement_key(KeyCode::KeyS, true);
+        assert!(f.app.up && f.app.down);
+        f.clear_movement();
+        assert!(!f.app.up && !f.app.down);
+        f.movement_key(KeyCode::KeyW, true);
+        f.movement_key(KeyCode::KeyW, false);
+        assert!(
+            !f.app.up && !f.app.down,
+            "blur must also clear alias storage"
+        );
     }
 }

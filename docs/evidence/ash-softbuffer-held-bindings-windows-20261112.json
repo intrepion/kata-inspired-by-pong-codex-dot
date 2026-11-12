@@ -1,0 +1,28 @@
+{
+  "platform": "Windows x64 GNU",
+  "scope": "Input boundary tests and native scripted integration; no OS-keyboard or benchmark qualification",
+  "results": [
+    {
+      "adapter": "ash",
+      "binary_sha256": "0e6795d299cd2f1a2ecd3ea1d175db61e1e07f2031e1499318a1be24b4dcbb6d",
+      "tests": 6,
+      "old_alias_regression": "failed before correction",
+      "replay_exit": 0,
+      "state_records": 13,
+      "finished": true,
+      "final_tick": 1440,
+      "capture_count": 6
+    },
+    {
+      "adapter": "softbuffer",
+      "binary_sha256": "76db135154e831321a4f2bb74ccc81c0a27378fbbe6037c6be0da6d0b34a600a",
+      "tests": 4,
+      "old_alias_regression": "failed before correction",
+      "replay_exit": 0,
+      "state_records": 13,
+      "finished": true,
+      "final_tick": 1440,
+      "capture_count": 6
+    }
+  ]
+}

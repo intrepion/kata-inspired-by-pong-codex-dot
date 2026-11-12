@@ -4,11 +4,11 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 10:07 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 12:26 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Miniquad/pixels/raw wgpu held-binding fixes requalified: fourteen release tests, three rebuilt scripted runs and eighteen captures passed. Offline cached builds used one job. | [Windows native-binding follow-up](docs/NATIVE-HELD-BINDINGS-FIX.md). Prior timing/package hashes remain historical; actual OS-input gates remain open. |
+| Windows | Ash and softbuffer alias-release bugs corrected: ten release tests, strict Clippy, two fresh native scripted replays and twelve captures pass. | [Input correction](docs/ASH-SOFTBUFFER-HELD-BINDINGS-FIX.md). OS keyboard/focus acceptance and new timing/package qualification remain separate. |
 | Mac | Corrected Miniquad/pixels/wgpu packages requalified: nine guards, three extracted runtime replays and 18 captures pass. Binary hashes and inspected-frame equivalence verified; scoped app removal preserved sentinels, no extra runtime files found. | [Updated package evidence](docs/packaging/MAC-HELD-FIXES-PACKAGE.md). Signing/notices/clean-machine and physical-input gates remain; no public binary release. |
 | Omarchy ARM64 | Fixed shared Dioxus/Yew/Leptos movement-source interference: keyboard aliases and on-screen buttons now release independently. Eight controller tests and all three WASM checks pass; preexisting strict-Clippy findings retained. | [Web input-source evidence](docs/WEB-INPUT-SOURCES-FIX.md). Fresh browser/webview interaction remains pending; no deployment or package requalification implied. |
 
