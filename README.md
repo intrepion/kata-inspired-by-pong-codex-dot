@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Piston fresh release build running (08:07 UTC), shared dependencies compiling. Miniquad three-repeat pilot/replay complete and published. | Next: Piston tests and bounded timing after compilation. [Latest completed Windows pilot](docs/benchmarks/MINIQUAD-WINDOWS-PILOT.md). No Piston timing pass yet. |
+| Windows | Piston three valid callback repeats, 2 adapter + 12 shared tests and 12.6s scripted replay/capture passed; processes exited. | [Piston Windows evidence](docs/benchmarks/PISTON-WINDOWS-PILOT.md). Next unblocked Windows adapter: softbuffer. Packaging and OS-input gates remain separate. |
 | Mac | ggez eighth timing adapter: release build, 2 Rust + 13 Node tests and 3 valid repeats complete; replay finished in 12.320 seconds with 13 states and six frames. Processes exited. | [ggez Mac evidence](docs/benchmarks/GGEZ-MAC-PILOT.md). Piston timing fix is separate; original slowdown evidence retained. Yew focus inconclusive; packaging partial. |
 | Omarchy ARM64 | Nannou ninth timing adapter: 2 Rust + 14 Node tests pass; strict Clippy/release build running. Existing eight adapter pilots remain verified. | Next: bounded Nannou timing and replay after build; not yet a completed benchmark. |
 
@@ -249,6 +249,6 @@ Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md
 | raylib-rs | [3/3](docs/benchmarks/RAYLIB-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/RAYLIB-ADAPTER.md) |
 | pixels/winit | [3/3](docs/benchmarks/PIXELS-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/PIXELS-ADAPTER.md) |
 | Miniquad | [3/3](docs/benchmarks/MINIQUAD-MAC-PILOT.md) | [3/3](docs/benchmarks/MINIQUAD-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/MINIQUAD-ADAPTER.md) |
-| Piston | [3/3](docs/benchmarks/PISTON-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/PISTON-ADAPTER.md) |
+| Piston | [3/3](docs/benchmarks/PISTON-MAC-PILOT.md) | [3/3](docs/benchmarks/PISTON-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/PISTON-ADAPTER.md) |
 
 Other implementations have not yet been qualified through this shared timing protocol. Package lifecycle status is a separate dimension: Mac [Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md) and [SDL3](docs/packaging/SDL3-MAC-PILOT.md) have local extracted-app gameplay/removal evidence, not signed or clean-machine release qualification.
