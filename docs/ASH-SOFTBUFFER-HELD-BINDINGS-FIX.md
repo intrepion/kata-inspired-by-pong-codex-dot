@@ -29,3 +29,9 @@ These checks establish input-model regressions and extracted runtime integration
 At `af1db13`, fresh optimized builds, all ten adapter tests (ash six, softbuffer four) and strict all-target Clippy pass. Both rebuilt native executables exit 0 after 13 scripted states through tick 1440 and six app-owned captures each. Tick 600 inspections show score 0:1, both paddles, ball and divider. Softbuffer replay began after its fresh build completed.
 
 [Redacted hashes/results](evidence/ash-softbuffer-held-bindings-linux-20261112.json). These app-owned images are not compositor evidence or physical-key tests. Existing benchmark and package hashes remain historical; no new timing or package qualification is inferred. Raw logs and captures remain local, and both native processes exited.
+
+## Mac supported native gameplay check
+
+The corrected softbuffer archive was extracted again into a separate local test directory and launched through supported native application control, without scripted-test arguments. The UI initially reported Ready. Space changed it to Playing; held W moved the player paddle upward, and held S moved it downward in actual window screenshots. Score advanced to 0–2. Space paused (visible pause marker and Paused title), then resumed Playing with the same score. R reset the score to 0–0. This is actual application-input/window evidence in addition to the earlier app-owned replay captures.
+
+Quit through the application menu was confirmed by `procNotFound` and no matching test process afterward. Earlier Escape, Cmd-Q and close-button observations returned inconsistent fresh Ready views, so those routes are **not** recorded as reliable quit passes. Overlapping physical-key release order, focus loss, resizing and complete match acceptance remain separate; the direct handler tests do not replace them. The extracted UI-test files remain local, and no user windows/settings were changed.
