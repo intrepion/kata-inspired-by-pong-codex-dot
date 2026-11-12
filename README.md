@@ -2,6 +2,18 @@
 
 An original real-time paddle game inspired by Pong. Return the ball, steer shots with your paddle, and beat the computer to seven points. The computer has a short reaction delay and a limited paddle speed, so well-placed shots can get past it. This independent kata is not affiliated with or endorsed by Atari.
 
+## Current activity (last reported)
+
+**Snapshot updated: 2026-11-12 02:54 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+
+| Computer | Last reported activity | Phase / next step |
+| --- | --- | --- |
+| Windows | Fresh Bevy MSVC build passed. Default Vulkan run exits with `-1073740940`; DX12 replay completed with six PNGs but distorted sprites remain. | Compiling a local Mesh2d rectangle presentation workaround. No passing fix yet; rerun and inspect captures next. |
+| Mac | Yew and Leptos native-wrapper checks assigned, followed by Dioxus native desktop. Existing test binaries use an older checkpoint. | Last reported waiting for Pong Yew Computer Use approval. Current launch/run not independently confirmed; no new pass recorded here. |
+| Omarchy ARM64 | Last known assignment: GPUI scripted-demo/capture assessment and Slint attribution-clipping polish. | Current run not confirmed. The verified baseline below covers nineteen scripted adapters; this assignment is not a new test pass. |
+
+The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
+
 ## Play
 
 [Play Rallylight online](https://intrepion.github.io/kata-inspired-by-pong-codex-dot/).
