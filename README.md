@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | ggez three valid timing repeats, 2 adapter tests and 12.5s replay/capture passed; processes exited. Eight Windows timing adapters recorded. | [ggez Windows evidence](docs/benchmarks/GGEZ-WINDOWS-PILOT.md). Next: SDL3 build/pilot. OS-input/installation qualification remains separate. |
+| Windows | SDL3 static release, 3 valid timing repeats, 2 adapter + 17 shared tests and 12.2s replay/capture passed; processes exited. Nine Windows timing adapters recorded. | [SDL3 Windows evidence](docs/benchmarks/SDL3-WINDOWS-PILOT.md). Next: Nannou build/pilot. Native-input/installation gates separate. |
 | Mac | Bevy twelfth adapter offline release build running; eleven Mac timing pilots remain recorded. | Next: tests, main-world callback timing and replay. This metric is not render/presentation timing. Yew focus inconclusive; packaging partial. |
 | Omarchy ARM64 | Twelfth timing adapter Bevy: 2 Rust + 17 Node tests, release/Clippy, three valid main-world callback repeats and replay/six PNGs passed; processes exited. | [Bevy evidence](docs/benchmarks/BEVY-ADAPTER.md). Main-world timing is not rendered-frame timing. Tick600 inspected; real-input/focus and packaging gaps separate. |
 
@@ -244,7 +244,7 @@ Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md
 | --- | --- | --- | --- |
 | Macroquad | [3/3](docs/benchmarks/MACROQUAD-MAC-PILOT.md) | [3/3](docs/benchmarks/WINDOWS-MACROQUAD-PILOT.md) | [3/3](docs/benchmarks/README.md) |
 | softbuffer/winit | [3/3](docs/benchmarks/SOFTBUFFER-MAC-PILOT.md) | [3/3](docs/benchmarks/SOFTBUFFER-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/SOFTBUFFER-ADAPTER.md) |
-| SDL3 | [3/3](docs/benchmarks/SDL3-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/SDL3-ADAPTER.md) |
+| SDL3 | [3/3](docs/benchmarks/SDL3-MAC-PILOT.md) | [3/3](docs/benchmarks/SDL3-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/SDL3-ADAPTER.md) |
 | raylib-rs | [3/3](docs/benchmarks/RAYLIB-MAC-PILOT.md) | [3/3](docs/benchmarks/RAYLIB-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/RAYLIB-ADAPTER.md) |
 | pixels/winit | [3/3](docs/benchmarks/PIXELS-MAC-PILOT.md) | [3/3](docs/benchmarks/PIXELS-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/PIXELS-ADAPTER.md) |
 | Miniquad | [3/3](docs/benchmarks/MINIQUAD-MAC-PILOT.md) | [3/3](docs/benchmarks/MINIQUAD-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/MINIQUAD-ADAPTER.md) |
