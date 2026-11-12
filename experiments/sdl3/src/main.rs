@@ -6,7 +6,16 @@ use sdl3::{
     render::FRect,
 };
 use std::time::{Duration, Instant};
+fn benchmark_args(args: &[String]) -> bool {
+    let enabled = args.iter().any(|a| a == "--benchmark");
+    assert!(
+        !enabled || !args.iter().any(|a| a.starts_with("--scripted")),
+        "benchmark and replay/capture modes are distinct"
+    );
+    enabled
+}
 fn main() -> Result<(), String> {
+    let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     let sdl = sdl3::init().map_err(|e| e.to_string())?;
     let video = sdl.video().map_err(|e| e.to_string())?;
     let window = video
@@ -16,9 +25,23 @@ fn main() -> Result<(), String> {
         .build()
         .map_err(|e| e.to_string())?;
     let mut canvas = window.into_canvas();
+    if benchmarking {
+        println!(
+            "PONG_BENCHMARK_BACKEND {{\"video_driver\":{:?},\"renderer\":{:?}}}",
+            video.current_video_driver(),
+            canvas.renderer_name
+        );
+    }
     let mut events = sdl.event_pump().map_err(|e| e.to_string())?;
     let mut app = App::default();
     let mut demo = pong_scenario::Demo::from_args();
+    let (width, height) = canvas.output_size().map_err(|e| e.to_string())?;
+    let mut benchmark = benchmarking.then(|| pong_benchmark::Frames::new(width, height));
+    let mut scenario = pong_scenario::Scenario::default();
+    let mut accumulator = 0.;
+    if benchmarking {
+        app.game = pong_low_level_common::Game::new(pong_scenario::SEED);
+    }
     let mut last = Instant::now();
     'running: loop {
         for event in events.poll_iter() {
@@ -32,16 +55,16 @@ fn main() -> Result<(), String> {
                     keycode: Some(Keycode::Space),
                     repeat: false,
                     ..
-                } if demo.is_none() => app.action(),
+                } if demo.is_none() && !benchmarking => app.action(),
                 Event::KeyDown {
                     keycode: Some(Keycode::R),
                     repeat: false,
                     ..
-                } if demo.is_none() => app.game.start(),
+                } if demo.is_none() && !benchmarking => app.game.start(),
                 Event::Window {
                     win_event: WindowEvent::FocusLost,
                     ..
-                } if demo.is_none() => app.blur(),
+                } if demo.is_none() && !benchmarking => app.blur(),
                 _ => {}
             }
         }
@@ -49,7 +72,17 @@ fn main() -> Result<(), String> {
         app.up = k.is_scancode_pressed(Scancode::W) || k.is_scancode_pressed(Scancode::Up);
         app.down = k.is_scancode_pressed(Scancode::S) || k.is_scancode_pressed(Scancode::Down);
         let now = Instant::now();
-        if let Some(demo) = &mut demo {
+        if benchmarking {
+            accumulator += (now - last).as_secs_f32().clamp(0., 0.1);
+            while accumulator >= pong_scenario::STEP {
+                if scenario.finished() {
+                    scenario = pong_scenario::Scenario::default();
+                    app.game = pong_low_level_common::Game::new(pong_scenario::SEED);
+                }
+                scenario.advance(&mut app.game);
+                accumulator -= pong_scenario::STEP;
+            }
+        } else if let Some(demo) = &mut demo {
             demo.advance(&mut app.game, (now - last).as_secs_f32());
         } else {
             app.tick((now - last).as_secs_f32());
@@ -91,12 +124,21 @@ fn main() -> Result<(), String> {
             });
         }
         canvas.present();
+        // Present-return callback boundary, not a display/GPU completion timestamp.
+        if let Some(bench) = &mut benchmark {
+            if bench.frame(width, height) {
+                println!("PONG_BENCHMARK {}", bench.report());
+                break;
+            }
+        }
         if demo.as_ref().is_some_and(|d| d.finished()) {
             break;
         }
         canvas
             .window_mut()
-            .set_title(&app.title(if demo.is_some() {
+            .set_title(&app.title(if benchmarking {
+                "SDL3 BENCHMARK"
+            } else if demo.is_some() {
                 "SDL3 SCRIPTED"
             } else {
                 "SDL3 renderer"
@@ -105,4 +147,20 @@ fn main() -> Result<(), String> {
         std::thread::sleep(Duration::from_millis(8));
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn benchmark_is_opt_in() {
+        assert!(!benchmark_args(&[]));
+        assert!(!benchmark_args(&["--scripted-test".into()]));
+        assert!(benchmark_args(&["--benchmark".into()]));
+    }
+    #[test]
+    #[should_panic(expected = "benchmark and replay/capture modes are distinct")]
+    fn rejects_capture_mixing() {
+        benchmark_args(&["--benchmark".into(), "--scripted-captures".into()]);
+    }
 }
