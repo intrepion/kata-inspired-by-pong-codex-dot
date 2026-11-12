@@ -36,3 +36,9 @@ test('pixels metadata separates CPU raster from GPU presentation', () => {
   assert.match(config.renderer, /CPU raster plus wgpu/);
   assert.match(config.pacing, /successful pixels.render/);
 });
+
+test('Miniquad metadata names submission boundary without asserting driver', () => {
+  const config = parseArguments(['binary', 'out.json', 'unqueried', 'pilot', '--adapter', 'miniquad']);
+  assert.match(config.pacing, /commit_frame/);
+  assert.match(config.renderer, /driver unqueried/);
+});

@@ -13,13 +13,16 @@ struct App {
     bindings: Bindings,
     game: Game,
     demo: Option<pong_scenario::Demo>,
+    benchmarking: bool,
+    benchmark: Option<pong_benchmark::Frames>,
+    scenario: pong_scenario::Scenario,
     up: bool,
     down: bool,
     last: Instant,
     acc: f32,
 }
 impl App {
-    fn new() -> Self {
+    fn new(benchmarking: bool) -> Self {
         let mut ctx = window::new_rendering_backend();
         let shader=ctx.new_shader(ShaderSource::Glsl{vertex:"#version 100\nattribute vec2 position; attribute vec3 color; varying lowp vec3 c; void main(){gl_Position=vec4(position,0.,1.);c=color;}",fragment:"#version 100\nprecision lowp float; varying vec3 c; void main(){gl_FragColor=vec4(c,1.);}"},ShaderMeta{images:vec![],uniforms:UniformBlockLayout{uniforms:vec![]}}).unwrap();
         let pipeline = ctx.new_pipeline(
@@ -42,7 +45,18 @@ impl App {
             BufferUsage::Immutable,
             BufferSource::slice(&indices),
         );
+        let (width, height) = window::screen_size();
+        if benchmarking {
+            println!(
+                "PONG_BENCHMARK_BACKEND {{\"backend\":\"{:?}\"}}",
+                ctx.info().backend
+            );
+        }
         Self {
+            benchmarking,
+            benchmark: benchmarking
+                .then(|| pong_benchmark::Frames::new(width as u32, height as u32)),
+            scenario: pong_scenario::Scenario::default(),
             ctx,
             pipeline,
             bindings: Bindings {
@@ -50,7 +64,7 @@ impl App {
                 index_buffer: index,
                 images: vec![],
             },
-            game: Game::new(42),
+            game: Game::new(pong_scenario::SEED),
             demo: pong_scenario::Demo::from_args(),
             up: false,
             down: false,
@@ -85,8 +99,16 @@ impl EventHandler for App {
         }
         self.last = now;
         while self.acc >= 1. / 120. {
-            self.game
-                .step(1. / 120., self.down as u8 as f32 - self.up as u8 as f32);
+            if self.benchmarking {
+                if self.scenario.finished() {
+                    self.scenario = pong_scenario::Scenario::default();
+                    self.game = Game::new(pong_scenario::SEED);
+                }
+                self.scenario.advance(&mut self.game);
+            } else {
+                self.game
+                    .step(1. / 120., self.down as u8 as f32 - self.up as u8 as f32);
+            }
             self.acc -= 1. / 120.;
         }
     }
@@ -170,12 +192,21 @@ impl EventHandler for App {
         }
         self.ctx.end_render_pass();
         self.ctx.commit_frame();
+        let finished = self
+            .benchmark
+            .as_mut()
+            .is_some_and(|frames| frames.frame(w as u32, h as u32));
+        if finished {
+            let frames = self.benchmark.take().expect("completed sampler");
+            println!("PONG_BENCHMARK {}", frames.report());
+            window::order_quit();
+        }
         if self.demo.as_ref().is_some_and(|d| d.finished()) {
-            window::request_quit();
+            window::order_quit();
         }
     }
     fn key_down_event(&mut self, k: KeyCode, _: KeyMods, repeat: bool) {
-        if self.demo.is_some() {
+        if self.demo.is_some() || self.benchmarking {
             return;
         }
         match k {
@@ -201,7 +232,7 @@ impl EventHandler for App {
         }
     }
     fn window_minimized_event(&mut self) {
-        if self.demo.is_some() {
+        if self.demo.is_some() || self.benchmarking {
             return;
         }
         self.game.pause();
@@ -210,7 +241,17 @@ impl EventHandler for App {
         self.acc = 0.;
     }
 }
+fn benchmark_args(args: &[String]) -> bool {
+    let enabled = args.iter().any(|a| a == "--benchmark");
+    assert!(
+        !enabled || !args.iter().any(|a| a.starts_with("--scripted")),
+        "benchmark and replay/capture modes are distinct"
+    );
+    enabled
+}
+
 fn main() {
+    let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     miniquad::start(
         conf::Conf {
             window_title: "Pong Miniquad | Enter start/restart • W/S arrows • Space pause".into(),
@@ -218,13 +259,23 @@ fn main() {
             window_height: H as i32,
             ..Default::default()
         },
-        || Box::new(App::new()),
+        move || Box::new(App::new(benchmarking)),
     );
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn benchmark_is_opt_in() {
+        assert!(!benchmark_args(&[]));
+        assert!(benchmark_args(&["--benchmark".into()]));
+    }
+    #[test]
+    #[should_panic(expected = "benchmark and replay/capture modes are distinct")]
+    fn rejects_capture_mixing() {
+        benchmark_args(&["--benchmark".into(), "--scripted-test".into()]);
+    }
     #[test]
     fn rectangle_is_two_triangles_in_top_down_court_coordinates() {
         let mut vertices = Vec::new();
