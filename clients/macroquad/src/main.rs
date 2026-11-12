@@ -22,7 +22,22 @@ fn conf() -> Conf {
 }
 #[macroquad::main(conf)]
 async fn main() {
-    let scripted = std::env::args().any(|arg| arg == "--scripted-test");
+    let args: Vec<String> = std::env::args().collect();
+    let scripted = args.iter().any(|arg| arg == "--scripted-test");
+    let capture_dir = args
+        .iter()
+        .position(|arg| arg == "--scripted-captures")
+        .map(|i| {
+            assert!(scripted, "--scripted-captures requires --scripted-test");
+            let path = args
+                .get(i + 1)
+                .expect("--scripted-captures requires a NEW directory");
+            // Refuse an existing directory so earlier evidence is never overwritten.
+            std::fs::create_dir(path).expect("create new capture directory");
+            path.clone()
+        });
+    let capture_ticks = [120, 240, 480, 600, 1320, 1440];
+    let mut last_capture = 0;
     let mut scenario = pong_scenario::Scenario::default();
     let mut g = Game::new(if scripted {
         pong_scenario::SEED
@@ -73,7 +88,10 @@ async fn main() {
                 g.step(1. / 120., input as f32);
             }
             accumulator -= 1. / 120.;
-            if scripted && scenario.finished() {
+            if scripted
+                && (scenario.finished()
+                    || (capture_dir.is_some() && capture_ticks.contains(&scenario.tick())))
+            {
                 break;
             }
         }
@@ -144,6 +162,16 @@ async fn main() {
                 20.,
                 YELLOW,
             );
+        }
+        if let Some(dir) = &capture_dir {
+            if capture_ticks.contains(&scenario.tick()) && last_capture != scenario.tick() {
+                // Macroquad flushes its own draw commands and reads this app's
+                // framebuffer only. No desktop, window-manager or other-app capture.
+                let path = format!("{dir}/tick-{:04}.png", scenario.tick());
+                get_screen_data().export_png(&path);
+                eprintln!("Saved application framebuffer: {path}");
+                last_capture = scenario.tick();
+            }
         }
         next_frame().await;
         if scripted && scenario.finished() {

@@ -3,7 +3,7 @@
 Macroquad is the first representative adapter. This is **not** desktop automation
 or a replacement for interactive/visual QA. The shared `pong-scenario` crate feeds
 the same simulation boundary as the adapter's ordinary input handling. It never
-injects OS events or captures a screen. Other adapters do not yet implement it.
+injects OS events or captures the desktop. Optional PNG export reads only its own application framebuffer. Other adapters do not yet implement it.
 
 ## Run and watch
 
@@ -52,3 +52,23 @@ or visual PASS without separately observing and testing those behaviors.
 
 2026-11-12 Omarchy ARM64: build and 11 tests passed. Live-session replay result is
 recorded in the root README. No desktop screenshot/control was used.
+
+## Optional application-framebuffer PNGs (native only)
+
+```sh
+cargo run -p pong-macroquad -- --scripted-test --scripted-captures ./new-smoke-images > macroquad-smoke.jsonl
+```
+
+The output directory must not already exist (prevents overwriting earlier evidence).
+Macroquad's supported `get_screen_data().export_png()` flushes draw commands and
+exports this application's framebuffer at ticks 120, 240, 480, 600, 1320, and 1440.
+No desktop screenshot, other-app capture, OS input injection, or native-control
+permission workaround is used. This export API is native-only, not WebAssembly.
+
+2026-11-12 Omarchy run: exited 0, six PNGs saved and inspected; telemetry identical
+to the no-capture run. Images show the top/bottom paddle movement, pause label,
+resume, and reset score/paddles. Text, court and ball render correctly in the
+observed frames. The tall tiled window has substantial unused space below the
+court; this remains a layout-polish opportunity. These snapshots do not prove
+smooth animation, real keyboard input, compositor presentation, focus or touch.
+All six images were also delivered to the owner's Library.

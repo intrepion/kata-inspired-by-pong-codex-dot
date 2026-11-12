@@ -46,7 +46,7 @@ Each desktop cell is **build / runtime evidence**:
 | --- | --- | --- | --- |
 | Original TypeScript + Canvas browser | Updated UI not rechecked on Mac | Strict TS build + 12 tests pass; localhost start/rally/pause/resume smoke | Updated UI not rechecked on Omarchy |
 | Rust WASM + Canvas browser | B / I | B / I | B / localhost serves; UI blocked |
-| Macroquad | B / I | B / R; keyboard play unverified | B / S + scripted replay passed; visual/real input blocked |
+| Macroquad | B / I | B / R; keyboard play unverified | B / S + scripted replay and app-frame PNGs inspected; real input blocked |
 | Bevy | B / I | B / **F**: Vulkan exits; DX12 renders incorrectly | B / S; UI blocked |
 | Tauri + Rust WASM | B / I | B / I | B / S; UI blocked |
 | Miniquad | B / I | B / R; start input unsuccessful | B / S; UI blocked |
@@ -131,3 +131,8 @@ visual correctness or real keyboard behavior. Other adapters are not wired yet.
 Omarchy ARM64: two native replay runs exited 0 at tick 1440 with identical 13-line
 [telemetry](docs/evidence/omarchy-macroquad-scripted-20261112.jsonl). Build, 11 tests
 and strict Clippy passed. This is **not** a visual/interactive PASS.
+
+Optional `--scripted-captures ./new-smoke-images` now exports six app-owned PNGs.
+Omarchy capture replay exited 0 with unchanged telemetry; all six frames were
+inspected (movement, pause/resume, reset). This establishes bounded framebuffer
+rendering evidence, **not** real keyboard/focus or smooth-motion validation.
