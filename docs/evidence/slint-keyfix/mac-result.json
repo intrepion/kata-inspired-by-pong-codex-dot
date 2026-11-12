@@ -1,0 +1,12 @@
+{
+  "source": "5af98ee",
+  "profile": "debug",
+  "binary_sha256": "5bde0be65b7ee3bded4722b212975135f6e05fc484061f5ed4753d8831d3c785",
+  "exit": 0,
+  "signal": null,
+  "seconds": 17.326,
+  "states": 13,
+  "final_tick": 1440,
+  "finished": true,
+  "captures": 6
+}
