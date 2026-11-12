@@ -102,6 +102,8 @@ Details: [low-level clients](experiments/LOW-LEVEL.md), [GUI toolkits](experimen
 
 [Commands and detailed web-framework results](docs/web-framework-comparison.md). Browser checks use a localhost HTTP server, never file URLs. Narrow browser layout is not a physical touchscreen or mobile-package test.
 
+Omarchy pointer ownership follow-up: shared Rust controller model tests pass (11), including independent same-button pointer release, unrelated release, opposing pointers, and pause clearing; Yew, Leptos, and Dioxus web adapters pass `cargo check` for `wasm32-unknown-unknown`; Dioxus desktop also passes `cargo check`. These are model and compilation checks, not browser or physical touch interaction. Strict Clippy remains blocked by existing replay-code and test-module lint warnings.
+
 ### Mobile targets
 
 | Implementation | Test host / target | Build and tests | Actual runtime evidence | Still outstanding |
