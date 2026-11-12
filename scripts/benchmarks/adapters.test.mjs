@@ -62,3 +62,5 @@ test('Bevy metadata labels main-world frame callback scope',()=>{const config=pa
 test('Blue Engine timing excludes headless mode and identifies upload boundary',()=>{const config=parseArguments([...base,'--adapter','blue-engine']);assert.match(config.presentation,/headless excluded/);assert.match(config.pacing,/object upload precedes/);});
 
 test("Fyrox callback metadata excludes completed GPU timing",()=>{const r=parseArguments(["binary","new.json","backend","notes","--adapter","fyrox"]); assert.match(r.pacing,/before_rendering/);});
+
+test("ash timing names serialized FIFO and excludes skipped frames",()=>{const r=parseArguments(["binary","new.json","backend","notes","--adapter","ash"]); assert.match(r.pacing,/FIFO/);assert.match(r.pacing,/successful present-request/);});

@@ -8,6 +8,11 @@ use std::{
     ffi::{CStr, CString},
 };
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
+/// Separates actual present requests from swapchain recovery with no presentation.
+pub struct DrawOutcome {
+    pub resize: bool,
+    pub presented: bool,
+}
 pub struct Renderer {
     _entry: Entry,
     instance: ash::Instance,
@@ -362,9 +367,12 @@ impl Renderer {
         &mut self,
         app: &App,
         capture: &mut Option<std::path::PathBuf>,
-    ) -> Result<bool> {
+    ) -> Result<DrawOutcome> {
         if self.swap == vk::SwapchainKHR::null() {
-            return Ok(false);
+            return Ok(DrawOutcome {
+                resize: false,
+                presented: false,
+            });
         }
         // Intentionally serialize this learning baseline; queue idle also makes presentation
         // semaphore reuse safe. Production engines use per-frame/per-image sync instead.
@@ -376,7 +384,12 @@ impl Renderer {
             vk::Fence::null(),
         ) {
             Ok(v) => v,
-            Err(vk::Result::ERROR_OUT_OF_DATE_KHR) => return Ok(true),
+            Err(vk::Result::ERROR_OUT_OF_DATE_KHR) => {
+                return Ok(DrawOutcome {
+                    resize: true,
+                    presented: false,
+                })
+            }
             Err(e) => return Err(e.into()),
         };
         self.device
@@ -542,8 +555,14 @@ impl Renderer {
                 .swapchains(&[self.swap])
                 .image_indices(&[index]),
         ) {
-            Ok(v) => Ok(v || suboptimal),
-            Err(vk::Result::ERROR_OUT_OF_DATE_KHR) => Ok(true),
+            Ok(v) => Ok(DrawOutcome {
+                resize: v || suboptimal,
+                presented: true,
+            }),
+            Err(vk::Result::ERROR_OUT_OF_DATE_KHR) => Ok(DrawOutcome {
+                resize: true,
+                presented: false,
+            }),
             Err(e) => Err(e.into()),
         }
     }

@@ -1021,11 +1021,16 @@ version = "0.1.0"
 dependencies = [
  "ash",
  "ash-window",
+ "pong-benchmark",
  "pong-low-level-common",
  "pong-scenario",
  "raw-window-handle",
  "winit",
 ]
+
+[[package]]
+name = "pong-benchmark"
+version = "0.1.0"
 
 [[package]]
 name = "pong-core"

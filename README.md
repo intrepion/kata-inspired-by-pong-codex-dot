@@ -4,13 +4,13 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 08:57 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 08:59 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Nannou release build actively compiling Bevy/wgpu dependencies (08:55 UTC), two jobs; no approval blocker. Nine completed timing adapters remain published. | [Latest completed SDL3 pilot](docs/benchmarks/SDL3-WINDOWS-PILOT.md). Timing will start after compilation; no Nannou result claimed yet. |
 | Mac | Fyrox fourteenth adapter offline release build running; thirteen completed Mac timing pilots remain recorded. | Next: tests, native before-rendering callback timings and replay. Yew focus inconclusive; packaging partial. |
-| Omarchy ARM64 | Fourteenth timing adapter Fyrox: 2 Rust + 19 Node tests, release/Clippy, three valid native pre-render repeats and replay/six UI PNGs passed; processes exited. | [Fyrox evidence](docs/benchmarks/FYROX-ADAPTER.md). Tick600 inspected; real-input/focus and installation gates remain separate. |
+| Omarchy ARM64 | Fifteenth timing adapter ash/Vulkan: 4 Rust + 20 Node tests, release/Clippy, three valid native repeats and replay/six PNGs passed; processes exited. | [ash evidence](docs/benchmarks/ASH-ADAPTER.md). FIFO/serialized timing is not an engine ranking; tick600 inspected. Real input/focus and installation remain separate. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -256,5 +256,6 @@ Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md
 | Bevy (main-world callback) | [3/3](docs/benchmarks/BEVY-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/BEVY-ADAPTER.md) |
 | Blue Engine (native callback) | Not recorded | Not recorded | [3/3; initial failure retained](docs/benchmarks/BLUE-ENGINE-ADAPTER.md) |
 | Fyrox (pre-render callback) | Not recorded | Not recorded | [3/3](docs/benchmarks/FYROX-ADAPTER.md) |
+| ash / Vulkan | Not recorded; Vulkan loader previously blocked | Not recorded | [3/3](docs/benchmarks/ASH-ADAPTER.md) |
 
 Other implementations have not yet been qualified through this shared timing protocol. Package lifecycle status is a separate dimension: Mac [Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md) and [SDL3](docs/packaging/SDL3-MAC-PILOT.md) have local extracted-app gameplay/removal evidence, not signed or clean-machine release qualification.

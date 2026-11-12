@@ -11,6 +11,11 @@ use winit::{
 #[derive(Default)]
 struct Frontend {
     app: App,
+    benchmarking: bool,
+    benchmark: Option<pong_benchmark::Frames>,
+    benchmark_done: bool,
+    scenario: pong_scenario::Scenario,
+    accumulator: f32,
     demo: Option<pong_scenario::Demo>,
     pending_capture: Option<std::path::PathBuf>,
     capture_enabled: bool,
@@ -56,8 +61,12 @@ impl ApplicationHandler for Frontend {
                     }
                 }
             }
-            WindowEvent::Focused(false) if self.demo.is_none() => self.app.blur(),
-            WindowEvent::KeyboardInput { event, .. } if self.demo.is_none() => {
+            WindowEvent::Focused(false) if self.demo.is_none() && !self.benchmarking => {
+                self.app.blur()
+            }
+            WindowEvent::KeyboardInput { event, .. }
+                if self.demo.is_none() && !self.benchmarking =>
+            {
                 let pressed = event.state == ElementState::Pressed;
                 match event.physical_key {
                     PhysicalKey::Code(KeyCode::KeyW | KeyCode::ArrowUp) => self.app.up = pressed,
@@ -85,6 +94,17 @@ impl ApplicationHandler for Frontend {
                     if let Some(demo) = &mut self.demo {
                         demo.advance(&mut self.app.game, elapsed);
                         self.pending_capture = demo.capture_path();
+                    } else if self.benchmarking {
+                        self.accumulator += elapsed.min(0.1);
+                        while self.accumulator >= pong_scenario::STEP {
+                            if self.scenario.finished() {
+                                self.scenario = pong_scenario::Scenario::default();
+                                self.app.game =
+                                    pong_low_level_common::Game::new(pong_scenario::SEED);
+                            }
+                            self.scenario.advance(&mut self.app.game);
+                            self.accumulator -= pong_scenario::STEP;
+                        }
                     } else {
                         self.app.tick(elapsed);
                     }
@@ -98,19 +118,30 @@ impl ApplicationHandler for Frontend {
                             .unwrap()
                             .draw(&self.app, &mut self.pending_capture)
                     } {
-                        Ok(true) => {
-                            if let Err(e) = unsafe {
-                                self.renderer
-                                    .as_mut()
-                                    .unwrap()
-                                    .resize(size.width, size.height)
-                            } {
-                                eprintln!("Vulkan resize: {e}");
-                                self.failed = true;
-                                el.exit();
+                        Ok(outcome) => {
+                            if outcome.presented && self.benchmarking && !self.benchmark_done {
+                                let frames = self.benchmark.get_or_insert_with(|| {
+                                    pong_benchmark::Frames::new(size.width, size.height)
+                                });
+                                if frames.frame(size.width, size.height) {
+                                    self.benchmark_done = true;
+                                    println!("PONG_BENCHMARK {}", frames.report());
+                                    el.exit();
+                                }
+                            }
+                            if outcome.resize {
+                                if let Err(e) = unsafe {
+                                    self.renderer
+                                        .as_mut()
+                                        .unwrap()
+                                        .resize(size.width, size.height)
+                                } {
+                                    eprintln!("Vulkan resize: {e}");
+                                    self.failed = true;
+                                    el.exit();
+                                }
                             }
                         }
-                        Ok(false) => {}
                         Err(e) => {
                             eprintln!("Vulkan draw: {e}");
                             self.failed = true;
@@ -150,6 +181,7 @@ impl ApplicationHandler for Frontend {
 }
 fn main() {
     let mut app = Frontend {
+        benchmarking: benchmark_args(&std::env::args().collect::<Vec<_>>()),
         demo: pong_scenario::Demo::from_args(),
         capture_enabled: std::env::args().any(|a| a == "--scripted-captures"),
         ..Default::default()
@@ -157,5 +189,28 @@ fn main() {
     EventLoop::new().unwrap().run_app(&mut app).unwrap();
     if app.failed {
         std::process::exit(1);
+    }
+}
+
+fn benchmark_args(args: &[String]) -> bool {
+    let enabled = args.iter().any(|a| a == "--benchmark");
+    assert!(
+        !enabled || !args.iter().any(|a| a.starts_with("--scripted")),
+        "benchmark and replay/capture modes are exclusive"
+    );
+    enabled
+}
+#[cfg(test)]
+mod benchmark_tests {
+    use super::*;
+    #[test]
+    fn opt_in_only() {
+        assert!(!benchmark_args(&[]));
+        assert!(benchmark_args(&["--benchmark".into()]));
+    }
+    #[test]
+    #[should_panic]
+    fn reject_combined_modes() {
+        benchmark_args(&["--benchmark".into(), "--scripted-test".into()]);
     }
 }
