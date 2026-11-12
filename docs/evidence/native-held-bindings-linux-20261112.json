@@ -1,0 +1,36 @@
+{
+  "platform": "Linux ARM64",
+  "scope": "input model tests plus native scripted integration; no OS-input qualification",
+  "results": [
+    {
+      "adapter": "miniquad",
+      "binary_sha256": "e8a5646123f963f8143598fbdd45824fe4e67efaeea832158e3b466c8a5fc815",
+      "tests": 5,
+      "clippy": "pass",
+      "legacy_semantics_mutation_test_exit": 101,
+      "replay_exit": 0,
+      "state_records": 13,
+      "capture_count": 6
+    },
+    {
+      "adapter": "pixels",
+      "binary_sha256": "bb99542572e9ae1ac892a447c10eff956e8e0b0396dad063a4833bb5465ec20a",
+      "tests": 5,
+      "clippy": "pass",
+      "legacy_semantics_mutation_test_exit": 101,
+      "replay_exit": 0,
+      "state_records": 13,
+      "capture_count": 6
+    },
+    {
+      "adapter": "wgpu",
+      "binary_sha256": "b87ee528165b82e66bcb39d4ccf2ac4bca1bbc09e8a2677ffb0eaacd59e03d1a",
+      "tests": 4,
+      "clippy": "pass",
+      "legacy_semantics_mutation_test_exit": 101,
+      "replay_exit": 0,
+      "state_records": 13,
+      "capture_count": 6
+    }
+  ]
+}

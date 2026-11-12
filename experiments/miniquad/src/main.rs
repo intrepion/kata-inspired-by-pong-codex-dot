@@ -7,6 +7,28 @@ struct Vertex {
     pos: [f32; 2],
     color: [f32; 3],
 }
+#[derive(Default)]
+struct MovementInput {
+    held: [bool; 4],
+}
+impl MovementInput {
+    fn key(&mut self, key: KeyCode, pressed: bool) {
+        let binding = match key {
+            KeyCode::Up => 0,
+            KeyCode::W => 1,
+            KeyCode::Down => 2,
+            KeyCode::S => 3,
+            _ => return,
+        };
+        self.held[binding] = pressed;
+    }
+    fn axis(&self) -> f32 {
+        (self.held[2] || self.held[3]) as u8 as f32 - (self.held[0] || self.held[1]) as u8 as f32
+    }
+    fn clear(&mut self) {
+        self.held = [false; 4];
+    }
+}
 struct App {
     ctx: Box<dyn RenderingBackend>,
     pipeline: Pipeline,
@@ -16,8 +38,7 @@ struct App {
     benchmarking: bool,
     benchmark: Option<pong_benchmark::Frames>,
     scenario: pong_scenario::Scenario,
-    up: bool,
-    down: bool,
+    movement: MovementInput,
     last: Instant,
     acc: f32,
 }
@@ -66,8 +87,7 @@ impl App {
             },
             game: Game::new(pong_scenario::SEED),
             demo: pong_scenario::Demo::from_args(),
-            up: false,
-            down: false,
+            movement: MovementInput::default(),
             last: Instant::now(),
             acc: 0.0,
         }
@@ -106,8 +126,7 @@ impl EventHandler for App {
                 }
                 self.scenario.advance(&mut self.game);
             } else {
-                self.game
-                    .step(1. / 120., self.down as u8 as f32 - self.up as u8 as f32);
+                self.game.step(1. / 120., self.movement.axis());
             }
             self.acc -= 1. / 120.;
         }
@@ -209,9 +228,8 @@ impl EventHandler for App {
         if self.demo.is_some() || self.benchmarking {
             return;
         }
+        self.movement.key(k, true);
         match k {
-            KeyCode::Up | KeyCode::W => self.up = true,
-            KeyCode::Down | KeyCode::S => self.down = true,
             KeyCode::Enter | KeyCode::R if !repeat => self.game.start(),
             KeyCode::Space if !repeat => {
                 if self.game.state == State::Ready {
@@ -225,19 +243,14 @@ impl EventHandler for App {
         }
     }
     fn key_up_event(&mut self, k: KeyCode, _: KeyMods) {
-        match k {
-            KeyCode::Up | KeyCode::W => self.up = false,
-            KeyCode::Down | KeyCode::S => self.down = false,
-            _ => {}
-        }
+        self.movement.key(k, false);
     }
     fn window_minimized_event(&mut self) {
         if self.demo.is_some() || self.benchmarking {
             return;
         }
         self.game.pause();
-        self.up = false;
-        self.down = false;
+        self.movement.clear();
         self.acc = 0.;
     }
 }
@@ -283,5 +296,40 @@ mod tests {
         assert_eq!(vertices.len(), 6);
         assert_eq!(vertices[0].pos, [-1.0, 1.0]);
         assert_eq!(vertices[2].pos, [1.0, -1.0]);
+    }
+}
+
+#[cfg(test)]
+mod movement_tests {
+    use super::*;
+    #[test]
+    fn aliases_release_independently_in_both_orders() {
+        for (a, b, axis) in [
+            (KeyCode::Up, KeyCode::W, -1.),
+            (KeyCode::Down, KeyCode::S, 1.),
+        ] {
+            for (first, second) in [(a, b), (b, a)] {
+                let mut input = MovementInput::default();
+                input.key(first, true);
+                input.key(second, true);
+                input.key(first, false);
+                assert_eq!(input.axis(), axis);
+                input.key(second, false);
+                assert_eq!(input.axis(), 0.);
+            }
+        }
+    }
+    #[test]
+    fn repeat_opposite_and_focus_clear() {
+        let mut input = MovementInput::default();
+        input.key(KeyCode::W, true);
+        input.key(KeyCode::W, true);
+        assert_eq!(input.axis(), -1.);
+        input.key(KeyCode::Down, true);
+        assert_eq!(input.axis(), 0.);
+        input.clear();
+        assert_eq!(input.axis(), 0.);
+        input.key(KeyCode::W, false);
+        assert_eq!(input.axis(), 0.);
     }
 }
