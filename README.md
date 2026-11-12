@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | GPUI portable state-only pilot recorded. Latest modifier-case fix: eight model tests and rebuilt GPUI/Slint replay checks passed; Slint six snapshots inspected at tick600. | [Windows fix follow-up](docs/GUI-HELD-BINDINGS-FIX.md). Old package hashes retained; native OS-input/clean-machine/release gates remain open. |
+| Windows | Lightweight package-safety coverage continued during WSL work: Windows junction/hard-link/oversized-state refusal verified. Combined Node suite32pass/8platform skips. | [State-safety follow-up](docs/packaging/FYROX-GENERATED-STATE-SAFETY.md). No competing builds/timing runs or desktop approval retries; existing package/input limitations remain. |
 | Mac | Fyrox cleanup safety tests now pass on Mac: eight focused tests, including symlink-root refusal. Fixture paths corrected for macOS temporary-directory aliases; production safety guard unchanged. Retained registry inspected read-only and preserved. | [Cleanup safety evidence](docs/packaging/FYROX-GENERATED-STATE-SAFETY.md). Corrected package replay/visual checks passed earlier; full cleanup and manual-input/release gates remain. |
 | Omarchy ARM64 | Fixed second shared GUI input defect: case-changing release no longer leaves movement stuck; case-changed repeat no longer restarts twice. Both regressions failed before correction; eight model tests and strict Clippy now pass. | [Held-binding and key-identity evidence](docs/GUI-HELD-BINDINGS-FIX.md). Model-level checks only, not new native keyboard/package passes. |
 
