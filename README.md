@@ -4,13 +4,13 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 08:04 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 08:08 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Piston fresh release build running (08:07 UTC), shared dependencies compiling. Miniquad three-repeat pilot/replay complete and published. | Next: Piston tests and bounded timing after compilation. [Latest completed Windows pilot](docs/benchmarks/MINIQUAD-WINDOWS-PILOT.md). No Piston timing pass yet. |
 | Mac | Piston seventh adapter offline release build running from ebdc9da; timing has not started. Six completed timing adapters remain recorded. | Next: adapter/shared tests, then three bounded Piston repeats after build completes. Yew focus remains inconclusive; packaging partial. |
-| Omarchy ARM64 | Seventh shared benchmark adapter Piston: three valid release callback runs and scripted replay passed; processes exited. | [Piston evidence](docs/benchmarks/PISTON-ADAPTER.md). 2 Rust + 12 Node tests/Clippy pass. Default rendering cadence retained, not a displayed-FPS or real-input claim. |
+| Omarchy ARM64 | Eighth shared timing adapter ggez: three valid release callback repeats, replay and six app-owned screenshots passed; processes exited. | [ggez evidence](docs/benchmarks/GGEZ-ADAPTER.md). 2 Rust + 13 Node tests/Clippy pass; tick 600 inspected. Not a real-input or full visual acceptance claim. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -65,6 +65,7 @@ Each desktop cell is **build / runtime evidence**:
 | pixels + winit | B / I | B / I | B / S + scripted/source PNG passed; real input blocked |
 | raw wgpu + winit | B / I | B / I | B / S + scripted/PNG sample passed; real input blocked |
 | Piston | B / I | B / I | B / S + scripted/PNG sample passed; real input blocked |
+| ggez | Not recorded | Not recorded | [3/3](docs/benchmarks/GGEZ-ADAPTER.md) |
 | ggez | B / I; Mac surface fix verified | B / I on earlier snapshot | B / S + scripted/PNG sample passed; real input blocked |
 | nannou | B / I before pacing follow-up | B / I | B / S + scripted/PNG sample passed; real input blocked |
 | Fyrox | B / I | B / I | B / S + scripted/PNG samples passed; real input blocked |

@@ -7,7 +7,18 @@ use ggez::{
 use pong_core::*;
 use pong_scenario::Demo;
 use std::time::{Duration, Instant};
+fn benchmark_args(args: &[String]) -> bool {
+    let enabled = args.iter().any(|a| a == "--benchmark");
+    assert!(
+        !enabled || !args.iter().any(|a| a.starts_with("--scripted")),
+        "benchmark and replay/capture modes are distinct"
+    );
+    enabled
+}
 struct App {
+    benchmarking: bool,
+    benchmark: Option<pong_benchmark::Frames>,
+    scenario: pong_scenario::Scenario,
     game: Game,
     demo: Option<Demo>,
     capture: graphics::ScreenImage,
@@ -50,11 +61,19 @@ impl event::EventHandler for App {
         self.accumulator += elapsed;
         self.last_update = now;
         while self.accumulator >= 1. / 120. {
-            self.game.step(
-                1. / 120.,
-                (self.held[2] || self.held[3]) as u8 as f32
-                    - (self.held[0] || self.held[1]) as u8 as f32,
-            );
+            if self.benchmarking {
+                if self.scenario.finished() {
+                    self.scenario = pong_scenario::Scenario::default();
+                    self.game = Game::new(pong_scenario::SEED);
+                }
+                self.scenario.advance(&mut self.game);
+            } else {
+                self.game.step(
+                    1. / 120.,
+                    (self.held[2] || self.held[3]) as u8 as f32
+                        - (self.held[0] || self.held[1]) as u8 as f32,
+                );
+            }
             self.accumulator -= 1. / 120.;
         }
         Ok(())
@@ -122,6 +141,14 @@ impl event::EventHandler for App {
             );
         }
         c.finish(ctx)?;
+        if let Some(frames) = &mut self.benchmark {
+            if frames.frame(w as u32, h as u32) {
+                let report = frames.report();
+                self.benchmark = None;
+                println!("PONG_BENCHMARK {}", report);
+                ctx.request_quit();
+            }
+        }
         if let (Some(path), Some(image)) = (path, image) {
             // Present the very same texture that was exported, not a synthetic screenshot.
             let mut screen = graphics::Canvas::from_frame(ctx, Color::BLACK);
@@ -135,7 +162,7 @@ impl event::EventHandler for App {
         Ok(())
     }
     fn key_down_event(&mut self, _: &mut Context, input: KeyInput, repeated: bool) -> GameResult {
-        if self.demo.is_some() {
+        if self.demo.is_some() || self.benchmarking {
             return Ok(());
         }
         let key = input.event.physical_key;
@@ -186,7 +213,7 @@ impl event::EventHandler for App {
         Ok(())
     }
     fn focus_event(&mut self, _: &mut Context, gained: bool) -> GameResult {
-        if self.demo.is_some() {
+        if self.demo.is_some() || self.benchmarking {
             return Ok(());
         }
         if !gained {
@@ -198,6 +225,7 @@ impl event::EventHandler for App {
     }
 }
 fn main() -> GameResult {
+    let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     let (ctx, events) = ggez::ContextBuilder::new("pong-ggez", "kata")
         .window_setup(ggez::conf::WindowSetup::default().title("Pong ggez"))
         .window_mode(
@@ -208,11 +236,16 @@ fn main() -> GameResult {
         .build()?;
     let capture =
         graphics::ScreenImage::new_raw(&ctx, graphics::ImageFormat::Rgba8UnormSrgb, 1., 1., 1);
+    let (width, height) = ctx.gfx.drawable_size();
     event::run(
         ctx,
         events,
         App {
-            game: Game::new(42),
+            benchmarking,
+            benchmark: benchmarking
+                .then(|| pong_benchmark::Frames::new(width as u32, height as u32)),
+            scenario: pong_scenario::Scenario::default(),
+            game: Game::new(pong_scenario::SEED),
             demo: Demo::from_args(),
             capture,
             pending: None,
@@ -221,4 +254,19 @@ fn main() -> GameResult {
             last_update: Instant::now(),
         },
     )
+}
+
+#[cfg(test)]
+mod benchmark_tests {
+    use super::benchmark_args;
+    #[test]
+    fn opt_in_only() {
+        assert!(!benchmark_args(&[]));
+        assert!(benchmark_args(&["--benchmark".into()]));
+    }
+    #[test]
+    #[should_panic(expected = "distinct")]
+    fn reject_combined_modes() {
+        benchmark_args(&["--benchmark".into(), "--scripted-test".into()]);
+    }
 }

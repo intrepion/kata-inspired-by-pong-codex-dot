@@ -48,3 +48,5 @@ test('Piston metadata distinguishes render callbacks from update rate', () => {
   assert.match(config.pacing, /render events only/);
   assert.match(config.pacing, /120UPS/);
 });
+
+test('ggez metadata does not confuse Canvas finish with end-frame presentation',()=> { const config=parseArguments([...base,'--adapter','ggez']); assert.match(config.pacing,/before framework end_frame/); assert.match(config.pacing,/120Hz remainder sleep/); });
