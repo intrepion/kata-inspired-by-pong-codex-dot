@@ -10,7 +10,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 | --- | --- | --- |
 | Windows | Blue Engine 3 valid native timing repeats, 2 tests and plain replay passed; native screenshot mode remains unsupported. Thirteen Windows timing adapters measured. Bevy release build compiling. | [Blue Windows evidence](docs/benchmarks/BLUE-ENGINE-WINDOWS-PILOT.md). Next Bevy/Fyrox; no headless capture substituted for native evidence. |
 | Mac | Fourteen timing pilots complete. Raylib extracted-app real-input controls and Miniquad relocated replay/six PNGs now pass; 12 package guard tests pass. Processes exited. | [raylib native controls](docs/packaging/RAYLIB-MAC-PILOT.md) and [Miniquad package](docs/packaging/MINIQUAD-MAC-PILOT.md). Ash loader and distribution gates remain. |
-| Omarchy ARM64 | Blue Engine and softbuffer relocated package replays passed; exact-file uninstall verified. All fifteen native timed adapters now have local portable lifecycle pilots; 24 Node tests pass. | [Final two Linux pilots](docs/packaging/LINUX-PORTABLE-BATCH3.md). Next: dependency notice preparation. Clean-machine, cross-distro and OS-input gates remain separate. |
+| Omarchy ARM64 | All fifteen native timed adapters have local portable lifecycle pilots. Offline license-declaration audit of eleven adapter graphs passed; ten first-party MIT metadata omissions corrected. | [Declaration audit](docs/packaging/LINUX-LICENSE-DECLARATIONS.md). Actual notice-text collection and distribution qualification remain pending; no public release claim. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
