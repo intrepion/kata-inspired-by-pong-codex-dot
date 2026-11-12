@@ -5,7 +5,7 @@ This batch adds platform-independent `ScenarioManifest.parse` and
 consume the same `scenarios/smoke-v1.txt` used by Rust and TypeScript. Existing
 app entry points, touch controls, game timing and physics are unchanged.
 
-**Not compiled or run on iOS/Android yet.** Omarchy has no Swift, Kotlin or Java
+**Kotlin now compiled/tested on Windows; Swift remains unverified for this candidate.** See the follow-up below. Original source-only assessment: Omarchy has no Swift, Kotlin or Java
 compiler on PATH or in the inspected mise, /opt and /usr/local toolchain paths.
 No SDK was downloaded. The XCTest/JUnit suites are added source, not test-pass
 claims. Only the Node resource consistency check and whitespace checks ran.
@@ -54,3 +54,9 @@ Xcode project and inspect packaged resources. On a configured Android host:
 and inspect APK assets. Correct compiler/test failures before treating this
 as verified native integration. Follow with opt-in UI wiring, bounded device
 or simulator replay and supported app-owned image capture separately.
+
+## Windows Kotlin verification (2026-11-12)
+
+Candidate `71c513a` compiled with existing JDK 21 and Android SDK. Gradle `testDebugUnitTest assembleDebug` passed: 9 game tests plus 2 scenario tests, zero failures/errors/skips. The debug APK built (887,693 bytes); its `assets/scenarios/smoke-v1.txt` is SHA-256 identical to the canonical manifest. Only existing deprecated window-inset API warnings were emitted.
+
+[Machine-readable evidence](evidence/windows-kotlin-scenario-build-20261112.json). These are host JVM tests and APK inspection, not device replay or app-owned captures. No new emulator install/runtime claim; demo UI wiring remains future work. Swift candidate compile/resource verification is still pending.
