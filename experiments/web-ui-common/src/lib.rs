@@ -7,11 +7,16 @@ pub struct DemoExports<'a> {
 }
 
 use pong_core::{Game, State};
+#[derive(Clone, Copy)]
+pub enum Direction {
+    Up,
+    Down,
+}
+
 #[derive(Clone)]
 pub struct Session {
     pub game: Game,
-    up: bool,
-    down: bool,
+    held: [bool; 6], // arrows, W/S, and pointer buttons have independent identities.
     accumulator: f64,
     demo: Option<Replay>,
 }
@@ -38,8 +43,7 @@ impl Default for Session {
     fn default() -> Self {
         let mut session = Self {
             game: Game::new(42),
-            up: false,
-            down: false,
+            held: [false; 6],
             accumulator: 0.0,
             demo: None,
         };
@@ -55,11 +59,22 @@ impl Session {
             return;
         }
         match key {
-            "ArrowUp" | "w" | "W" => self.up = pressed,
-            "ArrowDown" | "s" | "S" => self.down = pressed,
+            "ArrowUp" => self.held[0] = pressed,
+            "w" | "W" => self.held[1] = pressed,
+            "ArrowDown" => self.held[2] = pressed,
+            "s" | "S" => self.held[3] = pressed,
             "Enter" if pressed && !repeat => self.start(),
             " " | "Escape" if pressed && !repeat => self.game.toggle_pause(),
             _ => {}
+        }
+    }
+    /// On-screen movement controls are separate from keyboard bindings.
+    pub fn movement_button(&mut self, direction: Direction, pressed: bool) {
+        if self.demo.is_none() {
+            self.held[match direction {
+                Direction::Up => 4,
+                Direction::Down => 5,
+            }] = pressed;
         }
     }
     pub fn start(&mut self) {
@@ -74,8 +89,7 @@ impl Session {
             return;
         }
         self.game.pause();
-        self.up = false;
-        self.down = false;
+        self.held = [false; 6];
         self.accumulator = 0.0;
     }
     pub fn toggle_pause(&mut self) {
@@ -128,8 +142,11 @@ impl Session {
             return;
         }
         while self.accumulator >= 1.0 / 120.0 {
-            self.game
-                .step(1.0 / 120.0, self.down as u8 as f32 - self.up as u8 as f32);
+            self.game.step(
+                1.0 / 120.0,
+                (self.held[2] || self.held[3] || self.held[5]) as u8 as f32
+                    - (self.held[0] || self.held[1] || self.held[4]) as u8 as f32,
+            );
             self.accumulator -= 1.0 / 120.0;
         }
     }
@@ -223,6 +240,62 @@ mod tests {
         let exported = s.completed_demo_exports().unwrap();
         assert_eq!(exported.reports, demo.reports);
         assert_eq!(exported.captures, demo.captures);
+    }
+    #[test]
+    fn releasing_one_binding_keeps_other_binding_held() {
+        let mut s = Session::default();
+        s.start();
+        s.key("w", true, false);
+        s.key("ArrowUp", true, false);
+        s.key("w", false, false);
+        s.tick(0.05);
+        assert!(s.game.player < 250.);
+    }
+    #[test]
+    fn button_release_does_not_cancel_keyboard_and_keyboard_release_does_not_cancel_button() {
+        for button_released_first in [true, false] {
+            let mut s = Session::default();
+            s.start();
+            s.key("ArrowDown", true, false);
+            s.movement_button(Direction::Down, true);
+            if button_released_first {
+                s.movement_button(Direction::Down, false);
+            } else {
+                s.key("ArrowDown", false, false);
+            }
+            s.tick(0.05);
+            assert!(s.game.player > 250.);
+            s.key("ArrowDown", false, false);
+            s.movement_button(Direction::Down, false);
+            let stopped = s.game.player;
+            s.tick(0.05);
+            assert_eq!(s.game.player, stopped);
+        }
+    }
+    #[test]
+    fn opposite_sources_cancel_and_blur_clears_every_source() {
+        let mut s = Session::default();
+        s.start();
+        s.key("w", true, false);
+        s.movement_button(Direction::Down, true);
+        s.tick(0.05);
+        assert_eq!(s.game.player, 250.);
+        s.pause();
+        s.toggle_pause();
+        s.tick(0.05);
+        assert_eq!(s.game.player, 250.);
+    }
+    #[test]
+    fn case_changed_release_and_scripted_button_lockout() {
+        let mut s = Session::default();
+        s.start();
+        s.key("s", true, false);
+        s.key("S", false, false);
+        s.tick(0.05);
+        assert_eq!(s.game.player, 250.);
+        s.enable_demo();
+        s.movement_button(Direction::Up, true);
+        assert_eq!(s.held, [false; 6]);
     }
     #[test]
     fn repeats_do_not_restart() {

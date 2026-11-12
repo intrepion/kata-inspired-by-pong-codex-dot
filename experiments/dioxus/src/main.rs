@@ -42,8 +42,8 @@ fn App() -> Element {
     div { dangerous_inner_html: svg }
     button {onclick:move |_| session.write().start(),"Start / Restart"}
     button {onclick:move |_| session.write().toggle_pause(),"Pause / Resume"}
-    button {onpointerdown:move |e:PointerEvent| {e.prevent_default();session.write().key("ArrowUp",true,false)},onpointerup:move |_|session.write().key("ArrowUp",false,false),onpointerleave:move |_|session.write().key("ArrowUp",false,false),onpointercancel:move |_|session.write().key("ArrowUp",false,false),"▲ Hold"}
-    button {onpointerdown:move |e:PointerEvent| {e.prevent_default();session.write().key("ArrowDown",true,false)},onpointerup:move |_|session.write().key("ArrowDown",false,false),onpointerleave:move |_|session.write().key("ArrowDown",false,false),onpointercancel:move |_|session.write().key("ArrowDown",false,false),"▼ Hold"}
+    button {onpointerdown:move |e:PointerEvent| {e.prevent_default();session.write().movement_button(pong_web_ui_common::Direction::Up,true)},onpointerup:move |_|session.write().movement_button(pong_web_ui_common::Direction::Up,false),onpointerleave:move |_|session.write().movement_button(pong_web_ui_common::Direction::Up,false),onpointercancel:move |_|session.write().movement_button(pong_web_ui_common::Direction::Up,false),"▲ Hold"}
+    button {onpointerdown:move |e:PointerEvent| {e.prevent_default();session.write().movement_button(pong_web_ui_common::Direction::Down,true)},onpointerup:move |_|session.write().movement_button(pong_web_ui_common::Direction::Down,false),onpointerleave:move |_|session.write().movement_button(pong_web_ui_common::Direction::Down,false),onpointercancel:move |_|session.write().movement_button(pong_web_ui_common::Direction::Down,false),"▼ Hold"}
     p {"W/S or ↑/↓ move · Enter restarts · Space pauses. Click the court to focus."}
     a {href:"https://intrepion.github.io/", "Back to Kata Arcade"}
     }

@@ -22,8 +22,8 @@ fn App() -> impl IntoView {
     <div inner_html=move || session.with(|s|s.svg())></div>
     <button on:click=move |_|session.update(|s|s.start())>"Start / Restart"</button>
     <button on:click=move |_|session.update(|s|s.toggle_pause())>"Pause / Resume"</button>
-    <button on:pointerdown=move |e:web_sys::PointerEvent|{e.prevent_default();session.update(|s|s.key("ArrowUp",true,false))} on:pointerup=move |_|session.update(|s|s.key("ArrowUp",false,false)) on:pointerleave=move |_|session.update(|s|s.key("ArrowUp",false,false)) on:pointercancel=move |_|session.update(|s|s.key("ArrowUp",false,false))>"▲ Hold"</button>
-    <button on:pointerdown=move |e:web_sys::PointerEvent|{e.prevent_default();session.update(|s|s.key("ArrowDown",true,false))} on:pointerup=move |_|session.update(|s|s.key("ArrowDown",false,false)) on:pointerleave=move |_|session.update(|s|s.key("ArrowDown",false,false)) on:pointercancel=move |_|session.update(|s|s.key("ArrowDown",false,false))>"▼ Hold"</button>
+    <button on:pointerdown=move |e:web_sys::PointerEvent|{e.prevent_default();session.update(|s|s.movement_button(pong_web_ui_common::Direction::Up,true))} on:pointerup=move |_|session.update(|s|s.movement_button(pong_web_ui_common::Direction::Up,false)) on:pointerleave=move |_|session.update(|s|s.movement_button(pong_web_ui_common::Direction::Up,false)) on:pointercancel=move |_|session.update(|s|s.movement_button(pong_web_ui_common::Direction::Up,false))>"▲ Hold"</button>
+    <button on:pointerdown=move |e:web_sys::PointerEvent|{e.prevent_default();session.update(|s|s.movement_button(pong_web_ui_common::Direction::Down,true))} on:pointerup=move |_|session.update(|s|s.movement_button(pong_web_ui_common::Direction::Down,false)) on:pointerleave=move |_|session.update(|s|s.movement_button(pong_web_ui_common::Direction::Down,false)) on:pointercancel=move |_|session.update(|s|s.movement_button(pong_web_ui_common::Direction::Down,false))>"▼ Hold"</button>
     <p>"W/S or ↑/↓ move · Enter restarts · Space pauses. Click the court to focus."</p>
     <a href="https://intrepion.github.io/">"Back to Kata Arcade"</a>
     </main>}
