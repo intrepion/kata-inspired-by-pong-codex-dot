@@ -4,13 +4,13 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 06:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 06:37 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Fresh original TypeScript and raw-WASM browser replay completed on `0cbe38f`; TS15 tests, WASM2 ABI and7 Rust scenario/WASM tests passed. | Bounded browser batch complete; tabs closed. Bundle downloads, true focus-loss and responsive override unverified. See [follow-up](docs/WINDOWS-BROWSER-REPLAY-FOLLOWUP.md). |
 | Mac | Published `18bc91c`: Swift simulator touch/release, Home background pause/resume, genuine full match and restart passed. Fresh Yew/Leptos actual native gameplay passed. | Assigned batch complete; apps exited and no simulator booted. No wrapper focus/resize/full-match pass claimed. Swift physical-device and store-packaging checks remain outstanding. |
-| Omarchy ARM64 | Macroquad Linux ARM64 local portable archive and isolated staged install/run/uninstall pilot completed. | Pilot only: checksum and installed replay passed; no system installer, clean-machine/cross-distro, upgrade, signing or dependency-license inventory pass. |
+| Omarchy ARM64 | Second shared benchmark adapter (softbuffer/winit) release build and three bounded pilot runs completed; processes exited. | Callback timing only, not displayed FPS or engine ranking. Local portable packaging pilot remains narrowly scoped; see linked evidence. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -127,7 +127,7 @@ Details: [native Kotlin/Swift](experiments/NATIVE-MOBILE.md), [Tauri mobile](doc
 | Known defects | Windows Bevy default Vulkan crash (DX12 rendering corrected); Windows bracket-lib bitmap text remains rough despite improved layout; Miniquad/raylib supported start input unsuccessful; Godot headless editor shutdown crash. |
 | Snapshot freshness | Windows extra-engine interaction used existing isolated GNU binaries, not a fresh latest-source rebuild. Mac nannou UI predates the pacing patch. bracket-lib header layout has been rechecked on Windows only. Requalification remains necessary before release. |
 | Packaging and compatibility | No complete signed-installer/download-install matrix, physical-mobile coverage, exhaustive OS/DPI/input matrix or accessibility audit. |
-| Performance | No controlled cross-engine benchmark; debug build sizes/timings are not fair comparisons. |
+| Performance | Macroquad and softbuffer shared-harness pilots completed; callback intervals only. No controlled cross-engine ranking; see [softbuffer evidence](docs/benchmarks/SOFTBUFFER-ADAPTER.md). |
 
 Keep this dashboard updated with every meaningful testing checkpoint. This dashboard also incorporates coordinator-confirmed later GPUI, Tauri mobile and Omarchy Ratatui worker results that are not yet reflected in every linked document. Detailed logs contain earlier states followed by newer corrections: use the latest dated follow-up, not an obsolete blocker paragraph. **U means unrun/unverified, not failed; I does not mean everything passed.** Comfy and rend3 were intentionally excluded, not left waiting for tests.
 
@@ -217,3 +217,5 @@ The [shared Macroquad benchmark pilot](docs/benchmarks/README.md) completed thre
 ## Packaging pilot
 
 [Macroquad Linux ARM64 portable archive](docs/packaging/README.md): local creation, checksum validation, isolated staged extraction, installed scripted run and exact-file uninstall passed. Archive remains local and is not a distribution-ready release. System installation, clean-machine/cross-distro compatibility, upgrades, signing and full dependency notices remain pending.
+
+Second shared benchmark adapter: [softbuffer/winit pilot](docs/benchmarks/SOFTBUFFER-ADAPTER.md), three valid bounded release runs, shared scenario/sampler and explicit runner metadata. Existing 8ms pacing remains; no displayed-FPS or engine ranking claim.

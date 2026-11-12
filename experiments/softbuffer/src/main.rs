@@ -11,6 +11,10 @@ use winit::{
 struct Frontend {
     app: App,
     demo: Option<pong_scenario::Demo>,
+    benchmarking: bool,
+    benchmark: Option<pong_benchmark::Frames>,
+    bench_scenario: pong_scenario::Scenario,
+    bench_accumulator: f32,
     window: Option<Rc<Window>>,
     surface: Option<softbuffer::Surface<Rc<Window>, Rc<Window>>>,
     last: Option<Instant>,
@@ -30,14 +34,23 @@ impl ApplicationHandler for Frontend {
         );
         let ctx = softbuffer::Context::new(w.clone()).unwrap();
         self.surface = Some(softbuffer::Surface::new(&ctx, w.clone()).unwrap());
+        if self.benchmarking {
+            let size = w.inner_size();
+            self.benchmark = Some(pong_benchmark::Frames::new(size.width, size.height));
+            self.app.game = pong_low_level_common::Game::new(pong_scenario::SEED);
+        }
         self.window = Some(w);
         self.last = Some(Instant::now());
     }
     fn window_event(&mut self, el: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
         match event {
             WindowEvent::CloseRequested => el.exit(),
-            WindowEvent::Focused(false) if self.demo.is_none() => self.app.blur(),
-            WindowEvent::KeyboardInput { event, .. } if self.demo.is_none() => {
+            WindowEvent::Focused(false) if self.demo.is_none() && !self.benchmarking => {
+                self.app.blur()
+            }
+            WindowEvent::KeyboardInput { event, .. }
+                if self.demo.is_none() && !self.benchmarking =>
+            {
                 let pressed = event.state == ElementState::Pressed;
                 match event.physical_key {
                     PhysicalKey::Code(KeyCode::KeyW | KeyCode::ArrowUp) => self.app.up = pressed,
@@ -60,7 +73,17 @@ impl ApplicationHandler for Frontend {
                     .last
                     .replace(now)
                     .map_or(0., |t| (now - t).as_secs_f32());
-                if let Some(demo) = &mut self.demo {
+                if self.benchmarking {
+                    self.bench_accumulator += elapsed.clamp(0., 0.1);
+                    while self.bench_accumulator >= pong_scenario::STEP {
+                        if self.bench_scenario.finished() {
+                            self.bench_scenario = pong_scenario::Scenario::default();
+                            self.app.game = pong_low_level_common::Game::new(pong_scenario::SEED);
+                        }
+                        self.bench_scenario.advance(&mut self.app.game);
+                        self.bench_accumulator -= pong_scenario::STEP;
+                    }
+                } else if let Some(demo) = &mut self.demo {
                     demo.advance(&mut self.app.game, elapsed);
                 } else {
                     self.app.tick(elapsed);
@@ -78,8 +101,17 @@ impl ApplicationHandler for Frontend {
                         pong_scenario::Demo::save_rgb(&path, &b, size.width, size.height);
                     }
                     b.present().unwrap();
+                    // Callback boundary after CPU raster + present submission, not display time.
+                    if let Some(bench) = &mut self.benchmark {
+                        if bench.frame(size.width, size.height) {
+                            println!("PONG_BENCHMARK {}", bench.report());
+                            el.exit();
+                        }
+                    }
                 }
-                w.set_title(&self.app.title(if self.demo.is_some() {
+                w.set_title(&self.app.title(if self.benchmarking {
+                    "softbuffer / BENCHMARK"
+                } else if self.demo.is_some() {
                     "softbuffer / SCRIPTED"
                 } else {
                     "softbuffer / CPU"
@@ -107,12 +139,38 @@ impl ApplicationHandler for Frontend {
         ));
     }
 }
+fn benchmark_args(args: &[String]) -> bool {
+    let enabled = args.iter().any(|a| a == "--benchmark");
+    assert!(
+        !enabled || !args.iter().any(|a| a.starts_with("--scripted")),
+        "benchmark and replay/capture modes are distinct"
+    );
+    enabled
+}
 fn main() {
+    let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     EventLoop::new()
         .unwrap()
         .run_app(&mut Frontend {
             demo: pong_scenario::Demo::from_args(),
+            benchmarking,
             ..Frontend::default()
         })
         .unwrap();
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn benchmark_is_opt_in() {
+        assert!(!benchmark_args(&[]));
+        assert!(!benchmark_args(&["--scripted-test".into()]));
+        assert!(benchmark_args(&["--benchmark".into()]));
+    }
+    #[test]
+    #[should_panic(expected = "benchmark and replay/capture modes are distinct")]
+    fn rejects_capture_mixing() {
+        benchmark_args(&["--benchmark".into(), "--scripted-captures".into()]);
+    }
 }

@@ -3,11 +3,11 @@ import {spawnSync} from 'node:child_process';
 import {writeFileSync, readFileSync, existsSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import os from 'node:os';
-const [binary, output, backend, notes] = process.argv.slice(2);
-if (!binary || !output || !backend || !notes) throw Error('usage: node scripts/benchmarks/run.mjs BINARY NEW.json BACKEND NOTES');
+import {parseArguments} from './adapters.mjs';
+const {binary, output, backend, notes, adapter, presentation, renderer, pacing} = parseArguments(process.argv.slice(2));
 if (existsSync(output)) throw Error('Refusing to overwrite results');
 const command = (exe,args) => { const r=spawnSync(exe,args,{encoding:'utf8',timeout:5000}); return r.status===0?r.stdout.trim():null; };
-const result = {schema:1, started_utc:new Date().toISOString(), protocol:'pong-frame-callback-v1', adapter:'macroquad', presentation:'native window', backend, notes,
+const result = {schema:1, started_utc:new Date().toISOString(), protocol:'pong-frame-callback-v1', adapter, presentation, renderer, pacing, backend, notes,
   git_revision:command('git',['rev-parse','HEAD']), working_tree:command('git',['status','--porcelain']), rustc:command('rustc',['-Vv']),
   profile:'release', binary_sha256:createHash('sha256').update(readFileSync(binary)).digest('hex'),
   host:{hostname:os.hostname(),os:os.type(),release:os.release(),architecture:os.arch(),cpu:os.cpus()[0]?.model,cpu_count:os.cpus().length,memory_bytes:os.totalmem()},

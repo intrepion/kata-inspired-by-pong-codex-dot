@@ -8,3 +8,4 @@ pong-low-level-common = { path = "../low-level-common" }
 winit = "=0.30.13"
 softbuffer = "0.4"
 pong-scenario = { path = "../../crates/pong-scenario" }
+pong-benchmark = { path = "../../crates/pong-benchmark" }
