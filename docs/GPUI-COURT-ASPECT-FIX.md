@@ -19,3 +19,9 @@ GPUI app-owned pixel export is still unsupported. Native visual resizing/letterb
 ## Mac qualification status
 
 The existing Mac debug target was selected for an offline, single-job test/build attempt at source `5120220`. Cargo began recompiling a broad dependency graph rather than reusing a fully warm cache. The attempt was deliberately interrupted (exit 130) before tests completed to conserve disk and avoid a large background rebuild. This is **not** a compiler failure and **not** a Mac test pass. No native inspection of the corrected renderer is claimed; the older bundled executable cannot qualify the new aspect-fit change. Existing build files were preserved.
+
+## Windows qualification
+
+At source `5120220` (checkout `ccf6daf`), the optimized geometry test and all eight shared GUI-model tests pass. Strict all-target release Clippy and a fresh locked offline optimized build pass; the existing proc-macro-error2 future-compatibility warning remains. The freshly built native application completes its normal-window scripted replay with exit 0 and thirteen states through tick 1440, finished=true. [Binary/result record](evidence/gpui-court-aspect-windows-20261112.json).
+
+A separate interactive launch was found by the supported desktop tool, but its app-access approval timed out. It was not retried; only that owned test process was stopped. No screenshot, native resize, physical input or clean-shutdown pass is claimed for the interactive attempt. Existing package and timing binaries remain historical.

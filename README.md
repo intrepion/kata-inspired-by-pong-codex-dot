@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Kotlin Android multi-touch ownership fixed: secondary fingers cannot steal movement; owner release/cancel/lifecycle clear stops it. Offline APK build and fourteen unit tests pass. | [Kotlin touch correction](docs/KOTLIN-TOUCH-OWNERSHIP-FIX.md). MotionEvent instrumentation, emulator/physical multi-touch and installation remain separate; debug APK retained locally. |
+| Windows | GPUI aspect-fit correction passes one geometry test, eight shared model tests, strict Clippy and fresh native thirteen-state replay. Original TS pointer fix also passes seventeen tests. | [GPUI Windows evidence](docs/GPUI-COURT-ASPECT-FIX.md). Visual inspection approval timed out once; no retry, owned process closed. Native resize/input remain open. |
 | Mac | Miniquad fresh optimized build and seven action tests pass; supported native Enter, held W/S and restart produce visible expected gameplay changes. Native Close confirmed exit. | [Mac input comparison](docs/MINIQUAD-WINDOWS-INPUT-DIAGNOSIS.md). Windows Unknown-key limitation remains platform-specific evidence, not fixed. Full match/focus/resize remain open; no active process. |
 | Omarchy ARM64 | Original TypeScript pointer buttons now retain each finger independently: opposite directions cancel and releasing one finger preserves other held controls. Strict build and all seventeen tests pass. | [Original pointer-button regression](docs/ORIGINAL-TS-POINTER-BUTTONS-FIX.md). Browser/device multi-touch qualification remains pending; generated JavaScript updated from TypeScript. |
 
