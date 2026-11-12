@@ -4,11 +4,11 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 07:16 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 07:18 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Fresh original TypeScript and raw-WASM browser replay completed on `0cbe38f`; TS15 tests, WASM2 ABI and7 Rust scenario/WASM tests passed. | Bounded browser batch complete; tabs closed. Bundle downloads, true focus-loss and responsive override unverified. See [follow-up](docs/WINDOWS-BROWSER-REPLAY-FOLLOWUP.md). |
+| Windows | Network restored; fresh TS15, core9, sampler3, replay5 and fixed cross-platform runner5 tests passed. Three Macroquad release benchmark repeats completed; processes exited. | Portable snapshot fails on cross-platform floating-point differences (not masked). [Checks](docs/WINDOWS-CONTINUATION-20261112.md); [benchmark pilot](docs/benchmarks/WINDOWS-MACROQUAD-PILOT.md). |
 | Mac | Fresh `4088089` Dioxus build, shared controller 4/4, native replay and actual held movement/release, pause/resume, full match 2:7 and restart passed. | Dioxus batch complete; test apps exited. Yew real OS focus-loss remains unverified. [Evidence](docs/MAC-DIOXUS-REQUALIFICATION.md). |
 | Omarchy ARM64 | SDL3 benchmark published; isolated Linux ARM64 portable archive creation, checksum verification, bounded installed replay and scoped uninstall passed. | [SDL3 package pilot](docs/packaging/SDL3-LINUX-PILOT.md) is not a release; dependency notices, clean-machine and cross-distro tests remain pending. |
 

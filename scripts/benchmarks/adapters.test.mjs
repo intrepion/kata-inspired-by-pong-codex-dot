@@ -8,17 +8,17 @@ test('reject unknown, missing or duplicate adapter',()=>{for(const a of [[...bas
 import {mkdtempSync,writeFileSync,readFileSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {spawnSync} from 'node:child_process';
+import {runPilot} from './run.mjs';
 test('runner records selected adapter over three fixture processes, not a benchmark',()=>{
   const dir=mkdtempSync(join(tmpdir(),'pong-runner-fixture-'));
   try {
     const binary=join(dir,'fixture.cjs'), output=join(dir,'results.json');
     writeFileSync(binary,'#!/usr/bin/env node\nconsole.log(\'PONG_BENCHMARK_BACKEND {"video_driver":"fixture","renderer":"fixture"}\');\nconsole.log(\'PONG_BENCHMARK '+JSON.stringify({samples:2,resized:false,sampled_seconds:10,p50_ms:5,p95_ms:5,p99_ms:5})+'\');\n',{mode:0o755});
-    const r=spawnSync(process.execPath,['scripts/benchmarks/run.mjs',binary,output,'fixture-only','synthetic runner test','--adapter','softbuffer'],{encoding:'utf8'});
-    assert.equal(r.status,0,r.stderr); const data=JSON.parse(readFileSync(output,'utf8'));
+    const options=parseArguments([process.execPath,output,'fixture-only','synthetic runner test','--adapter','softbuffer']);
+    runPilot(options,[binary]);
+    const data=JSON.parse(readFileSync(output,'utf8'));
     assert.equal(data.adapter,'softbuffer'); assert.equal(data.runs.length,3); assert.ok(data.runs.every(x=>x.valid)); assert.ok(data.runs.every(x=>x.reported_backend?.renderer === "fixture"));
-    const duplicate=spawnSync(process.execPath,['scripts/benchmarks/run.mjs',binary,output,'fixture-only','synthetic runner test','--adapter','softbuffer']);
-    assert.notEqual(duplicate.status,0);
+    assert.throws(()=>runPilot(options,[binary]), /Refusing to overwrite/);
   } finally {rmSync(dir,{recursive:true,force:true});}
 });
 
