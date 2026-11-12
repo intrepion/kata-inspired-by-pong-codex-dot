@@ -62,7 +62,7 @@ fn compare(actual: &Snapshot, expected: &Snapshot) -> Result<f64, String> {
 }
 
 fn baseline() -> Vec<Snapshot> {
-    include_str!("../../../docs/evidence/rust-core-face-crossing-model-20261112.jsonl")
+    include_str!("../../../docs/evidence/rust-core-contact-timing-model-20261112.jsonl")
         .lines()
         .map(|line| serde_json::from_str(line).unwrap())
         .collect()
@@ -127,7 +127,7 @@ fn comparison_accepts_only_small_numeric_variation_and_valid_schema() {
     let mut actual = expected.clone();
     actual.ball[2] += 0.0005;
     assert!(compare(&actual, &expected).is_ok());
-    let line = include_str!("../../../docs/evidence/rust-core-face-crossing-model-20261112.jsonl")
+    let line = include_str!("../../../docs/evidence/rust-core-contact-timing-model-20261112.jsonl")
         .lines()
         .next()
         .unwrap();

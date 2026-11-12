@@ -92,8 +92,10 @@ impl Game {
             return;
         }
         let dt = dt.clamp(0., 0.033);
-        self.player = (self.player + input.clamp(-1., 1.) * 470. * dt)
-            .clamp(PADDLE_H / 2., H - PADDLE_H / 2.);
+        let old_player = self.player;
+        let old_cpu = self.cpu;
+        let player_speed = input.clamp(-1., 1.) * 470.;
+        self.player = (self.player + player_speed * dt).clamp(PADDLE_H / 2., H - PADDLE_H / 2.);
         self.cpu_reaction -= dt;
         if self.cpu_reaction <= 0. {
             self.cpu_target = if self.ball.vx > 0. {
@@ -124,7 +126,7 @@ impl Game {
             b.y = 2. * (H - BALL) - b.y;
             b.vy = -b.vy.abs();
         }
-        for (x, y, dir) in [(38., self.player, 1.), (W - 38., self.cpu, -1.)] {
+        for (x, dir) in [(38., 1.), (W - 38., -1.)] {
             let face = x + dir * (PADDLE_W / 2. + BALL);
             let crosses = if dir == 1. {
                 old_x >= face && b.x <= face
@@ -144,6 +146,15 @@ impl Game {
             } else if hit_y > H - BALL {
                 hit_y = 2. * (H - BALL) - hit_y;
             }
+            let contact_time = dt * fraction;
+            let y = if dir == 1. {
+                (old_player + player_speed * contact_time).clamp(PADDLE_H / 2., H - PADDLE_H / 2.)
+            } else {
+                (old_cpu
+                    + (self.cpu_target - old_cpu)
+                        .clamp(-speed * contact_time, speed * contact_time))
+                .clamp(PADDLE_H / 2., H - PADDLE_H / 2.)
+            };
             if (hit_y - y).abs() <= PADDLE_H / 2. + BALL {
                 b.y = hit_y;
                 let angle = ((hit_y - y) / (PADDLE_H / 2.)).clamp(-1., 1.) * 1.05;
@@ -151,6 +162,17 @@ impl Game {
                 b.x = face;
                 b.vx = dir * speed * angle.cos();
                 b.vy = speed * angle.sin();
+                let remaining = dt - contact_time;
+                b.x += b.vx * remaining;
+                b.y += b.vy * remaining;
+                if b.y < BALL {
+                    b.y = 2. * BALL - b.y;
+                    b.vy = b.vy.abs();
+                } else if b.y > H - BALL {
+                    b.y = 2. * (H - BALL) - b.y;
+                    b.vy = -b.vy.abs();
+                }
+                break;
             }
         }
         if b.x < -BALL || b.x > W + BALL {
@@ -228,7 +250,6 @@ mod tests {
         }
     }
     #[test]
-    #[ignore = "known limitation: paddle position is evaluated at step end"]
     fn moving_paddle_is_tested_at_contact_time() {
         let mut g = game();
         g.ball = Ball {
@@ -241,7 +262,6 @@ mod tests {
         assert!(g.ball.vx < 0., "ball clears the paddle at contact time");
     }
     #[test]
-    #[ignore = "known limitation: remainder of step after impact is discarded"]
     fn ball_advances_after_paddle_contact() {
         let mut g = game();
         g.ball = Ball {
@@ -252,6 +272,66 @@ mod tests {
         };
         g.step(1. / 120., 0.);
         assert!(g.ball.x > 52.8, "ball should travel away after bouncing");
+    }
+    #[test]
+    fn moving_cpu_is_tested_at_contact_time() {
+        let mut g = game();
+        g.cpu_target = 400.;
+        g.cpu_reaction = 1.;
+        g.ball = Ball {
+            x: 846.,
+            y: 304.3,
+            vx: 350.,
+            vy: 0.,
+        };
+        g.step(1. / 120., 0.);
+        assert!(g.ball.vx > 0., "ball clears CPU paddle at contact time");
+    }
+    #[test]
+    fn cpu_bounce_advances_after_contact() {
+        let mut g = game();
+        g.cpu_target = 250.;
+        g.cpu_reaction = 1.;
+        g.ball = Ball {
+            x: 846.,
+            y: 250.,
+            vx: 350.,
+            vy: 0.,
+        };
+        g.step(1. / 120., 0.);
+        assert!(g.ball.x < 847.2);
+    }
+    #[test]
+    fn wall_reflects_during_remaining_time_after_either_paddle_hit() {
+        for (x, vx) in [(54., -350.), (846., 350.)] {
+            let mut g = game();
+            g.player = 45.;
+            g.cpu = 45.;
+            g.cpu_target = 45.;
+            g.cpu_reaction = 1.;
+            g.ball = Ball {
+                x,
+                y: 8.3,
+                vx,
+                vy: 0.,
+            };
+            g.step(1. / 120., 0.);
+            assert_eq!(g.ball.vx.signum(), -vx.signum());
+            assert!(g.ball.y >= BALL && g.ball.vy > 0.);
+        }
+    }
+    #[test]
+    fn paddle_clamp_applies_at_contact_not_end_of_step() {
+        let mut g = game();
+        g.player = H - PADDLE_H / 2. - 0.5;
+        g.ball = Ball {
+            x: 54.,
+            y: 490.,
+            vx: -350.,
+            vy: 0.,
+        };
+        g.step(1. / 120., 1.);
+        assert!(g.ball.vx > 0.);
     }
     #[test]
     fn wall_and_score() {
