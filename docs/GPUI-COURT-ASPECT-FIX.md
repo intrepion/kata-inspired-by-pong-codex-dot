@@ -15,3 +15,7 @@ The renderer now paints the same game geometry into a centered, uniformly scaled
 - [Redacted binary/result record](evidence/gpui-court-aspect-linux-20261112.json).
 
 GPUI app-owned pixel export is still unsupported. Native visual resizing/letterboxing and real keyboard input are **not yet verified here**; Mac follow-up requested. Existing package and timing hashes remain historical, not requalified by this renderer change. No desktop-control workaround was used.
+
+## Mac qualification status
+
+The existing Mac debug target was selected for an offline, single-job test/build attempt at source `5120220`. Cargo began recompiling a broad dependency graph rather than reusing a fully warm cache. The attempt was deliberately interrupted (exit 130) before tests completed to conserve disk and avoid a large background rebuild. This is **not** a compiler failure and **not** a Mac test pass. No native inspection of the corrected renderer is claimed; the older bundled executable cannot qualify the new aspect-fit change. Existing build files were preserved.
