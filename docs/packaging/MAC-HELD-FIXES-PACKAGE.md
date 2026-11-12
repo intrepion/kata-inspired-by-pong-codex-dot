@@ -1,0 +1,7 @@
+# Mac input-fix package follow-up
+
+2026-11-12, source c3d9041 (adapter corrections cdf65cc). Miniquad, pixels and raw wgpu were repackaged from the corrected release binaries. Fresh archives were extracted to separate directories, extracted binary hashes matched, and every extracted process exited zero after thirteen scripted states through finished tick 1440 and six captures. Tick-600 PNGs are byte-identical to the native captures inspected in the preceding input-fix follow-up. Pixel captures remain CPU source-buffer evidence, not compositor screenshots.
+
+Nine targeted package guards pass: missing arguments, invalid executable rejection before output creation, and refusal to overwrite an existing directory, for each adapter. After each runtime exited, only its extracted app bundle was removed; a neighboring sentinel was retained. Remaining entries were exactly the package notice and sentinel, with no additional runtime-created state found in these staging directories. Original binaries, archives and captures remain local.
+
+[Redacted manifests and outcomes](mac-held-fixes-package-20261112.json). Prior package/benchmark reports retain their historical hashes. These are local unsigned package lifecycle checks, not clean-machine installation, physical-keyboard/focus tests, signing/notarization, or redistribution clearance. Miniquad's pinned malloc_buf notice gap remains open; optional incomplete notice material was not bundled or represented as cleared. No public binary release was created.
