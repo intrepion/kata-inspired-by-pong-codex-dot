@@ -4,12 +4,12 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 08:33 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 08:35 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Raw wgpu three valid callback repeats, 2 adapter tests and 12.5s replay/capture passed; processes exited. | [wgpu Windows evidence](docs/benchmarks/WGPU-WINDOWS-PILOT.md). Next: ggez build/pilot. No displayed-FPS or native-input claim. |
-| Mac | Nannou ninth adapter offline release build running. Piston wall-clock fix published and requalified (~12.5-second replay instead of ~59 seconds); eight timing adapters recorded. | [Original and fixed Piston evidence](docs/benchmarks/PISTON-MAC-PILOT.md). Next: Nannou tests, timing and replay. Yew focus inconclusive; packaging partial. |
+| Mac | Nannou ninth adapter: build, 2 Rust + 14 Node tests, three valid repeat timings and 13.132-second replay/six frames complete. Initial short timing sample retained as invalid. Processes exited. | [Nannou Mac evidence](docs/benchmarks/NANNOU-MAC-PILOT.md). Raw wgpu release build running; fixed Piston requalified. Yew focus inconclusive; packaging partial. |
 | Omarchy ARM64 | Eleventh timing adapter bracket-lib: 8 Rust + 16 Node tests, release/Clippy, three valid callback repeats and replay/six PNGs passed; processes exited. | [Graphical tile evidence](docs/benchmarks/BRACKET-LIB-ADAPTER.md). Tick600 inspected; fixed-Piston requalification remains passed. Real-input/focus and packaging gaps separate. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
@@ -250,7 +250,7 @@ Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md
 | Miniquad | [3/3](docs/benchmarks/MINIQUAD-MAC-PILOT.md) | [3/3](docs/benchmarks/MINIQUAD-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/MINIQUAD-ADAPTER.md) |
 | Piston | [3/3](docs/benchmarks/PISTON-MAC-PILOT.md) | [3/3](docs/benchmarks/PISTON-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/PISTON-ADAPTER.md) |
 | ggez | [3/3](docs/benchmarks/GGEZ-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/GGEZ-ADAPTER.md) |
-| Nannou | Not recorded | Not recorded | [3/3](docs/benchmarks/NANNOU-ADAPTER.md) |
+| Nannou | [3/3 repeat; initial rejection retained](docs/benchmarks/NANNOU-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/NANNOU-ADAPTER.md) |
 | raw wgpu | Not recorded | [3/3](docs/benchmarks/WGPU-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/WGPU-ADAPTER.md) |
 | bracket-lib | Not recorded | Not recorded | [3/3](docs/benchmarks/BRACKET-LIB-ADAPTER.md) |
 
