@@ -42,3 +42,7 @@ Built with CARGO_PROFILE_DEV_DEBUG=0 and CARGO_PROFILE_DEV_INCREMENTAL=false to 
 ## Windows Slint follow-up (2026-11-12)
 
 Locked full MSVC build passed with two jobs. Supported native Computer Use verified clean court/status/attribution rendering, Enter start, scoring/ball movement, Space pause/resume, R resetting scores to 0:0, and titlebar close. Sustained paddle movement/release, full-match win behavior, focus/minimize and resize/DPI remain unverified. No source changes were required. GPUI build is still in progress, not yet a pass.
+
+## Windows GPUI follow-up (2026-11-12)
+
+Locked full MSVC build passed (11m31s including earlier target-lock wait). GPUI dependency proc-macro-error2 emits a future-Rust-compatibility warning, not a build failure. Native supported Computer Use verified a readable court/status, Enter start, score advancement/ball movement, Space pause/resume, R reset to 0:0, maximized rendering and titlebar close. The court stretches with the window (ball becomes elliptical at wide aspect); no pixel/aspect-ratio fidelity claim is made. Sustained paddle movement/release, focus/minimize and complete matches remain unverified. Shared GUI adapter tests pass 4/4 on Windows. Both Slint and GPUI test windows are closed; no user files or build caches deleted.

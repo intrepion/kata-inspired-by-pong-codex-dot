@@ -71,7 +71,7 @@ Details: [baseline frontends](docs/desktop-comparison.md), [extra engines](exper
 | SDL3 | B / I, including focus and resize checks | B / I; LNK4098 linker warning remains | B / S; UI blocked |
 | Vulkan via ash | B / blocked: missing Vulkan loader/MoltenVK | B / I (simple clear-attachment renderer only) | B / S; UI blocked |
 | Slint | B / I | B / I: start, scoring, pause/resume, reset | U / U |
-| GPUI | B / I: Enter start, held-W movement, scoring, Space pause | U / U | U / U |
+| GPUI | B / I: Enter start, held-W movement, scoring, Space pause | B / I; maximized rendering checked | U / U |
 | GTK4 | Blocked: native dependencies missing / U | U / U | B / S; UI blocked |
 | Ratatui | B / pseudo-terminal checks; enhanced-terminal interaction unverified | B / blocked: direct launch has no targetable window; Windows Terminal access blocked by product policy | B / pseudo-terminal startup, movement and quit; 4 tests pass |
 
@@ -108,7 +108,7 @@ Details: [native Kotlin/Swift](experiments/NATIVE-MOBILE.md), [Tauri mobile](doc
 | Check or issue | Current evidence / remaining work |
 | --- | --- |
 | Shared simulation | 9 Rust core/WASM tests; 6 original JS tests + 2 compiled-WASM ABI tests passed. This is not frontend input QA. |
-| Adapter regressions | Windows web controller 3/3, low-level controller 3/3, Ratatui 4/4, bracket-lib 6/6; other adapter results linked above. |
+| Adapter regressions | Windows web controller 3/3, low-level controller 3/3, Ratatui 4/4, bracket-lib 6/6, GUI support 4/4; other adapter results linked above. |
 | Windows engine interaction | Most I cells mean start, scoring/ball motion, pause/resume and reset. Sustained paddle movement/release, full matches, focus/minimize and resize/DPI are mostly still unverified. |
 | Windows web interaction | Browser variants exercised keyboard/pointer and CPU win; real focus-loss still unverified. Native wrappers exercised pointer movement and basic controls, not held-key/full-match/physical-touch coverage. |
 | Omarchy visual/input testing | Many builds and smoke launches pass, but the automation connection exposes no native/browser surfaces. This is a tool-access blocker, not proof of a gameplay failure. |
