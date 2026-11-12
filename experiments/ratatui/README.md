@@ -32,3 +32,7 @@ This is an experiment, not a published package. See the project comparison notes
 ## Windows verification (2026-11-11)
 
 From checkpoint 4707ee9, locked MSVC build passed and all four frontend tests passed. Direct supported Computer Use launch did not expose a targetable window; no process remained afterward. The supported Windows Terminal launch alternative was blocked by product policy. No alternate input mechanism was used to bypass that restriction. Windows terminal rendering/gameplay, keyboard release, resize and terminal restoration remain unverified. Build/test success is not an interactive pass.
+
+## Omarchy ARM64 follow-up (2026-11-12)
+
+A fresh locked release build, all five frontend tests, relocated six-checkpoint cell replay and local portable package lifecycle passed. An isolated normal pseudo-terminal launch also passed start/changing-output/Q-exit with exact terminal-flag restoration. Earlier blanket Omarchy-unverified wording above is superseded by this bounded evidence, not by a desktop-terminal/input claim. See [Linux package report](../../docs/packaging/RATATUI-LINUX-PILOT.md).
