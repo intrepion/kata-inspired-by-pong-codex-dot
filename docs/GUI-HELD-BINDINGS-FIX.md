@@ -22,3 +22,5 @@ The planned GPUI package review was deferred to fix this concrete gameplay issue
 ## Mac ARM64 model follow-up
 
 All six shared model tests, including both overlapping held-binding regressions, pass on Mac after the correction. Strict Clippy passes with all targets. This is a source-level Mac check only; existing GTK/Slint/GPUI binaries and package hashes have not been requalified, and no new OS keyboard/focus pass is claimed.
+
+Windows follow-up: fresh Slint release and all six shared GUI support release tests passed, including both simultaneous-binding regressions. Extracted Slint scripted replay and six own-window snapshots passed; this does not claim real Windows keyboard dispatch/focus acceptance. See [Slint Windows pilot](packaging/SLINT-WINDOWS-PILOT.md).

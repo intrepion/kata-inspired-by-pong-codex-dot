@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Fifteen native timing/portable runtime pilots plus Ratatui extracted TestBackend cell replay recorded. Ratatui fresh release and five tests passed. | [Ratatui cell pilot](docs/packaging/RATATUI-WINDOWS-PILOT.md). Real terminal input, installer/clean-machine and notice gates remain separate. |
+| Windows | Fifteen native timing/portable pilots plus Ratatui cell and Slint snapshot package pilots recorded. Slint fresh release and six shared GUI tests passed. | [Slint pilot](docs/packaging/SLINT-WINDOWS-PILOT.md). Real OS-input, notices, installers and clean-machine gates remain open. |
 | Mac | Corrected Fyrox package replay and six captures pass; readable HUD verified. App bundle removed, but generated registry outside it remains, so full cleanup is incomplete. Six shared GUI binding tests and strict Clippy pass. Processes exited. | [Fyrox package follow-up](docs/FYROX-HUD-SCALE-FIX.md) and [GUI model tests](docs/GUI-HELD-BINDINGS-FIX.md). Runtime-state cleanup policy and real-input/release gates remain; historical benchmarks preserved. |
 | Omarchy ARM64 | Fyrox generated-state safety investigated: seven new read-only ownership-inspection tests and all thirteen packaging tests pass. Existing registry preserved because no pre-run ownership receipt exists. | [Cleanup policy and limits](docs/packaging/FYROX-GENERATED-STATE-SAFETY.md). No automatic deletion; clean-uninstall gate remains open. Bracket/Fyrox visual fixes and shared GUI input fix verified separately. |
 
@@ -284,7 +284,7 @@ These are local archive extraction, relocated runtime and removal checks, **not 
 | Blue Engine, softbuffer | [Local pilots; Blue state-only](docs/packaging/MAC-SOFTBUFFER-BLUE-PILOT.md) | [Blue state-only](docs/packaging/WINDOWS-PORTABLE-BATCH3.md); [softbuffer replay/capture](docs/packaging/WINDOWS-PORTABLE-BATCH.md) | [Final two local pilots](docs/packaging/LINUX-PORTABLE-BATCH3.md); Blue native captures unsupported |
 | Ratatui | Not recorded | [Local ZIP/cell replay only](docs/packaging/RATATUI-WINDOWS-PILOT.md) | [Terminal local pilot](docs/packaging/RATATUI-LINUX-PILOT.md); cells + bounded PTY, not screenshots |
 | GTK4 | Not recorded | Not recorded | [Local package pilot](docs/packaging/GTK-LINUX-PILOT.md); existing GTK4 libraries required |
-| Slint | Not recorded | Not recorded | [Local package pilot](docs/packaging/SLINT-LINUX-PILOT.md); own-window snapshots, license text included |
+| Slint | Not recorded | [Local ZIP/own-window snapshots](docs/packaging/SLINT-WINDOWS-PILOT.md) | [Local package pilot](docs/packaging/SLINT-LINUX-PILOT.md); own-window snapshots, license text included |
 | Other adapters | Not recorded | Not recorded | Not recorded |
 
 Evidence and limitations: [packaging index](docs/packaging/README.md), [Mac Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md), [Windows Macroquad](docs/packaging/MACROQUAD-WINDOWS-PILOT.md), [Mac SDL3](docs/packaging/SDL3-MAC-PILOT.md), [Mac raylib](docs/packaging/RAYLIB-MAC-PILOT.md), [Linux ash](docs/packaging/ASH-LINUX-PILOT.md).
