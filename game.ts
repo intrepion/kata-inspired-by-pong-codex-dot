@@ -34,6 +34,19 @@ interface FrameLoop {
 // The simulation uses seconds and court coordinates so its pace is frame-rate independent.
 const W = 900, H = 500, PADDLE_H = 90, PADDLE_W = 12, BALL = 8, WIN = 7;
 const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
+// Captured pointers retain independent button ownership until released/cancelled.
+function createPointerButtons() {
+    const held = new Map<number, -1 | 1>();
+    return {
+        press(id: number, dir: -1 | 1) { held.set(id, dir); },
+        release(id: number) { held.delete(id); },
+        clear() { held.clear(); },
+        axis() {
+            const directions = [...held.values()];
+            return Number(directions.includes(1)) - Number(directions.includes(-1));
+        }
+    };
+}
 function createGame(random: () => number = Math.random): Game {
     const s: Game = { player: H / 2, cpu: H / 2, ball: { x: W / 2, y: H / 2, vx: 0, vy: 0 }, scores: [0, 0], state: 'ready', serve: 0, random, cpuTarget: H / 2, cpuReaction: 0, resetBall: () => { }, start: () => { }, step: () => { } };
     s.resetBall = (direction) => { s.ball = { x: W / 2, y: H / 2, vx: direction * 350, vy: (random() - .5) * 180 }; s.serve = .65; s.cpuTarget = H / 2; s.cpuReaction = .3; };
@@ -165,7 +178,7 @@ function createScriptedReplay(manifest: ScenarioManifest) {
 }
 
 if (typeof module !== 'undefined')
-    module.exports = { createGame, createFrameLoop, parseScenario, createScriptedReplay, W, H, PADDLE_H, BALL };
+    module.exports = { createPointerButtons, createGame, createFrameLoop, parseScenario, createScriptedReplay, W, H, PADDLE_H, BALL };
 if (typeof document !== 'undefined') {
     function element<T extends HTMLElement>(selector: string, kind: {
         new (): T;
@@ -184,7 +197,7 @@ if (typeof document !== 'undefined') {
     let replay: ReturnType<typeof createScriptedReplay> | undefined;
     const captures: {tick:number;png:string}[] = []; let exported = false; let demoError: string | undefined;
     if (demoRequested) fetch('scenarios/smoke-v1.txt').then(r => { if(!r.ok)throw Error('Scenario manifest unavailable'); return r.text(); }).then(text => { replay=createScriptedReplay(parseScenario(text)); game=replay.game; }).catch(e=>{ console.error(e); demoError=String(e); });
-    let touch = 0;
+    const pointerButtons = createPointerButtons();
     const overlay = element('#overlay', HTMLElement), message = element('#message', HTMLElement), hint = element('#hint', HTMLElement), start = element('#start', HTMLButtonElement), pause = element('#pause', HTMLButtonElement), status = element('#status', HTMLElement);
     function sync() { element('#you', HTMLElement).textContent = String(game.scores[0]); element('#cpu', HTMLElement).textContent = String(game.scores[1]); pause.disabled = demoRequested || game.state === 'ready' || game.state === 'over'; start.disabled=demoRequested; pause.textContent = game.state === 'paused' ? 'Resume' : 'Pause'; status.textContent = game.state === 'playing' ? (game.serve > 0 ? 'Next serve' : 'Rally in progress') : game.state === 'paused' ? 'Paused' : game.state === 'over' ? (game.scores[0] === WIN ? 'You won the match' : 'Computer wins the match') : 'Ready to play'; overlay.hidden = game.state === 'playing'; if (game.state === 'paused') {
         message.textContent = 'Take a breather.';
@@ -208,15 +221,15 @@ if (typeof document !== 'undefined') {
         e.preventDefault(); if (e.key === ' ' && !e.repeat && (game.state === 'playing' || game.state === 'paused'))
         toggle(); keys.add(e.key.toLowerCase()); });
     document.addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
-    window.addEventListener('blur', () => { keys.clear(); touch = 0; if (game.state === 'playing')
+    window.addEventListener('blur', () => { keys.clear(); pointerButtons.clear(); if (game.state === 'playing')
         toggle(); });
     document.addEventListener('visibilitychange', () => { if (document.hidden && game.state === 'playing')
         toggle(); });
     for (const [id, dir] of [['up', -1], ['down', 1]] as const) {
         const el = element('#' + id, HTMLButtonElement);
-        el.addEventListener('pointerdown', e => { if(demoRequested)return; e.preventDefault(); touch = dir; el.setPointerCapture(e.pointerId); });
-        for (const event of ['pointerup', 'pointercancel', 'lostpointercapture'])
-            el.addEventListener(event, () => { touch = 0; });
+        el.addEventListener('pointerdown', e => { if(demoRequested)return; e.preventDefault(); pointerButtons.press(e.pointerId, dir); el.setPointerCapture(e.pointerId); });
+        for (const event of ['pointerup', 'pointercancel', 'lostpointercapture'] as const)
+            el.addEventListener(event, e => { pointerButtons.release(e.pointerId); });
     }
     canvas.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse')
         canvas.setPointerCapture(e.pointerId); });
@@ -225,7 +238,7 @@ if (typeof document !== 'undefined') {
         game.player = clamp((e.clientY - rect.top) / rect.height * H, PADDLE_H / 2, H - PADDLE_H / 2);
     } });
     function draw() { ctx.fillStyle = '#153f37'; ctx.fillRect(0, 0, W, H); ctx.strokeStyle = '#a8e6bb30'; ctx.lineWidth = 2; ctx.setLineDash([12, 16]); ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke(); ctx.setLineDash([]); ctx.strokeStyle = '#a8e6bb25'; ctx.beginPath(); ctx.arc(W / 2, H / 2, 70, 0, Math.PI * 2); ctx.stroke(); ctx.fillStyle = '#d9ffae'; ctx.fillRect(32, game.player - PADDLE_H / 2, PADDLE_W, PADDLE_H); ctx.fillStyle = '#e3f3e7'; ctx.fillRect(W - 44, game.cpu - PADDLE_H / 2, PADDLE_W, PADDLE_H); ctx.beginPath(); ctx.arc(game.ball.x, game.ball.y, BALL, 0, Math.PI * 2); ctx.fill(); }
-    function frame(t: number) { if(demoRequested) replay?.frame(t); else loop.advance(t, touch + (keys.has('arrowdown') || keys.has('s') ? 1 : 0) - (keys.has('arrowup') || keys.has('w') ? 1 : 0)); draw(); sync(); if(demoError)status.textContent=demoError;
+    function frame(t: number) { if(demoRequested) replay?.frame(t); else loop.advance(t, pointerButtons.axis() + (keys.has('arrowdown') || keys.has('s') ? 1 : 0) - (keys.has('arrowup') || keys.has('w') ? 1 : 0)); draw(); sync(); if(demoError)status.textContent=demoError;
         if(replay && replay.manifest.captures.includes(replay.tick) && !captures.some(c=>c.tick===replay!.tick)) captures.push({tick:replay.tick,png:canvas.toDataURL('image/png')});
         if(replay?.finished) {
             if(!exported) { exported=true; const evidence={kind:'original TS state and own Canvas2D; not Rust-identical or desktop QA',reports:replay.reports,actions:replay.actions,captures};

@@ -62,3 +62,15 @@ test('scripted frame pacing lands on every capture tick even after stalls',()=>{
  for(let t=0;!r.finished && t<100000;t+=137){r.frame(t);if(m.captures.includes(r.tick))seen.add(r.tick);}
  assert.equal(r.finished,true);assert.deepEqual([...seen],m.captures);
 });
+
+test('pointer button release preserves other held fingers', () => {
+ const {createPointerButtons}=require('../game'); const input=createPointerButtons();
+ input.press(1,-1); input.press(2,-1); input.release(1); assert.equal(input.axis(),-1);
+ input.release(99); assert.equal(input.axis(),-1); input.release(2); assert.equal(input.axis(),0);
+});
+test('opposing pointer buttons cancel and release independently', () => {
+ const {createPointerButtons}=require('../game'); const input=createPointerButtons();
+ input.press(1,-1); input.press(2,1); assert.equal(input.axis(),0);
+ input.release(2); assert.equal(input.axis(),-1); input.clear(); assert.equal(input.axis(),0);
+ input.release(1); assert.equal(input.axis(),0);
+});

@@ -2,6 +2,19 @@
 // The simulation uses seconds and court coordinates so its pace is frame-rate independent.
 const W = 900, H = 500, PADDLE_H = 90, PADDLE_W = 12, BALL = 8, WIN = 7;
 const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+// Captured pointers retain independent button ownership until released/cancelled.
+function createPointerButtons() {
+    const held = new Map();
+    return {
+        press(id, dir) { held.set(id, dir); },
+        release(id) { held.delete(id); },
+        clear() { held.clear(); },
+        axis() {
+            const directions = [...held.values()];
+            return Number(directions.includes(1)) - Number(directions.includes(-1));
+        }
+    };
+}
 function createGame(random = Math.random) {
     const s = { player: H / 2, cpu: H / 2, ball: { x: W / 2, y: H / 2, vx: 0, vy: 0 }, scores: [0, 0], state: 'ready', serve: 0, random, cpuTarget: H / 2, cpuReaction: 0, resetBall: () => { }, start: () => { }, step: () => { } };
     s.resetBall = (direction) => { s.ball = { x: W / 2, y: H / 2, vx: direction * 350, vy: (random() - .5) * 180 }; s.serve = .65; s.cpuTarget = H / 2; s.cpuReaction = .3; };
@@ -161,7 +174,7 @@ function createScriptedReplay(manifest) {
     };
 }
 if (typeof module !== 'undefined')
-    module.exports = { createGame, createFrameLoop, parseScenario, createScriptedReplay, W, H, PADDLE_H, BALL };
+    module.exports = { createPointerButtons, createGame, createFrameLoop, parseScenario, createScriptedReplay, W, H, PADDLE_H, BALL };
 if (typeof document !== 'undefined') {
     function element(selector, kind) {
         const found = document.querySelector(selector);
@@ -183,7 +196,7 @@ if (typeof document !== 'undefined') {
     if (demoRequested)
         fetch('scenarios/smoke-v1.txt').then(r => { if (!r.ok)
             throw Error('Scenario manifest unavailable'); return r.text(); }).then(text => { replay = createScriptedReplay(parseScenario(text)); game = replay.game; }).catch(e => { console.error(e); demoError = String(e); });
-    let touch = 0;
+    const pointerButtons = createPointerButtons();
     const overlay = element('#overlay', HTMLElement), message = element('#message', HTMLElement), hint = element('#hint', HTMLElement), start = element('#start', HTMLButtonElement), pause = element('#pause', HTMLButtonElement), status = element('#status', HTMLElement);
     function sync() {
         element('#you', HTMLElement).textContent = String(game.scores[0]);
@@ -237,7 +250,7 @@ if (typeof document !== 'undefined') {
     document.addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
     window.addEventListener('blur', () => {
         keys.clear();
-        touch = 0;
+        pointerButtons.clear();
         if (game.state === 'playing')
             toggle();
     });
@@ -248,9 +261,9 @@ if (typeof document !== 'undefined') {
     for (const [id, dir] of [['up', -1], ['down', 1]]) {
         const el = element('#' + id, HTMLButtonElement);
         el.addEventListener('pointerdown', e => { if (demoRequested)
-            return; e.preventDefault(); touch = dir; el.setPointerCapture(e.pointerId); });
+            return; e.preventDefault(); pointerButtons.press(e.pointerId, dir); el.setPointerCapture(e.pointerId); });
         for (const event of ['pointerup', 'pointercancel', 'lostpointercapture'])
-            el.addEventListener(event, () => { touch = 0; });
+            el.addEventListener(event, e => { pointerButtons.release(e.pointerId); });
     }
     canvas.addEventListener('pointerdown', e => {
         if (e.pointerType !== 'mouse')
@@ -269,7 +282,7 @@ if (typeof document !== 'undefined') {
         if (demoRequested)
             replay?.frame(t);
         else
-            loop.advance(t, touch + (keys.has('arrowdown') || keys.has('s') ? 1 : 0) - (keys.has('arrowup') || keys.has('w') ? 1 : 0));
+            loop.advance(t, pointerButtons.axis() + (keys.has('arrowdown') || keys.has('s') ? 1 : 0) - (keys.has('arrowup') || keys.has('w') ? 1 : 0));
         draw();
         sync();
         if (demoError)
