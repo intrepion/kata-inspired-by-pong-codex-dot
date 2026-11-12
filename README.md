@@ -52,7 +52,7 @@ Each desktop cell is **build / runtime evidence**:
 | Miniquad | B / I | B / R; start input unsuccessful | B / S + scripted/PNG sample passed; real input blocked |
 | pixels + winit | B / I | B / I | B / S + scripted/source PNG passed; real input blocked |
 | raw wgpu + winit | B / I | B / I | B / S + scripted/PNG sample passed; real input blocked |
-| Piston | B / I | B / I | B / S; UI blocked |
+| Piston | B / I | B / I | B / S + scripted/PNG sample passed; real input blocked |
 | ggez | B / I; Mac surface fix verified | B / I on earlier snapshot | B / S + scripted/PNG sample passed; real input blocked |
 | nannou | B / I before pacing follow-up | B / I | B / S + scripted/PNG sample passed; real input blocked |
 | Fyrox | B / I | B / I | B / S; UI blocked |
@@ -151,8 +151,10 @@ rendering evidence, **not** real keyboard/focus or smooth-motion validation.
 | ggez | Passed | Six saved; pause/reset inspected | Same app render texture presented and captured |
 | Miniquad | Passed | Six saved; paused sample inspected | Own OpenGL framebuffer; Metal capture unsupported |
 | raw wgpu | Passed | Six saved; paused sample inspected | Surface COPY_SRC readback; requires capability |
+| Piston | Passed | Six saved; pause/reset inspected | Same scene rendered to app-owned target, not swapchain |
+| bracket-lib | Passed | Six saved; pause/reset inspected | Native framework framebuffer export |
 | Remaining Rust / Swift / Kotlin adapters | Not wired yet | Not wired yet | No implied pass |
 
-All ten finish at tick 1440 with the same baseline telemetry. Shared core has
-13 passing tests; raylib has one additional viewport test. Details and artifact
+All twelve finish at tick 1440 with the same baseline telemetry. Shared core has
+14 passing tests; raylib has one additional viewport test. Details and artifact
 hashes: [scripted testing](docs/SCRIPTED-TESTING.md).

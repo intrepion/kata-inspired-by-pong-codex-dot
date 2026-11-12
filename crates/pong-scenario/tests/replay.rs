@@ -87,3 +87,21 @@ fn cpu_capture_encodes_exact_rgb_values() {
     assert_eq!(&bytes[..info.buffer_size()], &[255, 0, 0, 0, 255, 0]);
     std::fs::remove_file(path).unwrap();
 }
+
+#[test]
+fn repeated_update_callbacks_hold_pending_frame_until_renderer_consumes_it() {
+    let mut demo = pong_scenario::Demo::new(Some("unused-test-directory".into()));
+    let mut game = Game::new(SEED);
+    while demo.tick() < 120 {
+        demo.advance(&mut game, 0.1);
+    }
+    let ball = (game.ball.x, game.ball.y);
+    for _ in 0..20 {
+        demo.advance(&mut game, 0.1);
+    }
+    assert_eq!(demo.tick(), 120);
+    assert_eq!((game.ball.x, game.ball.y), ball);
+    assert!(demo.capture_path().is_some());
+    demo.advance(&mut game, 0.1);
+    assert!(demo.tick() > 120);
+}

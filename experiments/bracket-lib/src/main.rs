@@ -10,6 +10,8 @@ struct Pong {
     keys: HashSet<VirtualKeyCode>,
     focused: bool,
     accumulator: f32,
+    demo: Option<pong_scenario::Demo>,
+    pending_capture: Option<std::path::PathBuf>,
 }
 impl Pong {
     fn new() -> Self {
@@ -18,6 +20,8 @@ impl Pong {
             keys: HashSet::new(),
             focused: true,
             accumulator: 0.,
+            demo: None,
+            pending_capture: None,
         }
     }
     fn event(&mut self, event: BEvent) -> bool {
@@ -124,12 +128,30 @@ impl GameState for Pong {
             }
             events
         };
+        if let Some(path) = self.pending_capture.take() {
+            let bytes = std::fs::read(path).expect("framework screenshot completed");
+            assert!(
+                bytes.ends_with(&[0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130]),
+                "incomplete PNG"
+            );
+        }
+        if self.demo.as_ref().is_some_and(|d| d.finished()) {
+            ctx.quitting = true;
+            return;
+        }
         for e in events {
+            if self.demo.is_some() {
+                continue;
+            }
             if self.event(e) {
                 ctx.quitting = true;
             }
         }
-        self.advance(ctx.frame_time_ms / 1000.);
+        if let Some(demo) = &mut self.demo {
+            demo.advance(&mut self.game, ctx.frame_time_ms / 1000.);
+        } else {
+            self.advance(ctx.frame_time_ms / 1000.);
+        }
         ctx.set_active_console(0);
         ctx.cls_bg(RGB::from_u8(9, 14, 25));
         // Separate transparent VGA console: 16px text without stretching the court.
@@ -171,6 +193,10 @@ impl GameState for Pong {
             2. * BALL,
             RGB::from_u8(250, 226, 160),
         );
+        if let Some(path) = self.demo.as_mut().and_then(|d| d.capture_path()) {
+            ctx.screenshot(path.to_string_lossy());
+            self.pending_capture = Some(path);
+        }
     }
 }
 // The pinned winit/glutin Wayland title renderer has a freetype 0.26 UB
@@ -204,7 +230,9 @@ fn main() -> BError {
         .with_automatic_console_resize(false)
         .build()?;
     INPUT.lock().activate_event_queue();
-    main_loop(ctx, Pong::new())
+    let mut pong = Pong::new();
+    pong.demo = pong_scenario::Demo::from_args();
+    main_loop(ctx, pong)
 }
 #[cfg(test)]
 mod tests {

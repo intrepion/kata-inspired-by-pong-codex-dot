@@ -93,6 +93,8 @@ appropriate application-buffer export. No per-engine copy of the timeline.
 | ggez | App-owned render texture, presented then read after submit | Exit 0, six PNGs; pause/reset inspected |
 | Miniquad | Own active OpenGL framebuffer read before swap; flipped rows | Exit 0, six PNGs; paused frame inspected |
 | raw wgpu | Current surface texture COPY_SRC with padded-row readback | Exit 0, six PNGs; paused frame inspected |
+| Piston | Same scene on app-owned wgpu target | Exit 0, six PNGs; pause/reset inspected |
+| bracket-lib | Native BTerm framebuffer export | Exit 0, six PNGs; pause/reset inspected |
 | Other Rust adapters | Not wired yet; API-specific work remains | No demo/capture claim |
 | Independent Swift/Kotlin | Not wired; should consume a portable scenario fixture | No Rust FFI/timeline duplication assumed |
 
@@ -122,3 +124,5 @@ Batch2 recorded evidence: [Pixels/SDL3 PNG hashes and outcomes](evidence/scripte
 Batch3 adds Bevy, nannou, ggez, Miniquad and raw wgpu. All five pass builds and strict Clippy; Miniquad also passes its geometry test. Shared core/scenario tests remain green. All five runs produce 13 baseline-identical telemetry records and six PNGs. Bevy and nannou hold the simulation until asynchronous exports finish (bounded timeout); ggez reads the exact app render texture after submission. Miniquad explicitly supports OpenGL capture only, not Metal. wgpu requires surface COPY_SRC and an RGBA8/BGRA8 format, with bounded map waits; unsupported capture fails rather than using a desktop fallback. Existing render styles differ: Miniquad has a square ball, wgpu a round ball and lighter sRGB court. These are not evidence of equal pixel output or compositor correctness.
 
 Batch3 evidence: [GPU framework outcomes](evidence/scripted-gpu-batch-20261112.json), [low-level outcomes](evidence/scripted-lowlevel-batch3-20261112.json).
+
+Batch4: [Piston/bracket-lib verification and capture boundaries](SCRIPTED-PISTON-BRACKET.md). Shared tests now total fourteen. Piston exposed a pending-capture timing bug across multiple update callbacks; the common driver now holds each unconsumed checkpoint until render, with a red/green regression test.

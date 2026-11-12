@@ -1324,11 +1324,20 @@ version = "0.1.0"
 dependencies = [
  "bracket-lib",
  "pong-core",
+ "pong-scenario",
 ]
 
 [[package]]
 name = "pong-core"
 version = "0.1.0"
+
+[[package]]
+name = "pong-scenario"
+version = "0.1.0"
+dependencies = [
+ "png",
+ "pong-core",
+]
 
 [[package]]
 name = "proc-macro-crate"

@@ -96,6 +96,14 @@ impl Demo {
         if !elapsed.is_finite() {
             return;
         }
+        // Update and render callbacks may be separate. Hold a pending frame
+        // without accumulating an unbounded backlog until the renderer takes it.
+        if self.directory.is_some()
+            && CAPTURE_TICKS.contains(&self.tick())
+            && self.last_capture != self.tick()
+        {
+            return;
+        }
         self.accumulator += elapsed.clamp(0.0, 0.1);
         while self.accumulator >= STEP && !self.finished() {
             self.scenario.advance(game);
