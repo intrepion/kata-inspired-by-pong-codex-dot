@@ -60,3 +60,7 @@ or simulator replay and supported app-owned image capture separately.
 Candidate `71c513a` compiled with existing JDK 21 and Android SDK. Gradle `testDebugUnitTest assembleDebug` passed: 9 game tests plus 2 scenario tests, zero failures/errors/skips. The debug APK built (887,693 bytes); its `assets/scenarios/smoke-v1.txt` is SHA-256 identical to the canonical manifest. Only existing deprecated window-inset API warnings were emitted.
 
 [Machine-readable evidence](evidence/windows-kotlin-scenario-build-20261112.json). These are host JVM tests and APK inspection, not device replay or app-owned captures. No new emulator install/runtime claim; demo UI wiring remains future work. Swift candidate compile/resource verification is still pending.
+
+## Android runtime follow-up
+
+The source-only limits above are superseded for Kotlin by [debug Android replay wiring and verified emulator captures](SCRIPTED-ANDROID.md). Swift runtime remains pending. Normal mobile interaction is not certified by replay.

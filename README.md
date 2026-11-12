@@ -4,11 +4,11 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 04:59 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 05:01 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Android opt-in replay/Canvas capture wiring builds; 11 JVM tests pass. | Emulator package service missing at boot; no-wipe test AVD restart underway. APK install/replay still unverified ([details](docs/SCRIPTED-ANDROID.md)). |
+| Windows | Android replay on API35 emulator passed: 1440 ticks, 13 telemetry rows, six app-owned PNGs; pause/reset inspected ([evidence](docs/SCRIPTED-ANDROID.md)). | Completed; test app stopped, emulator preserved. Package service recovered after no-wipe AVD restart. Normal-mode post-change touch regression remains. |
 | Mac | Yew and Leptos native-wrapper checks assigned, followed by Dioxus native desktop. Existing test binaries use an older checkpoint. | Preparing visual checks with existing `6ceb22a` binaries; Pong Yew app-access call pending, possibly approval. Gameplay not yet confirmed; Dioxus build queued. |
 | Omarchy ARM64 | Swift/Kotlin portable parser/replay source and derived resources prepared; host resource consistency checks pass. | Publishing source candidate only. Swift/Kotlin compiler, native tests, packaged-app resource loading and mobile UI replay remain pending platform toolchains. |
 
@@ -179,7 +179,7 @@ rendering evidence, **not** real keyboard/focus or smooth-motion validation.
 | Yew / Leptos native wrappers | Passed | Six SVG sources each; geometry checked | Source export, not screenshot or visual QA |
 | Dioxus native | Passed | Six SVG sources; geometry checked | Source export, not final DOM presentation or screenshot |
 | Original TypeScript | Portable-action and replay tests pass | Canvas export implemented; browser run unverified | TS physics/RNG trajectory differs from Rust; no visual pass |
-| Independent Swift / Kotlin | Kotlin: compile + 11 JUnit tests pass; Swift candidate tests pending | No UI replay/capture wiring yet | Kotlin APK manifest bytes verified; host resource checks pass |
+| Independent Swift / Kotlin | Kotlin: compile + 11 JUnit tests + emulator replay pass; Swift candidate tests pending | Kotlin six app-owned PNGs; pause/reset inspected; Swift not wired | [Android evidence](docs/SCRIPTED-ANDROID.md); no new physical touch claim |
 | Remaining Rust / Swift / Kotlin adapters | Not wired yet | Not wired yet | No implied pass |
 
 All twenty render-evidence adapters finish at tick 1440 with the same baseline telemetry. Shared core has
@@ -200,4 +200,4 @@ GPUI Linux state-only replay now builds and completes after a narrow, licensed x
 
 [Portable scenario and original TypeScript replay](docs/SCRIPTED-ORIGINAL-TYPESCRIPT.md): one manifest drives both timelines; Rust preserves its existing baseline exactly. TypeScript uses its own physics/RNG, so only action/checkpoint semantics are shared. Browser rendering/canvas export remains unverified.
 
-[Portable Swift/Kotlin replay source candidate](docs/SCRIPTED-NATIVE-MOBILE.md) consumes the shared manifest. Kotlin compile/JUnit and APK resource checks pass; Swift candidate compilation/XCTest and both UI replays remain pending. Existing app entry points remain unchanged.
+[Portable Swift/Kotlin replay source candidate](docs/SCRIPTED-NATIVE-MOBILE.md) consumes the shared manifest. Kotlin compile/JUnit and APK resource checks pass; Swift candidate compilation/XCTest and UI replay remain pending; Kotlin emulator replay/captures now pass. Existing app entry points remain unchanged.

@@ -21,9 +21,25 @@ completed directory contains `complete.json`, `telemetry.jsonl` and checkpoint
 PNGs. These are renderer/replay evidence, not physical touch/focus validation.
 No test deletes prior runs or changes emulator security/data.
 
-## Current verification
+## Verification (2026-11-12 UTC)
 
-Windows Gradle build and all 11 JVM tests passed after wiring. Emulator runtime is
-pending: installation returned `Can't find service: package`; supported UI inspection
-showed the emulator still at the Android boot logo, not an active user app. A routine
-no-wipe reboot was requested. No installed/replayed/captured success is yet claimed.
+Source a27f120: Windows Gradle build and all 11 JVM tests passed. The existing
+Android15/API35 emulator initially lacked its package service and remained at the
+boot logo. Graceful shutdown/relaunch of the same AVD (no wipe) restored service.
+APK install succeeded, and the explicit scripted intent completed 1,440 ticks,
+13 telemetry rows and six PNG captures. `complete.json` reported tick1440/count6.
+Pause and reset captures were inspected: court, paddles, ball, score and pause
+label are correct. Portrait layout remains sparse; the existing instruction
+separator renders as a replacement glyph. This is not a full UI polish pass.
+
+[Telemetry](evidence/windows-kotlin-replay-20261112-telemetry.jsonl)
+
+![Pause](evidence/windows-kotlin-replay-20261112-tick-0480.png)
+
+![Reset](evidence/windows-kotlin-replay-20261112-tick-1320.png)
+
+Only the test app was stopped afterward; emulator/data/artifacts were retained.
+No new physical touch, focus/background, full manually played match or device
+coverage is inferred. These images are app game-view Canvas captures, not full
+emulator-screen captures. Normal-mode controls require a post-change regression
+check; their earlier results remain historical rather than newly certified.
