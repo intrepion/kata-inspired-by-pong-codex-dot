@@ -1,0 +1,7 @@
+# Miniquad contact-timing replay on Omarchy
+
+2026-11-12, Omarchy ARM64; source `4f4da1dc2fa82025786383dc1ea0ca38ba23ff7a` includes contact-timing physics `c77bf3a`. A fresh offline locked release build and all seven Miniquad frontend tests passed. A local Linux portable pilot archive was created and extracted to a separate directory; archive SHA-256 and all four extracted manifest entries verified. Archive size: 448,089 bytes; archive SHA-256: `6f1f9cd61c9803e026f37b322135b5454b216e90f8e8d5c08ae634aeeae904f2`; binary SHA-256: `b0200ff0cb06a1d2322015ce67b1163771021e671007f1972fa3f0e061e90114`.
+
+A first sandboxed run could not open the X display. With approved host-display access, the relocated binary completed `--scripted-test --scripted-captures` with exit 0. Its 13 telemetry records exactly match the revised contact-timing model reference through finished tick 1440. Six app-owned OpenGL framebuffer PNGs were produced; tick 600 was inspected and showed the court, paddles and ball. These are framebuffer captures, not desktop/compositor screenshots. Archive, extraction, captures and telemetry remain under separate `/tmp/pong-miniquad-c77-*` paths; historical artifacts were not overwritten.
+
+This is a local package extraction and scripted rendering/replay check. It does not establish physical input, focus or resize behavior, full-match interaction, clean-machine installation, complete dependency notices or public distribution.
