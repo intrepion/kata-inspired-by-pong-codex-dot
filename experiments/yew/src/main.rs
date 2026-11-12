@@ -48,7 +48,7 @@ fn app() -> Html {
         let s = session.clone();
         Callback::from(move |e: PointerEvent| {
             e.prevent_default();
-            s.borrow_mut().movement_button(direction, pressed)
+            s.borrow_mut().movement_button(direction, e.pointer_id(), pressed)
         })
     };
     html! {<><style>{CSS}</style><main tabindex="0" autofocus=true onkeydown={down} onkeyup={up} onblur={blur}>

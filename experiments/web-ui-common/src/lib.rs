@@ -7,6 +7,7 @@ pub struct DemoExports<'a> {
 }
 
 use pong_core::{Game, State};
+use std::collections::HashSet;
 #[derive(Clone, Copy)]
 pub enum Direction {
     Up,
@@ -16,7 +17,8 @@ pub enum Direction {
 #[derive(Clone)]
 pub struct Session {
     pub game: Game,
-    held: [bool; 6], // arrows, W/S, and pointer buttons have independent identities.
+    held: [bool; 4], // Arrow and W/S keyboard bindings have independent identities.
+    pointers: [HashSet<i32>; 2],
     accumulator: f64,
     demo: Option<Replay>,
 }
@@ -43,7 +45,8 @@ impl Default for Session {
     fn default() -> Self {
         let mut session = Self {
             game: Game::new(42),
-            held: [false; 6],
+            held: [false; 4],
+            pointers: Default::default(),
             accumulator: 0.0,
             demo: None,
         };
@@ -69,12 +72,17 @@ impl Session {
         }
     }
     /// On-screen movement controls are separate from keyboard bindings.
-    pub fn movement_button(&mut self, direction: Direction, pressed: bool) {
+    pub fn movement_button(&mut self, direction: Direction, pointer_id: i32, pressed: bool) {
         if self.demo.is_none() {
-            self.held[match direction {
-                Direction::Up => 4,
-                Direction::Down => 5,
-            }] = pressed;
+            let pointers = &mut self.pointers[match direction {
+                Direction::Up => 0,
+                Direction::Down => 1,
+            }];
+            if pressed {
+                pointers.insert(pointer_id);
+            } else {
+                pointers.remove(&pointer_id);
+            }
         }
     }
     pub fn start(&mut self) {
@@ -89,7 +97,8 @@ impl Session {
             return;
         }
         self.game.pause();
-        self.held = [false; 6];
+        self.held = [false; 4];
+        self.pointers.iter_mut().for_each(HashSet::clear);
         self.accumulator = 0.0;
     }
     pub fn toggle_pause(&mut self) {
@@ -144,8 +153,8 @@ impl Session {
         while self.accumulator >= 1.0 / 120.0 {
             self.game.step(
                 1.0 / 120.0,
-                (self.held[2] || self.held[3] || self.held[5]) as u8 as f32
-                    - (self.held[0] || self.held[1] || self.held[4]) as u8 as f32,
+                (self.held[2] || self.held[3] || !self.pointers[1].is_empty()) as u8 as f32
+                    - (self.held[0] || self.held[1] || !self.pointers[0].is_empty()) as u8 as f32,
             );
             self.accumulator -= 1.0 / 120.0;
         }
@@ -257,16 +266,16 @@ mod tests {
             let mut s = Session::default();
             s.start();
             s.key("ArrowDown", true, false);
-            s.movement_button(Direction::Down, true);
+            s.movement_button(Direction::Down, 1, true);
             if button_released_first {
-                s.movement_button(Direction::Down, false);
+                s.movement_button(Direction::Down, 1, false);
             } else {
                 s.key("ArrowDown", false, false);
             }
             s.tick(0.05);
             assert!(s.game.player > 250.);
             s.key("ArrowDown", false, false);
-            s.movement_button(Direction::Down, false);
+            s.movement_button(Direction::Down, 1, false);
             let stopped = s.game.player;
             s.tick(0.05);
             assert_eq!(s.game.player, stopped);
@@ -277,7 +286,7 @@ mod tests {
         let mut s = Session::default();
         s.start();
         s.key("w", true, false);
-        s.movement_button(Direction::Down, true);
+        s.movement_button(Direction::Down, 1, true);
         s.tick(0.05);
         assert_eq!(s.game.player, 250.);
         s.pause();
@@ -294,8 +303,49 @@ mod tests {
         s.tick(0.05);
         assert_eq!(s.game.player, 250.);
         s.enable_demo();
-        s.movement_button(Direction::Up, true);
-        assert_eq!(s.held, [false; 6]);
+        s.movement_button(Direction::Up, 1, true);
+        assert_eq!(s.held, [false; 4]);
+        assert!(s.pointers.iter().all(HashSet::is_empty));
+    }
+    #[test]
+    fn same_button_pointers_release_independently() {
+        let mut s = Session::default();
+        s.start();
+        s.movement_button(Direction::Up, 7, true);
+        s.movement_button(Direction::Up, 12, true);
+        s.movement_button(Direction::Up, 7, false);
+        s.tick(0.05);
+        assert!(s.game.player < 250.);
+        s.movement_button(Direction::Up, 12, false);
+        let stopped = s.game.player;
+        s.tick(0.05);
+        assert_eq!(s.game.player, stopped);
+    }
+    #[test]
+    fn unrelated_release_cannot_cancel_a_held_pointer() {
+        let mut s = Session::default();
+        s.start();
+        s.movement_button(Direction::Down, 7, true);
+        s.movement_button(Direction::Down, 99, false);
+        s.tick(0.05);
+        assert!(s.game.player > 250.);
+    }
+    #[test]
+    fn opposing_pointers_cancel_and_pause_clears_them() {
+        let mut s = Session::default();
+        s.start();
+        s.movement_button(Direction::Up, 1, true);
+        s.movement_button(Direction::Down, 2, true);
+        s.tick(0.05);
+        assert_eq!(s.game.player, 250.);
+        s.movement_button(Direction::Up, 1, false);
+        s.tick(0.05);
+        assert!(s.game.player > 250.);
+        s.pause();
+        s.toggle_pause();
+        let stopped = s.game.player;
+        s.tick(0.05);
+        assert_eq!(s.game.player, stopped);
     }
     #[test]
     fn repeats_do_not_restart() {
