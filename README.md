@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Blue Engine 3 valid native timing repeats, 2 tests and plain replay passed; native screenshot mode remains unsupported. Thirteen Windows timing adapters measured. Bevy release build compiling. | [Blue Windows evidence](docs/benchmarks/BLUE-ENGINE-WINDOWS-PILOT.md). Next Bevy/Fyrox; no headless capture substituted for native evidence. |
+| Windows | Bevy DX12: 3 valid timing repeats, 2 tests, replay and six captures passed. Default Vulkan crashed and is explicitly rejected. Fourteen timing adapters measured. | [Bevy evidence](docs/benchmarks/BEVY-WINDOWS-PILOT.md). Next: fresh Fyrox release build and timing/replay qualification. |
 | Mac | Fourteen local native package pilots recorded: softbuffer replay/six PNGs and Blue Engine state-only replay plus precise removal passed. 42 package guards pass; all processes exited. | [Final two Mac package pilots](docs/packaging/MAC-SOFTBUFFER-BLUE-PILOT.md). Blue native captures unsupported. Fourteen timing pilots; input, notices, signing and clean-machine gates remain. |
 | Omarchy ARM64 | GTK GUI-toolkit local package passed fresh release build, one Cairo and four GUI-model tests, extracted native replay/six app-owned Cairo captures and exact uninstall. 28 Node tests pass; process exited. | [GTK Linux package report](docs/packaging/GTK-LINUX-PILOT.md). Requires existing GTK4 runtime; capture is not a compositor screenshot or OS-input pass. |
 
@@ -253,7 +253,7 @@ Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md
 | Nannou | [3/3 repeat; initial rejection retained](docs/benchmarks/NANNOU-MAC-PILOT.md) | [3/3](docs/benchmarks/NANNOU-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/NANNOU-ADAPTER.md) |
 | raw wgpu | [3/3](docs/benchmarks/WGPU-MAC-PILOT.md) | [3/3](docs/benchmarks/WGPU-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/WGPU-ADAPTER.md) |
 | bracket-lib | [3/3](docs/benchmarks/BRACKET-LIB-MAC-PILOT.md) | [3/3](docs/benchmarks/BRACKET-LIB-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/BRACKET-LIB-ADAPTER.md) |
-| Bevy (main-world callback) | [3/3](docs/benchmarks/BEVY-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/BEVY-ADAPTER.md) |
+| Bevy (main-world callback) | [3/3](docs/benchmarks/BEVY-MAC-PILOT.md) | [DX12 3/3; Vulkan rejected](docs/benchmarks/BEVY-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/BEVY-ADAPTER.md) |
 | Blue Engine (native callback) | [3/3](docs/benchmarks/BLUE-ENGINE-MAC-PILOT.md) | [3/3](docs/benchmarks/BLUE-ENGINE-WINDOWS-PILOT.md) | [3/3; initial failure retained](docs/benchmarks/BLUE-ENGINE-ADAPTER.md) |
 | Fyrox (pre-render callback) | [3/3](docs/benchmarks/FYROX-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/FYROX-ADAPTER.md) |
 | ash / Vulkan | Not recorded; Vulkan loader previously blocked | [3/3](docs/benchmarks/ASH-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/ASH-ADAPTER.md) |

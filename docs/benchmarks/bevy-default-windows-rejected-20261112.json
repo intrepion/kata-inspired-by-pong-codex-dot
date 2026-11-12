@@ -1,0 +1,26 @@
+{
+  "profile": "release",
+  "schema": 1,
+  "protocol": "pong-frame-callback-v1",
+  "adapter": "bevy",
+  "git_revision": "3de48812f49f9ecb788c50e356c91849d68f86f6",
+  "binary_sha256": "326bb0663f51f6fbe8eac6a20682e04e4f83f517a8c0960951327695f1fbf333",
+  "privacy": "Publication copy: allowlisted timing/provenance fields only. Host identity, environment, toolchain, notes and process diagnostics omitted. Original retained locally.",
+  "unmeasured": [
+    "GPU time",
+    "displayed FPS",
+    "CPU utilization",
+    "peak memory",
+    "startup latency",
+    "power",
+    "thermal state"
+  ],
+  "runs": [
+    {
+      "iteration": 1,
+      "exit": 3221225477,
+      "valid": false,
+      "sample": null
+    }
+  ]
+}
