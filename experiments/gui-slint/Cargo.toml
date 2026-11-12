@@ -7,3 +7,4 @@ license = "MIT"
 [dependencies]
 pong-gui-support = {path="../gui-support"}
 slint = {version="=1.18.1", default-features=false, features=["std", "backend-winit", "renderer-software", "compat-1-2"]}
+pong-scenario = { path = "../../crates/pong-scenario" }

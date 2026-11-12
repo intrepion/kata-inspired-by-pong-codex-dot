@@ -7,3 +7,4 @@ license = "MIT"
 [dependencies]
 pong-gui-support = {path="../gui-support"}
 gtk = {package="gtk4",version="0.10"}
+pong-scenario = { path = "../../crates/pong-scenario" }

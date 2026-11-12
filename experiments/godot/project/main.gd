@@ -72,6 +72,6 @@ func _draw() -> void:
     draw_string(font, Vector2(370, 48), "%d     %d" % [state.score_player, state.score_cpu], HORIZONTAL_ALIGNMENT_LEFT, -1, 32)
     draw_string(font, Vector2(28, 533), "GODOT + RUST  |  First to 7  |  " + state.state, HORIZONTAL_ALIGNMENT_LEFT, -1, 20)
     draw_string(font, Vector2(28, 563), "W/S or arrows: move   Space: start/pause   R: restart   Esc: quit", HORIZONTAL_ALIGNMENT_LEFT, -1, 17)
-    if state.state != "Playing":
+    if state.state == "Ready" or state.state == "Over":
         var message: String = "Space to start" if state.state == "Ready" else ("Paused - Space to resume" if state.state == "Paused" else "Match over - Space to restart")
         draw_string(font, Vector2(280, 260), message, HORIZONTAL_ALIGNMENT_LEFT, -1, 24)

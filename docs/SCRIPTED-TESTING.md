@@ -100,6 +100,8 @@ appropriate application-buffer export. No per-engine copy of the timeline.
 | Vulkan via ash | Acquired swapchain image copied before present | Exit 0, six PNGs; all inspected |
 | Godot + Rust | Actual scene viewport export after frame draw | Exit 0, six PNGs; pause/reset inspected |
 | Ratatui | Supported TestBackend cell/text exports, no PNG | Exit 0, six text + six style JSON; no terminal presentation claim |
+| Slint | Supported software component snapshot | Exit 0, six PNGs; pause/reset inspected |
+| GTK4 | Same draw_scene on app-owned Cairo surface | Exit 0, six PNGs; pause/reset inspected |
 | Other Rust adapters | Not wired yet; API-specific work remains | No demo/capture claim |
 | Independent Swift/Kotlin | Not wired; should consume a portable scenario fixture | No Rust FFI/timeline duplication assumed |
 
@@ -135,3 +137,5 @@ Batch4: [Piston/bracket-lib verification and capture boundaries](SCRIPTED-PISTON
 Batch5: [Fyrox/Blue verification and boundaries](SCRIPTED-FYROX-BLUE.md) and [ash evidence](evidence/scripted-ash-20261112.json). Ash checks swapchain transfer support and packed RGBA/BGRA formats, uses explicit image/buffer barriers and waits for completion. Both with/without capture runs match all 13 baseline records. Two adapter tests, build and strict Clippy pass. Vulkan validation layers were unavailable. [Ash contact sheet](evidence/omarchy-ash-scripted-20261112.jpg) shows all six frames; this is still not compositor, interactive input or smooth-motion verification.
 
 Batch6: [Ratatui/Godot commands and evidence limits](SCRIPTED-RATATUI-GODOT.md). Sixteen adapters now export app-owned images; Ratatui separately exports terminal cells, not screenshots. Godot normal integration smoke passes; existing paused overlay/ball overlap remains documented.
+
+Batch7: [Slint/GTK evidence and limits](SCRIPTED-SLINT-GTK.md). Eighteen adapters export app-owned images and Ratatui separately exports cells. Godot pause overlay no longer covers the ball; the footer retains its paused status, verified by a fresh viewport replay. Slint attribution clipping remains documented. No compositor or real-input pass is implied.

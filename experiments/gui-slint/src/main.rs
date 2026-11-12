@@ -29,9 +29,15 @@ export component PongWindow inherits Window {
 }
 fn main() -> Result<(), slint::PlatformError> {
     let ui = PongWindow::new()?;
+    let mut demo = pong_scenario::Demo::from_args();
+    let scripted = demo.is_some();
+    let mut previous = std::time::Instant::now();
     let model = Rc::new(RefCell::new(Model::default()));
     let m = model.clone();
     ui.on_key(move |key, down| {
+        if scripted {
+            return;
+        }
         let k = match key.as_str() {
             "\u{f700}" => "Up",
             "\u{f701}" => "Down",
@@ -42,7 +48,11 @@ fn main() -> Result<(), slint::PlatformError> {
         m.borrow_mut().key(k, down);
     });
     let m = model.clone();
-    ui.on_blur(move || m.borrow_mut().blur());
+    ui.on_blur(move || {
+        if !scripted {
+            m.borrow_mut().blur();
+        }
+    });
     let weak = ui.as_weak();
     let timer = slint::Timer::default();
     timer.start(
@@ -51,12 +61,34 @@ fn main() -> Result<(), slint::PlatformError> {
         move || {
             let Some(ui) = weak.upgrade() else { return };
             let mut m = model.borrow_mut();
-            m.tick();
+            let now = std::time::Instant::now();
+            let dt = now.duration_since(previous).as_secs_f32();
+            previous = now;
+            if let Some(demo) = &mut demo {
+                demo.advance(&mut m.game, dt);
+            } else {
+                m.tick();
+            }
             ui.set_player(m.game.player);
             ui.set_cpu(m.game.cpu);
             ui.set_bx(m.game.ball.x);
             ui.set_by(m.game.ball.y);
             ui.set_status(m.status().into());
+            if let Some(path) = demo.as_mut().and_then(|d| d.capture_path()) {
+                let pixels = ui
+                    .window()
+                    .take_snapshot()
+                    .expect("Slint renderer supports own-window snapshot");
+                let rgb: Vec<u32> = pixels
+                    .as_slice()
+                    .iter()
+                    .map(|p| (u32::from(p.r) << 16) | (u32::from(p.g) << 8) | u32::from(p.b))
+                    .collect();
+                pong_scenario::Demo::save_rgb(&path, &rgb, pixels.width(), pixels.height());
+            }
+            if demo.as_ref().is_some_and(|d| d.finished()) {
+                slint::quit_event_loop().expect("quit scripted Slint run");
+            }
         },
     );
     ui.run()

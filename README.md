@@ -70,9 +70,9 @@ Details: [baseline frontends](docs/desktop-comparison.md), [extra engines](exper
 | softbuffer + winit | B / I, including focus and resize checks | B / I | B / S + scripted/PNG sample passed; real input blocked |
 | SDL3 | B / I, including focus and resize checks | B / I; LNK4098 linker warning remains | B / S + scripted/PNG sample passed; real input blocked |
 | Vulkan via ash | B / blocked: missing Vulkan loader/MoltenVK | B / I (simple clear-attachment renderer only) | B / S + scripted/PNG samples passed; real input blocked |
-| Slint | B / I | B / I: start, scoring, pause/resume, reset | U / U |
+| Slint | B / I | B / I: start, scoring, pause/resume, reset | B / scripted component PNG samples passed; real input unverified |
 | GPUI | B / I: Enter start, held-W movement, scoring, Space pause | B / I; maximized rendering checked | U / U |
-| GTK4 | Blocked: native dependencies missing / U | U / U | B / S; UI blocked |
+| GTK4 | Blocked: native dependencies missing / U | U / U | B / S + scripted Cairo PNG samples passed; real input unverified |
 | Ratatui | B / pseudo-terminal checks; enhanced-terminal interaction unverified | B / blocked: direct launch has no targetable window; Windows Terminal access blocked by product policy | B / pseudo-terminal startup, movement and quit; scripted cell-buffer evidence; 5 tests pass |
 
 Details: [low-level clients](experiments/LOW-LEVEL.md), [GUI toolkits](experiments/GUI-TOOLKITS.md), [Ratatui](experiments/ratatui/README.md). GPUI's initial default Mac check required the separate Metal Toolchain; the runtime-shader path and later native worker results are reflected above.
@@ -158,9 +158,11 @@ rendering evidence, **not** real keyboard/focus or smooth-motion validation.
 | Vulkan via ash | Passed | Six saved; all inspected | Acquired swapchain image copied before present |
 | Godot + Rust | Passed | Six saved; pause/reset inspected | Actual scene viewport after frame draw |
 | Ratatui | Passed (TestBackend) | No PNG: six text + six cell/style JSON exports | Cell-buffer evidence only, not terminal screenshots |
+| Slint | Passed | Six saved; pause/reset inspected | Supported software-renderer component snapshot |
+| GTK4 | Passed | Six saved; pause/reset inspected | Same Cairo scene on separate app-owned surface |
 | Remaining Rust / Swift / Kotlin adapters | Not wired yet | Not wired yet | No implied pass |
 
-All seventeen finish at tick 1440 with the same baseline telemetry. Shared core has
+All nineteen finish at tick 1440 with the same baseline telemetry. Shared core has
 14 passing tests; raylib has one additional viewport test. Details and artifact
 hashes: [scripted testing](docs/SCRIPTED-TESTING.md).
 
