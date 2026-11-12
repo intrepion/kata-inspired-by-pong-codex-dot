@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Piston three valid callback repeats, 2 adapter + 12 shared tests and 12.6s scripted replay/capture passed; processes exited. | [Piston Windows evidence](docs/benchmarks/PISTON-WINDOWS-PILOT.md). Next unblocked Windows adapter: softbuffer. Packaging and OS-input gates remain separate. |
+| Windows | Softbuffer three valid callback repeats, 2 adapter + 13 shared tests and 12.1s scripted replay/capture passed (08:17 UTC); processes exited. | [Softbuffer Windows evidence](docs/benchmarks/SOFTBUFFER-WINDOWS-PILOT.md). Next: pixels release build. Packaging and OS-input gates remain separate. |
 | Mac | ggez eighth timing adapter: release build, 2 Rust + 13 Node tests and 3 valid repeats complete; replay finished in 12.320 seconds with 13 states and six frames. Processes exited. | [ggez Mac evidence](docs/benchmarks/GGEZ-MAC-PILOT.md). Piston timing fix is separate; original slowdown evidence retained. Yew focus inconclusive; packaging partial. |
 | Omarchy ARM64 | Nannou ninth timing adapter: 2 Rust + 14 Node tests pass; strict Clippy/release build running. Existing eight adapter pilots remain verified. | Next: bounded Nannou timing and replay after build; not yet a completed benchmark. |
 
