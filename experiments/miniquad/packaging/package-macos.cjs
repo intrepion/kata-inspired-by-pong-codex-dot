@@ -3,13 +3,22 @@ const fs = require('node:fs');
 const path = require('node:path');
 const cp = require('node:child_process');
 const crypto = require('node:crypto');
-const [binaryArg, outputArg] = process.argv.slice(2);
+const [binaryArg, outputArg, noticeArg, indexArg] = process.argv.slice(2);
 if (!binaryArg || !outputArg) throw Error('Usage: node package-macos.cjs RELEASE_BINARY NEW_OUTPUT_DIRECTORY');
 if (process.platform !== 'darwin') throw Error('macOS packaging pilot must run on macOS');
 const binary = path.resolve(binaryArg), out = path.resolve(outputArg);
 if (!fs.statSync(binary).isFile()) throw Error('binary must be a regular file');
 const format = cp.execFileSync('file', ['-b', binary], {encoding:'utf8'});
 if (!format.includes('Mach-O 64-bit executable arm64')) throw Error('pilot requires a thin arm64 Mach-O executable');
+let notices=null;
+if(noticeArg||indexArg){
+ if(!noticeArg||!indexArg)throw Error('Both notice text and index are required');
+ const index=JSON.parse(fs.readFileSync(indexArg,'utf8'));
+ const text=fs.readFileSync(noticeArg);
+ if(!Array.isArray(index.missing_notice_files)||index.missing_notice_files.length)throw Error('Notice inventory is incomplete');
+ if(crypto.createHash('sha256').update(text).digest('hex')!==index.bundle_sha256)throw Error('Notice hash mismatch');
+ notices=text;
+}
 fs.mkdirSync(out); // Refuse to overwrite any existing output.
 const root = path.resolve(__dirname, '../../..');
 const contents = path.join(out, 'Pong Miniquad.app/Contents');
@@ -18,6 +27,7 @@ fs.mkdirSync(path.join(contents, 'Resources'));
 fs.copyFileSync(binary, path.join(contents, 'MacOS/pong-miniquad'));
 fs.chmodSync(path.join(contents, 'MacOS/pong-miniquad'), 0o755);
 fs.copyFileSync(path.join(root, 'LICENSE'), path.join(contents, 'Resources/LICENSE'));
+if(notices) fs.writeFileSync(path.join(contents,'Resources/THIRD-PARTY-NOTICES.txt'),notices);
 fs.writeFileSync(path.join(contents, 'Info.plist'), `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
