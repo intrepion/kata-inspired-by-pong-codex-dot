@@ -55,11 +55,11 @@ Each desktop cell is **build / runtime evidence**:
 | Piston | B / I | B / I | B / S + scripted/PNG sample passed; real input blocked |
 | ggez | B / I; Mac surface fix verified | B / I on earlier snapshot | B / S + scripted/PNG sample passed; real input blocked |
 | nannou | B / I before pacing follow-up | B / I | B / S + scripted/PNG sample passed; real input blocked |
-| Fyrox | B / I | B / I | B / S; UI blocked |
-| Blue Engine | B / I | B / I | B / S; UI blocked |
+| Fyrox | B / I | B / I | B / S + scripted/PNG samples passed; real input blocked |
+| Blue Engine | B / I | B / I | B / S + headless replay/PNG samples passed; window/input unverified |
 | raylib-rs | B / I | B / R; start input unsuccessful; LLVM build blocker resolved | B / S + scripted/PNG sample passed; real input blocked |
 | Godot + Rust GDExtension | B / I for game; **F** in headless editor shutdown | U / U | U / U |
-| bracket-lib (RLTK) | B / I; restart/exit incomplete | B / I; separate header improves readability, bitmap quality still rough | B / S on X11 and patched Wayland; UI blocked |
+| bracket-lib (RLTK) | B / I; restart/exit incomplete | B / I; separate header improves readability, bitmap quality still rough | B / S on X11 and patched Wayland + scripted/PNG samples passed; real input blocked |
 
 Details: [baseline frontends](docs/desktop-comparison.md), [extra engines](experiments/ENGINE-STATUS.md), [ggez fix](experiments/ggez/README.md), [Godot](experiments/godot/VERIFICATION.md), [bracket-lib](experiments/bracket-lib/README.md).
 
@@ -69,7 +69,7 @@ Details: [baseline frontends](docs/desktop-comparison.md), [extra engines](exper
 | --- | --- | --- | --- |
 | softbuffer + winit | B / I, including focus and resize checks | B / I | B / S + scripted/PNG sample passed; real input blocked |
 | SDL3 | B / I, including focus and resize checks | B / I; LNK4098 linker warning remains | B / S + scripted/PNG sample passed; real input blocked |
-| Vulkan via ash | B / blocked: missing Vulkan loader/MoltenVK | B / I (simple clear-attachment renderer only) | B / S; UI blocked |
+| Vulkan via ash | B / blocked: missing Vulkan loader/MoltenVK | B / I (simple clear-attachment renderer only) | B / S + scripted/PNG samples passed; real input blocked |
 | Slint | B / I | B / I: start, scoring, pause/resume, reset | U / U |
 | GPUI | B / I: Enter start, held-W movement, scoring, Space pause | B / I; maximized rendering checked | U / U |
 | GTK4 | Blocked: native dependencies missing / U | U / U | B / S; UI blocked |
@@ -153,9 +153,12 @@ rendering evidence, **not** real keyboard/focus or smooth-motion validation.
 | raw wgpu | Passed | Six saved; paused sample inspected | Surface COPY_SRC readback; requires capability |
 | Piston | Passed | Six saved; pause/reset inspected | Same scene rendered to app-owned target, not swapchain |
 | bracket-lib | Passed | Six saved; pause/reset inspected | Native framework framebuffer export |
+| Fyrox | Passed | Six saved; pause/reset inspected | App-owned UI render target, not compositor |
+| Blue Engine | Passed (headless) | Six saved; pause/reset inspected | Supported headless renderer only; window capture unsupported |
+| Vulkan via ash | Passed | Six saved; all inspected | Acquired swapchain image copied before present |
 | Remaining Rust / Swift / Kotlin adapters | Not wired yet | Not wired yet | No implied pass |
 
-All twelve finish at tick 1440 with the same baseline telemetry. Shared core has
+All fifteen finish at tick 1440 with the same baseline telemetry. Shared core has
 14 passing tests; raylib has one additional viewport test. Details and artifact
 hashes: [scripted testing](docs/SCRIPTED-TESTING.md).
 

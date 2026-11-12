@@ -95,6 +95,9 @@ appropriate application-buffer export. No per-engine copy of the timeline.
 | raw wgpu | Current surface texture COPY_SRC with padded-row readback | Exit 0, six PNGs; paused frame inspected |
 | Piston | Same scene on app-owned wgpu target | Exit 0, six PNGs; pause/reset inspected |
 | bracket-lib | Native BTerm framebuffer export | Exit 0, six PNGs; pause/reset inspected |
+| Fyrox | App-owned UI render target | Exit 0, six PNGs; pause/reset inspected |
+| Blue Engine | Supported headless own-buffer renderer | Exit 0, six PNGs; pause/reset inspected; no window capture |
+| Vulkan via ash | Acquired swapchain image copied before present | Exit 0, six PNGs; all inspected |
 | Other Rust adapters | Not wired yet; API-specific work remains | No demo/capture claim |
 | Independent Swift/Kotlin | Not wired; should consume a portable scenario fixture | No Rust FFI/timeline duplication assumed |
 
@@ -126,3 +129,5 @@ Batch3 adds Bevy, nannou, ggez, Miniquad and raw wgpu. All five pass builds and 
 Batch3 evidence: [GPU framework outcomes](evidence/scripted-gpu-batch-20261112.json), [low-level outcomes](evidence/scripted-lowlevel-batch3-20261112.json).
 
 Batch4: [Piston/bracket-lib verification and capture boundaries](SCRIPTED-PISTON-BRACKET.md). Shared tests now total fourteen. Piston exposed a pending-capture timing bug across multiple update callbacks; the common driver now holds each unconsumed checkpoint until render, with a red/green regression test.
+
+Batch5: [Fyrox/Blue verification and boundaries](SCRIPTED-FYROX-BLUE.md) and [ash evidence](evidence/scripted-ash-20261112.json). Ash checks swapchain transfer support and packed RGBA/BGRA formats, uses explicit image/buffer barriers and waits for completion. Both with/without capture runs match all 13 baseline records. Two adapter tests, build and strict Clippy pass. Vulkan validation layers were unavailable. [Ash contact sheet](evidence/omarchy-ash-scripted-20261112.jpg) shows all six frames; this is still not compositor, interactive input or smooth-motion verification.

@@ -16,12 +16,15 @@ use fyrox::{
     plugin::{error::GameResult, Plugin, PluginContext},
 };
 use pong_core::*;
-#[derive(Debug, Visit, Reflect)]
+#[derive(Visit, Reflect)]
 #[reflect(non_cloneable)]
 struct App {
     #[visit(skip)]
     #[reflect(hidden)]
     game: Game,
+    #[visit(skip)]
+    #[reflect(hidden)]
+    demo: Option<pong_scenario::Demo>,
     #[visit(skip)]
     #[reflect(hidden)]
     held: [bool; 4],
@@ -31,10 +34,16 @@ struct App {
     nodes: Vec<Handle<UiNode>>,
     title: Handle<UiNode>,
 }
+impl std::fmt::Debug for App {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("PongApp").finish_non_exhaustive()
+    }
+}
 impl Default for App {
     fn default() -> Self {
         Self {
             game: Game::new(42),
+            demo: pong_scenario::Demo::from_args(),
             held: [false; 4],
             acc: 0.,
             nodes: Vec::new(),
@@ -45,7 +54,9 @@ impl Default for App {
 impl Plugin for App {
     fn init(&mut self, _: Option<&str>, context: PluginContext) -> GameResult {
         if context.user_interfaces.iter().next().is_none() {
-            context.user_interfaces.add(UserInterface::new(Vector2::new(W, H + 90.0)));
+            context
+                .user_interfaces
+                .add(UserInterface::new(Vector2::new(W, H + 90.0)));
         }
         let ui = context.user_interfaces.first_mut();
         let ctx = &mut ui.build_ctx();
@@ -75,14 +86,18 @@ impl Plugin for App {
         Ok(())
     }
     fn update(&mut self, context: &mut PluginContext) -> GameResult {
-        self.acc += context.dt.min(0.1);
-        while self.acc >= 1. / 120. {
-            self.game.step(
-                1. / 120.,
-                (self.held[2] || self.held[3]) as u8 as f32
-                    - (self.held[0] || self.held[1]) as u8 as f32,
-            );
-            self.acc -= 1. / 120.;
+        if let Some(demo) = &mut self.demo {
+            demo.advance(&mut self.game, context.dt);
+        } else {
+            self.acc += context.dt.min(0.1);
+            while self.acc >= 1. / 120. {
+                self.game.step(
+                    1. / 120.,
+                    (self.held[2] || self.held[3]) as u8 as f32
+                        - (self.held[0] || self.held[1]) as u8 as f32,
+                );
+                self.acc -= 1. / 120.;
+            }
         }
         let ui = context.user_interfaces.first_mut();
         let size = ui.screen_size();
@@ -117,7 +132,47 @@ impl Plugin for App {
         ui.send(self.title,TextMessage::Text(format!("PONG / FYROX   YOU {} : {} CPU   {:?}\nW/S or arrows: move | Enter: play/resume | Space: pause | R: restart",self.game.scores[0],self.game.scores[1],self.game.state)));
         Ok(())
     }
+    fn before_rendering(&mut self, context: PluginContext) -> GameResult {
+        if let Some(path) = self.demo.as_mut().and_then(|d| d.capture_path()) {
+            use fyrox::graphics::framebuffer::ReadTarget;
+            use fyrox::renderer::ui_renderer::UiRenderInfo;
+            use fyrox::resource::texture::{TextureResource, TextureResourceExtension};
+            let ui = context.user_interfaces.first();
+            let size = ui.screen_size();
+            let (width, height) = (size.x as u32, size.y as u32);
+            let target = TextureResource::new_render_target(width, height);
+            let renderer = &mut context.graphics_context.as_initialized_mut().renderer;
+            renderer
+                .render_ui(UiRenderInfo {
+                    ui,
+                    render_target: Some(target.clone()),
+                    clear_color: Color::BLACK,
+                    resource_manager: context.resource_manager,
+                })
+                .expect("render application UI capture target");
+            let bytes = renderer.ui_frame_buffers[&target.key()]
+                .read_pixels(ReadTarget::Color(0))
+                .expect("read application UI target");
+            assert_eq!(bytes.len(), width as usize * height as usize * 4);
+            let rgb: Vec<u32> = bytes
+                .chunks_exact(width as usize * 4)
+                .rev()
+                .flat_map(|row| {
+                    row.as_chunks::<4>().0.iter()
+                        .map(|p| (u32::from(p[0]) << 16) | (u32::from(p[1]) << 8) | u32::from(p[2]))
+                })
+                .collect();
+            pong_scenario::Demo::save_rgb(&path, &rgb, width, height);
+        }
+        if self.demo.as_ref().is_some_and(|d| d.finished()) {
+            context.loop_controller.exit();
+        }
+        Ok(())
+    }
     fn on_os_event(&mut self, event: &Event<()>, _: PluginContext) -> GameResult {
+        if self.demo.is_some() {
+            return Ok(());
+        }
         if let Event::WindowEvent { event, .. } = event {
             match event {
                 WindowEvent::Focused(false) => {

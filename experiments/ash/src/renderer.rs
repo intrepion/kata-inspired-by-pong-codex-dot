@@ -20,6 +20,11 @@ pub struct Renderer {
     swap: vk::SwapchainKHR,
     extent: vk::Extent2D,
     views: Vec<vk::ImageView>,
+    images: Vec<vk::Image>,
+    format: vk::Format,
+    capture_enabled: bool,
+    readback: vk::Buffer,
+    readback_memory: vk::DeviceMemory,
     pass: vk::RenderPass,
     frames: Vec<vk::Framebuffer>,
     pool: vk::CommandPool,
@@ -28,7 +33,7 @@ pub struct Renderer {
     finished: vk::Semaphore,
 }
 impl Renderer {
-    pub unsafe fn new(window: &winit::window::Window) -> Result<Self> {
+    pub unsafe fn new(window: &winit::window::Window, capture_enabled: bool) -> Result<Self> {
         let entry=Entry::load().map_err(|e|format!("Vulkan loader unavailable ({e}). On macOS install/configure the official Vulkan SDK with MoltenVK; on Windows/Linux install a Vulkan-capable driver."))?;
         let name = CString::new("Pong ash")?;
         let app = vk::ApplicationInfo::default()
@@ -149,6 +154,11 @@ impl Renderer {
             swap: vk::SwapchainKHR::null(),
             extent: vk::Extent2D::default(),
             views: vec![],
+            images: vec![],
+            format: vk::Format::UNDEFINED,
+            capture_enabled,
+            readback: vk::Buffer::null(),
+            readback_memory: vk::DeviceMemory::null(),
             pass: vk::RenderPass::null(),
             frames: vec![],
             pool,
@@ -161,6 +171,15 @@ impl Renderer {
         Ok(r)
     }
     unsafe fn clear_swap(&mut self) {
+        if self.readback != vk::Buffer::null() {
+            self.device.destroy_buffer(self.readback, None);
+            self.readback = vk::Buffer::null();
+        }
+        if self.readback_memory != vk::DeviceMemory::null() {
+            self.device.free_memory(self.readback_memory, None);
+            self.readback_memory = vk::DeviceMemory::null();
+        }
+        self.images.clear();
         for f in self.frames.drain(..) {
             self.device.destroy_framebuffer(f, None);
         }
@@ -218,6 +237,23 @@ impl Renderer {
         .into_iter()
         .find(|a| caps.supported_composite_alpha.contains(*a))
         .ok_or("No composite alpha mode")?;
+        let mut usage = vk::ImageUsageFlags::COLOR_ATTACHMENT;
+        if self.capture_enabled {
+            if !caps
+                .supported_usage_flags
+                .contains(vk::ImageUsageFlags::TRANSFER_SRC)
+            {
+                return Err(
+                    "Surface cannot copy app-owned swapchain images; scripted capture unsupported"
+                        .into(),
+                );
+            }
+            if !supported_capture_format(format.format) {
+                return Err(format!("Unsupported capture format: {:?}", format.format).into());
+            }
+            usage |= vk::ImageUsageFlags::TRANSFER_SRC;
+        }
+        self.format = format.format;
         self.swap = self.swap_api.create_swapchain(
             &vk::SwapchainCreateInfoKHR::default()
                 .surface(self.surface)
@@ -226,7 +262,7 @@ impl Renderer {
                 .image_color_space(format.color_space)
                 .image_extent(self.extent)
                 .image_array_layers(1)
-                .image_usage(vk::ImageUsageFlags::COLOR_ATTACHMENT)
+                .image_usage(usage)
                 .image_sharing_mode(vk::SharingMode::EXCLUSIVE)
                 .pre_transform(caps.current_transform)
                 .composite_alpha(alpha)
@@ -242,7 +278,7 @@ impl Renderer {
             .stencil_load_op(vk::AttachmentLoadOp::DONT_CARE)
             .stencil_store_op(vk::AttachmentStoreOp::DONT_CARE)
             .initial_layout(vk::ImageLayout::UNDEFINED)
-            .final_layout(vk::ImageLayout::PRESENT_SRC_KHR)];
+            .final_layout(vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL)];
         let refs = [vk::AttachmentReference::default()
             .attachment(0)
             .layout(vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL)];
@@ -262,7 +298,8 @@ impl Renderer {
                 .dependencies(&deps),
             None,
         )?;
-        for image in self.swap_api.get_swapchain_images(self.swap)? {
+        self.images = self.swap_api.get_swapchain_images(self.swap)?;
+        for &image in &self.images {
             let range = vk::ImageSubresourceRange::default()
                 .aspect_mask(vk::ImageAspectFlags::COLOR)
                 .level_count(1)
@@ -288,9 +325,44 @@ impl Renderer {
                 )?,
             );
         }
+        if self.capture_enabled {
+            let size = u64::from(self.extent.width) * u64::from(self.extent.height) * 4;
+            self.readback = self.device.create_buffer(
+                &vk::BufferCreateInfo::default()
+                    .size(size)
+                    .usage(vk::BufferUsageFlags::TRANSFER_DST)
+                    .sharing_mode(vk::SharingMode::EXCLUSIVE),
+                None,
+            )?;
+            let requirements = self.device.get_buffer_memory_requirements(self.readback);
+            let properties = self
+                .instance
+                .get_physical_device_memory_properties(self.physical);
+            let memory_type = (0..properties.memory_type_count)
+                .find(|&i| {
+                    requirements.memory_type_bits & (1 << i) != 0
+                        && properties.memory_types[i as usize].property_flags.contains(
+                            vk::MemoryPropertyFlags::HOST_VISIBLE
+                                | vk::MemoryPropertyFlags::HOST_COHERENT,
+                        )
+                })
+                .ok_or("No host-visible coherent capture memory")?;
+            self.readback_memory = self.device.allocate_memory(
+                &vk::MemoryAllocateInfo::default()
+                    .allocation_size(requirements.size)
+                    .memory_type_index(memory_type),
+                None,
+            )?;
+            self.device
+                .bind_buffer_memory(self.readback, self.readback_memory, 0)?;
+        }
         Ok(())
     }
-    pub unsafe fn draw(&mut self, app: &App) -> Result<bool> {
+    pub unsafe fn draw(
+        &mut self,
+        app: &App,
+        capture: &mut Option<std::path::PathBuf>,
+    ) -> Result<bool> {
         if self.swap == vk::SwapchainKHR::null() {
             return Ok(false);
         }
@@ -362,6 +434,77 @@ impl Renderer {
             self.device.cmd_clear_attachments(self.cmd, &a, &rect);
         }
         self.device.cmd_end_render_pass(self.cmd);
+        let range = vk::ImageSubresourceRange::default()
+            .aspect_mask(vk::ImageAspectFlags::COLOR)
+            .level_count(1)
+            .layer_count(1);
+        let barrier = vk::ImageMemoryBarrier::default()
+            .image(self.images[index as usize])
+            .subresource_range(range)
+            .src_queue_family_index(vk::QUEUE_FAMILY_IGNORED)
+            .dst_queue_family_index(vk::QUEUE_FAMILY_IGNORED)
+            .old_layout(vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL)
+            .src_access_mask(vk::AccessFlags::COLOR_ATTACHMENT_WRITE);
+        if capture.is_some() {
+            self.device.cmd_pipeline_barrier(
+                self.cmd,
+                vk::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT,
+                vk::PipelineStageFlags::TRANSFER,
+                vk::DependencyFlags::empty(),
+                &[],
+                &[],
+                &[barrier
+                    .new_layout(vk::ImageLayout::TRANSFER_SRC_OPTIMAL)
+                    .dst_access_mask(vk::AccessFlags::TRANSFER_READ)],
+            );
+            // buffer_row_length=0 means tightly packed rows; unlike linear images,
+            // this copy has no implementation-specific mapped image row pitch.
+            self.device.cmd_copy_image_to_buffer(
+                self.cmd,
+                self.images[index as usize],
+                vk::ImageLayout::TRANSFER_SRC_OPTIMAL,
+                self.readback,
+                &[vk::BufferImageCopy::default()
+                    .image_subresource(
+                        vk::ImageSubresourceLayers::default()
+                            .aspect_mask(vk::ImageAspectFlags::COLOR)
+                            .layer_count(1),
+                    )
+                    .image_extent(vk::Extent3D {
+                        width: self.extent.width,
+                        height: self.extent.height,
+                        depth: 1,
+                    })],
+            );
+            self.device.cmd_pipeline_barrier(
+                self.cmd,
+                vk::PipelineStageFlags::TRANSFER,
+                vk::PipelineStageFlags::HOST | vk::PipelineStageFlags::BOTTOM_OF_PIPE,
+                vk::DependencyFlags::empty(),
+                &[],
+                &[vk::BufferMemoryBarrier::default()
+                    .buffer(self.readback)
+                    .size(vk::WHOLE_SIZE)
+                    .src_queue_family_index(vk::QUEUE_FAMILY_IGNORED)
+                    .dst_queue_family_index(vk::QUEUE_FAMILY_IGNORED)
+                    .src_access_mask(vk::AccessFlags::TRANSFER_WRITE)
+                    .dst_access_mask(vk::AccessFlags::HOST_READ)],
+                &[barrier
+                    .old_layout(vk::ImageLayout::TRANSFER_SRC_OPTIMAL)
+                    .new_layout(vk::ImageLayout::PRESENT_SRC_KHR)
+                    .src_access_mask(vk::AccessFlags::TRANSFER_READ)],
+            );
+        } else {
+            self.device.cmd_pipeline_barrier(
+                self.cmd,
+                vk::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT,
+                vk::PipelineStageFlags::BOTTOM_OF_PIPE,
+                vk::DependencyFlags::empty(),
+                &[],
+                &[],
+                &[barrier.new_layout(vk::ImageLayout::PRESENT_SRC_KHR)],
+            );
+        }
         self.device.end_command_buffer(self.cmd)?;
         let waits = [self.acquired];
         let stages = [vk::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT];
@@ -374,6 +517,24 @@ impl Renderer {
             .signal_semaphores(&signals)];
         self.device
             .queue_submit(self.queue, &submit, vk::Fence::null())?;
+        if let Some(path) = capture.as_ref() {
+            // Only map after this frame's transfer completes; never read a previous frame.
+            self.device.queue_wait_idle(self.queue)?;
+            let size = self.extent.width as usize * self.extent.height as usize * 4;
+            let mapped = self.device.map_memory(
+                self.readback_memory,
+                0,
+                size as u64,
+                vk::MemoryMapFlags::empty(),
+            )?;
+            let pixels = packed_rgb(
+                std::slice::from_raw_parts(mapped.cast::<u8>(), size),
+                self.format,
+            );
+            self.device.unmap_memory(self.readback_memory);
+            pong_scenario::Demo::save_rgb(path, &pixels, self.extent.width, self.extent.height);
+            *capture = None;
+        }
         match self.swap_api.queue_present(
             self.queue,
             &vk::PresentInfoKHR::default()
@@ -399,5 +560,55 @@ impl Drop for Renderer {
             self.surface_api.destroy_surface(self.surface, None);
             self.instance.destroy_instance(None);
         }
+    }
+}
+
+fn supported_capture_format(format: vk::Format) -> bool {
+    matches!(
+        format,
+        vk::Format::B8G8R8A8_UNORM
+            | vk::Format::B8G8R8A8_SRGB
+            | vk::Format::R8G8B8A8_UNORM
+            | vk::Format::R8G8B8A8_SRGB
+    )
+}
+fn packed_rgb(bytes: &[u8], format: vk::Format) -> Vec<u32> {
+    assert!(supported_capture_format(format));
+    assert_eq!(bytes.len() % 4, 0);
+    let bgra = matches!(
+        format,
+        vk::Format::B8G8R8A8_UNORM | vk::Format::B8G8R8A8_SRGB
+    );
+    bytes
+        .as_chunks::<4>()
+        .0
+        .iter()
+        .map(|p| {
+            let (r, b) = if bgra { (p[2], p[0]) } else { (p[0], p[2]) };
+            (u32::from(r) << 16) | (u32::from(p[1]) << 8) | u32::from(b)
+        })
+        .collect()
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn capture_preserves_row_order_and_swizzles_bgra() {
+        let bytes = [3, 2, 1, 255, 6, 5, 4, 128];
+        assert_eq!(
+            packed_rgb(&bytes, vk::Format::B8G8R8A8_UNORM),
+            [0x010203, 0x040506]
+        );
+        assert_eq!(
+            packed_rgb(&bytes, vk::Format::R8G8B8A8_SRGB),
+            [0x030201, 0x060504]
+        );
+    }
+    #[test]
+    fn rejects_non_eight_bit_formats() {
+        assert!(!supported_capture_format(
+            vk::Format::A2B10G10R10_UNORM_PACK32
+        ));
+        assert!(!supported_capture_format(vk::Format::UNDEFINED));
     }
 }

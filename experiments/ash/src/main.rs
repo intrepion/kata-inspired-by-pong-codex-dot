@@ -11,6 +11,9 @@ use winit::{
 #[derive(Default)]
 struct Frontend {
     app: App,
+    demo: Option<pong_scenario::Demo>,
+    pending_capture: Option<std::path::PathBuf>,
+    capture_enabled: bool,
     renderer: Option<renderer::Renderer>,
     window: Option<Rc<Window>>,
     last: Option<Instant>,
@@ -29,7 +32,7 @@ impl ApplicationHandler for Frontend {
             )
             .unwrap(),
         );
-        match unsafe { renderer::Renderer::new(&w) } {
+        match unsafe { renderer::Renderer::new(&w, self.capture_enabled) } {
             Ok(r) => self.renderer = Some(r),
             Err(e) => {
                 eprintln!("Cannot initialize Vulkan: {e}");
@@ -53,8 +56,8 @@ impl ApplicationHandler for Frontend {
                     }
                 }
             }
-            WindowEvent::Focused(false) => self.app.blur(),
-            WindowEvent::KeyboardInput { event, .. } => {
+            WindowEvent::Focused(false) if self.demo.is_none() => self.app.blur(),
+            WindowEvent::KeyboardInput { event, .. } if self.demo.is_none() => {
                 let pressed = event.state == ElementState::Pressed;
                 match event.physical_key {
                     PhysicalKey::Code(KeyCode::KeyW | KeyCode::ArrowUp) => self.app.up = pressed,
@@ -73,15 +76,28 @@ impl ApplicationHandler for Frontend {
             }
             WindowEvent::RedrawRequested => {
                 let now = Instant::now();
-                self.app.tick(
-                    self.last
-                        .replace(now)
-                        .map_or(0., |t| (now - t).as_secs_f32()),
-                );
+                let elapsed = self
+                    .last
+                    .replace(now)
+                    .map_or(0., |t| (now - t).as_secs_f32());
+                // Retry an unpresentable checkpoint without advancing its state.
+                if self.pending_capture.is_none() {
+                    if let Some(demo) = &mut self.demo {
+                        demo.advance(&mut self.app.game, elapsed);
+                        self.pending_capture = demo.capture_path();
+                    } else {
+                        self.app.tick(elapsed);
+                    }
+                }
                 let w = self.window.as_ref().unwrap();
                 let size = w.inner_size();
                 if size.width > 0 && size.height > 0 {
-                    match unsafe { self.renderer.as_mut().unwrap().draw(&self.app) } {
+                    match unsafe {
+                        self.renderer
+                            .as_mut()
+                            .unwrap()
+                            .draw(&self.app, &mut self.pending_capture)
+                    } {
                         Ok(true) => {
                             if let Err(e) = unsafe {
                                 self.renderer
@@ -102,7 +118,16 @@ impl ApplicationHandler for Frontend {
                         }
                     }
                 }
-                w.set_title(&self.app.title("Vulkan / ash"));
+                w.set_title(&self.app.title(if self.demo.is_some() {
+                    "Vulkan / ash / SCRIPTED"
+                } else {
+                    "Vulkan / ash"
+                }));
+                if self.demo.as_ref().is_some_and(|d| d.finished())
+                    && self.pending_capture.is_none()
+                {
+                    el.exit();
+                }
             }
             _ => {}
         }
@@ -124,7 +149,11 @@ impl ApplicationHandler for Frontend {
     }
 }
 fn main() {
-    let mut app = Frontend::default();
+    let mut app = Frontend {
+        demo: pong_scenario::Demo::from_args(),
+        capture_enabled: std::env::args().any(|a| a == "--scripted-captures"),
+        ..Default::default()
+    };
     EventLoop::new().unwrap().run_app(&mut app).unwrap();
     if app.failed {
         std::process::exit(1);

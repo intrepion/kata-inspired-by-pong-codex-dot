@@ -15,10 +15,12 @@ fn rect(engine: &mut Engine, name: &str, x: f32, y: f32, width: f32, height: f32
         object.set_position([x + width / 2. - W / 2., H / 2. - y - height / 2., z]);
     }
 }
+#[cfg(all(feature = "windowed", feature = "capture-headless"))]
+compile_error!("Use --no-default-features --features capture-headless for headless export");
 fn main() -> Result<(), blue_engine::error::Error> {
     let mut engine = Engine::new_config(EngineSettings {
-        width: 1000,
-        height: 680,
+        width: if cfg!(feature = "capture-headless") { 1024 } else { 1000 },
+        height: if cfg!(feature = "capture-headless") { 640 } else { 680 },
         title: "Pong Blue Engine",
         present_mode: blue_engine::wgpu::PresentMode::AutoVsync,
         ..Default::default()
@@ -81,14 +83,55 @@ fn main() -> Result<(), blue_engine::error::Error> {
         }
     }
     let mut game = Game::new(42);
+    let mut demo = pong_scenario::Demo::from_args();
+    #[cfg(feature = "windowed")]
+    assert!(
+        !std::env::args().any(|a| a == "--scripted-captures"),
+        "Blue Engine capture requires --no-default-features --features capture-headless"
+    );
+    #[cfg(feature = "capture-headless")]
+    assert!(demo.is_some(), "headless export requires --scripted-test");
+    #[cfg(feature = "capture-headless")]
+    let mut pending: Option<(std::path::PathBuf, u8)> = None;
+
     let mut previous = Instant::now();
+    #[cfg(feature = "windowed")]
     let mut accumulator = 0.;
+    #[cfg(feature = "windowed")]
     let mut title = String::new();
+    #[cfg(feature = "windowed")]
     let mut dimensions = (0, 0);
+    #[cfg(feature = "capture-headless")]
+    {
+        engine.camera.set_projection(Projection::Orthographic {
+            zoom: (W + 30.).max((H + 30.) * 1.6),
+        });
+        engine.camera.update_view_projection(&mut engine.renderer);
+    }
     engine.update_loop(move |engine| {
         let now = Instant::now();
         let dt = now.duration_since(previous).as_secs_f32().min(0.1);
         previous = now;
+        #[cfg(feature = "capture-headless")]
+        if let Some((path, remaining)) = &mut pending {
+            if *remaining > 0 { *remaining -= 1; return; }
+            let rgba = &engine.renderer.headless_texture_data;
+            let (width, height) = (engine.renderer.config.width, engine.renderer.config.height);
+            assert_eq!(rgba.len(), width as usize * height as usize * 4);
+            use blue_engine::wgpu::TextureFormat;
+            let bgra = match engine.renderer.config.format {
+                TextureFormat::Bgra8Unorm | TextureFormat::Bgra8UnormSrgb => true,
+                TextureFormat::Rgba8Unorm | TextureFormat::Rgba8UnormSrgb => false,
+                other => panic!("Unsupported app-frame format {other:?}"),
+            };
+            let rgb: Vec<u32> = rgba.as_chunks::<4>().0.iter().map(|p| { let (r,b) = if bgra {(p[2],p[0])} else {(p[0],p[2])}; (u32::from(r)<<16)|(u32::from(p[1])<<8)|u32::from(b) }).collect();
+            pong_scenario::Demo::save_rgb(path, &rgb, width, height);
+            pending = None;
+        }
+        if demo.as_ref().is_some_and(|d| d.finished()) { std::process::exit(0); }
+        if let Some(demo) = &mut demo { demo.advance(&mut game, dt); }
+        #[cfg(feature = "windowed")]
+        if demo.is_none() {
         let focused = engine.window.as_ref().is_some_and(|window| window.has_focus());
         if !focused {
             game.pause();
@@ -107,6 +150,8 @@ fn main() -> Result<(), blue_engine::error::Error> {
             accumulator += dt;
             while accumulator >= 1. / 120. { game.step(1. / 120., axis); accumulator -= 1. / 120.; }
         }
+        }
+        #[cfg(feature = "windowed")]
         if let Some(window) = engine.window.as_ref() {
             let size = window.inner_size();
             if size.width > 0 && size.height > 0 && dimensions != (size.width, size.height) {
@@ -126,6 +171,11 @@ fn main() -> Result<(), blue_engine::error::Error> {
             let width = if point < game.scores[side] { 8. } else { 0. };
             rect(engine, &name, 330.+side as f32*170.+point as f32*12., 20., width, 18., 0.);
         }}
+        #[cfg(feature = "capture-headless")]
+        if let Some(path) = demo.as_mut().and_then(|d| d.capture_path()) {
+            // Rendering precedes changed-object upload in the framework loop.
+            pending = Some((path, 1));
+        }
     })?;
     Ok(())
 }

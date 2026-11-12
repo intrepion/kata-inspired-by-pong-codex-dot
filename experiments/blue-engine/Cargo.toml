@@ -5,4 +5,10 @@ edition = "2021"
 [workspace]
 [dependencies]
 pong-core = { path = "../../crates/pong-core" }
-blue_engine = { version = "=0.10.0", default-features = false, features = ["window", "static_link"] }
+blue_engine = { version = "=0.10.0", default-features = false, features = ["static_link"] }
+pong-scenario = { path = "../../crates/pong-scenario" }
+
+[features]
+default = ["windowed"]
+windowed = ["blue_engine/window"]
+capture-headless = ["blue_engine/headless"]

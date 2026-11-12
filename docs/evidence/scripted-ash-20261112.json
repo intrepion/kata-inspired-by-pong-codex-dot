@@ -1,0 +1,60 @@
+{
+  "platform": "Omarchy ARM64",
+  "date": "2026-11-12",
+  "device": "Apple M1 Pro (G13S C0)",
+  "adapter": "ash",
+  "exit": 0,
+  "finalTick": 1440,
+  "telemetryRecords": 13,
+  "baselineIdentical": true,
+  "noCaptureRunIdentical": true,
+  "inspectedTicks": [
+    120,
+    240,
+    480,
+    600,
+    1320,
+    1440
+  ],
+  "frames": [
+    {
+      "file": "tick-0120.png",
+      "width": 1474,
+      "height": 1864,
+      "sha256": "6de25bfc0240f8ac08698bd141678548246658263dd9510b76cc3d32014cf5a8"
+    },
+    {
+      "file": "tick-0240.png",
+      "width": 1474,
+      "height": 1864,
+      "sha256": "02ba1d12134571195e6389c378f764a9fbfdcf7c6a7e91aff415e3394b1968e0"
+    },
+    {
+      "file": "tick-0480.png",
+      "width": 1474,
+      "height": 1864,
+      "sha256": "b625fb03c1f5663c353eed582800d6ffd267ed8025e86f81279088369a0d5ccb"
+    },
+    {
+      "file": "tick-0600.png",
+      "width": 1474,
+      "height": 1864,
+      "sha256": "a6ce96e6ddc7eaefd2e8b1044dfbce7c0bba26729ddf63ec4931e8282473916e"
+    },
+    {
+      "file": "tick-1320.png",
+      "width": 1474,
+      "height": 1864,
+      "sha256": "000242e250f148aa0f3a8504abbc5ed9bf01dabee6038eb18aa1ad8150d9ccef"
+    },
+    {
+      "file": "tick-1440.png",
+      "width": 1474,
+      "height": 1864,
+      "sha256": "96cb7c8590118f7501155590c8f42a178c5de3a258d82e07026a7cb9558e3305"
+    }
+  ],
+  "checks": "Locked offline build, two adapter tests, five shared scenario tests, and strict all-target Clippy passed.",
+  "capture": "Actual acquired app-owned Vulkan swapchain image copied to tightly packed host-coherent staging buffer before presentation. Explicit layout and memory barriers; waits for same-frame transfer. Surface TRANSFER_SRC capability and supported 8-bit formats checked; unsupported surfaces fail explicitly.",
+  "boundary": "No OS desktop capture/control. Not physical keyboard, compositor, sustained smooth-motion, performance or Windows/macOS evidence. No Vulkan validation layers available on this installation."
+}

@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 pong-core = { path = "../../crates/pong-core" }
 fyrox = "=1.0.1"
+pong-scenario = { path = "../../crates/pong-scenario" }
