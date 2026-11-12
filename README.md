@@ -9,7 +9,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Softbuffer three valid callback repeats, 2 adapter + 13 shared tests and 12.1s scripted replay/capture passed (08:17 UTC); processes exited. | [Softbuffer Windows evidence](docs/benchmarks/SOFTBUFFER-WINDOWS-PILOT.md). Next: pixels release build. Packaging and OS-input gates remain separate. |
-| Mac | ggez eighth timing adapter: release build, 2 Rust + 13 Node tests and 3 valid repeats complete; replay finished in 12.320 seconds with 13 states and six frames. Processes exited. | [ggez Mac evidence](docs/benchmarks/GGEZ-MAC-PILOT.md). Piston timing fix is separate; original slowdown evidence retained. Yew focus inconclusive; packaging partial. |
+| Mac | Piston wall-clock slowdown fixed and requalified: plain replay 12.723 seconds, capture 12.380 seconds/six frames; seven unit tests and three separate post-fix timing repeats passed. Processes exited. | [Original and fixed Piston evidence](docs/benchmarks/PISTON-MAC-PILOT.md). Eight Mac timing adapters recorded; next Nannou after shared adapter publication. Yew focus inconclusive; packaging partial. |
 | Omarchy ARM64 | Ninth timing adapter Nannou: three valid release callback repeats, replay and six app-owned screenshots passed; processes exited. | [Nannou evidence](docs/benchmarks/NANNOU-ADAPTER.md). 2 Rust + 14 Node tests/Clippy pass; tick 600 inspected. Not a real-input or full visual acceptance claim. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
