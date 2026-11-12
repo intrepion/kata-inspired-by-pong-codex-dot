@@ -15,3 +15,5 @@ Bevy uses process-only `WGPU_BACKEND=dx12`; default Vulkan remains rejected, so 
 Fyrox pre-run read-only receipt confirmed no registry in its isolated extracted folder; afterwards `data/resources.registry` contained exact two-byte `{}`. Inspection returned review-candidate, not deletion authorization. The generated state is preserved. Older checkout-generated data is also untouched. This is not clean uninstall.
 
 All fifteen currently timed native adapters now have Windows local portable archive/extracted-runtime evidence, but not universal release readiness. Full notices, dependency/clean-machine tests, signed/downloaded-file behavior, actual installers/upgrades/uninstalls and native keyboard/focus gates remain. No new benchmark or ranking claim.
+
+Read-only Fyrox state-planning tests on Windows: five pass, two symlink cases skipped (platform capability). No skipped test counted as passed.
