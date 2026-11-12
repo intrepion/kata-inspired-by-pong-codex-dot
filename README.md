@@ -251,6 +251,6 @@ Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md
 | Piston | [3/3](docs/benchmarks/PISTON-MAC-PILOT.md) | [3/3](docs/benchmarks/PISTON-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/PISTON-ADAPTER.md) |
 | ggez | [3/3](docs/benchmarks/GGEZ-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/GGEZ-ADAPTER.md) |
 | Nannou | Not recorded | Not recorded | [3/3](docs/benchmarks/NANNOU-ADAPTER.md) |
-| raw wgpu | Not recorded | Not recorded | [3/3](docs/benchmarks/WGPU-ADAPTER.md) |
+| raw wgpu | Not recorded | [3/3](docs/benchmarks/WGPU-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/WGPU-ADAPTER.md) |
 
 Other implementations have not yet been qualified through this shared timing protocol. Package lifecycle status is a separate dimension: Mac [Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md) and [SDL3](docs/packaging/SDL3-MAC-PILOT.md) have local extracted-app gameplay/removal evidence, not signed or clean-machine release qualification.
