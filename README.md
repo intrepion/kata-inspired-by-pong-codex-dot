@@ -4,13 +4,13 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 05:52 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 06:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Fresh original TypeScript and raw-WASM browser replay completed on `0cbe38f`; TS15 tests, WASM2 ABI and7 Rust scenario/WASM tests passed. | Bounded browser batch complete; tabs closed. Bundle downloads, true focus-loss and responsive override unverified. See [follow-up](docs/WINDOWS-BROWSER-REPLAY-FOLLOWUP.md). |
 | Mac | Published `18bc91c`: Swift simulator touch/release, Home background pause/resume, genuine full match and restart passed. Fresh Yew/Leptos actual native gameplay passed. | Assigned batch complete; apps exited and no simulator booted. No wrapper focus/resize/full-match pass claimed. Swift physical-device and store-packaging checks remain outstanding. |
-| Omarchy ARM64 | Shared benchmark pilot completed: Macroquad release, three valid callback-interval samples at stable app dimensions. | Pilot published, runs finished. Not display FPS or an engine ranking; background load and driver/power metadata limits documented. |
+| Omarchy ARM64 | Macroquad Linux ARM64 local portable archive and isolated staged install/run/uninstall pilot completed. | Pilot only: checksum and installed replay passed; no system installer, clean-machine/cross-distro, upgrade, signing or dependency-license inventory pass. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -213,3 +213,7 @@ Windows follow-up: [fresh original TypeScript and raw-WASM browser replay comple
 ## Benchmark pilot
 
 The [shared Macroquad benchmark pilot](docs/benchmarks/README.md) completed three release runs on Omarchy. Median **frame-callback intervals** were about 8.33 ms, not measured display FPS. Raw samples, rejected attempts and metadata limits are retained. This is a harness pilot, **not a cross-engine ranking**; CPU/memory/startup/power/presentation metrics and packaging remain unmeasured.
+
+## Packaging pilot
+
+[Macroquad Linux ARM64 portable archive](docs/packaging/README.md): local creation, checksum validation, isolated staged extraction, installed scripted run and exact-file uninstall passed. Archive remains local and is not a distribution-ready release. System installation, clean-machine/cross-distro compatibility, upgrades, signing and full dependency notices remain pending.
