@@ -8,3 +8,4 @@ pong-scenario = { path = "../../crates/pong-scenario" }
 pong-core = { path = "../../crates/pong-core" }
 piston_window = "=0.148.0"
 wgpu = "=29.0.4"
+pong-benchmark = { path = "../../crates/pong-benchmark" }

@@ -1961,6 +1961,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "pong-benchmark"
+version = "0.1.0"
+
+[[package]]
 name = "pong-core"
 version = "0.1.0"
 
@@ -1969,6 +1973,7 @@ name = "pong-piston"
 version = "0.1.0"
 dependencies = [
  "piston_window",
+ "pong-benchmark",
  "pong-core",
  "pong-scenario",
  "wgpu",

@@ -42,3 +42,9 @@ test('Miniquad metadata names submission boundary without asserting driver', () 
   assert.match(config.pacing, /commit_frame/);
   assert.match(config.renderer, /driver unqueried/);
 });
+
+test('Piston metadata distinguishes render callbacks from update rate', () => {
+  const config = parseArguments(['binary', 'out.json', 'unqueried', 'pilot', '--adapter', 'piston']);
+  assert.match(config.pacing, /render events only/);
+  assert.match(config.pacing, /120UPS/);
+});

@@ -2,7 +2,17 @@ use piston_window::graphics::{clear, ellipse, rectangle, Transformed};
 
 use piston_window::*;
 use pong_core::*;
+fn benchmark_args(args: &[String]) -> bool {
+    let enabled = args.iter().any(|a| a == "--benchmark");
+    assert!(
+        !enabled || !args.iter().any(|a| a.starts_with("--scripted")),
+        "benchmark and replay/capture modes are distinct"
+    );
+    enabled
+}
+
 fn main() {
+    let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     let mut window: PistonWindow = WindowSettings::new(
         "Pong Piston | Enter: start | W/S/arrows: move | Space: pause | R: restart",
         [1000, 680],
@@ -12,14 +22,16 @@ fn main() {
     .build()
     .expect("create Piston window");
     window.set_ups(120);
-    let mut game = Game::new(42);
+    let mut game = Game::new(pong_scenario::SEED);
+    let mut scenario = pong_scenario::Scenario::default();
+    let mut benchmark: Option<pong_benchmark::Frames> = None;
     let mut demo = pong_scenario::Demo::from_args();
     let mut held = [false; 4];
     let mut pressed = std::collections::HashSet::new();
     let mut acc = 0.;
     let mut last_title = String::new();
     while let Some(e) = window.next() {
-        if demo.is_none() {
+        if demo.is_none() && !benchmarking {
             if let Some(Button::Keyboard(key)) = e.press_args() {
                 for (i, k) in [Key::W, Key::Up, Key::S, Key::Down].into_iter().enumerate() {
                     if key == k {
@@ -63,10 +75,18 @@ fn main() {
             } else {
                 acc += u.dt.min(0.1);
                 while acc >= 1. / 120. {
-                    game.step(
-                        1. / 120.,
-                        (held[2] || held[3]) as u8 as f32 - (held[0] || held[1]) as u8 as f32,
-                    );
+                    if benchmarking {
+                        if scenario.finished() {
+                            scenario = pong_scenario::Scenario::default();
+                            game = Game::new(pong_scenario::SEED);
+                        }
+                        scenario.advance(&mut game);
+                    } else {
+                        game.step(
+                            1. / 120.,
+                            (held[2] || held[3]) as u8 as f32 - (held[0] || held[1]) as u8 as f32,
+                        );
+                    }
                     acc -= 1. / 120.;
                 }
             }
@@ -80,6 +100,15 @@ fn main() {
         }
         window.draw_2d(&e, |c, g, _| draw_scene(c, g, &game));
         if let Some(args) = e.render_args() {
+            if benchmarking {
+                let frames = benchmark.get_or_insert_with(|| {
+                    pong_benchmark::Frames::new(args.draw_size[0], args.draw_size[1])
+                });
+                if frames.frame(args.draw_size[0], args.draw_size[1]) {
+                    println!("PONG_BENCHMARK {}", frames.report());
+                    break;
+                }
+            }
             if let Some(path) = demo.as_mut().and_then(|d| d.capture_path()) {
                 capture(&mut window, args, &game, &path).expect("app-owned render target capture");
             }
@@ -264,4 +293,19 @@ fn capture(
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod benchmark_tests {
+    use super::*;
+    #[test]
+    fn benchmark_is_opt_in() {
+        assert!(!benchmark_args(&[]));
+        assert!(benchmark_args(&["--benchmark".into()]));
+    }
+    #[test]
+    #[should_panic(expected = "benchmark and replay/capture modes are distinct")]
+    fn rejects_capture_mixing() {
+        benchmark_args(&["--benchmark".into(), "--scripted-test".into()]);
+    }
 }
