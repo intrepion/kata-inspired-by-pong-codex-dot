@@ -266,5 +266,19 @@ Mac [raylib-rs local package pilot](docs/packaging/RAYLIB-MAC-PILOT.md) also pas
 
 Linux portable lifecycle expansion: [Miniquad, pixels, raw wgpu and raylib-rs](docs/packaging/LINUX-PORTABLE-BATCH.md) have verified local extraction/replay/capture/removal evidence.
 
+### Local portable-package lifecycle coverage
 
+These are local archive extraction, relocated runtime and removal checks, **not public installer or clean-machine release qualification**. “Not recorded” is not a failure. Native input remains a separate gate.
 
+| Adapter | Mac | Windows | Omarchy ARM64 |
+| --- | --- | --- | --- |
+| Macroquad | Local pilot | Local pilot | Local pilot |
+| SDL3 | Local pilot | Not recorded | Local pilot |
+| raylib | [Local replay + bounded native input](docs/packaging/RAYLIB-MAC-PILOT.md) | Not recorded | Local pilot |
+| ash | Loader blocked | Not recorded | Local pilot |
+| Miniquad | [Local replay/capture pilot](docs/packaging/MINIQUAD-MAC-PILOT.md) | Not recorded | [Four-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH.md) |
+| pixels, raw wgpu | Not recorded | Not recorded | [Four-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH.md) |
+| Piston, ggez, Nannou, bracket-lib, Fyrox, Bevy | Not recorded | Not recorded | [Six-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH2.md) |
+| Other adapters | Not recorded | Not recorded | Not recorded |
+
+Evidence and limitations: [packaging index](docs/packaging/README.md), [Mac Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md), [Windows Macroquad](docs/packaging/MACROQUAD-WINDOWS-PILOT.md), [Mac SDL3](docs/packaging/SDL3-MAC-PILOT.md), [Mac raylib](docs/packaging/RAYLIB-MAC-PILOT.md), [Linux ash](docs/packaging/ASH-LINUX-PILOT.md).
