@@ -4,13 +4,13 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 09:10 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 09:14 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Nannou release completed after 24m39s; 3 valid timing repeats, 2 adapter tests and 12.9s replay/capture passed. Ten Windows timing adapters recorded. | [Nannou Windows evidence](docs/benchmarks/NANNOU-WINDOWS-PILOT.md). Next: bracket-lib. Runner regression 21 pass/1 POSIX-only skip. |
 | Mac | Fourteen native timing pilots complete; raylib local package archive/extraction, relocated replay and six PNGs passed. Nine packaging guards and 22 benchmark-runner tests pass; processes exited. | [raylib Mac packaging evidence](docs/packaging/RAYLIB-MAC-PILOT.md). Ash loader, remaining input/visual and distribution gates remain separate. |
-| Omarchy ARM64 | Fifteen timing adapters and ash local package lifecycle recorded. Packaging follow-up: 95 dependency declarations inventoried, two local missing MIT metadata entries corrected; 6 Node + 4 Rust tests pass. | [ash packaging evidence](docs/packaging/ASH-LINUX-PILOT.md). Full third-party notice bundling, real-input/focus, public installers and clean-machine checks remain open. No active runtime process. |
+| Omarchy ARM64 | Four more portable lifecycle pilots passed: Miniquad, pixels, raw wgpu and raylib. Hashes, relocated 13-state replay/six captures, exact-file uninstall and sentinel preservation verified; 24 Node tests pass. | [Four-adapter Linux package batch](docs/packaging/LINUX-PORTABLE-BATCH.md). Fifteen native timing adapters recorded. No public installer, clean-machine or full notice qualification. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -263,3 +263,5 @@ Other implementations have not yet been qualified through this shared timing pro
 Additional local package lifecycle: [ash/Vulkan Linux ARM64](docs/packaging/ASH-LINUX-PILOT.md) passed relocation/replay/capture/removal; runtime dependencies and release gates remain explicit.
 
 Mac [raylib-rs local package pilot](docs/packaging/RAYLIB-MAC-PILOT.md) also passed extracted native scripted replay/captures and scoped removal; no signed distribution or manual-input package pass inferred.
+
+Linux portable lifecycle expansion: [Miniquad, pixels, raw wgpu and raylib-rs](docs/packaging/LINUX-PORTABLE-BATCH.md) have verified local extraction/replay/capture/removal evidence.

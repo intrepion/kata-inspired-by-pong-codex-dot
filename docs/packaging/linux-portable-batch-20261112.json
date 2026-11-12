@@ -1,0 +1,154 @@
+{
+  "schema": 1,
+  "scope": "local same-machine portable lifecycle only; not public installer or clean-machine qualification",
+  "runs": [
+    {
+      "adapter": "miniquad",
+      "name": "pong-miniquad",
+      "archive_sha256": "c09acc7a908369ff637024dae763cde5e27a133ec18022887a2aa158991a85d7",
+      "binary_sha256": "6525165093ab3ecea15e7fdaa7edbaf9cd44ad41d20e9dd4d88d962952c75ae5",
+      "size": 444408,
+      "source_commit": "59e9b1562940c4897cc25ec5d039c41a677d75c5",
+      "matches_previous_timing_binary": true,
+      "runtime": {
+        "exit": 0,
+        "signal": null,
+        "seconds": 12.105,
+        "states": 13,
+        "final": {
+          "scenario": "smoke-v1",
+          "seed": 42,
+          "tick": 1440,
+          "state": "Playing",
+          "player": 250,
+          "cpu": 250,
+          "ball": [
+            89.02103,
+            136.44139,
+            185.1054,
+            -322.69702
+          ],
+          "scores": [
+            0,
+            0
+          ],
+          "finished": true
+        },
+        "captures": 6
+      },
+      "uninstall": true,
+      "tick600_inspected": true
+    },
+    {
+      "adapter": "pixels",
+      "name": "pong-pixels",
+      "archive_sha256": "0eb6c8fa11be614fa7f9177bb4efec4dcb47bdf0bc2c78005a562a43d9b2b58d",
+      "binary_sha256": "0caf8eaa71472205da297ccdbe106387b06788d63e4edbed41847bb8d3b7a37b",
+      "size": 4005811,
+      "source_commit": "59e9b1562940c4897cc25ec5d039c41a677d75c5",
+      "matches_previous_timing_binary": true,
+      "runtime": {
+        "exit": 0,
+        "signal": null,
+        "seconds": 12.081,
+        "states": 13,
+        "final": {
+          "scenario": "smoke-v1",
+          "seed": 42,
+          "tick": 1440,
+          "state": "Playing",
+          "player": 250,
+          "cpu": 250,
+          "ball": [
+            89.02103,
+            136.44139,
+            185.1054,
+            -322.69702
+          ],
+          "scores": [
+            0,
+            0
+          ],
+          "finished": true
+        },
+        "captures": 6
+      },
+      "uninstall": true,
+      "tick600_inspected": true
+    },
+    {
+      "adapter": "wgpu",
+      "name": "pong-wgpu",
+      "archive_sha256": "8e8d6bdfe974e0f41c1e31c07a5d5885a6695318e577859764dbba64babc7724",
+      "binary_sha256": "28bd6f3bbdd6ded56bcc7d277f988da74e20fa6774194a856f6dc7867f59a147",
+      "size": 3978179,
+      "source_commit": "59e9b1562940c4897cc25ec5d039c41a677d75c5",
+      "matches_previous_timing_binary": true,
+      "runtime": {
+        "exit": 0,
+        "signal": null,
+        "seconds": 12.079,
+        "states": 13,
+        "final": {
+          "scenario": "smoke-v1",
+          "seed": 42,
+          "tick": 1440,
+          "state": "Playing",
+          "player": 250,
+          "cpu": 250,
+          "ball": [
+            89.02103,
+            136.44139,
+            185.1054,
+            -322.69702
+          ],
+          "scores": [
+            0,
+            0
+          ],
+          "finished": true
+        },
+        "captures": 6
+      },
+      "uninstall": true,
+      "tick600_inspected": true
+    },
+    {
+      "adapter": "raylib",
+      "name": "pong-raylib-rs",
+      "archive_sha256": "162f36081595148e619b71c7c06d9ba6fbb4142eb43de0649013265b209a35d6",
+      "binary_sha256": "a850529081cc8ef140f0fe835865bd03cf6b2caace40f4c297640672714a8d81",
+      "size": 409975,
+      "source_commit": "59e9b1562940c4897cc25ec5d039c41a677d75c5",
+      "matches_previous_timing_binary": true,
+      "runtime": {
+        "exit": 0,
+        "signal": null,
+        "seconds": 12.862,
+        "states": 13,
+        "final": {
+          "scenario": "smoke-v1",
+          "seed": 42,
+          "tick": 1440,
+          "state": "Playing",
+          "player": 250,
+          "cpu": 250,
+          "ball": [
+            89.02103,
+            136.44139,
+            185.1054,
+            -322.69702
+          ],
+          "scores": [
+            0,
+            0
+          ],
+          "finished": true
+        },
+        "captures": 6
+      },
+      "uninstall": true,
+      "tick600_inspected": true
+    }
+  ]
+}
