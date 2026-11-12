@@ -1,0 +1,19 @@
+[
+  {
+    "adapter": "bracket-lib",
+    "schema": 1,
+    "platform": "darwin",
+    "architecture": "arm64",
+    "binary_sha256": "8e6c75ccca7625a83e0c9b93ace64e030cfd5f8be5888bc3e7a024c22458257d",
+    "archive_sha256": "61de0e14ee07079227e60f7384f3ae4ba4ea913cee35bf233b0d7cc47f196668",
+    "archive_bytes": 808392,
+    "status": 0,
+    "signal": null,
+    "elapsed_seconds": 13.191,
+    "states": 13,
+    "final_tick": 1440,
+    "finished": true,
+    "captures": 6,
+    "scoped_removal": true
+  }
+]

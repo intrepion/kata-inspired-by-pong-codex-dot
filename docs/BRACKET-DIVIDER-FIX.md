@@ -21,3 +21,12 @@ Earlier benchmark/package reports retain their original binary hashes and visual
 caveat as historical evidence. The new source still needs Windows/Linux visual
 requalification and a newly packaged-binary run before those results apply to it.
 No signing, license-gap resolution or full release acceptance is claimed.
+
+## Updated Mac package requalification
+
+The corrected binary was packaged into a new archive (old archive retained),
+extracted outside the checkout and hash-checked. Relocated native replay exited
+zero in 13.191 seconds with thirteen states and six PNGs. Tick 600 confirms the
+corrected divider survived packaging. Exact extracted app removal preserved an
+adjacent sentinel. [New package manifest/result](packaging/mac-bracket-contrast-package-20261112.json)
+records the new hashes. No new timing pilot or manual package input pass inferred.
