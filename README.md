@@ -4,12 +4,12 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 07:27 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 07:29 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Network restored; fresh TS15, core9, sampler3, replay5 and fixed cross-platform runner5 tests passed. Three Macroquad release benchmark repeats completed; processes exited. | Portable snapshot repaired as a strict semantic comparison; Windows max numeric delta 0.00002 within explicit 0.001 bound, all discrete fields exact. [Contract and regression tests](docs/PORTABLE-SNAPSHOT-COMPARISON.md). Linux/Mac reruns pending. [Checks](docs/WINDOWS-CONTINUATION-20261112.md); [benchmark pilot](docs/benchmarks/WINDOWS-MACROQUAD-PILOT.md). |
-| Mac | Earlier Macroquad three-repeat callback pilot recovered; local ARM64 app/archive creation verified, but extracted runtime failed in current execution session. | [Timing evidence](docs/benchmarks/MACROQUAD-MAC-PILOT.md); [package failure and next checks](docs/packaging/MACROQUAD-MAC-PILOT.md). Not a successful installation or distribution-ready build. |
+| Mac | Macroquad extracted ARM64 app launched through supported GUI; held W/S, start, pause/resume, scoring and restart passed; test app closed. | [Timing evidence](docs/benchmarks/MACROQUAD-MAC-PILOT.md); [package GUI follow-up](docs/packaging/MACROQUAD-MAC-PILOT.md). Earlier shell launch failed; signing, Gatekeeper and clean-machine install remain unqualified. |
 | Omarchy ARM64 | Current `42f1135` core/scenario/sampler 20 tests and Node runner 5 tests pass; portable baseline delta 0. Mac requalification also passed the same suites. | [Cross-platform snapshot evidence](docs/PORTABLE-SNAPSHOT-COMPARISON.md). SDL3 package/notice gates remain recorded separately; no new manual gameplay claim. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
@@ -228,6 +228,6 @@ Third shared benchmark adapter: [SDL3 pilot](docs/benchmarks/SDL3-ADAPTER.md), t
 | --- | --- | --- |
 | Omarchy ARM64 | Three callback-timing runs; [protocol/evidence](docs/benchmarks/README.md) | Local extraction/replay/uninstall passed; [limits](docs/packaging/README.md) |
 | Windows | Three valid release repeats; [evidence](docs/benchmarks/WINDOWS-MACROQUAD-PILOT.md) | Not qualified by the timing pilot |
-| Mac ARM64 | Earlier three valid release repeats; [evidence](docs/benchmarks/MACROQUAD-MAC-PILOT.md) | Creation/extraction passed; extracted runtime failed; [details](docs/packaging/MACROQUAD-MAC-PILOT.md) |
+| Mac ARM64 | Earlier three valid release repeats; [evidence](docs/benchmarks/MACROQUAD-MAC-PILOT.md) | Creation/extraction and bounded extracted-app GUI gameplay passed; shell launch failed; [details](docs/packaging/MACROQUAD-MAC-PILOT.md) |
 
 These are differently configured machines and callback boundaries, not a controlled ranking. No public installer release is implied.
