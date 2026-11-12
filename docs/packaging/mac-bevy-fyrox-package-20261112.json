@@ -1,0 +1,36 @@
+[
+  {
+    "adapter": "bevy",
+    "schema": 1,
+    "platform": "darwin",
+    "architecture": "arm64",
+    "binary_sha256": "4c70b0a21f3f3953e8507f3d6d7dffb1b6a6168f9aba333403b9a8e54d2b9d43",
+    "archive_sha256": "030fc6a5744c1954b09a6e7a68abc246c18c1f7947a4bbc9031f62a36d9d8278",
+    "archive_bytes": 21755255,
+    "status": 0,
+    "signal": null,
+    "elapsed_seconds": 17.628,
+    "states": 13,
+    "final_tick": 1440,
+    "finished": true,
+    "captures": 6,
+    "scoped_removal": true
+  },
+  {
+    "adapter": "fyrox",
+    "schema": 1,
+    "platform": "darwin",
+    "architecture": "arm64",
+    "binary_sha256": "f181fbd32dd7f0585ec819d9f9be8f97b3a902dc3d9ea2200e6527719b36aa8c",
+    "archive_sha256": "5d34941211ced9c4f62bf2add980e51ee07fadde396df21b611acfede17166f1",
+    "archive_bytes": 14701281,
+    "status": 0,
+    "signal": null,
+    "elapsed_seconds": 16.473,
+    "states": 13,
+    "final_tick": 1440,
+    "finished": true,
+    "captures": 6,
+    "scoped_removal": true
+  }
+]
