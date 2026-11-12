@@ -10,7 +10,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 | --- | --- | --- |
 | Windows | Miniquad fresh MSVC build, one test, and scripted replay (1440 ticks / six captures) passed per worker report; native Return/Space start attempts still failed. Bevy scoped fix/evidence was published in `55d0975`. | **Disconnected; testing paused.** No active test window. Miniquad results/evidence remain uncommitted and await reconnect/publication; no native-input pass claimed. |
 | Mac | Yew and Leptos native-wrapper checks assigned, followed by Dioxus native desktop. Existing test binaries use an older checkpoint. | Preparing visual checks with existing `6ceb22a` binaries; Pong Yew app-access call pending, possibly approval. Gameplay not yet confirmed; Dioxus build queued. |
-| Omarchy ARM64 | Slint attribution polish verified; raw WASM shared replay ABI built/tested, browser execution not yet verified. GPUI adapter blocked before typecheck by xattr/libc ENOATTR dependency incompatibility. | Publishing verified subset; Bevy Mesh2d Linux scripted regression recheck assigned. GPUI candidate is not published or counted as passed. |
+| Omarchy ARM64 | Slint attribution polish verified; raw WASM shared replay ABI built/tested, browser execution not yet verified. GPUI adapter blocked before typecheck by xattr/libc ENOATTR dependency incompatibility. | Publishing verified subset; Bevy Mesh2d Linux Vulkan scripted recheck passed; six images and baseline telemetry verified. GPUI candidate is not published or counted as passed. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -61,7 +61,7 @@ Each desktop cell is **build / runtime evidence**:
 | Macroquad | B / I | B / R; keyboard play unverified | B / S + scripted replay and app-frame PNGs inspected; real input blocked |
 | Bevy | B / I | B / I + scripted captures **with DX12**; default Vulkan **F** ([details](docs/WINDOWS-BEVY-DIAGNOSIS.md)) | B / S + scripted/PNG sample passed; real input blocked |
 | Tauri + Rust WASM | B / I | B / I | B / S; UI blocked |
-| Miniquad | B / I | B / R; start input unsuccessful | B / S + scripted/PNG sample passed; real input blocked |
+| Miniquad | B / I | Fresh MSVC B + 1 test; scripted/six PNG reported passed; native Return/Space still no start | B / S + scripted/PNG sample passed; real input blocked |
 | pixels + winit | B / I | B / I | B / S + scripted/source PNG passed; real input blocked |
 | raw wgpu + winit | B / I | B / I | B / S + scripted/PNG sample passed; real input blocked |
 | Piston | B / I | B / I | B / S + scripted/PNG sample passed; real input blocked |
@@ -182,3 +182,7 @@ hashes: [scripted testing](docs/SCRIPTED-TESTING.md).
 ### Planned benchmark and packaging architecture
 
 Approved direction: use **one shared benchmark harness**, with platform-specific helpers only where useful. Keep packaging alongside each application until repeated common steps justify extracting shared tooling. This is a plan, not measured performance or completed release packaging. See [benchmark and packaging plan](docs/BENCHMARK-PLAN.md).
+
+Latest Bevy Linux source requalification: [Mesh2d native Vulkan replay and inspected captures](docs/OMARCHY-BEVY-MESH-RECHECK.md). Real-input/compositor checks remain separate.
+
+Windows Miniquad follow-up (worker report): fresh MSVC build and one adapter test passed; bounded replay reached tick 1440, exported six PNGs, and paused sample looked correct. Native Return/Space still did not visibly start play. The test window was closed before Windows disconnected; evidence files remain on that machine pending retrieval. This is not a native-input pass.
