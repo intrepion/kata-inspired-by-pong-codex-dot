@@ -1,0 +1,28 @@
+[
+  {
+    "adapter": "ash",
+    "binary_sha256": "6b9dc3cca6efb623a7ea3a7fd424ca4a158c4a3f50b33db886c157d2d788f9df",
+    "archive_sha256": "fb3bd1d1df95fa56592ca60010b17e1fd578ea4a25813fa3854cd0ff51fc1af7",
+    "size": 1699464,
+    "exit": 0,
+    "states": 13,
+    "final_tick": 1440,
+    "captures": 6,
+    "tick600_inspected": true,
+    "exact_seven_file_uninstall": true,
+    "matches_previous_timing_binary": true
+  },
+  {
+    "adapter": "sdl3",
+    "binary_sha256": "2c18942de6257c087d7002b3d0c88fd5ac616a03b8a25f437e236abc469a77a9",
+    "archive_sha256": "57e06149375d002233fecdc9ae690961e7ac58ac92d090c751d197a207d4f0bc",
+    "size": 2086269,
+    "exit": 0,
+    "states": 13,
+    "final_tick": 1440,
+    "captures": 6,
+    "tick600_inspected": true,
+    "exact_seven_file_uninstall": true,
+    "matches_previous_timing_binary": true
+  }
+]

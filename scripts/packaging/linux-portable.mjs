@@ -4,7 +4,7 @@ import {dirname,join,resolve} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 import {spawnSync} from 'node:child_process';
-const adapters=Object.freeze({miniquad:'pong-miniquad',pixels:'pong-pixels',wgpu:'pong-wgpu',raylib:'pong-raylib-rs',piston:'pong-piston',ggez:'pong-ggez',nannou:'pong-nannou','bracket-lib':'pong-bracket-lib',fyrox:'pong-fyrox',bevy:'pong-bevy','blue-engine':'pong-blue-engine',softbuffer:'pong-softbuffer'});
+const adapters=Object.freeze({miniquad:'pong-miniquad',pixels:'pong-pixels',wgpu:'pong-wgpu',raylib:'pong-raylib-rs',piston:'pong-piston',ggez:'pong-ggez',nannou:'pong-nannou','bracket-lib':'pong-bracket-lib',fyrox:'pong-fyrox',bevy:'pong-bevy','blue-engine':'pong-blue-engine',softbuffer:'pong-softbuffer',ash:'pong-ash',sdl3:'pong-sdl3'});
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
 const digest=p=>createHash('sha256').update(readFileSync(p)).digest('hex');
 export function packagePortable(adapter,input,output,source,notices=null) {

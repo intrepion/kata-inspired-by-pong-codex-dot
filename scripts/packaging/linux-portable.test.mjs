@@ -4,8 +4,8 @@ import{tmpdir}from'node:os';import{join}from'node:path';import{spawnSync}from'no
 import{packagePortable}from'./linux-portable.mjs';
 const linux=process.platform==='linux',rev='a'.repeat(40);
 function sandbox(t){const p=mkdtempSync(join(tmpdir(),'pong-portable-unit-'));t.after(()=>rmSync(p,{recursive:true,force:true}));return p;}
-test('twelve adapter fixtures package, verify and never overwrite',{skip:!linux},t=>{
- const root=sandbox(t);for(const adapter of ['miniquad','pixels','wgpu','raylib','piston','ggez','nannou','bracket-lib','fyrox','bevy','blue-engine','softbuffer']){
+test('fourteen adapter fixtures package, verify and never overwrite',{skip:!linux},t=>{
+ const root=sandbox(t);for(const adapter of ['miniquad','pixels','wgpu','raylib','piston','ggez','nannou','bracket-lib','fyrox','bevy','blue-engine','softbuffer','ash','sdl3']){
  const out=join(root,adapter),r=packagePortable(adapter,'/bin/true',out,rev);
  const initial=readFileSync(r.archive);assert.throws(()=>packagePortable(adapter,'/bin/true',out,rev),/already exists/);assert.deepEqual(readFileSync(r.archive),initial);
  const unpack=join(root,adapter+'-unpack');mkdirSync(unpack);assert.equal(spawnSync('tar',['-xzf',r.archive,'-C',unpack]).status,0);
