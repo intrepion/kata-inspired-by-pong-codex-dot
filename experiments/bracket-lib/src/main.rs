@@ -2,6 +2,11 @@
 use bracket_lib::prelude::*;
 use pong_core::{Game, State, BALL, H, PADDLE_H, PADDLE_W, W};
 use std::collections::HashSet;
+const COURT_RGB: (u8, u8, u8) = (9, 14, 25);
+const DIVIDER_RGB: (u8, u8, u8) = (120, 142, 166);
+fn court_color() -> RGB {
+    RGB::from_u8(COURT_RGB.0, COURT_RGB.1, COURT_RGB.2)
+}
 const COLS: i32 = 90;
 const ROWS: i32 = 50;
 const TOP: i32 = 10; // Five 16px header rows above the 8px playfield tiles.
@@ -185,7 +190,7 @@ impl GameState for Pong {
             self.advance(ctx.frame_time_ms / 1000.);
         }
         ctx.set_active_console(0);
-        ctx.cls_bg(RGB::from_u8(9, 14, 25));
+        ctx.cls_bg(court_color());
         // Separate transparent VGA console: 16px text without stretching the court.
         ctx.set_active_console(1);
         ctx.cls();
@@ -202,8 +207,8 @@ impl GameState for Pong {
             ctx.set(
                 COLS / 2,
                 y + TOP,
-                RGB::from_u8(65, 81, 101),
-                BLACK,
+                RGB::from_u8(DIVIDER_RGB.0, DIVIDER_RGB.1, DIVIDER_RGB.2),
+                court_color(),
                 to_cp437('|'),
             );
         }
@@ -360,5 +365,20 @@ mod tests {
         p.event(key(VirtualKeyCode::S, true));
         p.advance(100.);
         assert!(p.game.player <= 297.1);
+    }
+    #[test]
+    fn divider_contrast_exceeds_non_text_minimum() {
+        fn luminance(rgb: (u8, u8, u8)) -> f64 {
+            let linear = |c: u8| {
+                let v = f64::from(c) / 255.0;
+                if v <= 0.04045 {
+                    v / 12.92
+                } else {
+                    ((v + 0.055) / 1.055).powf(2.4)
+                }
+            };
+            0.2126 * linear(rgb.0) + 0.7152 * linear(rgb.1) + 0.0722 * linear(rgb.2)
+        }
+        assert!((luminance(DIVIDER_RGB) + 0.05) / (luminance(COURT_RGB) + 0.05) >= 3.0);
     }
 }

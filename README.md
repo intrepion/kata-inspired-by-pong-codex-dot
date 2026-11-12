@@ -4,12 +4,12 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 09:59 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 10:07 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Bevy DX12: 3 valid timing repeats, 2 tests, replay and six captures passed. Default Vulkan crashed and is explicitly rejected. Fourteen timing adapters measured. | [Bevy evidence](docs/benchmarks/BEVY-WINDOWS-PILOT.md). Next: fresh Fyrox release build and timing/replay qualification. |
-| Mac | Verified malloc_buf 0.0.6 source matches its upstream 2015 tag, which lacks a license file. Upstream MIT text added in 2020 after source changes; no pinned-release attribution inferred. | [Pinned provenance and notice gap](docs/packaging/MINIQUAD-MAC-NOTICE-GAP.md). Fourteen timing/local-package pilots remain valid; notice/release gates open. |
+| Mac | Fixed bracket-lib divider black boxes/low contrast; nine Rust tests, strict Clippy and native replay/six PNGs pass. Before/after screenshots verified; processes exited. | [Divider fix evidence](docs/BRACKET-DIVIDER-FIX.md). Earlier benchmark/package hashes remain historical; new-source cross-platform/package requalification pending. |
 | Omarchy ARM64 | Slint toolkit package passed fresh optimized build, four GUI-model and 28 Node tests, extracted replay/six own-window snapshots and exact uninstall. Existing Slint license text and visible attribution preserved; process exited. | [Slint Linux package report](docs/packaging/SLINT-LINUX-PILOT.md). Component snapshots are not compositor screenshots or OS-input passes. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
