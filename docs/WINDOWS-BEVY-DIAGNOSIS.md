@@ -37,4 +37,3 @@ Omit the two scripted arguments for normal interactive play. The environment var
 ## Native DX12 follow-up
 
 After the scripted run, a normal native window was checked through supported Computer Use: Enter started play; ball and CPU movement and score changes were visible; Space paused and resumed; maximizing retained the correct aspect and complete court; R reset the score; the Close button exited. Sustained player-key input, focus loss and a full match were not checked. This supersedes the pre-patch Windows DX12 visual-failure result only, not the Vulkan failure.
-
