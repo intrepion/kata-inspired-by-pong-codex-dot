@@ -1,0 +1,41 @@
+[
+  {
+    "adapter": "miniquad",
+    "source": "cdf65cc",
+    "profile": "release",
+    "binary_sha256": "6a4de542ce3db89f62c906d6b2de54782a4f788c98eefbccfaf26a2aa59b8ce1",
+    "exit": 0,
+    "signal": null,
+    "seconds": 13.084,
+    "states": 13,
+    "final_tick": 1440,
+    "finished": true,
+    "captures": 6
+  },
+  {
+    "adapter": "pixels",
+    "source": "cdf65cc",
+    "profile": "release",
+    "binary_sha256": "0bf4d162950eb5aa83d64ca3fc7fba45617dbdf1b939845e6986252093311f47",
+    "exit": 0,
+    "signal": null,
+    "seconds": 12.773,
+    "states": 13,
+    "final_tick": 1440,
+    "finished": true,
+    "captures": 6
+  },
+  {
+    "adapter": "wgpu",
+    "source": "cdf65cc",
+    "profile": "release",
+    "binary_sha256": "c85d872d74442945ed605d13ea5101f9269a9f90052549e5ad96685f85fd171e",
+    "exit": 0,
+    "signal": null,
+    "seconds": 12.815,
+    "states": 13,
+    "final_tick": 1440,
+    "finished": true,
+    "captures": 6
+  }
+]
