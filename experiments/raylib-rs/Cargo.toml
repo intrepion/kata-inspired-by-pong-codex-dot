@@ -8,3 +8,4 @@ license = "MIT"
 raylib = "=6.0.0"
 pong-core = { path = "../../crates/pong-core" }
 pong-scenario = { path = "../../crates/pong-scenario" }
+pong-benchmark = { path = "../../crates/pong-benchmark" }

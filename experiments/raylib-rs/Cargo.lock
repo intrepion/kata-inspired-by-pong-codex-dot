@@ -251,6 +251,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "pong-benchmark"
+version = "0.1.0"
+
+[[package]]
 name = "pong-core"
 version = "0.1.0"
 
@@ -258,6 +262,7 @@ version = "0.1.0"
 name = "pong-raylib-rs"
 version = "0.1.0"
 dependencies = [
+ "pong-benchmark",
  "pong-core",
  "pong-scenario",
  "raylib",

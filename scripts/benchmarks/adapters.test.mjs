@@ -23,3 +23,10 @@ test('runner records selected adapter over three fixture processes, not a benchm
 });
 
 test('SDL3 metadata names pacing and does not invent backend',()=>{const p=parseArguments([...base,'--adapter','sdl3']);assert.equal(p.adapter,'sdl3');assert.match(p.renderer,/reported by app/);assert.match(p.pacing,/8ms sleep/);});
+
+test('raylib metadata retains target pacing without claiming a GPU driver', () => {
+  const config = parseArguments(['binary', 'out.json', 'unqueried', 'pilot', '--adapter', 'raylib']);
+  assert.match(config.pacing, /target120fps/);
+  assert.match(config.pacing, /EndDrawing/);
+  assert.match(config.renderer, /unqueried/);
+});

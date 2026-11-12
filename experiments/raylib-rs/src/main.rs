@@ -7,23 +7,40 @@ fn viewport(width: f32, height: f32) -> (f32, f32, f32) {
     (scale, (width - W * scale) / 2.0, (height - H * scale) / 2.0)
 }
 
+fn benchmark_args(args: &[String]) -> bool {
+    let enabled = args.iter().any(|a| a == "--benchmark");
+    assert!(
+        !enabled || !args.iter().any(|a| a.starts_with("--scripted")),
+        "benchmark and replay/capture modes are distinct"
+    );
+    enabled
+}
+
 fn main() {
+    let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     let (mut window, thread) = raylib::init()
         .size(W as i32, H as i32)
         .title("Pong / raylib-rs")
         .resizable()
         .build();
     window.set_target_fps(120);
-    let mut game = Game::new(42);
+    let mut game = Game::new(pong_scenario::SEED);
     let mut accumulator = 0.0;
     let mut demo = pong_scenario::Demo::from_args();
+    let mut scenario = pong_scenario::Scenario::default();
+    let mut benchmark = benchmarking.then(|| {
+        pong_benchmark::Frames::new(
+            window.get_screen_width() as u32,
+            window.get_screen_height() as u32,
+        )
+    });
     while !window.window_should_close() {
         let focused = window.is_window_focused();
-        if !focused && demo.is_none() {
+        if !focused && demo.is_none() && !benchmarking {
             game.pause();
             accumulator = 0.0;
         }
-        if focused && demo.is_none() {
+        if focused && demo.is_none() && !benchmarking {
             if window.is_key_pressed(KeyboardKey::KEY_ENTER)
                 || window.is_key_pressed(KeyboardKey::KEY_R)
             {
@@ -44,6 +61,17 @@ fn main() {
             while accumulator >= 1.0 / 120.0 {
                 game.step(1.0 / 120.0, down as u8 as f32 - up as u8 as f32);
                 accumulator -= 1.0 / 120.0;
+            }
+        }
+        if benchmarking {
+            accumulator += window.get_frame_time().min(0.1);
+            while accumulator >= pong_scenario::STEP {
+                if scenario.finished() {
+                    scenario = pong_scenario::Scenario::default();
+                    game = Game::new(pong_scenario::SEED);
+                }
+                scenario.advance(&mut game);
+                accumulator -= pong_scenario::STEP;
             }
         }
         if let Some(demo) = &mut demo {
@@ -130,12 +158,33 @@ fn main() {
                 break;
             }
         }
+        // Drop performs EndDrawing, including raylib's existing target-FPS wait.
+        drop(d);
+        if let Some(frames) = benchmark.as_mut() {
+            if frames.frame(
+                window.get_screen_width() as u32,
+                window.get_screen_height() as u32,
+            ) {
+                println!("PONG_BENCHMARK {}", frames.report());
+                break;
+            }
+        }
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn benchmark_is_opt_in() {
+        assert!(!benchmark_args(&[]));
+        assert!(benchmark_args(&["--benchmark".into()]));
+    }
+    #[test]
+    #[should_panic(expected = "benchmark and replay/capture modes are distinct")]
+    fn rejects_capture_mixing() {
+        benchmark_args(&["--benchmark".into(), "--scripted-test".into()]);
+    }
     #[test]
     fn letterboxing_preserves_aspect() {
         assert_eq!(viewport(1800.0, 1000.0), (2.0, 0.0, 0.0));
