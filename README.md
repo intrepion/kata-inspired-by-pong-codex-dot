@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | SDL3 static release, 3 valid timing repeats, 2 adapter + 17 shared tests and 12.2s replay/capture passed; processes exited. Nine Windows timing adapters recorded. | [SDL3 Windows evidence](docs/benchmarks/SDL3-WINDOWS-PILOT.md). Next: Nannou build/pilot. Native-input/installation gates separate. |
+| Windows | Nannou release build actively compiling Bevy/wgpu dependencies (08:55 UTC), two jobs; no approval blocker. Nine completed timing adapters remain published. | [Latest completed SDL3 pilot](docs/benchmarks/SDL3-WINDOWS-PILOT.md). Timing will start after compilation; no Nannou result claimed yet. |
 | Mac | Bevy twelfth adapter: release build, 2 Rust + 17 Node tests, three valid main-world callback timings and 12.993-second replay/six PNGs complete. Processes exited. | [Bevy Mac evidence](docs/benchmarks/BEVY-MAC-PILOT.md). Not rendered-frame timing. Next Blue Engine; Yew focus inconclusive, packaging partial. |
 | Omarchy ARM64 | Fyrox fourteenth adapter: 2 Rust + 19 Node tests pass; fresh optimized dependency release build running. Thirteen published timing pilots remain complete. | Next: bounded Fyrox timing and replay after build; no completed Fyrox timing pilot yet. |
 
