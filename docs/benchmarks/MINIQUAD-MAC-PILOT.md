@@ -11,3 +11,7 @@
 Reported surface 900×500; no resize, all exits 0. Actual Miniquad runtime enum was OpenGl for all three runs; GPU/driver identity and actual vsync configuration were not queried. Existing Miniquad pacing retained; measurement follows commit_frame in the draw callback. Builds/tests completed first and a worker quiet window was reserved. Other user applications remained open; power, thermals and whole-machine idleness remain unverified.
 
 These are **callback intervals**, not displayed FPS or GPU execution time. Differing pacing, dimensions and machines prevent simple engine rankings. No new manual-input or installer qualification is claimed. All benchmark processes exited. The shared emit-once/order_quit completion fix also terminated these Mac runs normally.
+
+## Post-benchmark replay regression
+
+The same release binary also completed a bounded scripted capture run: exit 0, 13 state records, final tick 1440 and six PNG frames. The tick-600 frame was inspected: court, both paddles, ball and score pip were visible without an obvious rendering failure. This is an app-owned framebuffer sample, not OS-input acceptance or exhaustive visual QA. The capture directory and full replay log remain local; this check confirms the automated completion change did not prevent the capture scenario from finishing on Mac.
