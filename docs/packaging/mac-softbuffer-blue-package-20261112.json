@@ -1,0 +1,36 @@
+[
+  {
+    "adapter": "softbuffer",
+    "schema": 1,
+    "platform": "darwin",
+    "architecture": "arm64",
+    "binary_sha256": "d3028615a38b33dd1ed2d12ae962664e1f2222416f058f2c6b26103d101e8dc3",
+    "archive_sha256": "f71e6277fd97ce7e3eb332aee0e1bbaa149b65accceeb7ca359944e784d1dd4e",
+    "archive_bytes": 450376,
+    "status": 0,
+    "signal": null,
+    "elapsed_seconds": 13.208,
+    "states": 13,
+    "final_tick": 1440,
+    "finished": true,
+    "captures": 6,
+    "scoped_removal": true
+  },
+  {
+    "adapter": "blue-engine",
+    "schema": 1,
+    "platform": "darwin",
+    "architecture": "arm64",
+    "binary_sha256": "1cc29463f8b96f28adeaf6f9186409fa96dffc95501cbbe8af1016a59826679f",
+    "archive_sha256": "8dc3f678206070aa0f546b947f9e509fef1371282f6eb310ca7a1b0a1d4d7d97",
+    "archive_bytes": 3642645,
+    "status": 0,
+    "signal": null,
+    "elapsed_seconds": 14.749,
+    "states": 13,
+    "final_tick": 1440,
+    "finished": true,
+    "captures": 0,
+    "scoped_removal": true
+  }
+]
