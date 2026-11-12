@@ -4,11 +4,11 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 03:11 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 03:15 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Bevy Mesh2d fix passed DX12 scripted capture and native start/score/pause/resume/reset/maximize checks; 14 shared tests passed. | Scoped fix/evidence published in `55d0975`; this test phase is complete and the native test window is closed. Default Vulkan still crashes; DX12 is an explicit process-local workaround. Next target not yet started. |
+| Windows | Miniquad fresh MSVC build, one test, and scripted replay (1440 ticks / six captures) passed per worker report; native Return/Space start attempts still failed. Bevy scoped fix/evidence was published in `55d0975`. | **Disconnected; testing paused.** No active test window. Miniquad results/evidence remain uncommitted and await reconnect/publication; no native-input pass claimed. |
 | Mac | Yew and Leptos native-wrapper checks assigned, followed by Dioxus native desktop. Existing test binaries use an older checkpoint. | Preparing visual checks with existing `6ceb22a` binaries; Pong Yew app-access call pending, possibly approval. Gameplay not yet confirmed; Dioxus build queued. |
 | Omarchy ARM64 | Slint attribution polish verified; raw WASM shared replay ABI built/tested, browser execution not yet verified. GPUI adapter blocked before typecheck by xattr/libc ENOATTR dependency incompatibility. | Publishing verified subset; Bevy Mesh2d Linux scripted regression recheck assigned. GPUI candidate is not published or counted as passed. |
 
