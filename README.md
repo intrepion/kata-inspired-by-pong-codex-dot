@@ -4,13 +4,13 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 05:20 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 05:23 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Android normal-mode start/scoring/pause/resume/restart and Home/Recents pause retention passed; broken separators corrected; 11 tests pass. | Test app stopped; emulator/data preserved. Sustained drag movement remains unverified (two gestures inconclusive); [bounded results](docs/SCRIPTED-ANDROID.md). |
 | Mac | Bounded native gameplay passed for fresh Dioxus `6ceb22a` and Bevy Mesh2d `55d0975`; Yew/Leptos cached binaries also passed, exact source revision unverified. [Provenance and limits](docs/MAC-NATIVE-FOLLOWUP-20261112.md). | Assigned checks complete; all four apps closed and process check confirmed none running. No pending permission. Focus/resize/full-match, performance and installation not covered. |
-| Omarchy ARM64 | Swift/Kotlin portable parser/replay source and derived resources prepared; host resource consistency checks pass. | Publishing source candidate only. Swift/Kotlin compiler, native tests, packaged-app resource loading and mobile UI replay remain pending platform toolchains. |
+| Omarchy ARM64 | Portable Swift/Kotlin source handoff published. GPUI native state-only replay and Dioxus native SVG-source replay passed; neither establishes visual/input correctness. | Latest completed source/evidence checkpoints recorded below; current active run not confirmed. Kotlin validation subsequently passed on Windows, not Omarchy; Swift candidate compilation/XCTest and UI replay remain pending on Mac. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -83,7 +83,7 @@ Details: [baseline frontends](docs/desktop-comparison.md), [extra engines](exper
 | SDL3 | B / I, including focus and resize checks | B / I; LNK4098 linker warning remains | B / S + scripted/PNG sample passed; real input blocked |
 | Vulkan via ash | B / blocked: missing Vulkan loader/MoltenVK | B / I (simple clear-attachment renderer only) | B / S + scripted/PNG samples passed; real input blocked |
 | Slint | B / I | B / I: start, scoring, pause/resume, reset | B / scripted component PNG samples passed; real input unverified |
-| GPUI | B / I: Enter start, held-W movement, scoring, Space pause | B / I; maximized rendering checked | U / U |
+| GPUI | B / I: Enter start, held-W movement, scoring, Space pause | B / I; maximized rendering checked | B / native state-only replay passed; visual/input unverified |
 | GTK4 | Blocked: native dependencies missing / U | U / U | B / S + scripted Cairo PNG samples passed; real input unverified |
 | Ratatui | B / pseudo-terminal checks; enhanced-terminal interaction unverified | B / blocked: direct launch has no targetable window; Windows Terminal access blocked by product policy | B / pseudo-terminal startup, movement and quit; scripted cell-buffer evidence; 5 tests pass |
 
@@ -98,7 +98,7 @@ Details: [low-level clients](experiments/LOW-LEVEL.md), [GUI toolkits](experimen
 | Dioxus browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | U / U |
 | Yew native Tauri wrapper | B / I using cached binaries; exact source revision unverified | B / I | B / scripted SVG-source checks passed; visual/input unverified |
 | Leptos native Tauri wrapper | B / I using cached binaries; exact source revision unverified | B / I | B / scripted SVG-source checks passed; visual/input unverified |
-| Dioxus native desktop | B / I; fresh `6ceb22a` build | B / I; maximized layout checked | U / U |
+| Dioxus native desktop | B / I; fresh `6ceb22a` build | B / I; maximized layout checked | B / native scripted SVG-source checks passed; visual/input unverified |
 
 [Commands and detailed web-framework results](docs/web-framework-comparison.md). Browser checks use a localhost HTTP server, never file URLs. Narrow browser layout is not a physical touchscreen or mobile-package test.
 
