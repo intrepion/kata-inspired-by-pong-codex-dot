@@ -4,12 +4,12 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 07:54 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 07:58 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Network restored; fresh TS15, core9, sampler3, replay5 and fixed cross-platform runner5 tests passed. Three Macroquad release benchmark repeats completed; Windows portable ZIP creation/extraction + extracted scripted replay passed (07:32 UTC); processes exited. | Portable snapshot repaired as a strict semantic comparison; Windows max numeric delta 0.00002 within explicit 0.001 bound, all discrete fields exact. [Contract and regression tests](docs/PORTABLE-SNAPSHOT-COMPARISON.md). Linux/Mac reruns also passed (zero baseline delta). [Checks](docs/WINDOWS-CONTINUATION-20261112.md); [benchmark pilot](docs/benchmarks/WINDOWS-MACROQUAD-PILOT.md). |
-| Mac | Pixels offline release build,3 adapter tests,10 runner/sanitizer tests and three valid callback repeats complete; benchmark processes exited. Five Mac timing adapters recorded. | [Pixels Mac timing](docs/benchmarks/PIXELS-MAC-PILOT.md). Yew OS-focus check remains inconclusive; packaging partial, no engine ranking claimed. |
+| Mac | Miniquad offline release build, 3 adapter tests, 11 runner/sanitizer tests and three valid callback repeats complete; benchmark processes exited. Six Mac timing adapters recorded. | [Miniquad Mac timing](docs/benchmarks/MINIQUAD-MAC-PILOT.md). Supported Mac control and shell retry worked without a permission block. Yew OS-focus check remains inconclusive; packaging partial. |
 | Omarchy ARM64 | Sixth shared benchmark adapter Miniquad: fixed automated quit/report overflow; 3 valid reruns and replay regression passed. | [Miniquad evidence](docs/benchmarks/MINIQUAD-ADAPTER.md) retains failed first attempt separately. 3 Rust + 11 Node tests/Clippy pass; no real-input claim. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
@@ -247,6 +247,6 @@ Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md
 | SDL3 | [3/3](docs/benchmarks/SDL3-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/SDL3-ADAPTER.md) |
 | raylib-rs | [3/3](docs/benchmarks/RAYLIB-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/RAYLIB-ADAPTER.md) |
 | pixels/winit | [3/3](docs/benchmarks/PIXELS-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/PIXELS-ADAPTER.md) |
-| Miniquad | Not recorded | Not recorded | [3/3](docs/benchmarks/MINIQUAD-ADAPTER.md) |
+| Miniquad | [3/3](docs/benchmarks/MINIQUAD-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/MINIQUAD-ADAPTER.md) |
 
 Other implementations have not yet been qualified through this shared timing protocol. Package lifecycle status is a separate dimension: Mac [Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md) and [SDL3](docs/packaging/SDL3-MAC-PILOT.md) have local extracted-app gameplay/removal evidence, not signed or clean-machine release qualification.
