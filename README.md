@@ -4,12 +4,12 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 07:18 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 07:21 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Network restored; fresh TS15, core9, sampler3, replay5 and fixed cross-platform runner5 tests passed. Three Macroquad release benchmark repeats completed; processes exited. | Portable snapshot fails on cross-platform floating-point differences (not masked). [Checks](docs/WINDOWS-CONTINUATION-20261112.md); [benchmark pilot](docs/benchmarks/WINDOWS-MACROQUAD-PILOT.md). |
-| Mac | Fresh `4088089` Dioxus build, shared controller 4/4, native replay and actual held movement/release, pause/resume, full match 2:7 and restart passed. | Dioxus batch complete; test apps exited. Yew real OS focus-loss remains unverified. [Evidence](docs/MAC-DIOXUS-REQUALIFICATION.md). |
+| Mac | Earlier Macroquad three-repeat callback pilot recovered; local ARM64 app/archive creation verified, but extracted runtime failed in current execution session. | [Timing evidence](docs/benchmarks/MACROQUAD-MAC-PILOT.md); [package failure and next checks](docs/packaging/MACROQUAD-MAC-PILOT.md). Not a successful installation or distribution-ready build. |
 | Omarchy ARM64 | SDL3 benchmark published; isolated Linux ARM64 portable archive creation, checksum verification, bounded installed replay and scoped uninstall passed. | [SDL3 package pilot](docs/packaging/SDL3-LINUX-PILOT.md) is not a release; dependency notices, clean-machine and cross-distro tests remain pending. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
@@ -221,3 +221,13 @@ The [shared Macroquad benchmark pilot](docs/benchmarks/README.md) completed thre
 Second shared benchmark adapter: [softbuffer/winit pilot](docs/benchmarks/SOFTBUFFER-ADAPTER.md), three valid bounded release runs, shared scenario/sampler and explicit runner metadata. Existing 8ms pacing remains; no displayed-FPS or engine ranking claim.
 
 Third shared benchmark adapter: [SDL3 pilot](docs/benchmarks/SDL3-ADAPTER.md), three valid bounded release runs with actual SDL driver/renderer metadata. Existing 8ms sleep remains; no engine ranking.
+
+### Macroquad cross-platform pilot coverage
+
+| Computer | Timing pilot | Package lifecycle |
+| --- | --- | --- |
+| Omarchy ARM64 | Three callback-timing runs; [protocol/evidence](docs/benchmarks/README.md) | Local extraction/replay/uninstall passed; [limits](docs/packaging/README.md) |
+| Windows | Three valid release repeats; [evidence](docs/benchmarks/WINDOWS-MACROQUAD-PILOT.md) | Not qualified by the timing pilot |
+| Mac ARM64 | Earlier three valid release repeats; [evidence](docs/benchmarks/MACROQUAD-MAC-PILOT.md) | Creation/extraction passed; extracted runtime failed; [details](docs/packaging/MACROQUAD-MAC-PILOT.md) |
+
+These are differently configured machines and callback boundaries, not a controlled ranking. No public installer release is implied.
