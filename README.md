@@ -4,11 +4,11 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 12:26 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 12:29 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Ash and softbuffer alias-release bugs corrected: ten release tests, strict Clippy, two fresh native scripted replays and twelve captures pass. | [Input correction](docs/ASH-SOFTBUFFER-HELD-BINDINGS-FIX.md). OS keyboard/focus acceptance and new timing/package qualification remain separate. |
+| Windows | Shared web-input controller: eight release tests pass. Preparing pinned browser-binding tooling and fresh WASM assets for Yew, Leptos and Dioxus interaction checks. Ash/softbuffer input fixes are published. | [Web input verification](docs/WEB-INPUT-SOURCES-FIX.md). Browser checks are in progress, not a pass; [ash/softbuffer evidence](docs/ASH-SOFTBUFFER-HELD-BINDINGS-FIX.md). |
 | Mac | Ash/softbuffer input fixes: ten release tests and strict Clippy pass. Corrected softbuffer package replay, six captures, three guards and scoped removal pass. Ash Vulkan runtime remains blocked, not marked passed. | [Mac input/package follow-up](docs/ASH-SOFTBUFFER-HELD-BINDINGS-FIX.md). Physical-input/release gates remain; no loader installation or historical benchmark changes. |
 | Omarchy ARM64 | Fixed shared Dioxus/Yew/Leptos movement-source interference: keyboard aliases and on-screen buttons now release independently. Eight controller tests and all three WASM checks pass; preexisting strict-Clippy findings retained. | [Web input-source evidence](docs/WEB-INPUT-SOURCES-FIX.md). Fresh browser/webview interaction remains pending; no deployment or package requalification implied. |
 

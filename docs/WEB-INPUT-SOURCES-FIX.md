@@ -16,3 +16,7 @@ The controller now tracks four keyboard bindings and two movement buttons indepe
 This is controller and compile evidence, not a new browser/webview, touch-device, OS-keyboard or package pass. Browser testing must use a server and localhost, never direct files. A useful next interaction check holds an arrow, presses/releases the corresponding on-screen button, and verifies movement continues until the arrow is released. Multiple simultaneous pointers on the *same* button remain one button state; per-pointer tracking is not added here.
 
 Existing deployment, archives and benchmark evidence remain untouched.
+
+## Windows follow-up in progress, 2026-11-12
+
+All eight shared controller release tests pass on Windows x64 GNU. The current Rust toolchain lacked the WASM target and browser-binding CLI; the official WASM target is now installed, and pinned wasm-bindgen 0.2.130 plus fresh Yew/Leptos/Dioxus WASM builds are being prepared. Browser interaction is not yet requalified; existing dist output is not being treated as current evidence.
