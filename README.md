@@ -10,7 +10,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 | --- | --- | --- |
 | Windows | Shared web-input controller: eight release tests pass. Preparing pinned browser-binding tooling and fresh WASM assets for Yew, Leptos and Dioxus interaction checks. Ash/softbuffer input fixes are published. | [Web input verification](docs/WEB-INPUT-SOURCES-FIX.md). Browser checks are in progress, not a pass; [ash/softbuffer evidence](docs/ASH-SOFTBUFFER-HELD-BINDINGS-FIX.md). |
 | Mac | Ash/softbuffer input fixes: ten release tests and strict Clippy pass. Corrected softbuffer package replay, six captures, three guards and scoped removal pass. Ash Vulkan runtime remains blocked, not marked passed. | [Mac input/package follow-up](docs/ASH-SOFTBUFFER-HELD-BINDINGS-FIX.md). Physical-input/release gates remain; no loader installation or historical benchmark changes. |
-| Omarchy ARM64 | Requalified ash and softbuffer held-binding fixes: ten adapter tests, strict Clippy and fresh optimized builds pass. Both native scripted replays exit 0 with 13 states and six captures; tick 600 inspected. | [Linux follow-up evidence](docs/ASH-SOFTBUFFER-HELD-BINDINGS-FIX.md). No physical-key, timing or package qualification implied; native processes exited. |
+| Omarchy ARM64 | Requalified local packages for corrected Miniquad, pixels, raw wgpu, ash and softbuffer binaries. Five extracted native replays passed; 65 states/30 app captures, exact removal and neighbors preserved. Sixteen packaging tests pass (two platform skips). | [Linux corrected-input package follow-up](docs/packaging/LINUX-HELD-FIXES-PACKAGE.md). Old package/timing hashes retained; no physical-input, clean-distro or release claim. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -247,7 +247,7 @@ Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md
 | SDL3 | [3/3](docs/benchmarks/SDL3-MAC-PILOT.md) | [3/3](docs/benchmarks/SDL3-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/SDL3-ADAPTER.md) |
 | raylib-rs | [3/3](docs/benchmarks/RAYLIB-MAC-PILOT.md) | [3/3](docs/benchmarks/RAYLIB-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/RAYLIB-ADAPTER.md) |
 | pixels/winit | [3/3](docs/benchmarks/PIXELS-MAC-PILOT.md) | [3/3](docs/benchmarks/PIXELS-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/PIXELS-ADAPTER.md) |
-| Miniquad | [3/3](docs/benchmarks/MINIQUAD-MAC-PILOT.md) | [Local ZIP/replay pilot](docs/packaging/MINIQUAD-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/MINIQUAD-ADAPTER.md) |
+| Miniquad | [3/3](docs/benchmarks/MINIQUAD-MAC-PILOT.md) | [3/3](docs/benchmarks/MINIQUAD-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/MINIQUAD-ADAPTER.md) |
 | Piston | [3/3](docs/benchmarks/PISTON-MAC-PILOT.md) | [3/3](docs/benchmarks/PISTON-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/PISTON-ADAPTER.md) |
 | ggez | [3/3](docs/benchmarks/GGEZ-MAC-PILOT.md) | [3/3](docs/benchmarks/GGEZ-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/GGEZ-ADAPTER.md) |
 | Nannou | [3/3 repeat; initial rejection retained](docs/benchmarks/NANNOU-MAC-PILOT.md) | [3/3](docs/benchmarks/NANNOU-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/NANNOU-ADAPTER.md) |
@@ -265,6 +265,8 @@ Additional local package lifecycle: [ash/Vulkan Linux ARM64](docs/packaging/ASH-
 Mac [raylib-rs local package pilot](docs/packaging/RAYLIB-MAC-PILOT.md) also passed extracted native scripted replay/captures, bounded real-input controls and scoped removal; no signed distribution qualification inferred.
 
 Linux portable lifecycle expansion: [Miniquad, pixels, raw wgpu and raylib-rs](docs/packaging/LINUX-PORTABLE-BATCH.md) have verified local extraction/replay/capture/removal evidence.
+
+Corrected-input package follow-up: [five Linux adapters](docs/packaging/LINUX-HELD-FIXES-PACKAGE.md) requalified with fixed binaries; older linked pilots retain historical hashes.
 
 ### Local portable-package lifecycle coverage
 

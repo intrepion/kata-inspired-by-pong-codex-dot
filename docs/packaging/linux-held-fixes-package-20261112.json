@@ -1,0 +1,100 @@
+{
+  "platform": "Linux ARM64",
+  "scope": "local portable lifecycle only",
+  "packaging_tests": {
+    "passed": 16,
+    "skipped_windows_junction": 2
+  },
+  "results": [
+    {
+      "adapter": "miniquad",
+      "source_commit": "cdf65cc6c236ad8ecefb2ee1d2bd7bd3533a409f",
+      "binary_sha256": "e8a5646123f963f8143598fbdd45824fe4e67efaeea832158e3b466c8a5fc815",
+      "archive_sha256": "9b57a5ad494cc2e41576bbdb5c147b91467d324d71388b4ec6504c6690c415b4",
+      "archive_bytes": 444405,
+      "replay": {
+        "exit": 0,
+        "states": 13,
+        "final_tick": 1440,
+        "captures": 6
+      },
+      "cleanup": {
+        "exact_files_removed": 5,
+        "empty_directory_removed": true,
+        "neighbor_preserved": true
+      }
+    },
+    {
+      "adapter": "pixels",
+      "source_commit": "cdf65cc6c236ad8ecefb2ee1d2bd7bd3533a409f",
+      "binary_sha256": "bb99542572e9ae1ac892a447c10eff956e8e0b0396dad063a4833bb5465ec20a",
+      "archive_sha256": "bad24a424ba657c23a8ee22d686bafdea4a06dcf4b5e9f8b9ccc5294ad585983",
+      "archive_bytes": 4005597,
+      "replay": {
+        "exit": 0,
+        "states": 13,
+        "final_tick": 1440,
+        "captures": 6
+      },
+      "cleanup": {
+        "exact_files_removed": 5,
+        "empty_directory_removed": true,
+        "neighbor_preserved": true
+      }
+    },
+    {
+      "adapter": "wgpu",
+      "source_commit": "cdf65cc6c236ad8ecefb2ee1d2bd7bd3533a409f",
+      "binary_sha256": "b87ee528165b82e66bcb39d4ccf2ac4bca1bbc09e8a2677ffb0eaacd59e03d1a",
+      "archive_sha256": "7ed2391aa7d445cca1fbddc9e7238bfa21949d5a4f374b1c832f51852dc35acf",
+      "archive_bytes": 3978218,
+      "replay": {
+        "exit": 0,
+        "states": 13,
+        "final_tick": 1440,
+        "captures": 6
+      },
+      "cleanup": {
+        "exact_files_removed": 5,
+        "empty_directory_removed": true,
+        "neighbor_preserved": true
+      }
+    },
+    {
+      "adapter": "ash",
+      "source_commit": "af1db13312fa363f3ec9d91c35f7a0e4d68120bf",
+      "binary_sha256": "3f89901d560c84aa7100bd837fe6799a5f3088fc86ca4a2f3c49d77878c949a9",
+      "archive_sha256": "93f744fa92f333addd46d2ee307d2d860935afc48fcc207d9606cb445667ba9b",
+      "archive_bytes": 1648195,
+      "replay": {
+        "exit": 0,
+        "states": 13,
+        "final_tick": 1440,
+        "captures": 6
+      },
+      "cleanup": {
+        "exact_files_removed": 5,
+        "empty_directory_removed": true,
+        "neighbor_preserved": true
+      }
+    },
+    {
+      "adapter": "softbuffer",
+      "source_commit": "af1db13312fa363f3ec9d91c35f7a0e4d68120bf",
+      "binary_sha256": "3eec2e7b19d9a2ca9ef8a9e31879affdb463d2ac6be594d91707a883c7381752",
+      "archive_sha256": "d2b0cfc4045fa8a98c74fc439c819cc2ce804ae4e845b368bbbbf5630a826d21",
+      "archive_bytes": 1688629,
+      "replay": {
+        "exit": 0,
+        "states": 13,
+        "final_tick": 1440,
+        "captures": 6
+      },
+      "cleanup": {
+        "exact_files_removed": 5,
+        "empty_directory_removed": true,
+        "neighbor_preserved": true
+      }
+    }
+  ]
+}
