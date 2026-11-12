@@ -1,5 +1,11 @@
 # Rust paddle face collision finding
 
+## Windows contact-timing follow-up
+
+At `c77bf3ac147e41f67d88962f5c615fcc113d6465`, Windows MSVC model tests passed: 19 core, 8 scenario and 1 WASM. All 13 portable checkpoints matched the new model reference with maximum absolute delta zero (allowance 0.001). This compares models, not captured application output. Review confirmed the paddle positions are evaluated at contact time and the remaining ball travel is integrated, including a subsequent wall reflection under bounded normal-speed assumptions.
+
+Yew WASM was rebuilt at this revision and served over localhost in Chrome. In a separate normal session Start led to ball/score activity and a short Up mouse hold moved the paddle. This is a bounded interaction smoke check, not a collision-specific acceptance test, full match, physical touch, native build or package qualification. Earlier browser replay and screenshots apply to older physics revisions.
+
 Omarchy model test, 2026-11-12: a ball beginning at `(60, 180)` with velocity `(-350, 600)` steps for `0.033` seconds against the centered player paddle. At the paddle face (`x = 52`), the ball's center is approximately `y = 193.7`, outside the paddle's collision range (`197..303`). The previous simulation checked the end-of-step height (`199.8`) instead and incorrectly reversed its horizontal velocity.
 
 The regression test `paddle_collision_uses_height_at_face_crossing_on_both_sides` now passes without being ignored.
