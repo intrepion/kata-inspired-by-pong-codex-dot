@@ -6,3 +6,4 @@ license = "MIT"
 
 [dependencies]
 pong-core = { path = "../pong-core" }
+png = "0.17"

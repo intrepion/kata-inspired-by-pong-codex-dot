@@ -10,6 +10,7 @@ use winit::{
 #[derive(Default)]
 struct Frontend {
     app: App,
+    demo: Option<pong_scenario::Demo>,
     window: Option<Rc<Window>>,
     surface: Option<softbuffer::Surface<Rc<Window>, Rc<Window>>>,
     last: Option<Instant>,
@@ -35,8 +36,8 @@ impl ApplicationHandler for Frontend {
     fn window_event(&mut self, el: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
         match event {
             WindowEvent::CloseRequested => el.exit(),
-            WindowEvent::Focused(false) => self.app.blur(),
-            WindowEvent::KeyboardInput { event, .. } => {
+            WindowEvent::Focused(false) if self.demo.is_none() => self.app.blur(),
+            WindowEvent::KeyboardInput { event, .. } if self.demo.is_none() => {
                 let pressed = event.state == ElementState::Pressed;
                 match event.physical_key {
                     PhysicalKey::Code(KeyCode::KeyW | KeyCode::ArrowUp) => self.app.up = pressed,
@@ -55,11 +56,15 @@ impl ApplicationHandler for Frontend {
             }
             WindowEvent::RedrawRequested => {
                 let now = Instant::now();
-                self.app.tick(
-                    self.last
-                        .replace(now)
-                        .map_or(0., |t| (now - t).as_secs_f32()),
-                );
+                let elapsed = self
+                    .last
+                    .replace(now)
+                    .map_or(0., |t| (now - t).as_secs_f32());
+                if let Some(demo) = &mut self.demo {
+                    demo.advance(&mut self.app.game, elapsed);
+                } else {
+                    self.app.tick(elapsed);
+                }
                 let w = self.window.as_ref().unwrap();
                 let size = w.inner_size();
                 if let (Some(width), Some(height)) =
@@ -69,9 +74,19 @@ impl ApplicationHandler for Frontend {
                     s.resize(width, height).unwrap();
                     let mut b = s.buffer_mut().unwrap();
                     pong_low_level_common::raster(&self.app, &mut b, size.width, size.height);
+                    if let Some(path) = self.demo.as_mut().and_then(|d| d.capture_path()) {
+                        pong_scenario::Demo::save_rgb(&path, &b, size.width, size.height);
+                    }
                     b.present().unwrap();
                 }
-                w.set_title(&self.app.title("softbuffer / CPU"));
+                w.set_title(&self.app.title(if self.demo.is_some() {
+                    "softbuffer / SCRIPTED"
+                } else {
+                    "softbuffer / CPU"
+                }));
+                if self.demo.as_ref().is_some_and(|d| d.finished()) {
+                    el.exit();
+                }
             }
             _ => {}
         }
@@ -95,6 +110,9 @@ impl ApplicationHandler for Frontend {
 fn main() {
     EventLoop::new()
         .unwrap()
-        .run_app(&mut Frontend::default())
+        .run_app(&mut Frontend {
+            demo: pong_scenario::Demo::from_args(),
+            ..Frontend::default()
+        })
         .unwrap();
 }

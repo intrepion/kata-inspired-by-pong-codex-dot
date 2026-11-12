@@ -57,7 +57,7 @@ Each desktop cell is **build / runtime evidence**:
 | nannou | B / I before pacing follow-up | B / I | B / S; UI blocked |
 | Fyrox | B / I | B / I | B / S; UI blocked |
 | Blue Engine | B / I | B / I | B / S; UI blocked |
-| raylib-rs | B / I | B / R; start input unsuccessful; LLVM build blocker resolved | B / S; UI blocked |
+| raylib-rs | B / I | B / R; start input unsuccessful; LLVM build blocker resolved | B / S + scripted/PNG sample passed; real input blocked |
 | Godot + Rust GDExtension | B / I for game; **F** in headless editor shutdown | U / U | U / U |
 | bracket-lib (RLTK) | B / I; restart/exit incomplete | B / I; separate header improves readability, bitmap quality still rough | B / S on X11 and patched Wayland; UI blocked |
 
@@ -67,7 +67,7 @@ Details: [baseline frontends](docs/desktop-comparison.md), [extra engines](exper
 
 | Implementation | Mac build / runtime | Windows build / runtime | Omarchy ARM64 build / runtime |
 | --- | --- | --- | --- |
-| softbuffer + winit | B / I, including focus and resize checks | B / I | B / S; UI blocked |
+| softbuffer + winit | B / I, including focus and resize checks | B / I | B / S + scripted/PNG sample passed; real input blocked |
 | SDL3 | B / I, including focus and resize checks | B / I; LNK4098 linker warning remains | B / S; UI blocked |
 | Vulkan via ash | B / blocked: missing Vulkan loader/MoltenVK | B / I (simple clear-attachment renderer only) | B / S; UI blocked |
 | Slint | B / I | B / I: start, scoring, pause/resume, reset | U / U |
@@ -136,3 +136,16 @@ Optional `--scripted-captures ./new-smoke-images` now exports six app-owned PNGs
 Omarchy capture replay exited 0 with unchanged telemetry; all six frames were
 inspected (movement, pause/resume, reset). This establishes bounded framebuffer
 rendering evidence, **not** real keyboard/focus or smooth-motion validation.
+
+#### Shared scripted-demo rollout (Omarchy)
+
+| Adapter | Replay | App-buffer PNG export | Evidence boundary |
+|---|---|---|---|
+| Macroquad | Passed | Six saved; paused sample rechecked | Shared clock refactor verified |
+| softbuffer | Passed | Six saved; paused sample inspected | Exact CPU presentation buffer |
+| raylib-rs | Passed | Six saved; exact tick-480 inspected | Current app backbuffer before swap |
+| Remaining Rust / Swift / Kotlin adapters | Not wired yet | Not wired yet | No implied pass |
+
+All three finish at tick 1440 with the same baseline telemetry. Shared core has
+13 passing tests; raylib has one additional viewport test. Details and artifact
+hashes: [scripted testing](docs/SCRIPTED-TESTING.md).

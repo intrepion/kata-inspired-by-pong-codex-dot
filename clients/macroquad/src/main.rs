@@ -22,31 +22,13 @@ fn conf() -> Conf {
 }
 #[macroquad::main(conf)]
 async fn main() {
-    let args: Vec<String> = std::env::args().collect();
-    let scripted = args.iter().any(|arg| arg == "--scripted-test");
-    let capture_dir = args
-        .iter()
-        .position(|arg| arg == "--scripted-captures")
-        .map(|i| {
-            assert!(scripted, "--scripted-captures requires --scripted-test");
-            let path = args
-                .get(i + 1)
-                .expect("--scripted-captures requires a NEW directory");
-            // Refuse an existing directory so earlier evidence is never overwritten.
-            std::fs::create_dir(path).expect("create new capture directory");
-            path.clone()
-        });
-    let capture_ticks = [120, 240, 480, 600, 1320, 1440];
-    let mut last_capture = 0;
-    let mut scenario = pong_scenario::Scenario::default();
+    let mut demo = pong_scenario::Demo::from_args();
+    let scripted = demo.is_some();
     let mut g = Game::new(if scripted {
         pong_scenario::SEED
     } else {
         miniquad::date::now() as u64
     });
-    if scripted {
-        println!("{}", scenario.report(&g));
-    }
     let mut accumulator = 0.;
     let subscriber = macroquad::input::utils::register_input_subscriber();
     let mut focus = FocusEvents::default();
@@ -77,22 +59,13 @@ async fn main() {
         }
         let input = (is_key_down(KeyCode::Down) || is_key_down(KeyCode::S)) as i32
             - (is_key_down(KeyCode::Up) || is_key_down(KeyCode::W)) as i32;
-        accumulator += get_frame_time().min(0.1);
-        while accumulator >= 1. / 120. {
-            if scripted {
-                scenario.advance(&mut g);
-                if scenario.tick() % 120 == 0 {
-                    println!("{}", scenario.report(&g));
-                }
-            } else {
+        if let Some(demo) = &mut demo {
+            demo.advance(&mut g, get_frame_time());
+        } else {
+            accumulator += get_frame_time().min(0.1);
+            while accumulator >= 1. / 120. {
                 g.step(1. / 120., input as f32);
-            }
-            accumulator -= 1. / 120.;
-            if scripted
-                && (scenario.finished()
-                    || (capture_dir.is_some() && capture_ticks.contains(&scenario.tick())))
-            {
-                break;
+                accumulator -= 1. / 120.;
             }
         }
         clear_background(Color::from_hex(0x0c211e));
@@ -150,11 +123,11 @@ async fn main() {
             19.,
             WHITE,
         );
-        if scripted {
+        if let Some(demo) = &demo {
             draw_text(
                 format!(
                     "SCRIPTED INPUT / tick {} / {}",
-                    scenario.tick(),
+                    demo.tick(),
                     pong_scenario::END_TICK
                 ),
                 440.,
@@ -163,18 +136,11 @@ async fn main() {
                 YELLOW,
             );
         }
-        if let Some(dir) = &capture_dir {
-            if capture_ticks.contains(&scenario.tick()) && last_capture != scenario.tick() {
-                // Macroquad flushes its own draw commands and reads this app's
-                // framebuffer only. No desktop, window-manager or other-app capture.
-                let path = format!("{dir}/tick-{:04}.png", scenario.tick());
-                get_screen_data().export_png(&path);
-                eprintln!("Saved application framebuffer: {path}");
-                last_capture = scenario.tick();
-            }
+        if let Some(path) = demo.as_mut().and_then(|d| d.capture_path()) {
+            get_screen_data().export_png(path.to_str().expect("UTF-8 capture path"));
         }
         next_frame().await;
-        if scripted && scenario.finished() {
+        if demo.as_ref().is_some_and(|d| d.finished()) {
             break;
         }
     }

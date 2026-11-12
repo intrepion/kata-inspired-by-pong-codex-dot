@@ -50,3 +50,40 @@ fn repeat_is_deterministic_and_bounded_even_with_different_render_batches() {
     a.advance(&mut ga);
     assert_eq!(a.report(&ga), final_report);
 }
+
+#[test]
+fn shared_demo_clock_preserves_capture_checkpoints_under_slow_frames() {
+    use pong_scenario::Demo;
+    let mut demo = Demo::new(Some("unused-test-directory".into()));
+    let mut game = Game::new(SEED);
+    demo.advance(&mut game, f32::NAN);
+    assert_eq!(demo.tick(), 0);
+    let mut captured = Vec::new();
+    while !demo.finished() {
+        demo.advance(&mut game, 0.1);
+        if demo.capture_path().is_some() {
+            captured.push(demo.tick());
+            assert!(demo.capture_path().is_none(), "capture once per checkpoint");
+        }
+    }
+    assert_eq!(captured, [120, 240, 480, 600, 1320, 1440]);
+    let mut baseline = Scenario::default();
+    let mut expected = Game::new(SEED);
+    advance_to(&mut baseline, &mut expected, END_TICK);
+    assert_eq!(game.scores, expected.scores);
+    assert_eq!(game.ball.x, expected.ball.x);
+    assert_eq!(game.ball.y, expected.ball.y);
+}
+
+#[test]
+fn cpu_capture_encodes_exact_rgb_values() {
+    let path = std::env::temp_dir().join(format!("pong-png-test-{}.png", std::process::id()));
+    pong_scenario::Demo::save_rgb(&path, &[0x00ff0000, 0x0000ff00], 2, 1);
+    let decoder = png::Decoder::new(std::fs::File::open(&path).unwrap());
+    let mut reader = decoder.read_info().unwrap();
+    let mut bytes = vec![0; reader.output_buffer_size()];
+    let info = reader.next_frame(&mut bytes).unwrap();
+    assert_eq!((info.width, info.height), (2, 1));
+    assert_eq!(&bytes[..info.buffer_size()], &[255, 0, 0, 0, 255, 0]);
+    std::fs::remove_file(path).unwrap();
+}

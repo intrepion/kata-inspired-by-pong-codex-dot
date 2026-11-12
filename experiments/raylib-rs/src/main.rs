@@ -16,13 +16,14 @@ fn main() {
     window.set_target_fps(120);
     let mut game = Game::new(42);
     let mut accumulator = 0.0;
+    let mut demo = pong_scenario::Demo::from_args();
     while !window.window_should_close() {
         let focused = window.is_window_focused();
-        if !focused {
+        if !focused && demo.is_none() {
             game.pause();
             accumulator = 0.0;
         }
-        if focused {
+        if focused && demo.is_none() {
             if window.is_key_pressed(KeyboardKey::KEY_ENTER)
                 || window.is_key_pressed(KeyboardKey::KEY_R)
             {
@@ -44,6 +45,9 @@ fn main() {
                 game.step(1.0 / 120.0, down as u8 as f32 - up as u8 as f32);
                 accumulator -= 1.0 / 120.0;
             }
+        }
+        if let Some(demo) = &mut demo {
+            demo.advance(&mut game, window.get_frame_time());
         }
         let (s, ox, oy) = viewport(
             window.get_screen_width() as f32,
@@ -99,6 +103,33 @@ fn main() {
             (14.0 * s).max(8.0) as i32,
             Color::GRAY,
         );
+        if let Some(demo) = &demo {
+            d.draw_text(
+                &format!("SCRIPTED / tick {}", demo.tick()),
+                12,
+                12,
+                18,
+                Color::YELLOW,
+            );
+        }
+        if let Some(demo) = &mut demo {
+            if let Some(path) = demo.capture_path() {
+                // Flush raylib's draw batch before reading the current backbuffer.
+                // Reading after EndDrawing swaps buffers can return the previous frame.
+                unsafe {
+                    raylib::ffi::rlDrawRenderBatchActive();
+                }
+                d.load_image_from_screen(&thread)
+                    .export_image(path.to_str().expect("UTF-8 capture path"));
+                assert!(
+                    std::fs::metadata(&path).is_ok_and(|m| m.len() > 0),
+                    "capture export failed"
+                );
+            }
+            if demo.finished() {
+                break;
+            }
+        }
     }
 }
 

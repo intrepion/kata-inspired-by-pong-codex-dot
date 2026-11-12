@@ -1,9 +1,9 @@
 # Scripted application-input smoke tests
 
-Macroquad is the first representative adapter. This is **not** desktop automation
+Macroquad, softbuffer and raylib-rs are the first supported adapters. This is **not** desktop automation
 or a replacement for interactive/visual QA. The shared `pong-scenario` crate feeds
 the same simulation boundary as the adapter's ordinary input handling. It never
-injects OS events or captures the desktop. Optional PNG export reads only its own application framebuffer. Other adapters do not yet implement it.
+injects OS events or captures the desktop. Optional PNG export reads only its own application framebuffer. Remaining adapters do not yet implement it.
 
 ## Run and watch
 
@@ -72,3 +72,28 @@ observed frames. The tall tiled window has substantial unused space below the
 court; this remains a layout-polish opportunity. These snapshots do not prove
 smooth animation, real keyboard input, compositor presentation, focus or touch.
 All six images were also delivered to the owner's Library.
+
+## Shared core and rollout matrix
+
+The shared `pong-scenario` crate owns input events, the 120 Hz clock, seed,
+telemetry, argument parsing and six capture checkpoints. It depends on the pure
+`pong-core` simulation; keeping this separate avoids adding native filesystem/PNG
+concerns to gameplay. Adapters implement only their ordinary drawing and the
+appropriate application-buffer export. No per-engine copy of the timeline.
+
+| Adapter | Replay and export | Omarchy verification |
+|---|---|---|
+| Macroquad | `get_screen_data` current app buffer | Rerun after shared-helper refactor: exit 0, six PNGs, matching telemetry |
+| softbuffer | Exact CPU RGB buffer submitted to `present` | Exit 0, six PNGs, matching telemetry; paused frame inspected |
+| raylib-rs | Own backbuffer, explicit draw-batch flush before swap | Exit 0, six PNGs, matching telemetry; tick-480 image verified |
+| Other Rust adapters | Not wired yet; API-specific work remains | No demo/capture claim |
+| Independent Swift/Kotlin | Not wired; should consume a portable scenario fixture | No Rust FFI/timeline duplication assumed |
+
+Run experiment adapters with `cargo run --manifest-path experiments/softbuffer/Cargo.toml -- --scripted-test --scripted-captures ./new-softbuffer-images` (substitute `raylib-rs` for raylib).
+
+Batch evidence: [frame dimensions/hashes and run outcomes](evidence/scripted-batch1-20261112.json).
+Shared checks: nine core tests plus four driver/PNG tests. Raylib also passes its
+viewport test. Renderer snapshots remain separate from real-input QA. Raylib's
+convenience screenshot function mishandled absolute paths and a post-swap read
+returned the prior frame; the adapter now exports the current app buffer before
+swap and checks output exists. No generic desktop capture fallback.
