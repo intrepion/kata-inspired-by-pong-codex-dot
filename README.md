@@ -4,12 +4,12 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 08:37 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 08:39 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | ggez three valid timing repeats, 2 adapter tests and 12.5s replay/capture passed; processes exited. Eight Windows timing adapters recorded. | [ggez Windows evidence](docs/benchmarks/GGEZ-WINDOWS-PILOT.md). Next: SDL3 build/pilot. OS-input/installation qualification remains separate. |
-| Mac | Raw wgpu tenth adapter: release build, 2 Rust + 16 Node tests, three valid timings and 12.355-second replay/six frames complete. Processes exited. | [Raw wgpu Mac evidence](docs/benchmarks/WGPU-MAC-PILOT.md). Next bracket-lib; fixed Piston requalified, Nannou initial short sample retained. Yew focus inconclusive; packaging partial. |
+| Mac | Bracket-lib eleventh adapter: release build, 8 Rust + 16 Node tests, three valid timings and 12.279-second replay/six frames complete. Processes exited. | [Bracket-lib Mac evidence](docs/benchmarks/BRACKET-LIB-MAC-PILOT.md), including low-contrast divider note. Next shared adapter when ready; Yew focus inconclusive, packaging partial. |
 | Omarchy ARM64 | Bevy main-world callback adapter tests pass; release build in progress. Eleven published pilots remain complete; fixed Piston requalified. | Next: bounded Bevy timing and replay after build; no completed Bevy pilot yet. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
@@ -252,6 +252,6 @@ Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md
 | ggez | [3/3](docs/benchmarks/GGEZ-MAC-PILOT.md) | [3/3](docs/benchmarks/GGEZ-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/GGEZ-ADAPTER.md) |
 | Nannou | [3/3 repeat; initial rejection retained](docs/benchmarks/NANNOU-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/NANNOU-ADAPTER.md) |
 | raw wgpu | [3/3](docs/benchmarks/WGPU-MAC-PILOT.md) | [3/3](docs/benchmarks/WGPU-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/WGPU-ADAPTER.md) |
-| bracket-lib | Not recorded | Not recorded | [3/3](docs/benchmarks/BRACKET-LIB-ADAPTER.md) |
+| bracket-lib | [3/3](docs/benchmarks/BRACKET-LIB-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/BRACKET-LIB-ADAPTER.md) |
 
 Other implementations have not yet been qualified through this shared timing protocol. Package lifecycle status is a separate dimension: Mac [Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md) and [SDL3](docs/packaging/SDL3-MAC-PILOT.md) have local extracted-app gameplay/removal evidence, not signed or clean-machine release qualification.
