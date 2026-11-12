@@ -235,3 +235,17 @@ These are differently configured machines and callback boundaries, not a control
 Fourth shared benchmark adapter: [raylib-rs](docs/benchmarks/RAYLIB-ADAPTER.md), three valid Linux ARM64 runs using shared scenario/sampler and unchanged120fps pacing; no new manual gameplay or package claim.
 
 Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md), three valid Linux ARM64 callbacks pilots with fixed CPU source-buffer size and recorded output dimensions.
+
+### Shared callback-timing coverage by adapter
+
+`3/3` means three valid bounded release callback-timing runs, **not displayed FPS, GPU time, full gameplay acceptance or a comparable performance ranking**. `Not recorded` means this checkpoint has no published timing pilot for that combination; it does not mean the implementation failed. Run conditions and dimensions differ: follow each report.
+
+| Adapter | Mac ARM64 | Windows | Omarchy ARM64 |
+| --- | --- | --- | --- |
+| Macroquad | [3/3](docs/benchmarks/MACROQUAD-MAC-PILOT.md) | [3/3](docs/benchmarks/WINDOWS-MACROQUAD-PILOT.md) | [3/3](docs/benchmarks/README.md) |
+| softbuffer/winit | [3/3](docs/benchmarks/SOFTBUFFER-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/SOFTBUFFER-ADAPTER.md) |
+| SDL3 | [3/3](docs/benchmarks/SDL3-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/SDL3-ADAPTER.md) |
+| raylib-rs | [3/3](docs/benchmarks/RAYLIB-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/RAYLIB-ADAPTER.md) |
+| pixels/winit | [3/3](docs/benchmarks/PIXELS-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/PIXELS-ADAPTER.md) |
+
+Other implementations have not yet been qualified through this shared timing protocol. Package lifecycle status is a separate dimension: Mac [Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md) and [SDL3](docs/packaging/SDL3-MAC-PILOT.md) have local extracted-app gameplay/removal evidence, not signed or clean-machine release qualification.
