@@ -4,6 +4,7 @@ version="0.1.0"
 edition="2021"
 [workspace]
 [dependencies]
+pong-benchmark = { path = "../../crates/pong-benchmark" }
 wgpu="=29.0.4"
 winit="=0.30.13"
 pollster="=0.4.0"

@@ -9,7 +9,18 @@ use winit::{
     keyboard::{KeyCode, PhysicalKey},
     window::{Window, WindowId},
 };
+fn benchmark_args(args: &[String]) -> bool {
+    let enabled = args.iter().any(|a| a == "--benchmark");
+    assert!(
+        !enabled || !args.iter().any(|a| a.starts_with("--scripted")),
+        "benchmark and replay/capture modes are distinct"
+    );
+    enabled
+}
 struct App {
+    benchmarking: bool,
+    benchmark: Option<pong_benchmark::Frames>,
+    scenario: pong_scenario::Scenario,
     window: Option<Arc<Window>>,
     renderer: Option<Renderer>,
     game: Game,
@@ -40,7 +51,7 @@ impl ApplicationHandler for App {
     fn window_event(&mut self, e: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
         match event {
             WindowEvent::CloseRequested => e.exit(),
-            WindowEvent::Focused(false) if self.demo.is_none() => {
+            WindowEvent::Focused(false) if self.demo.is_none() && !self.benchmarking => {
                 self.up = false;
                 self.down = false;
                 self.game.pause();
@@ -56,7 +67,9 @@ impl ApplicationHandler for App {
                     }
                 }
             }
-            WindowEvent::KeyboardInput { event, .. } if self.demo.is_none() => {
+            WindowEvent::KeyboardInput { event, .. }
+                if self.demo.is_none() && !self.benchmarking =>
+            {
                 let pressed = event.state == ElementState::Pressed;
                 if let PhysicalKey::Code(k) = event.physical_key {
                     match k {
@@ -86,17 +99,39 @@ impl ApplicationHandler for App {
                 }
                 self.last = now;
                 while self.acc >= 1.0 / 120.0 {
-                    self.game
-                        .step(1.0 / 120.0, self.down as u8 as f32 - self.up as u8 as f32);
+                    if self.benchmarking {
+                        if self.scenario.finished() {
+                            self.scenario = pong_scenario::Scenario::default();
+                            self.game = Game::new(pong_scenario::SEED);
+                        }
+                        self.scenario.advance(&mut self.game);
+                    } else {
+                        self.game
+                            .step(1.0 / 120.0, self.down as u8 as f32 - self.up as u8 as f32);
+                    }
                     self.acc -= 1.0 / 120.0;
                 }
                 if let Some(p) = self.renderer.as_mut() {
                     let capture = self.demo.as_mut().and_then(|d| d.capture_path());
-                    if let Err(err) = p.render(&self.game, capture.as_deref()) {
-                        eprintln!("Render: {err}");
-                        self.failed = true;
-                        e.exit();
-                        return;
+                    match p.render(&self.game, capture.as_deref()) {
+                        Ok(true) if self.benchmarking => {
+                            let (width, height) = p.dimensions();
+                            let frames = self
+                                .benchmark
+                                .get_or_insert_with(|| pong_benchmark::Frames::new(width, height));
+                            if frames.frame(width, height) {
+                                println!("PONG_BENCHMARK {}", frames.report());
+                                e.exit();
+                                return;
+                            }
+                        }
+                        Ok(_) => {}
+                        Err(err) => {
+                            eprintln!("Render: {err}");
+                            self.failed = true;
+                            e.exit();
+                            return;
+                        }
                     }
                 }
                 if self.demo.as_ref().is_some_and(|d| d.finished()) {
@@ -119,12 +154,16 @@ impl ApplicationHandler for App {
     }
 }
 fn main() {
+    let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     let e = EventLoop::new().unwrap();
     e.set_control_flow(ControlFlow::Poll);
     let mut a = App {
+        benchmarking,
+        benchmark: None,
+        scenario: pong_scenario::Scenario::default(),
         window: None,
         renderer: None,
-        game: Game::new(42),
+        game: Game::new(pong_scenario::SEED),
         demo: pong_scenario::Demo::from_args(),
         up: false,
         down: false,
@@ -135,5 +174,20 @@ fn main() {
     e.run_app(&mut a).unwrap();
     if a.failed {
         std::process::exit(1);
+    }
+}
+
+#[cfg(test)]
+mod benchmark_tests {
+    use super::benchmark_args;
+    #[test]
+    fn opt_in_only() {
+        assert!(!benchmark_args(&[]));
+        assert!(benchmark_args(&["--benchmark".into()]));
+    }
+    #[test]
+    #[should_panic(expected = "distinct")]
+    fn reject_combined_modes() {
+        benchmark_args(&["--benchmark".into(), "--scripted-test".into()]);
     }
 }
