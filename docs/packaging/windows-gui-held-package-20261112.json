@@ -1,0 +1,54 @@
+{
+  "date": "2026-11-12",
+  "platform": "Windows x64 GNU",
+  "scope": "Corrected input local portable requalification; not OS-input acceptance",
+  "results": [
+    {
+      "adapter": "ratatui",
+      "binary_sha256": "475d4c6f9547b60d893e7aa3ff810603ee87ae8090550b90ac9f157014cd9e1f",
+      "archive_sha256": "64708044141ef3bb867954d9e420c4ebc8bf739f6c3b6009cbfe32cbc1d89a97",
+      "archive_bytes": 1141183,
+      "extracted_binary_matches": true,
+      "corrected_source_evidence_matches": true,
+      "state_records": 13,
+      "final_tick": 1440,
+      "exit_code": 0,
+      "evidence": "six 100x30 JSON cell buffers and six text exports",
+      "launch": "Hidden launch option"
+    },
+    {
+      "adapter": "slint",
+      "binary_sha256": "a5c965051b024ee9d1300f474378ca35db1e0a7c4b5fdbb6894e60ffca70a641",
+      "archive_sha256": "05c890278784fb3e6c0754c3d6332e088210b57024a436b0c30436e11cfd7d02",
+      "archive_bytes": 10589459,
+      "extracted_binary_matches": true,
+      "corrected_source_evidence_matches": true,
+      "state_records": 13,
+      "final_tick": 1440,
+      "exit_code": 0,
+      "evidence": "six own-window PNGs",
+      "launch": "Hidden launch option"
+    },
+    {
+      "adapter": "gpui",
+      "binary_sha256": "738e15317b4d88629c4bdc4b6c14bee45671e4fbf6bc95badd68cc6996198b9b",
+      "archive_sha256": "723cfa3c20abe123575d2b458413fcf9fbabbc3f1ca935483d59bcedec09692d",
+      "archive_bytes": 11150209,
+      "extracted_binary_matches": true,
+      "corrected_source_evidence_matches": true,
+      "state_records": 13,
+      "final_tick": 1440,
+      "exit_code": 0,
+      "evidence": "state-only native replay",
+      "launch": "Normal window; hidden first attempt timed out at tick 0"
+    }
+  ],
+  "gpui_initial_failure": {
+    "window_style": "Hidden",
+    "deadline_seconds": 45,
+    "followup_wait_seconds": 30,
+    "last_tick": 0,
+    "action": "owned process stopped after executable path verification",
+    "logs_retained": true
+  }
+}
