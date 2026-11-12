@@ -22,8 +22,16 @@ fn conf() -> Conf {
 }
 #[macroquad::main(conf)]
 async fn main() {
+    let benchmarking = std::env::args().any(|a| a == "--benchmark");
+    assert!(
+        !benchmarking || !std::env::args().any(|a| a.starts_with("--scripted")),
+        "benchmark and replay/capture modes are distinct"
+    );
+    let mut benchmark = benchmarking
+        .then(|| pong_benchmark::Frames::new(screen_width() as u32, screen_height() as u32));
+    let mut bench_scenario = pong_scenario::Scenario::default();
     let mut demo = pong_scenario::Demo::from_args();
-    let scripted = demo.is_some();
+    let scripted = demo.is_some() || benchmarking;
     let mut g = Game::new(if scripted {
         pong_scenario::SEED
     } else {
@@ -59,7 +67,17 @@ async fn main() {
         }
         let input = (is_key_down(KeyCode::Down) || is_key_down(KeyCode::S)) as i32
             - (is_key_down(KeyCode::Up) || is_key_down(KeyCode::W)) as i32;
-        if let Some(demo) = &mut demo {
+        if benchmarking {
+            accumulator += get_frame_time().min(0.1);
+            while accumulator >= pong_scenario::STEP {
+                if bench_scenario.finished() {
+                    bench_scenario = pong_scenario::Scenario::default();
+                    g = Game::new(pong_scenario::SEED);
+                }
+                bench_scenario.advance(&mut g);
+                accumulator -= pong_scenario::STEP;
+            }
+        } else if let Some(demo) = &mut demo {
             demo.advance(&mut g, get_frame_time());
         } else {
             accumulator += get_frame_time().min(0.1);
@@ -140,6 +158,12 @@ async fn main() {
             get_screen_data().export_png(path.to_str().expect("UTF-8 capture path"));
         }
         next_frame().await;
+        if let Some(bench) = &mut benchmark {
+            if bench.frame(screen_width() as u32, screen_height() as u32) {
+                println!("PONG_BENCHMARK {}", bench.report());
+                break;
+            }
+        }
         if demo.as_ref().is_some_and(|d| d.finished()) {
             break;
         }

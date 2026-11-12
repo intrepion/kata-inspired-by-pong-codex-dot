@@ -4,13 +4,13 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 05:42 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 06:56 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Fresh original TypeScript and raw-WASM browser replay completed on `0cbe38f`; TS15 tests, WASM2 ABI and7 Rust scenario/WASM tests passed. | Bounded browser batch complete; tabs closed. Bundle downloads, true focus-loss and responsive override unverified. See [follow-up](docs/WINDOWS-BROWSER-REPLAY-FOLLOWUP.md). |
-| Mac | Published `18bc91c`: Swift simulator touch/release, Home background pause/resume, genuine full match and restart passed. Fresh Yew/Leptos actual native gameplay passed. | Assigned batch complete; apps exited and no simulator booted. No wrapper focus/resize/full-match pass claimed. Swift physical-device and store-packaging checks remain outstanding. |
-| Omarchy ARM64 | Portable Swift/Kotlin source handoff published. GPUI native state-only replay and Dioxus native SVG-source replay passed; neither establishes visual/input correctness. | Latest completed source/evidence checkpoints recorded below; current active run not confirmed. Kotlin validation subsequently passed on Windows, not Omarchy; Swift app replay and bounded simulator UI subsequently passed on Mac; these are not Omarchy runtime results. |
+| Mac | Fresh `4088089` Dioxus build, shared controller 4/4, native replay and actual held movement/release, pause/resume, full match 2:7 and restart passed. | Dioxus batch complete; test apps exited. Yew real OS focus-loss remains unverified. [Evidence](docs/MAC-DIOXUS-REQUALIFICATION.md). |
+| Omarchy ARM64 | Third shared benchmark adapter (SDL3) release build and three bounded pilot runs completed; processes exited. | Runtime SDL backend recorded; callback timing only, no displayed FPS or engine ranking. Packaging pilot limits unchanged. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -98,7 +98,7 @@ Details: [low-level clients](experiments/LOW-LEVEL.md), [GUI toolkits](experimen
 | Dioxus browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | U / U |
 | Yew native Tauri wrapper | Fresh `b92b7df` B + state/SVG replay + bounded I; provenance/evidence published `18bc91c` | B / I | B / scripted SVG-source checks passed; visual/input unverified |
 | Leptos native Tauri wrapper | Fresh `b92b7df` B + state/SVG replay + bounded I; provenance/evidence published `18bc91c` | B / I | B / scripted SVG-source checks passed; visual/input unverified |
-| Dioxus native desktop | B / I; fresh `6ceb22a` build | B / I; maximized layout checked | B / native scripted SVG-source checks passed; visual/input unverified |
+| Dioxus native desktop | Fresh `4088089` B / I + native replay; held controls/release, full match and restart passed | B / I; maximized layout checked | B / native scripted SVG-source checks passed; visual/input unverified |
 
 [Commands and detailed web-framework results](docs/web-framework-comparison.md). Browser checks use a localhost HTTP server, never file URLs. Narrow browser layout is not a physical touchscreen or mobile-package test.
 
@@ -127,7 +127,7 @@ Details: [native Kotlin/Swift](experiments/NATIVE-MOBILE.md), [Tauri mobile](doc
 | Known defects | Windows Bevy default Vulkan crash (DX12 rendering corrected); Windows bracket-lib bitmap text remains rough despite improved layout; Miniquad/raylib supported start input unsuccessful; Godot headless editor shutdown crash. |
 | Snapshot freshness | Windows extra-engine interaction used existing isolated GNU binaries, not a fresh latest-source rebuild. Mac nannou UI predates the pacing patch. bracket-lib header layout has been rechecked on Windows only. Requalification remains necessary before release. |
 | Packaging and compatibility | No complete signed-installer/download-install matrix, physical-mobile coverage, exhaustive OS/DPI/input matrix or accessibility audit. |
-| Performance | No controlled cross-engine benchmark; debug build sizes/timings are not fair comparisons. |
+| Performance | Macroquad, softbuffer and SDL3 shared-harness pilots completed; callback intervals only. No controlled cross-engine ranking; see [softbuffer evidence](docs/benchmarks/SOFTBUFFER-ADAPTER.md). |
 
 Keep this dashboard updated with every meaningful testing checkpoint. This dashboard also incorporates coordinator-confirmed later GPUI, Tauri mobile and Omarchy Ratatui worker results that are not yet reflected in every linked document. Detailed logs contain earlier states followed by newer corrections: use the latest dated follow-up, not an obsolete blocker paragraph. **U means unrun/unverified, not failed; I does not mean everything passed.** Comfy and rend3 were intentionally excluded, not left waiting for tests.
 
@@ -207,3 +207,17 @@ Windows original TypeScript follow-up at `31478c642cf07d536cd979d82e81ea900a3c1a
 Mac follow-up published in `18bc91c`: [Swift normal UI regression](docs/evidence/swift-ios-normal-ui-20261112.txt) passed in 47.349 seconds using genuine touch, release, background/resume, game-over and restart assertions; no physics injection. [Fresh Yew/Leptos native interaction evidence](docs/evidence/mac-fresh-web-wrapper-ui-20261112.json) records rendering, Enter start, W/S movement, Space pause/resume, CPU scoring and restart. Wrapper focus/resize/full-match remain unverified. Both apps exited and the simulator was shut down after checks.
 
 Windows follow-up: [fresh original TypeScript and raw-WASM browser replay completion](docs/WINDOWS-BROWSER-REPLAY-FOLLOWUP.md). Both completion links appeared; raw final court inspected. Bundle contents, true focus transitions and responsive override remain unverified.
+
+[Omarchy portable-manifest regression](docs/MANIFEST-REGRESSION-OMARCHY.md): source 0cbe38f preserves sixteen shared tests and exact scripted baselines; Macroquad/Piston app-owned capture samples rechecked. This is not benchmark or manual-input evidence.
+
+## Benchmark pilot
+
+The [shared Macroquad benchmark pilot](docs/benchmarks/README.md) completed three release runs on Omarchy. Median **frame-callback intervals** were about 8.33 ms, not measured display FPS. Raw samples, rejected attempts and metadata limits are retained. This is a harness pilot, **not a cross-engine ranking**; CPU/memory/startup/power/presentation metrics remain unmeasured; separate packaging pilot follows.
+
+## Packaging pilot
+
+[Macroquad Linux ARM64 portable archive](docs/packaging/README.md): local creation, checksum validation, isolated staged extraction, installed scripted run and exact-file uninstall passed. Archive remains local and is not a distribution-ready release. System installation, clean-machine/cross-distro compatibility, upgrades, signing and full dependency notices remain pending.
+
+Second shared benchmark adapter: [softbuffer/winit pilot](docs/benchmarks/SOFTBUFFER-ADAPTER.md), three valid bounded release runs, shared scenario/sampler and explicit runner metadata. Existing 8ms pacing remains; no displayed-FPS or engine ranking claim.
+
+Third shared benchmark adapter: [SDL3 pilot](docs/benchmarks/SDL3-ADAPTER.md), three valid bounded release runs with actual SDL driver/renderer metadata. Existing 8ms sleep remains; no engine ranking.

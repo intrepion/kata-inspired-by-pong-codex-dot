@@ -10,3 +10,4 @@ bundled = ["sdl3/build-from-source-static"]
 pong-low-level-common = { path = "../low-level-common" }
 sdl3 = "0.22.1"
 pong-scenario = { path = "../../crates/pong-scenario" }
+pong-benchmark = { path = "../../crates/pong-benchmark" }

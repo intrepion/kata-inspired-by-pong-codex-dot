@@ -126,6 +126,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "pong-benchmark"
+version = "0.1.0"
+
+[[package]]
 name = "pong-core"
 version = "0.1.0"
 
@@ -148,6 +152,7 @@ dependencies = [
 name = "pong-sdl3"
 version = "0.1.0"
 dependencies = [
+ "pong-benchmark",
  "pong-low-level-common",
  "pong-scenario",
  "sdl3",

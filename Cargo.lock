@@ -5292,6 +5292,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "pong-benchmark"
+version = "0.1.0"
+
+[[package]]
 name = "pong-bevy"
 version = "0.1.0"
 dependencies = [
@@ -5309,6 +5313,7 @@ name = "pong-macroquad"
 version = "0.1.0"
 dependencies = [
  "macroquad",
+ "pong-benchmark",
  "pong-core",
  "pong-scenario",
 ]
