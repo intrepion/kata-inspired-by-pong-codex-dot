@@ -1,0 +1,13 @@
+{"scenario":"smoke-v1","seed":42,"tick":0,"state":"Ready","player":250,"cpu":250,"ball":[450,250,0,0],"scores":[0,0],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":120,"state":"Playing","player":45,"cpu":250,"ball":[330.41708,257.6975,-350,22.52929],"scores":[0,0],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":240,"state":"Playing","player":455,"cpu":250,"ball":[450,250,350,7.7871714],"scores":[0,1],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":360,"state":"Playing","player":455,"cpu":254.1791,"ball":[578.33356,252.85541,350,7.7871714],"scores":[0,1],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":480,"state":"Paused","player":455,"cpu":254.1791,"ball":[578.33356,252.85541,350,7.7871714],"scores":[0,1],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":600,"state":"Playing","player":455,"cpu":266.15198,"ball":[765.09827,253.11642,-368.44888,-25.65989],"scores":[0,1],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":720,"state":"Playing","player":455,"cpu":250,"ball":[396.64728,227.45602,-368.44888,-25.65989],"scores":[0,1],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":840,"state":"Playing","player":455,"cpu":250,"ball":[28.198746,201.79562,-368.44888,-25.65989],"scores":[0,1],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":960,"state":"Playing","player":455,"cpu":263.85794,"ball":[534.58325,243.11949,350,-28.47197],"scores":[0,2],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":1080,"state":"Playing","player":455,"cpu":224.73047,"ball":[815.00586,200.64653,-329.93805,-168.48947],"scores":[0,2],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":1200,"state":"Playing","player":455,"cpu":250,"ball":[485.06476,32.15698,-329.93805,-168.48947],"scores":[0,2],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":1320,"state":"Playing","player":250,"cpu":250,"ball":[330.41708,235.33006,-350,-42.935654],"scores":[0,0],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":1440,"state":"Playing","player":250,"cpu":250,"ball":[89.02103,136.44139,185.1054,-322.69702],"scores":[0,0],"finished":true}

@@ -4,13 +4,13 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 03:47 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 03:59 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Miniquad fresh MSVC build, one test, and scripted replay (1440 ticks / six captures) passed per worker report; native Return/Space start attempts still failed. Bevy scoped fix/evidence was published in `55d0975`. | **Disconnected; testing paused.** No active test window. Miniquad results/evidence remain uncommitted and await reconnect/publication; no native-input pass claimed. |
 | Mac | Yew and Leptos native-wrapper checks assigned, followed by Dioxus native desktop. Existing test binaries use an older checkpoint. | Preparing visual checks with existing `6ceb22a` binaries; Pong Yew app-access call pending, possibly approval. Gameplay not yet confirmed; Dioxus build queued. |
-| Omarchy ARM64 | Tauri native shared replay and Canvas2D exports verified; GPUI state-only replay passes. | Publishing Tauri evidence. Browser-only runtime checks and mobile replay remain pending; no new interactive-input claim. |
+| Omarchy ARM64 | Native Yew/Leptos shared replay completed with SVG-source and telemetry checks. | Publishing verified source-evidence subset; Dioxus and Tauri pause polish await shared-source coordination. SVG exports are not screenshots. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -96,8 +96,8 @@ Details: [low-level clients](experiments/LOW-LEVEL.md), [GUI toolkits](experimen
 | Yew browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | U / U |
 | Leptos browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | U / U |
 | Dioxus browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | U / U |
-| Yew native Tauri wrapper | B / U | B / I | U / U |
-| Leptos native Tauri wrapper | B / U | B / I | U / U |
+| Yew native Tauri wrapper | B / U | B / I | B / scripted SVG-source checks passed; visual/input unverified |
+| Leptos native Tauri wrapper | B / U | B / I | B / scripted SVG-source checks passed; visual/input unverified |
 | Dioxus native desktop | U / U | B / I; maximized layout checked | U / U |
 
 [Commands and detailed web-framework results](docs/web-framework-comparison.md). Browser checks use a localhost HTTP server, never file URLs. Narrow browser layout is not a physical touchscreen or mobile-package test.
@@ -176,6 +176,7 @@ rendering evidence, **not** real keyboard/focus or smooth-motion validation.
 | GPUI | Passed (native state-only) | Unsupported; request explicitly rejected | Telemetry only, not visual QA |
 | Yew / Leptos / Dioxus web | Shared replay tests and WASM builds pass | SVG scene-source export implemented, browser run unverified | SVG source is not screenshot evidence |
 | Tauri + Rust WASM | Passed (native WebKitGTK) | Six canvas PNGs; pause/reset inspected | Court only, not DOM scores or full webview |
+| Yew / Leptos native wrappers | Passed | Six SVG sources each; geometry checked | Source export, not screenshot or visual QA |
 | Remaining Rust / Swift / Kotlin adapters | Not wired yet | Not wired yet | No implied pass |
 
 All twenty render-evidence adapters finish at tick 1440 with the same baseline telemetry. Shared core has

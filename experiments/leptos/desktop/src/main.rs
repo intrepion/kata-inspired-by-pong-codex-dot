@@ -1,1 +1,3 @@
-fn main(){tauri::Builder::default().run(tauri::generate_context!()).expect("Pong desktop startup failed");}
+fn main() {
+    pong_native_web_demo::run(tauri::generate_context!());
+}
