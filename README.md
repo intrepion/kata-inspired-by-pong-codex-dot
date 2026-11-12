@@ -4,11 +4,11 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 12:42 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 12:48 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Five corrected-input portable ZIPs requalified: Miniquad, pixels, raw wgpu, ash and softbuffer. Exact source/extracted hashes match; five native runs, 65 states and 30 captures pass. | [Windows package follow-up](docs/packaging/WINDOWS-HELD-FIXES-PACKAGE.md). Eleven packaging tests pass/seven platform skips. Artifacts retained; clean-machine, installer and physical-input gates remain separate. |
+| Windows | Corrected Ratatui, Slint and GPUI portable packages requalified. All three extracted replays pass; Slint six snapshots and Ratatui six cell-buffer pairs checked. GPUI hidden launch stalled; normal-window diagnostic passed. | [GUI/terminal package follow-up](docs/packaging/WINDOWS-GUI-HELD-PACKAGE.md). Both GPUI outcomes retained; no processes remain. Physical-input, clean-machine and installer gates remain separate. |
 | Mac | Softbuffer native match reached 2–7 Over; Space restarted at 0–0 Playing. App-menu Quit confirmed exit. Focus-switch and Escape observations remain inconclusive, not silently passed. | [Full-match evidence and limits](docs/ASH-SOFTBUFFER-HELD-BINDINGS-FIX.md). Resize, physical overlapping-key order and verified OS-focus checks remain open. |
 | Omarchy ARM64 | First GPUI optimized local package pilot passed: eight model tests, sixteen packaging tests, checksum/extracted native state replay and exact six-file uninstall. Unsupported capture exits 2 without output. | [GPUI Linux package evidence](docs/packaging/GPUI-LINUX-PILOT.md). State-only, no visual/input pass; 30 dependency notice-file gaps remain explicit. |
 
@@ -263,6 +263,8 @@ Other implementations have not yet been qualified through this shared timing pro
 Additional local package lifecycle: [ash/Vulkan Linux ARM64](docs/packaging/ASH-LINUX-PILOT.md) passed relocation/replay/capture/removal; runtime dependencies and release gates remain explicit.
 
 Mac [raylib-rs local package pilot](docs/packaging/RAYLIB-MAC-PILOT.md) also passed extracted native scripted replay/captures, bounded real-input controls and scoped removal; no signed distribution qualification inferred.
+
+Windows corrected GUI/terminal package follow-up: [Ratatui, Slint and GPUI](docs/packaging/WINDOWS-GUI-HELD-PACKAGE.md), including the GPUI hidden-launch limitation.
 
 Windows corrected held-input package follow-up: [five rebuilt portable archives](docs/packaging/WINDOWS-HELD-FIXES-PACKAGE.md) preserve historical results while recording current binary hashes.
 
