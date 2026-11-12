@@ -155,6 +155,8 @@ impl Plugin for App {
             WidgetMessage::DesiredPosition(Vector2::new(ox, oy - 75. * s)),
         );
         ui.send(self.title, WidgetMessage::Width(W * s));
+        ui.send(self.title, WidgetMessage::Height(65. * s));
+        ui.send(self.title, TextMessage::FontSize((18. * s).into()));
         ui.send(self.title,TextMessage::Text(format!("PONG / FYROX   YOU {} : {} CPU   {:?}\nW/S or arrows: move | Enter: play/resume | Space: pause | R: restart",self.game.scores[0],self.game.scores[1],self.game.state)));
         Ok(())
     }
