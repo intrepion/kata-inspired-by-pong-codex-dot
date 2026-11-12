@@ -10,7 +10,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 | --- | --- | --- |
 | Windows | Bevy DX12: 3 valid timing repeats, 2 tests, replay and six captures passed. Default Vulkan crashed and is explicitly rejected. Fourteen timing adapters measured. | [Bevy evidence](docs/benchmarks/BEVY-WINDOWS-PILOT.md). Next: fresh Fyrox release build and timing/replay qualification. |
 | Mac | Verified malloc_buf 0.0.6 source matches its upstream 2015 tag, which lacks a license file. Upstream MIT text added in 2020 after source changes; no pinned-release attribution inferred. | [Pinned provenance and notice gap](docs/packaging/MINIQUAD-MAC-NOTICE-GAP.md). Fourteen timing/local-package pilots remain valid; notice/release gates open. |
-| Omarchy ARM64 | GTK GUI-toolkit local package passed fresh release build, one Cairo and four GUI-model tests, extracted native replay/six app-owned Cairo captures and exact uninstall. 28 Node tests pass; process exited. | [GTK Linux package report](docs/packaging/GTK-LINUX-PILOT.md). Requires existing GTK4 runtime; capture is not a compositor screenshot or OS-input pass. |
+| Omarchy ARM64 | Slint toolkit package passed fresh optimized build, four GUI-model and 28 Node tests, extracted replay/six own-window snapshots and exact uninstall. Existing Slint license text and visible attribution preserved; process exited. | [Slint Linux package report](docs/packaging/SLINT-LINUX-PILOT.md). Component snapshots are not compositor screenshots or OS-input passes. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -283,6 +283,7 @@ These are local archive extraction, relocated runtime and removal checks, **not 
 | Blue Engine, softbuffer | [Local pilots; Blue state-only](docs/packaging/MAC-SOFTBUFFER-BLUE-PILOT.md) | Not recorded | [Final two local pilots](docs/packaging/LINUX-PORTABLE-BATCH3.md); Blue native captures unsupported |
 | Ratatui | Not recorded | Not recorded | [Terminal local pilot](docs/packaging/RATATUI-LINUX-PILOT.md); cells + bounded PTY, not screenshots |
 | GTK4 | Not recorded | Not recorded | [Local package pilot](docs/packaging/GTK-LINUX-PILOT.md); existing GTK4 libraries required |
+| Slint | Not recorded | Not recorded | [Local package pilot](docs/packaging/SLINT-LINUX-PILOT.md); own-window snapshots, license text included |
 | Other adapters | Not recorded | Not recorded | Not recorded |
 
 Evidence and limitations: [packaging index](docs/packaging/README.md), [Mac Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md), [Windows Macroquad](docs/packaging/MACROQUAD-WINDOWS-PILOT.md), [Mac SDL3](docs/packaging/SDL3-MAC-PILOT.md), [Mac raylib](docs/packaging/RAYLIB-MAC-PILOT.md), [Linux ash](docs/packaging/ASH-LINUX-PILOT.md).

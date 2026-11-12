@@ -1,0 +1,20 @@
+{
+  "binary_sha256": "dc078be76937009a20997c3a862e98f7a6788be4965e101ac26ec9962cdb849f",
+  "archive_sha256": "0eee8e861458b87f6c6534b6a7b1243b0b43538d63bee6654777d310a9b28d41",
+  "size": 8875475,
+  "source_commit": "730881f7741b9ca998a878c01064edc829f78a5a",
+  "exit": 0,
+  "states": 13,
+  "final_tick": 1440,
+  "captures": 6,
+  "capture_kind": "Slint own-window component snapshot, not compositor screenshot",
+  "slint_license_sha256": "5167f5056e850419106ab6265efbdca7cba4d99c849d1445ca0bbf6a1e2315fe",
+  "exact_six_file_uninstall_neighbor_preserved": true,
+  "tick600_sha256": "c58e43b0d8cc4988f49af62761d70f45e97eb0f704a785779703ba9ed31f25ef",
+  "direct_elf_needed": [
+    "libfontconfig.so.1",
+    "libgcc_s.so.1",
+    "libm.so.6",
+    "libc.so.6"
+  ]
+}
