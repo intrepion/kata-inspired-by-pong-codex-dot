@@ -36,3 +36,29 @@ test('frame loop preserves one second of gameplay at 20, 60 and 120 Hz', () => {
 test('long stalls catch up no more than 100 ms per frame', () => { const { createFrameLoop } = require('../game'); const g = createGame(() => .5); g.start(); g.serve = 0; const loop = createFrameLoop(g); loop.advance(0); loop.advance(5000); assert.ok(Math.abs(g.ball.x - 485) < 1e-8); loop.advance(5000 + 1000 / 120); assert.ok(Math.abs(g.ball.x - 487.9166666667) < 1e-8); });
 test('reset discards partial steps and elapsed pause time', () => { const { createFrameLoop } = require('../game'); const g = createGame(() => .5); g.start(); g.serve = 0; const loop = createFrameLoop(g); loop.advance(0); loop.advance(4); loop.reset(); loop.advance(10000); loop.advance(10004); assert.equal(g.ball.x, 450); loop.advance(10000 + 1000 / 120); assert.ok(Math.abs(g.ball.x - 452.9166666667) < 1e-8); });
 test('invalid frame timestamps and controls do not poison the clock', () => { const { createFrameLoop } = require('../game'); const g = createGame(() => .5); g.start(); g.serve = 0; const loop = createFrameLoop(g); loop.advance(0); loop.advance(NaN); loop.advance(Infinity); loop.advance(-10); loop.advance(20, NaN); loop.advance(1000 / 120); assert.ok(Math.abs(g.ball.x - 452.9166666667) < 1e-8); });
+
+test('portable scenario preserves TS action semantics and is bounded/deterministic', () => {
+    const {parseScenario,createScriptedReplay}=require('../game');
+    const text=require('node:fs').readFileSync(require('node:path').join(__dirname,'../scenarios/smoke-v1.txt'),'utf8');
+    const manifest=parseScenario(text), a=createScriptedReplay(manifest),b=createScriptedReplay(manifest);
+    const checkpoints=[];
+    while(!a.finished){a.step();b.step();if(manifest.captures.includes(a.tick))checkpoints.push(a.tick);}
+    assert.deepEqual(a.reports,b.reports);assert.equal(a.tick,manifest.end);assert.equal(a.reports.length,13);
+    assert.deepEqual(a.actions,manifest.events);assert.deepEqual(checkpoints,manifest.captures);
+    assert.equal(a.reports.find(r=>r.tick===120).player,45);assert.equal(a.reports.find(r=>r.tick===240).player,455);
+    const before=a.reports.find(r=>r.tick===360),paused=a.reports.find(r=>r.tick===480);
+    assert.equal(paused.state,'paused');assert.deepEqual(paused.ball,before.ball);assert.equal(paused.player,before.player);
+    assert.equal(a.reports.find(r=>r.tick===600).state,'playing');assert.deepEqual(a.reports.find(r=>r.tick===1320).scores,[0,0]);
+    const final=JSON.stringify(a.reports);a.step();assert.equal(JSON.stringify(a.reports),final);
+});
+test('portable manifest rejects unknown actions, duplicates and overlapping ranges',()=>{
+ const {parseScenario}=require('../game'),fs=require('node:fs'),path=require('node:path');
+ const text=fs.readFileSync(path.join(__dirname,'../scenarios/smoke-v1.txt'),'utf8');
+ for(const bad of [text+'\nseed 9',text.replace('event 0 start','event 0 shell'),text.replace('input 120 240 1','input 100 240 1'),text.replace('step_hz 120','step_hz 0')])assert.throws(()=>parseScenario(bad));
+});
+test('scripted frame pacing lands on every capture tick even after stalls',()=>{
+ const {parseScenario,createScriptedReplay}=require('../game'),fs=require('node:fs'),path=require('node:path');
+ const m=parseScenario(fs.readFileSync(path.join(__dirname,'../scenarios/smoke-v1.txt'),'utf8')),r=createScriptedReplay(m),seen=new Set();
+ for(let t=0;!r.finished && t<100000;t+=137){r.frame(t);if(m.captures.includes(r.tick))seen.add(r.tick);}
+ assert.equal(r.finished,true);assert.deepEqual([...seen],m.captures);
+});

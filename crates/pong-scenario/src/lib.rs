@@ -1,9 +1,7 @@
 //! Opt-in application-level input replay. Never injects operating-system input.
 use pong_core::Game;
 
-pub const STEP: f32 = 1.0 / 120.0;
-pub const END_TICK: u32 = 1440;
-pub const SEED: u64 = 42;
+include!(concat!(env!("OUT_DIR"), "/scenario.rs"));
 
 #[derive(Clone, Default)]
 pub struct Scenario {
@@ -24,24 +22,25 @@ impl Scenario {
         if self.finished() {
             return;
         }
-        match self.tick {
-            0 | 1200 => game.start(),
-            360 => game.pause(),
-            480 => game.toggle_pause(),
-            _ => {}
+        for (_, action) in EVENTS.iter().filter(|(tick, _)| *tick == self.tick) {
+            match *action {
+                "start" => game.start(),
+                "pause" => game.pause(),
+                "toggle_pause" => game.toggle_pause(),
+                _ => unreachable!("build-time validated action"),
+            }
         }
-        let input = match self.tick {
-            0..=119 => -1.0,
-            120..=239 => 1.0,
-            _ => 0.0,
-        };
+        let input = INPUTS
+            .iter()
+            .find(|(from, to, _)| self.tick >= *from && self.tick < *to)
+            .map_or(0.0, |(_, _, value)| *value as f32);
         game.step(STEP, input);
         self.tick += 1;
     }
 
     /// JSONL telemetry is state evidence, not evidence of rendered correctness.
     pub fn report(&self, game: &Game) -> String {
-        format!("{{\"scenario\":\"smoke-v1\",\"seed\":{SEED},\"tick\":{},\"state\":\"{:?}\",\"player\":{},\"cpu\":{},\"ball\":[{},{},{},{}],\"scores\":[{},{}],\"finished\":{}}}",
+        format!("{{\"scenario\":\"{SCENARIO_ID}\",\"seed\":{SEED},\"tick\":{},\"state\":\"{:?}\",\"player\":{},\"cpu\":{},\"ball\":[{},{},{},{}],\"scores\":[{},{}],\"finished\":{}}}",
             self.tick, game.state, game.player, game.cpu, game.ball.x, game.ball.y,
             game.ball.vx, game.ball.vy, game.scores[0], game.scores[1], self.finished())
     }
@@ -56,7 +55,6 @@ pub struct Demo {
     last_capture: u32,
     started: bool,
 }
-pub const CAPTURE_TICKS: [u32; 6] = [120, 240, 480, 600, 1320, 1440];
 #[cfg(not(target_arch = "wasm32"))]
 impl Demo {
     pub fn from_args() -> Option<Self> {
@@ -110,7 +108,7 @@ impl Demo {
         while self.accumulator >= STEP && !self.finished() {
             self.scenario.advance(game);
             self.accumulator -= STEP;
-            if self.tick().is_multiple_of(120) {
+            if self.tick().is_multiple_of(REPORT_EVERY) {
                 println!("{}", self.scenario.report(game));
             }
             // Give the adapter a frame at every capture checkpoint, even on slow renders.

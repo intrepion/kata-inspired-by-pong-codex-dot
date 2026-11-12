@@ -81,8 +81,87 @@ function createFrameLoop(game) {
         }
     };
 }
+function parseScenario(text) {
+    const fields = new Map(), events = [], inputs = [], captures = [];
+    const number = (s) => { if (!/^\d+$/.test(s) || (!Number.isSafeInteger(Number(s)) || Number(s) > 0xffffffff))
+        throw Error('Invalid unsigned scenario integer'); return Number(s); };
+    for (const line of text.split(/\r?\n/)) {
+        const p = line.split('#')[0].trim().split(/\s+/);
+        if (!p[0])
+            continue;
+        if (p[0] === 'event' && p.length === 3 && ['start', 'pause', 'toggle_pause'].includes(p[2]))
+            events.push({ tick: number(p[1]), action: p[2] });
+        else if (p[0] === 'input' && p.length === 4 && ['-1', '0', '1'].includes(p[3]))
+            inputs.push({ from: number(p[1]), to: number(p[2]), value: Number(p[3]) });
+        else if (p[0] === 'capture' && p.length === 2)
+            captures.push(number(p[1]));
+        else if (p.length === 2 && ['schema', 'id', 'seed', 'step_hz', 'end_tick', 'report_every'].includes(p[0]) && !fields.has(p[0]))
+            fields.set(p[0], p[1]);
+        else
+            throw Error('Invalid or duplicate scenario line: ' + line);
+    }
+    if (fields.get('schema') !== '1' || !/^[a-zA-Z0-9-]+$/.test(fields.get('id') || ''))
+        throw Error('Unsupported scenario schema/id');
+    const m = { id: fields.get('id'), seed: number(fields.get('seed') || ''), hz: number(fields.get('step_hz') || ''), end: number(fields.get('end_tick') || ''), reportEvery: number(fields.get('report_every') || ''), events, inputs, captures };
+    if (!m.hz || !m.end || !m.reportEvery || events.some((e, i) => e.tick >= m.end || (i > 0 && events[i - 1].tick >= e.tick)) || inputs.some((r, i) => r.from >= r.to || r.to > m.end || (i > 0 && inputs[i - 1].to > r.from)) || captures.some((t, i) => !t || t > m.end || (i > 0 && captures[i - 1] >= t)))
+        throw Error('Invalid scenario ranges/order');
+    return m;
+}
+// Stable TS-demo-only RNG. This intentionally does not pretend to reproduce Rust's u64/f32 stream.
+function scenarioRandom(seed) {
+    let state = seed >>> 0;
+    return () => { state = (Math.imul(state, 1664525) + 1013904223) >>> 0; return state / 4294967296; };
+}
+function createScriptedReplay(manifest) {
+    const game = createGame(scenarioRandom(manifest.seed));
+    let tick = 0, last = null, accumulator = 0;
+    const report = () => ({ scenario: manifest.id, implementation: 'original-typescript', seed: manifest.seed, tick, state: game.state, player: game.player, cpu: game.cpu, ball: { ...game.ball }, scores: [...game.scores], finished: tick >= manifest.end });
+    const reports = [report()], actions = [];
+    function step() {
+        if (tick >= manifest.end)
+            return;
+        for (const event of manifest.events.filter(e => e.tick === tick)) {
+            actions.push({ ...event });
+            if (event.action === 'start')
+                game.start();
+            else if (event.action === 'pause' && game.state === 'playing')
+                game.state = 'paused';
+            else if (event.action === 'toggle_pause') {
+                if (game.state === 'paused')
+                    game.state = 'playing';
+                else if (game.state === 'playing')
+                    game.state = 'paused';
+            }
+        }
+        const range = manifest.inputs.find(r => tick >= r.from && tick < r.to);
+        game.step(1 / manifest.hz, range?.value || 0);
+        tick++;
+        if (tick % manifest.reportEvery === 0)
+            reports.push(report());
+    }
+    return { game, reports, actions, manifest, get tick() { return tick; }, get finished() { return tick >= manifest.end; }, step,
+        frame(t) {
+            if (!Number.isFinite(t))
+                return;
+            if (last === null) {
+                last = t;
+                return;
+            }
+            if (t < last)
+                return;
+            accumulator += Math.min((t - last) / 1000, .1);
+            last = t;
+            while (accumulator + 1e-12 >= 1 / manifest.hz && tick < manifest.end) {
+                step();
+                accumulator = Math.max(0, accumulator - 1 / manifest.hz);
+                if (manifest.captures.includes(tick))
+                    break;
+            }
+        }
+    };
+}
 if (typeof module !== 'undefined')
-    module.exports = { createGame, createFrameLoop, W, H, PADDLE_H, BALL };
+    module.exports = { createGame, createFrameLoop, parseScenario, createScriptedReplay, W, H, PADDLE_H, BALL };
 if (typeof document !== 'undefined') {
     function element(selector, kind) {
         const found = document.querySelector(selector);
@@ -93,13 +172,24 @@ if (typeof document !== 'undefined') {
     const canvas = element('#court', HTMLCanvasElement), context = canvas.getContext('2d');
     if (!context)
         throw new Error('Canvas 2D rendering is unavailable');
-    const ctx = context, game = createGame(), keys = new Set(), loop = createFrameLoop(game);
+    const ctx = context, keys = new Set();
+    let game = createGame();
+    const loop = createFrameLoop(game);
+    const demoRequested = new URLSearchParams(location.search).has('scripted-test');
+    let replay;
+    const captures = [];
+    let exported = false;
+    let demoError;
+    if (demoRequested)
+        fetch('scenarios/smoke-v1.txt').then(r => { if (!r.ok)
+            throw Error('Scenario manifest unavailable'); return r.text(); }).then(text => { replay = createScriptedReplay(parseScenario(text)); game = replay.game; }).catch(e => { console.error(e); demoError = String(e); });
     let touch = 0;
     const overlay = element('#overlay', HTMLElement), message = element('#message', HTMLElement), hint = element('#hint', HTMLElement), start = element('#start', HTMLButtonElement), pause = element('#pause', HTMLButtonElement), status = element('#status', HTMLElement);
     function sync() {
         element('#you', HTMLElement).textContent = String(game.scores[0]);
         element('#cpu', HTMLElement).textContent = String(game.scores[1]);
-        pause.disabled = game.state === 'ready' || game.state === 'over';
+        pause.disabled = demoRequested || game.state === 'ready' || game.state === 'over';
+        start.disabled = demoRequested;
         pause.textContent = game.state === 'paused' ? 'Resume' : 'Pause';
         status.textContent = game.state === 'playing' ? (game.serve > 0 ? 'Next serve' : 'Rally in progress') : game.state === 'paused' ? 'Paused' : game.state === 'over' ? (game.scores[0] === WIN ? 'You won the match' : 'Computer wins the match') : 'Ready to play';
         overlay.hidden = game.state === 'playing';
@@ -115,6 +205,8 @@ if (typeof document !== 'undefined') {
         }
     }
     function toggle() {
+        if (demoRequested)
+            return;
         if (game.state === 'playing')
             game.state = 'paused';
         else if (game.state === 'paused')
@@ -123,6 +215,8 @@ if (typeof document !== 'undefined') {
         sync();
     }
     start.addEventListener('click', () => {
+        if (demoRequested)
+            return;
         if (game.state === 'paused')
             game.state = 'playing';
         else
@@ -132,6 +226,8 @@ if (typeof document !== 'undefined') {
     });
     pause.addEventListener('click', toggle);
     document.addEventListener('keydown', e => {
+        if (demoRequested)
+            return;
         if (['ArrowUp', 'ArrowDown', ' ', 'w', 's', 'W', 'S'].includes(e.key))
             e.preventDefault();
         if (e.key === ' ' && !e.repeat && (game.state === 'playing' || game.state === 'paused'))
@@ -151,7 +247,8 @@ if (typeof document !== 'undefined') {
     });
     for (const [id, dir] of [['up', -1], ['down', 1]]) {
         const el = element('#' + id, HTMLButtonElement);
-        el.addEventListener('pointerdown', e => { e.preventDefault(); touch = dir; el.setPointerCapture(e.pointerId); });
+        el.addEventListener('pointerdown', e => { if (demoRequested)
+            return; e.preventDefault(); touch = dir; el.setPointerCapture(e.pointerId); });
         for (const event of ['pointerup', 'pointercancel', 'lostpointercapture'])
             el.addEventListener(event, () => { touch = 0; });
     }
@@ -160,13 +257,39 @@ if (typeof document !== 'undefined') {
             canvas.setPointerCapture(e.pointerId);
     });
     canvas.addEventListener('pointermove', e => {
+        if (demoRequested)
+            return;
         if (e.buttons && e.pointerType !== 'mouse' && game.state === 'playing') {
             const rect = canvas.getBoundingClientRect();
             game.player = clamp((e.clientY - rect.top) / rect.height * H, PADDLE_H / 2, H - PADDLE_H / 2);
         }
     });
     function draw() { ctx.fillStyle = '#153f37'; ctx.fillRect(0, 0, W, H); ctx.strokeStyle = '#a8e6bb30'; ctx.lineWidth = 2; ctx.setLineDash([12, 16]); ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke(); ctx.setLineDash([]); ctx.strokeStyle = '#a8e6bb25'; ctx.beginPath(); ctx.arc(W / 2, H / 2, 70, 0, Math.PI * 2); ctx.stroke(); ctx.fillStyle = '#d9ffae'; ctx.fillRect(32, game.player - PADDLE_H / 2, PADDLE_W, PADDLE_H); ctx.fillStyle = '#e3f3e7'; ctx.fillRect(W - 44, game.cpu - PADDLE_H / 2, PADDLE_W, PADDLE_H); ctx.beginPath(); ctx.arc(game.ball.x, game.ball.y, BALL, 0, Math.PI * 2); ctx.fill(); }
-    function frame(t) { loop.advance(t, touch + (keys.has('arrowdown') || keys.has('s') ? 1 : 0) - (keys.has('arrowup') || keys.has('w') ? 1 : 0)); draw(); sync(); requestAnimationFrame(frame); }
+    function frame(t) {
+        if (demoRequested)
+            replay?.frame(t);
+        else
+            loop.advance(t, touch + (keys.has('arrowdown') || keys.has('s') ? 1 : 0) - (keys.has('arrowup') || keys.has('w') ? 1 : 0));
+        draw();
+        sync();
+        if (demoError)
+            status.textContent = demoError;
+        if (replay && replay.manifest.captures.includes(replay.tick) && !captures.some(c => c.tick === replay.tick))
+            captures.push({ tick: replay.tick, png: canvas.toDataURL('image/png') });
+        if (replay?.finished) {
+            if (!exported) {
+                exported = true;
+                const evidence = { kind: 'original TS state and own Canvas2D; not Rust-identical or desktop QA', reports: replay.reports, actions: replay.actions, captures };
+                const a = document.createElement('a');
+                a.textContent = 'Download original TypeScript demo evidence';
+                a.download = 'pong-original-ts-demo.json';
+                a.href = URL.createObjectURL(new Blob([JSON.stringify(evidence)], { type: 'application/json' }));
+                document.body.append(a);
+            }
+        }
+        else
+            requestAnimationFrame(frame);
+    }
     sync();
     requestAnimationFrame(frame);
 }

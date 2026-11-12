@@ -1,0 +1,71 @@
+{
+  "kind": "Node state-only replay; not browser rendering",
+  "manifest": {
+    "id": "smoke-v1",
+    "seed": 42,
+    "hz": 120,
+    "end": 1440,
+    "reportEvery": 120,
+    "events": [
+      {
+        "tick": 0,
+        "action": "start"
+      },
+      {
+        "tick": 360,
+        "action": "pause"
+      },
+      {
+        "tick": 480,
+        "action": "toggle_pause"
+      },
+      {
+        "tick": 1200,
+        "action": "start"
+      }
+    ],
+    "inputs": [
+      {
+        "from": 0,
+        "to": 120,
+        "value": -1
+      },
+      {
+        "from": 120,
+        "to": 240,
+        "value": 1
+      }
+    ],
+    "captures": [
+      120,
+      240,
+      480,
+      600,
+      1320,
+      1440
+    ]
+  },
+  "actions": [
+    {
+      "tick": 0,
+      "action": "start"
+    },
+    {
+      "tick": 360,
+      "action": "pause"
+    },
+    {
+      "tick": 480,
+      "action": "toggle_pause"
+    },
+    {
+      "tick": 1200,
+      "action": "start"
+    }
+  ],
+  "typescript_tests": 15,
+  "rust_tests": 16,
+  "rust_baseline": "13 existing state lines preserved exactly",
+  "browser_status": "Unavailable: supported browser inventory empty; local HTTP manifest200 and byte-identical only",
+  "canvas_exports_verified": false
+}
