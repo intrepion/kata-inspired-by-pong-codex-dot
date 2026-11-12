@@ -18,4 +18,4 @@ Both frontends and native shells build. Locked native checks and strict Clippy p
 
 [Hashes and geometry validation](evidence/native-yew-leptos-scripted-20261112.json) · [Yew telemetry](evidence/omarchy-native-yew-scripted-20261112.jsonl) · [Leptos telemetry](evidence/omarchy-native-leptos-scripted-20261112.jsonl)
 
-Native Dioxus remains a separate integration; it is not covered by these results.
+Native Dioxus has a [separate verified integration](SCRIPTED-DIOXUS-NATIVE.md); it is not covered by the Yew/Leptos run results above.

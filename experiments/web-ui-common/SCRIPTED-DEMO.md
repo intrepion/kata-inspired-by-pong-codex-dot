@@ -9,9 +9,8 @@ These are app-owned SVG markup from the exact common court renderer, not
 raster screenshots or evidence that the browser presented those frames.
 They exclude surrounding framework DOM. They do not verify physical inputs,
 continuous animation, compositor behavior, packaging or performance. No data
-is uploaded; download links use local data URLs. Native Dioxus does not opt in
-from a query string and is unchanged. The library exposes `enable_demo()` for
-an explicit native adapter if one is implemented later.
+is uploaded; download links use local data URLs. Native Dioxus now supports explicit CLI opt-in via `enable_demo()` and the borrowed
+`completed_demo_exports()` accessor; see [native integration](../../docs/SCRIPTED-DIOXUS-NATIVE.md).
 
 The shared Rust unit test verifies all 13 reports, exact final reference state,
 six checkpoint ticks, bounded completion, and immunity to gameplay handlers.

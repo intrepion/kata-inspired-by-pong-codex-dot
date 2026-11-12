@@ -1,4 +1,11 @@
 //! Shared presentation/controller only. All physics live in pong-core.
+/// Borrowed exports from the normal scene renderer, available only after replay completion.
+/// SVG source is not a screenshot or proof of webview presentation.
+pub struct DemoExports<'a> {
+    pub reports: &'a [String],
+    pub captures: &'a [(u32, String)],
+}
+
 use pong_core::{Game, State};
 #[derive(Clone)]
 pub struct Session {
@@ -75,6 +82,15 @@ impl Session {
         if self.demo.is_none() {
             self.game.toggle_pause();
         }
+    }
+    pub fn completed_demo_exports(&self) -> Option<DemoExports<'_>> {
+        self.demo
+            .as_ref()
+            .filter(|d| d.scenario.finished())
+            .map(|d| DemoExports {
+                reports: &d.reports,
+                captures: &d.captures,
+            })
     }
     pub fn enable_demo(&mut self) {
         self.game = Game::new(pong_scenario::SEED);
@@ -176,7 +192,9 @@ mod tests {
     #[test]
     fn shared_demo_is_bounded_and_exports_six_scenes() {
         let mut s = Session::default();
+        assert!(s.completed_demo_exports().is_none());
         s.enable_demo();
+        assert!(s.completed_demo_exports().is_none());
         let mut expected = Game::new(pong_scenario::SEED);
         let mut reference = pong_scenario::Scenario::default();
         while !reference.finished() {
@@ -202,6 +220,9 @@ mod tests {
             .iter()
             .all(|(_, svg)| svg.starts_with("<svg") && !svg.contains("Download")));
         assert_eq!(s.svg().matches("download=").count(), 7);
+        let exported = s.completed_demo_exports().unwrap();
+        assert_eq!(exported.reports, demo.reports);
+        assert_eq!(exported.captures, demo.captures);
     }
     #[test]
     fn repeats_do_not_restart() {

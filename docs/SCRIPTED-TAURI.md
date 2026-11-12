@@ -13,17 +13,19 @@ The shell exits after saving six PNGs plus `telemetry.jsonl`. Without `--scripte
 
 ## Evidence boundary
 
-These are exports of the actual app-owned Canvas2D court bitmap, not full webview screenshots. DOM score/status/buttons, window decorations, compositor presentation, real input/focus/resize, smoothness and full-match behavior are not verified by them. No OS screenshot or input workaround is used. The existing pause overlay partially overlaps the ball at tick 480; this is documented, not hidden. Frontend source was not changed in this native integration.
+These are exports of the actual app-owned Canvas2D court bitmap, not full webview screenshots. DOM score/status/buttons, window decorations, compositor presentation, real input/focus/resize, smoothness and full-match behavior are not verified by them. No OS screenshot or input workaround is used. A subsequent frontend-only placement polish moves the paused label to the top of the canvas. A fresh native run exits 0 with six PNGs and thirteen matching states; tick 480 was inspected with the ball unobscured. [Polish evidence](evidence/tauri-pause-polish-20261112.json).
 
 ## Omarchy ARM64, 2026-11-12
 
 - WebKitGTK 2.54.2; native build and strict all-target Clippy pass.
 - Two native evidence-validation tests and fifteen shared core/scenario/WASM tests pass.
 - Bounded native run exits 0 with six 900x500 PNGs and thirteen semantically identical baseline states through tick 1440. JSON object key order differs, so byte identity is not claimed.
-- Pause/reset PNGs inspected: complete court, both paddles, center dashes and ball visible; pause overlay overlap noted above. Score lives outside the canvas and is confirmed only in telemetry.
+- Pause/reset PNGs inspected: complete court, both paddles, center dashes and ball visible; paused overlay was subsequently moved clear of the ball as described above. Score lives outside the canvas and is confirmed only in telemetry.
 
 [State evidence](evidence/omarchy-tauri-scripted-20261112.jsonl) · [Hashes and summary](evidence/omarchy-tauri-scripted-20261112.json)
 
 ![Paused canvas](evidence/omarchy-tauri-pause-20261112.png)
 
 ![Restarted canvas](evidence/omarchy-tauri-reset-20261112.png)
+
+![Pause-label polish](evidence/tauri-pause-polish-20261112.png)

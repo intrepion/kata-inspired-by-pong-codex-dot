@@ -1,11 +1,23 @@
 use dioxus::prelude::*;
 use pong_web_ui_common::{Session, CSS};
+#[cfg(feature = "desktop")]
+mod native_demo;
 fn main() {
+    #[cfg(feature = "desktop")]
+    native_demo::configure();
     dioxus::launch(App);
 }
 #[component]
 fn App() -> Element {
-    let mut session = use_signal(Session::default);
+    let mut session = use_signal(|| {
+        #[allow(unused_mut)]
+        let mut session = Session::default();
+        #[cfg(feature = "desktop")]
+        if native_demo::enabled() {
+            session.enable_demo();
+        }
+        session
+    });
     use_future(move || async move {
         let mut last = web_time::Instant::now();
         loop {
@@ -16,6 +28,8 @@ fn App() -> Element {
             let now = web_time::Instant::now();
             session.write().tick(now.duration_since(last).as_secs_f64());
             last = now;
+            #[cfg(feature = "desktop")]
+            native_demo::finish_if_ready(&session.read());
         }
     });
     let svg = session.read().svg();
