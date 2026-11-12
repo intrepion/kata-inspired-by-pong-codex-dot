@@ -2,6 +2,7 @@
 name = "pong-ash"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
 [workspace]
 [dependencies]
 pong-low-level-common = { path = "../low-level-common" }

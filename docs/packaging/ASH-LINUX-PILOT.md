@@ -38,3 +38,21 @@ This local extraction/removal pilot creates no service, desktop entry, PATH
 change or package-manager registration and does not qualify a public installer,
 another Linux distribution or architecture. The portable instructions contain
 an exact-file removal recipe rather than recursive deletion of arbitrary paths.
+
+## Dependency metadata follow-up
+
+The offline locked Linux ARM64 Cargo graph contains 95 packages. Initial
+inspection found missing declarations only on two local project crates,
+`pong-ash` and `pong-low-level-common`; their manifests now explicitly state the
+existing repository MIT license, consistent with pong-core and root LICENSE.
+The regenerated [metadata inventory](ash-linux-license-inventory.json) has no
+missing declarations. The shared inventory's three privacy/order/validation
+tests, three archive guard tests and four ash Rust tests pass.
+
+This is **not completed third-party notice bundling or legal clearance**.
+The graph includes build/optional dependencies and is not a linked-binary
+inventory. Declared compound licenses are retained unchanged; actual license
+texts, attribution/NOTICE requirements and bundled native sources still need
+inspection before public redistribution. Platform Vulkan/display runtime
+libraries are outside this Cargo metadata inventory. Existing local archive
+hashes above are unchanged; this follow-up changes metadata, not its binary.
