@@ -17,3 +17,11 @@ test('bad adapter/provenance/input refused before output creation',{skip:!linux}
  const root=sandbox(t),out=join(root,'output'),plain=join(root,'plain');writeFileSync(plain,'not executable',{mode:0o600});
  for(const args of [['no','/bin/true',out,rev],['wgpu','/bin/true',out,'bad'],['wgpu',root,out,rev],['wgpu',plain,out,rev]]){assert.throws(()=>packagePortable(...args));assert.equal(existsSync(out),false);}
 });
+
+test('optional notice bundle hash checked before output; texts and index packaged',{skip:!linux},async t=>{
+ const {createHash}=await import('node:crypto');const root=sandbox(t),text='fixture license\n',index={bundle_sha256:createHash('sha256').update(text).digest('hex'),missing_notice_files:[]};
+ const bad=join(root,'bad');assert.throws(()=>packagePortable('miniquad','/bin/true',bad,rev,{text,index:{...index,bundle_sha256:'bad'}}),/Invalid/);assert.equal(existsSync(bad),false);
+ assert.throws(()=>packagePortable('miniquad','/bin/true',bad,rev,{text,index:{...index,missing_notice_files:['x']}}),/incomplete/);
+ const out=join(root,'good'),r=packagePortable('miniquad','/bin/true',out,rev,{text,index}),unpack=join(root,'unpack');mkdirSync(unpack);assert.equal(spawnSync('tar',['-xzf',r.archive,'-C',unpack]).status,0);
+ const stage=join(unpack,readdirSync(unpack)[0]);assert.equal(readdirSync(stage).length,7);assert.equal(readFileSync(join(stage,'THIRD-PARTY-NOTICES.txt'),'utf8'),text);assert.deepEqual(JSON.parse(readFileSync(join(stage,'NOTICE-INDEX.json'))),index);assert.equal(spawnSync('sha256sum',['-c','SHA256SUMS'],{cwd:stage}).status,0);
+});

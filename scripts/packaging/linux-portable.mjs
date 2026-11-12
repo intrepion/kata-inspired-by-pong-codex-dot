@@ -7,10 +7,13 @@ import {spawnSync} from 'node:child_process';
 const adapters=Object.freeze({miniquad:'pong-miniquad',pixels:'pong-pixels',wgpu:'pong-wgpu',raylib:'pong-raylib-rs',piston:'pong-piston',ggez:'pong-ggez',nannou:'pong-nannou','bracket-lib':'pong-bracket-lib',fyrox:'pong-fyrox',bevy:'pong-bevy','blue-engine':'pong-blue-engine',softbuffer:'pong-softbuffer'});
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
 const digest=p=>createHash('sha256').update(readFileSync(p)).digest('hex');
-export function packagePortable(adapter,input,output,source) {
+export function packagePortable(adapter,input,output,source,notices=null) {
   if(process.platform!=='linux') throw Error('Linux only');
   if(!Object.hasOwn(adapters,adapter)) throw Error('Unsupported adapter');
   if(!/^[a-f0-9]{40}$/.test(source??'')) throw Error('Full source commit required');
+  if(notices){
+    if(typeof notices.text!=='string'||Buffer.byteLength(notices.text)>32*1024*1024||notices.index?.bundle_sha256!==createHash('sha256').update(notices.text).digest('hex')||!Array.isArray(notices.index?.missing_notice_files)||notices.index.missing_notice_files.length)throw Error('Invalid or incomplete notice bundle');
+  }
   const binary=realpathSync(input), info=statSync(binary), out=resolve(output);
   if(!info.isFile() || !(info.mode&0o111)) throw Error('Executable regular file required');
   if(existsSync(out)) throw Error('Output already exists');
@@ -20,9 +23,10 @@ export function packagePortable(adapter,input,output,source) {
   const executable=adapters[adapter];
   copyFileSync(binary,join(stage,executable));chmodSync(join(stage,executable),0o755);
   copyFileSync(join(root,'LICENSE'),join(stage,'LICENSE'));
-  writeFileSync(join(stage,'README.txt'),`${executable}: local Linux portable pilot\n\nRun ./${executable} from this folder. --scripted-test runs a bounded seeded replay.\n${adapter==='blue-engine'?'Native scripted screenshots are not implemented for this adapter.':'--scripted-captures NEW_DIRECTORY additionally writes application-owned captures.'}\nNormal controls are shown by the application.\n\nRequires compatible CPU architecture, Linux runtime, graphics drivers and display.\nDrivers/runtime libraries are not bundled or installed. Not a public release or\ncross-distro guarantee. Root MIT included; full dependency notices remain pending.\n\nInstallation is extraction only; no settings, services or PATH changes. Verify\nSHA256SUMS before launch. Uninstall only the four files listed there plus\nSHA256SUMS itself, then remove the empty dedicated folder; preserve other files.\n`);
+  writeFileSync(join(stage,'README.txt'),`${executable}: local Linux portable pilot\n\nRun ./${executable} from this folder. --scripted-test runs a bounded seeded replay.\n${adapter==='blue-engine'?'Native scripted screenshots are not implemented for this adapter.':'--scripted-captures NEW_DIRECTORY additionally writes application-owned captures.'}\nNormal controls are shown by the application.\n\nRequires compatible CPU architecture, Linux runtime, graphics drivers and display.\nDrivers/runtime libraries are not bundled or installed. Not a public release or\ncross-distro guarantee. Root MIT included; ${notices?'resolved-graph notice texts included, review still required.':'full dependency notices remain pending.'}\n\nInstallation is extraction only; no settings, services or PATH changes. Verify\nSHA256SUMS before launch. Uninstall only the ${notices?'six':'four'} files listed there plus\nSHA256SUMS itself, then remove the empty dedicated folder; preserve other files.\n`);
   writeFileSync(join(stage,'BUILD-INFO.txt'),`source_commit=${source}\nadapter=${adapter}\narchitecture=${process.arch}\nbinary_sha256=${digest(binary)}\nartifact_scope=local portable pilot; not public release\nprovenance_limit=supplied commit is not proof for arbitrary binary input\n`);
   const files=[executable,'LICENSE','README.txt','BUILD-INFO.txt'];
+  if(notices){writeFileSync(join(stage,'THIRD-PARTY-NOTICES.txt'),notices.text);writeFileSync(join(stage,'NOTICE-INDEX.json'),JSON.stringify(notices.index,null,2)+'\n');files.push('THIRD-PARTY-NOTICES.txt','NOTICE-INDEX.json');}
   writeFileSync(join(stage,'SHA256SUMS'),files.map(f=>`${digest(join(stage,f))}  ${f}\n`).join(''));
   const archive=join(out,name+'.tar.gz');
   const result=spawnSync('tar',['-C',out,'-czf',archive,name],{encoding:'utf8'});
