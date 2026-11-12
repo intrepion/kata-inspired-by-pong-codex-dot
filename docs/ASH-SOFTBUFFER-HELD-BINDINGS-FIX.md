@@ -41,3 +41,9 @@ Quit through the application menu was confirmed by `procNotFound` and no matchin
 A subsequent supported native-input run reached score 2–7 and visibly changed from Playing to Over. Space then started a new match at 0–0 Playing. App-menu Quit again returned `procNotFound`; no matching test process remained. This closes the observed native loss-to-seven/new-match path, not every win/lose permutation.
 
 Focus-loss qualification remains **inconclusive**: Cmd-M and opening/dismissing the Finder menu did not yield a verified deactivation/minimization event, and the game remained Playing. App-targeted automation does not establish which application actually owns OS keyboard focus, so this result is neither a focus pass nor a confirmed application focus defect. Finder files/windows were left unchanged. Escape again led to ambiguous Running/Ready observations; only the application-menu termination path is confirmed.
+
+## Mac native zoom/restore follow-up
+
+The same corrected softbuffer package was launched at its normal window size. The exposed macOS zoom action enlarged the actual captured window from 1800×1064 to 2880×1558 (including title bar). Score digits, centered divider, both paddles and ball remained visible and proportionate. Space started gameplay at the enlarged size; held S moved the player. Double-clicking the visible title bar restored the original captured size while Playing, with coherent court rendering and continued score progression. No surface error or crash occurred. App-menu Quit again confirmed `procNotFound`.
+
+This is one actual zoom/restore cycle, not exhaustive arbitrary-size, multiple-monitor, zero-sized surface, minimize/restore or DPI-transition acceptance. The separate OS-focus and Escape uncertainties remain open. No code, dependencies or system settings changed.
