@@ -4,11 +4,11 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 05:30 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 05:34 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Yew/Leptos/Dioxus localhost Chrome demos each reached tick 1440 with 13 identical telemetry records; six SVG links and final rendered courts were inspected. | SVG data-URL downloads blocked; exported-file integrity not verified. Raw WASM launched, completion unverified. Current active run not confirmed. Earlier Android results remain below. |
+| Windows | On `31478c6`, Yew/Leptos/Dioxus browser demos completed; raw WASM normal start/pause/resume and rendered court verified. Seven scenario/WASM tests passed. | Browser batch complete, no active test. Raw WASM scripted completion remains unverified. Browser policy blocks data-URL downloads (HTTP/HTTPS only); no file-download pass or workaround. |
 | Mac | Fresh `b92b7df` Yew/Leptos native builds and scripted state/SVG exports passed. Swift 11 tests and simulator build passed; replay core is not yet wired into the app. [Provenance and limits](docs/MAC-NATIVE-FOLLOWUP-20261112.md). | Assigned batch complete; apps closed, no active test or pending permission. Fresh SVG exports are not screenshots or new manual-input passes. Swift app replay/UI remains outstanding. |
 | Omarchy ARM64 | Portable Swift/Kotlin source handoff published. GPUI native state-only replay and Dioxus native SVG-source replay passed; neither establishes visual/input correctness. | Latest completed source/evidence checkpoints recorded below; current active run not confirmed. Kotlin validation subsequently passed on Windows, not Omarchy; Swift core tests and simulator build subsequently passed on Mac; app replay/UI remains pending. |
 
@@ -57,7 +57,7 @@ Each desktop cell is **build / runtime evidence**:
 | Implementation | Mac build / runtime | Windows build / runtime | Omarchy ARM64 build / runtime |
 | --- | --- | --- | --- |
 | Original TypeScript + Canvas browser | Updated UI not rechecked on Mac | Strict TS build + 12 tests pass; localhost start/rally/pause/resume smoke | Updated UI not rechecked on Omarchy |
-| Rust WASM + Canvas browser | B / I | B / I | B / localhost serves; UI blocked |
+| Rust WASM + Canvas browser | B / I | B / I; normal start/pause/resume rechecked at `31478c6`, 7 scenario/WASM tests pass | B / localhost serves; UI blocked |
 | Macroquad | B / I | B / R; keyboard play unverified | B / S + scripted replay and app-frame PNGs inspected; real input blocked |
 | Bevy | B / I; Mesh2d rechecked at `55d0975` | B / I + scripted captures **with DX12**; default Vulkan **F** ([details](docs/WINDOWS-BEVY-DIAGNOSIS.md)) | B / S + scripted/PNG sample passed; real input blocked |
 | Tauri + Rust WASM | B / I | B / I | B / native scripted Canvas PNG samples passed; real input unverified |
@@ -194,7 +194,7 @@ Latest Bevy Linux source requalification: [Mesh2d native Vulkan replay and inspe
 
 Windows Miniquad follow-up (worker report): fresh MSVC build and one adapter test passed; bounded replay reached tick 1440, exported six PNGs, and paused sample looked correct. Native Return/Space still did not visibly start play. The test window was closed before Windows disconnected; evidence files remain on that machine pending retrieval. This is not a native-input pass.
 
-GPUI Linux state-only replay now builds and completes after a narrow, licensed xattr compatibility patch; see [provenance and evidence](docs/SCRIPTED-GPUI.md). No libc downgrade or image-capture claim. [Browser-framework replay](experiments/web-ui-common/SCRIPTED-DEMO.md) is tested/build-verified. Windows localhost Chrome subsequently completed Yew/Leptos/Dioxus demos at tick 1440 with 13 identical telemetry records; six SVG links per app and final rendered courts were inspected. Data-URL downloads were blocked, so exported-file integrity remains unverified. Raw WASM launched but its demo completion remains unverified. These are not Omarchy browser results.
+GPUI Linux state-only replay now builds and completes after a narrow, licensed xattr compatibility patch; see [provenance and evidence](docs/SCRIPTED-GPUI.md). No libc downgrade or image-capture claim. [Browser-framework replay](experiments/web-ui-common/SCRIPTED-DEMO.md) is tested/build-verified. Windows localhost Chrome at `31478c6` subsequently completed Yew/Leptos/Dioxus demos at tick 1440 with 13 identical telemetry records; six SVG links per app and final rendered courts were inspected. Data-URL downloads were blocked, so exported-file integrity remains unverified. Raw WASM normal start/pause/resume and rendered court were verified on Windows at `31478c642cf07d536cd979d82e81ea900a3c1acd`; seven scenario/WASM tests passed. Its scripted-demo completion remains unverified. The browser accepts only HTTP/HTTPS downloads and rejected the existing data-URL link; no indirect workaround was attempted. These are not Omarchy browser results.
 
 [Dioxus native shared replay](docs/SCRIPTED-DIOXUS-NATIVE.md) passes source/telemetry validation. Tauri paused label now stays above the playfield and no longer covers the ball, confirmed in a fresh native canvas export.
 
