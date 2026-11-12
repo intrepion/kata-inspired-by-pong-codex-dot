@@ -4,11 +4,11 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 12:29 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 12:38 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Shared web-input controller: eight release tests pass. Preparing pinned browser-binding tooling and fresh WASM assets for Yew, Leptos and Dioxus interaction checks. Ash/softbuffer input fixes are published. | [Web input verification](docs/WEB-INPUT-SOURCES-FIX.md). Browser checks are in progress, not a pass; [ash/softbuffer evidence](docs/ASH-SOFTBUFFER-HELD-BINDINGS-FIX.md). |
+| Windows | Eight shared web-controller tests pass; fresh Yew, Leptos and Dioxus WASM builds passed localhost Chrome start/movement/button-release smoke checks. | [Web-input follow-up](docs/WEB-INPUT-SOURCES-FIX.md). Exact multi-source browser release ordering remains unverified; supported raw key dispatch was rejected, not bypassed. |
 | Mac | Corrected Softbuffer package passed supported native UI start, held W/S movement, scoring, pause/resume and R reset. App-menu Quit confirmed process exit. Earlier alternate quit observations remain inconclusive. | [Native gameplay evidence](docs/ASH-SOFTBUFFER-HELD-BINDINGS-FIX.md). Physical overlapping-key order, focus, resize and full-match checks remain separate. |
 | Omarchy ARM64 | Requalified local packages for corrected Miniquad, pixels, raw wgpu, ash and softbuffer binaries. Five extracted native replays passed; 65 states/30 app captures, exact removal and neighbors preserved. Sixteen packaging tests pass (two platform skips). | [Linux corrected-input package follow-up](docs/packaging/LINUX-HELD-FIXES-PACKAGE.md). Old package/timing hashes retained; no physical-input, clean-distro or release claim. |
 

@@ -1,0 +1,39 @@
+{
+  "date": "2026-11-12",
+  "platform": "Windows x64 GNU / Chrome",
+  "source_fix": "7a3f13567411b80bd98b537a4007c884b4af6b4f",
+  "controller_release_tests": 8,
+  "wasm_bindgen": "0.2.130",
+  "scope": "Fresh WASM builds and browser smoke checks through localhost, not exact multi-source release choreography",
+  "results": [
+    {
+      "adapter": "yew",
+      "wasm_sha256": "6306a1120c36bb9755130a2a0cf98521515096f6947a1c408222e8a39acb1262",
+      "start_y": 205,
+      "up_250ms_y": 79.66651,
+      "down_button_250ms_y": 330.33304,
+      "button_release_y_unchanged": true
+    },
+    {
+      "adapter": "leptos",
+      "wasm_sha256": "7f3a541973521b3cc16fb29bb7f4ca49ba6af8dd33d6d80d057f2d6b84959314",
+      "start_y": 205,
+      "up_250ms_y": 91.41652,
+      "down_button_250ms_y": 326.41638,
+      "button_release_y_unchanged": true
+    },
+    {
+      "adapter": "dioxus",
+      "wasm_sha256": "5fd1b8ba0bb748ad25c59fe55d164f14a85f68b6ac9bdeaba79878b6400cff59",
+      "start_y": 205,
+      "up_250ms_y": 83.583176,
+      "down_button_250ms_y": 326.41638,
+      "button_release_y_unchanged": true
+    }
+  ],
+  "limitations": [
+    "Raw CDP Input.dispatchKeyEvent rejected by supported browser tool; not bypassed",
+    "Independent simultaneous held-key/pointer release order remains controller-test evidence only",
+    "No package, deployment, performance or clean-machine qualification"
+  ]
+}

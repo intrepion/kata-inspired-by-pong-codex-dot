@@ -17,6 +17,10 @@ This is controller and compile evidence, not a new browser/webview, touch-device
 
 Existing deployment, archives and benchmark evidence remain untouched.
 
-## Windows follow-up in progress, 2026-11-12
+## Windows follow-up, 2026-11-12
 
-All eight shared controller release tests pass on Windows x64 GNU. The current Rust toolchain lacked the WASM target and browser-binding CLI; the official WASM target is now installed, and pinned wasm-bindgen 0.2.130 plus fresh Yew/Leptos/Dioxus WASM builds are being prepared. Browser interaction is not yet requalified; existing dist output is not being treated as current evidence.
+All eight shared controller release tests pass on Windows x64 GNU. Installed the official Rust WASM target and pinned wasm-bindgen CLI 0.2.130, then rebuilt Yew, Leptos and Dioxus (web-only) from current source. No system PATH change was made. All three served through localhost in connected Chrome, never direct file URLs.
+
+Each game started and moved the player paddle upward from y=205 with a 250 ms Up press. Each on-screen Down hold moved the paddle downward, then its position remained unchanged after pointer release. The Yew court screenshot was inspected; Yew, Leptos and Dioxus pause status was also observed. [Sanitized browser evidence and WASM hashes](evidence/web-input-windows-20261112.json).
+
+The exact overlapping key/pointer release-order browser test remains unverified. The supported browser interface rejected raw CDP key-down/up dispatch, and it was not bypassed. Those combinations have passing controller tests but are not presented as browser acceptance. No package, deployment, performance or clean-machine gate is advanced.
