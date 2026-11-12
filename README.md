@@ -156,9 +156,11 @@ rendering evidence, **not** real keyboard/focus or smooth-motion validation.
 | Fyrox | Passed | Six saved; pause/reset inspected | App-owned UI render target, not compositor |
 | Blue Engine | Passed (headless) | Six saved; pause/reset inspected | Supported headless renderer only; window capture unsupported |
 | Vulkan via ash | Passed | Six saved; all inspected | Acquired swapchain image copied before present |
+| Godot + Rust | Passed | Six saved; pause/reset inspected | Actual scene viewport after frame draw |
+| Ratatui | Passed (TestBackend) | No PNG: six text + six cell/style JSON exports | Cell-buffer evidence only, not terminal screenshots |
 | Remaining Rust / Swift / Kotlin adapters | Not wired yet | Not wired yet | No implied pass |
 
-All fifteen finish at tick 1440 with the same baseline telemetry. Shared core has
+All seventeen finish at tick 1440 with the same baseline telemetry. Shared core has
 14 passing tests; raylib has one additional viewport test. Details and artifact
 hashes: [scripted testing](docs/SCRIPTED-TESTING.md).
 

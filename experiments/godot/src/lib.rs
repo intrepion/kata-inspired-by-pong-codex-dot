@@ -10,6 +10,7 @@ unsafe impl ExtensionLibrary for PongExtension {}
 #[class(base=Node)]
 struct PongSimulation {
     game: Game,
+    demo: Option<pong_scenario::Demo>,
     base: Base<Node>,
 }
 #[godot_api]
@@ -17,12 +18,36 @@ impl INode for PongSimulation {
     fn init(base: Base<Node>) -> Self {
         Self {
             game: Game::new(42),
+            demo: pong_scenario::Demo::from_args(),
             base,
         }
     }
 }
 #[godot_api]
 impl PongSimulation {
+    #[func]
+    fn scripted_enabled(&self) -> bool {
+        self.demo.is_some()
+    }
+    #[func]
+    fn scripted_advance(&mut self, delta: f64) {
+        if let Some(demo) = &mut self.demo {
+            demo.advance(&mut self.game, delta as f32);
+        }
+    }
+    #[func]
+    fn scripted_capture_path(&mut self) -> GString {
+        self.demo
+            .as_mut()
+            .and_then(|d| d.capture_path())
+            .map(|p| GString::from(p.to_string_lossy().as_ref()))
+            .unwrap_or_default()
+    }
+    #[func]
+    fn scripted_finished(&self) -> bool {
+        self.demo.as_ref().is_some_and(|d| d.finished())
+    }
+
     #[func]
     fn advance(&mut self, delta: f64, axis: f64) {
         self.game.step(delta as f32, axis as f32);

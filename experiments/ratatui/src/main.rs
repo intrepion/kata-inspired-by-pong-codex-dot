@@ -151,7 +151,62 @@ fn draw(f: &mut Frame, g: &Game, releases: bool) {
         });
     f.render_widget(canvas, area);
 }
+fn cell_evidence(buffer: &ratatui::buffer::Buffer) -> serde_json::Value {
+    serde_json::json!({
+        "evidence": "Ratatui TestBackend cell buffer, NOT a screenshot",
+        "width": buffer.area.width, "height": buffer.area.height,
+        "cells": buffer.content.iter().map(|c| serde_json::json!({
+            "symbol": c.symbol(), "foreground": format!("{:?}", c.fg),
+            "background": format!("{:?}", c.bg), "modifier": format!("{:?}", c.modifier)
+        })).collect::<Vec<_>>()
+    })
+}
+fn cell_text(buffer: &ratatui::buffer::Buffer) -> String {
+    buffer
+        .content
+        .chunks(buffer.area.width as usize)
+        .map(|row| row.iter().map(|c| c.symbol()).collect::<String>() + "\n")
+        .collect()
+}
+fn scripted_cells(args: &[String]) -> io::Result<()> {
+    assert!(
+        !args.iter().any(|a| a == "--scripted-captures"),
+        "Ratatui exports cells, not PNGs; use --scripted-cells NEW_DIRECTORY"
+    );
+    let directory = args.iter().position(|a| a == "--scripted-cells").map(|i| {
+        let p = std::path::PathBuf::from(args.get(i + 1).expect("missing NEW cell directory"));
+        std::fs::create_dir(&p).expect("create NEW cell directory");
+        p
+    });
+    let mut demo = pong_scenario::Demo::new(directory);
+    let mut game = Game::new(42);
+    let mut term = Terminal::new(ratatui::backend::TestBackend::new(100, 30))?;
+    while !demo.finished() {
+        demo.advance(&mut game, pong_scenario::STEP);
+        term.draw(|f| draw(f, &game, false))?;
+        if let Some(path) = demo.capture_path() {
+            let buffer = term.backend().buffer();
+            std::fs::write(
+                path.with_extension("json"),
+                serde_json::to_vec_pretty(&cell_evidence(buffer))?,
+            )?;
+            std::fs::write(path.with_extension("txt"), cell_text(buffer))?;
+        }
+    }
+    Ok(())
+}
 fn main() -> io::Result<()> {
+    let args: Vec<_> = std::env::args().collect();
+    if args.iter().any(|a| a == "--scripted-test") {
+        return scripted_cells(&args);
+    }
+    assert!(
+        !args
+            .iter()
+            .any(|a| a == "--scripted-cells" || a == "--scripted-captures"),
+        "cell export requires --scripted-test"
+    );
+
     // Query before starting any event reader: the probe itself consumes a terminal response.
     let enhanced = terminal::supports_keyboard_enhancement().unwrap_or(false);
     let releases = cfg!(windows) || enhanced;
@@ -289,5 +344,32 @@ mod tests {
                 .collect::<String>();
             assert!(text.contains(if w < 50 { "too small" } else { "LATCHED INPUT" }));
         }
+    }
+}
+
+#[cfg(test)]
+mod scripted_tests {
+    use super::*;
+    #[test]
+    fn exported_cells_preserve_rendered_symbols_and_styles() {
+        let mut term = Terminal::new(ratatui::backend::TestBackend::new(100, 30)).unwrap();
+        let mut game = Game::new(42);
+        game.start();
+        game.pause();
+        game.scores = [0, 1];
+        term.draw(|f| draw(f, &game, false)).unwrap();
+        let buffer = term.backend().buffer();
+        let evidence = cell_evidence(buffer);
+        assert_eq!(evidence["cells"].as_array().unwrap().len(), 3000);
+        assert!(cell_text(buffer).contains("YOU 0 : 1 CPU     Paused"));
+        assert!(evidence["cells"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|c| c["foreground"] == "Cyan" || c["background"] == "Cyan"));
+        assert!(evidence["evidence"]
+            .as_str()
+            .unwrap()
+            .contains("NOT a screenshot"));
     }
 }
