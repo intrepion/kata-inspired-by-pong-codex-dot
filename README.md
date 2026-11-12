@@ -4,11 +4,11 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 12:48 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 13:09 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Corrected Ratatui, Slint and GPUI portable packages requalified. All three extracted replays pass; Slint six snapshots and Ratatui six cell-buffer pairs checked. GPUI hidden launch stalled; normal-window diagnostic passed. | [GUI/terminal package follow-up](docs/packaging/WINDOWS-GUI-HELD-PACKAGE.md). Both GPUI outcomes retained; no processes remain. Physical-input, clean-machine and installer gates remain separate. |
+| Windows | Three notice-bearing ZIP pilots pass for softbuffer, SDL3 and ash: all staged/extracted hashes match, 39 states and 18 captures. Fixed a Windows license-fallback path containment bug with a failing-then-passing regression. | [Windows notice packages](docs/packaging/WINDOWS-NOTICE-PACKAGES.md). Thirteen packaging tests pass/seven platform skips. Legal/linked-library completeness, installer and physical-input gates remain open. |
 | Mac | Softbuffer native zoom/restore cycle passed: enlarged and restored window rendered coherent court, scores and paddles; gameplay continued. App-menu Quit confirmed exit. | [Resize-cycle evidence](docs/ASH-SOFTBUFFER-HELD-BINDINGS-FIX.md). Multi-monitor/DPI, minimize and OS-focus checks remain separate; no code changes or large builds. |
 | Omarchy ARM64 | GTK and Slint rebuilt after both GUI input fixes: eight model tests, sixteen packaging tests and two extracted native scripted replays pass (26 states, twelve app-owned captures). | [Corrected Linux GUI package evidence](docs/packaging/linux-gui-identity-followup-20261112.json). Captures inspected; physical keyboard input, new uninstall qualification and release gates remain separate. |
 
@@ -263,6 +263,8 @@ Other implementations have not yet been qualified through this shared timing pro
 Additional local package lifecycle: [ash/Vulkan Linux ARM64](docs/packaging/ASH-LINUX-PILOT.md) passed relocation/replay/capture/removal; runtime dependencies and release gates remain explicit.
 
 Mac [raylib-rs local package pilot](docs/packaging/RAYLIB-MAC-PILOT.md) also passed extracted native scripted replay/captures, bounded real-input controls and scoped removal; no signed distribution qualification inferred.
+
+Windows notice preparation: [three local notice-bearing ZIPs](docs/packaging/WINDOWS-NOTICE-PACKAGES.md) with discovered texts and hash indexes, not legal or release clearance.
 
 Windows corrected GUI/terminal package follow-up: [Ratatui, Slint and GPUI](docs/packaging/WINDOWS-GUI-HELD-PACKAGE.md), including the GPUI hidden-launch limitation.
 
