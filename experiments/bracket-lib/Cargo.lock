@@ -1319,10 +1319,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "pong-benchmark"
+version = "0.1.0"
+
+[[package]]
 name = "pong-bracket-lib"
 version = "0.1.0"
 dependencies = [
  "bracket-lib",
+ "pong-benchmark",
  "pong-core",
  "pong-scenario",
 ]

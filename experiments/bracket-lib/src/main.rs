@@ -5,7 +5,19 @@ use std::collections::HashSet;
 const COLS: i32 = 90;
 const ROWS: i32 = 50;
 const TOP: i32 = 10; // Five 16px header rows above the 8px playfield tiles.
+fn benchmark_args(args: &[String]) -> bool {
+    let enabled = args.iter().any(|a| a == "--benchmark");
+    assert!(
+        !enabled || !args.iter().any(|a| a.starts_with("--scripted")),
+        "benchmark and replay/capture modes are distinct"
+    );
+    enabled
+}
 struct Pong {
+    benchmarking: bool,
+    benchmark: Option<pong_benchmark::Frames>,
+    benchmark_done: bool,
+    scenario: pong_scenario::Scenario,
     game: Game,
     keys: HashSet<VirtualKeyCode>,
     focused: bool,
@@ -16,7 +28,11 @@ struct Pong {
 impl Pong {
     fn new() -> Self {
         Self {
-            game: Game::new(42),
+            benchmarking: false,
+            benchmark: None,
+            benchmark_done: false,
+            scenario: pong_scenario::Scenario::default(),
+            game: Game::new(pong_scenario::SEED),
             keys: HashSet::new(),
             focused: true,
             accumulator: 0.,
@@ -140,6 +156,12 @@ impl GameState for Pong {
             return;
         }
         for e in events {
+            if self.benchmarking {
+                if matches!(e, BEvent::CloseRequested) {
+                    ctx.quitting = true;
+                }
+                continue;
+            }
             if self.demo.is_some() {
                 continue;
             }
@@ -149,6 +171,16 @@ impl GameState for Pong {
         }
         if let Some(demo) = &mut self.demo {
             demo.advance(&mut self.game, ctx.frame_time_ms / 1000.);
+        } else if self.benchmarking {
+            self.accumulator += (ctx.frame_time_ms / 1000.).clamp(0., 0.1);
+            while self.accumulator >= pong_scenario::STEP {
+                if self.scenario.finished() {
+                    self.scenario = pong_scenario::Scenario::default();
+                    self.game = Game::new(pong_scenario::SEED);
+                }
+                self.scenario.advance(&mut self.game);
+                self.accumulator -= pong_scenario::STEP;
+            }
         } else {
             self.advance(ctx.frame_time_ms / 1000.);
         }
@@ -193,6 +225,16 @@ impl GameState for Pong {
             2. * BALL,
             RGB::from_u8(250, 226, 160),
         );
+        if self.benchmarking && !self.benchmark_done {
+            let frames = self.benchmark.get_or_insert_with(|| {
+                pong_benchmark::Frames::new(ctx.width_pixels, ctx.height_pixels)
+            });
+            if frames.frame(ctx.width_pixels, ctx.height_pixels) {
+                self.benchmark_done = true;
+                println!("PONG_BENCHMARK {}", frames.report());
+                ctx.quitting = true;
+            }
+        }
         if let Some(path) = self.demo.as_mut().and_then(|d| d.capture_path()) {
             ctx.screenshot(path.to_string_lossy());
             self.pending_capture = Some(path);
@@ -222,6 +264,7 @@ fn configure_backend() {
 fn main() -> BError {
     #[cfg(target_os = "linux")]
     configure_backend();
+    let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     let ctx = BTermBuilder::simple(COLS, ROWS + TOP)?
         .with_font("vga8x16.png", 8, 16)
         .with_simple_console_no_bg(COLS, (ROWS + TOP) / 2, "vga8x16.png")
@@ -232,11 +275,22 @@ fn main() -> BError {
     INPUT.lock().activate_event_queue();
     let mut pong = Pong::new();
     pong.demo = pong_scenario::Demo::from_args();
+    pong.benchmarking = benchmarking;
     main_loop(ctx, pong)
 }
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn benchmark_opt_in() {
+        assert!(!benchmark_args(&[]));
+        assert!(benchmark_args(&["--benchmark".into()]));
+    }
+    #[test]
+    #[should_panic(expected = "distinct")]
+    fn rejects_combined_modes() {
+        benchmark_args(&["--benchmark".into(), "--scripted-test".into()]);
+    }
     #[test]
     fn backend_fallback_is_scoped_and_respects_choice() {
         assert!(prefer_x11(false, true, true));

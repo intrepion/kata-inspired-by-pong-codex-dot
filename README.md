@@ -4,13 +4,13 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 08:29 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 08:33 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Raw wgpu three valid callback repeats, 2 adapter tests and 12.5s replay/capture passed; processes exited. | [wgpu Windows evidence](docs/benchmarks/WGPU-WINDOWS-PILOT.md). Next: ggez build/pilot. No displayed-FPS or native-input claim. |
 | Mac | Nannou ninth adapter offline release build running. Piston wall-clock fix published and requalified (~12.5-second replay instead of ~59 seconds); eight timing adapters recorded. | [Original and fixed Piston evidence](docs/benchmarks/PISTON-MAC-PILOT.md). Next: Nannou tests, timing and replay. Yew focus inconclusive; packaging partial. |
-| Omarchy ARM64 | Fixed Piston requalified: 7 tests, plain replay12.092s, capture replay12.128s/six PNGs and three post-fix callback runs passed; processes exited. | [Piston post-fix evidence](docs/benchmarks/PISTON-ADAPTER.md#wall-clock-fix-requalification-on-omarchy). Ten adapters have timing pilots; real-input/focus and packaging gaps remain separate. |
+| Omarchy ARM64 | Eleventh timing adapter bracket-lib: 8 Rust + 16 Node tests, release/Clippy, three valid callback repeats and replay/six PNGs passed; processes exited. | [Graphical tile evidence](docs/benchmarks/BRACKET-LIB-ADAPTER.md). Tick600 inspected; fixed-Piston requalification remains passed. Real-input/focus and packaging gaps separate. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -252,5 +252,6 @@ Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md
 | ggez | [3/3](docs/benchmarks/GGEZ-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/GGEZ-ADAPTER.md) |
 | Nannou | Not recorded | Not recorded | [3/3](docs/benchmarks/NANNOU-ADAPTER.md) |
 | raw wgpu | Not recorded | [3/3](docs/benchmarks/WGPU-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/WGPU-ADAPTER.md) |
+| bracket-lib | Not recorded | Not recorded | [3/3](docs/benchmarks/BRACKET-LIB-ADAPTER.md) |
 
 Other implementations have not yet been qualified through this shared timing protocol. Package lifecycle status is a separate dimension: Mac [Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md) and [SDL3](docs/packaging/SDL3-MAC-PILOT.md) have local extracted-app gameplay/removal evidence, not signed or clean-machine release qualification.
