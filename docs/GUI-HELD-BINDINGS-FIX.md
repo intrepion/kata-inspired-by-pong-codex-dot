@@ -32,3 +32,9 @@ A second model-boundary regression was reproduced: pressing `w` and releasing `W
 The model now normalizes supported key identity before held-state/repeat handling. W and Up remain distinct bindings, so the previous overlapping-key fix is retained. Eight GUI-model tests and strict all-target Clippy pass on Omarchy ARM64. Tests check paddle position after release and score preservation during case-changed repeat, not only boolean flags.
 
 This is direct key-event/model evidence. No claim is made that a particular OS/toolkit generated this exact sequence during native testing, nor that old Slint/GTK/GPUI binaries were rebuilt or requalified by these unit tests. Case-insensitive logical handling is intentionally limited to the documented controls.
+
+## Windows modifier-case correction follow-up
+
+All eight GUI support release tests pass on Windows, including case-changing release/repeat and the earlier overlapping bindings. Both GPUI and Slint rebuilt against the correction at cc9f0ef (shared source from20e1ac8). Bounded replays from new isolated working directories exited0 with thirteen states through finished tick1440: GPUI13.138s, Slint12.721s. Slint produced six own-window snapshots; tick600 inspected, score/controls/court and attribution intact. GPUI remains state-only. No desktop-control retry or OS-input claim.
+
+New binary SHA-256: GPUI `738e15317b4d88629c4bdc4b6c14bee45671e4fbf6bc95badd68cc6996198b9b`; Slint `a5c965051b024ee9d1300f474378ca35db1e0a7c4b5fdbb6894e60ffca70a641`. Existing package archives retain earlier hashes and are not retroactively upgraded by these rebuilt-runtime checks.
