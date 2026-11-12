@@ -7,3 +7,5 @@ New local unsigned ZIP, fresh extraction to a path containing spaces and exact b
 Snapshots use Slint's own-window API; no real keyboard/focus or compositor screenshot acceptance inferred. Shared held-input fix was compiled and its unit tests passed, but OS dispatch remains a separate gate.
 
 Local archive includes executable, project LICENSE and explicit warning that Slint license choices/full third-party notices, clean-machine dependencies, signing/download security and installer/upgrade/uninstall are not qualified. No public binary distribution, system changes, security bypass or build/staging deletion. This does not choose a commercial/GPL/other Slint licensing option on the user's behalf.
+
+Native-control follow-up: launched the tested app and detected its Windows window. Computer Use app approval timed out before control, so no keys were sent and no native-input result was recorded. Only this owned test process was stopped after exact executable identity verification. Scripted/snapshot qualification above remains separate.

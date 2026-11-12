@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Fifteen native timing/portable pilots plus Ratatui cell and Slint snapshot package pilots recorded. Slint fresh release and six shared GUI tests passed. | [Slint pilot](docs/packaging/SLINT-WINDOWS-PILOT.md). Real OS-input, notices, installers and clean-machine gates remain open. |
+| Windows | Fifteen native timing/portable pilots plus Ratatui cell and Slint snapshot pilots recorded. Notice feasibility covers all fifteen native adapter graphs. Slint real-input approval timed out; no pass inferred. | [Notice gaps](docs/packaging/WINDOWS-NOTICE-FEASIBILITY.md), [Slint limit](docs/packaging/SLINT-WINDOWS-PILOT.md). Installers, clean-machine, notices and remaining native-input gates open. |
 | Mac | Corrected Fyrox package replay and six captures pass; readable HUD verified. App bundle removed, but generated registry outside it remains, so full cleanup is incomplete. Six shared GUI binding tests and strict Clippy pass. Processes exited. | [Fyrox package follow-up](docs/FYROX-HUD-SCALE-FIX.md) and [GUI model tests](docs/GUI-HELD-BINDINGS-FIX.md). Runtime-state cleanup policy and real-input/release gates remain; historical benchmarks preserved. |
 | Omarchy ARM64 | Fyrox generated-state safety investigated: seven new read-only ownership-inspection tests and all thirteen packaging tests pass. Existing registry preserved because no pre-run ownership receipt exists. | [Cleanup policy and limits](docs/packaging/FYROX-GENERATED-STATE-SAFETY.md). No automatic deletion; clean-uninstall gate remains open. Bracket/Fyrox visual fixes and shared GUI input fix verified separately. |
 

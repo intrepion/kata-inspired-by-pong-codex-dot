@@ -18,6 +18,9 @@ Offline locked Cargo metadata filtered to x86_64-pc-windows-gnu, then shared not
 | fyrox | 393 | 628 | 34 |
 | blue-engine | 202 | 352 | 14 |
 
+| macroquad | 48 | 92 | 2 |
+| bevy | 349 | 633 | 17 |
+
 [Exact missing-package lists](windows-notice-feasibility-20261112.json). Only softbuffer, SDL3 and ash have discovered files for every package in these selected graphs. Even these are not legal clearance: nested/unlabelled bundled code, selected licensing alternatives, native DLLs/system libraries and actual linked content still need review. Miniquad specifically lacks a discovered file for winapi-x86_64-pc-windows-gnu0.4.0; do not borrow its Linux clearance.
 
-Root-workspace Macroquad/Bevy graphs were not included in this standalone scan; no coverage inferred. No notice-bearing Windows archive or public release is claimed by this report. Existing local ZIP pilots explicitly remain incomplete.
+Root-workspace Macroquad and Bevy were subsequently scanned using only their transitive resolved dependency closures, including build dependencies, rather than every unrelated workspace member. Both have discovered-file gaps. All fifteen native timing adapters are now represented. No notice-bearing Windows archive or public release is claimed by this report. Existing local ZIP pilots explicitly remain incomplete.
