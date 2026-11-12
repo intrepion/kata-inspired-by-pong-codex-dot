@@ -113,7 +113,11 @@ impl Renderer {
         }
         Ok(())
     }
-    pub fn render(&mut self, g: &Game, capture: Option<&std::path::Path>) -> Result<(), String> {
+    pub fn dimensions(&self) -> (u32, u32) {
+        (self.config.width, self.config.height)
+    }
+    /// True only when a surface frame was submitted and present requested.
+    pub fn render(&mut self, g: &Game, capture: Option<&std::path::Path>) -> Result<bool, String> {
         if capture.is_some() && !self.config.usage.contains(wgpu::TextureUsages::COPY_SRC) {
             return Err("Surface does not support app-owned COPY_SRC capture".into());
         }
@@ -137,14 +141,14 @@ impl Renderer {
                 return if capture.is_some() {
                     Err("Capture target temporarily unavailable".into())
                 } else {
-                    Ok(())
+                    Ok(false)
                 };
             }
             wgpu::CurrentSurfaceTexture::Timeout | wgpu::CurrentSurfaceTexture::Occluded => {
                 return if capture.is_some() {
                     Err("Capture target temporarily unavailable".into())
                 } else {
-                    Ok(())
+                    Ok(false)
                 }
             }
             wgpu::CurrentSurfaceTexture::Validation => {
@@ -250,6 +254,6 @@ impl Renderer {
             buffer.unmap();
         }
         frame.present();
-        Ok(())
+        Ok(true)
     }
 }
