@@ -4,12 +4,12 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 05:06 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 05:09 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Android normal-mode start/scoring/pause/resume/restart and Home/Recents pause retention passed; broken separators corrected; 11 tests pass. | Test app stopped; emulator/data preserved. Sustained drag movement remains unverified (two gestures inconclusive); [bounded results](docs/SCRIPTED-ANDROID.md). |
-| Mac | Yew and Leptos native-wrapper checks assigned, followed by Dioxus native desktop. Existing test binaries use an older checkpoint. | Preparing visual checks with existing `6ceb22a` binaries; Pong Yew app-access call pending, possibly approval. Gameplay not yet confirmed; Dioxus build queued. |
+| Mac | Yew native bounded gameplay passed on older `6ceb22a`: Enter start, held W/S movement, pause/resume, scoring and restart. Subsequent Leptos access call ended user-aborted; Leptos/Dioxus remain untested in this phase. | Mac connected; last process check found no running Pong apps. No pending approval/window from the aborted call. Worker assigned to resume remaining checks; a new test run is not yet confirmed. |
 | Omarchy ARM64 | Swift/Kotlin portable parser/replay source and derived resources prepared; host resource consistency checks pass. | Publishing source candidate only. Swift/Kotlin compiler, native tests, packaged-app resource loading and mobile UI replay remain pending platform toolchains. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
