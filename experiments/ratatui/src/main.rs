@@ -25,8 +25,7 @@ use std::{
 };
 #[derive(Default)]
 struct Input {
-    up: bool,
-    down: bool,
+    held: [bool; 4], // Up, W, Down, S: aliases release independently.
     latched: f32,
 }
 impl Input {
@@ -35,30 +34,31 @@ impl Input {
     }
     fn axis(&self, releases: bool) -> f32 {
         if releases {
-            self.down as u8 as f32 - self.up as u8 as f32
+            (self.held[2] || self.held[3]) as u8 as f32
+                - (self.held[0] || self.held[1]) as u8 as f32
         } else {
             self.latched
         }
     }
     fn key(&mut self, key: KeyEvent, releases: bool) {
         let down = key.kind != KeyEventKind::Release;
-        match key.code {
-            KeyCode::Up | KeyCode::Char('w') => {
-                if releases {
-                    self.up = down
-                } else if down {
-                    self.latched = -1.
-                }
+        let binding = match key.code {
+            KeyCode::Up => Some(0),
+            KeyCode::Char('w' | 'W') => Some(1),
+            KeyCode::Down => Some(2),
+            KeyCode::Char('s' | 'S') => Some(3),
+            KeyCode::Char('x' | 'X') => {
+                self.clear();
+                None
             }
-            KeyCode::Down | KeyCode::Char('s') => {
-                if releases {
-                    self.down = down
-                } else if down {
-                    self.latched = 1.
-                }
+            _ => None,
+        };
+        if let Some(binding) = binding {
+            if releases {
+                self.held[binding] = down;
+            } else if down {
+                self.latched = if binding < 2 { -1. } else { 1. };
             }
-            KeyCode::Char('x') => self.clear(),
-            _ => {}
         }
     }
 }
@@ -313,6 +313,25 @@ mod tests {
         assert_eq!(i.axis(true), 1.);
         i.key(key(KeyCode::Down, KeyEventKind::Release), true);
         assert_eq!(i.axis(true), 0.);
+    }
+    #[test]
+    fn overlapping_direction_bindings_release_independently() {
+        for (arrow, letter, axis) in [(KeyCode::Up, 'w', -1.), (KeyCode::Down, 's', 1.)] {
+            let mut input = Input::default();
+            input.key(key(arrow, KeyEventKind::Press), true);
+            input.key(key(KeyCode::Char(letter), KeyEventKind::Press), true);
+            input.key(key(arrow, KeyEventKind::Release), true);
+            assert_eq!(input.axis(true), axis);
+            input.key(key(KeyCode::Char(letter), KeyEventKind::Release), true);
+            assert_eq!(input.axis(true), 0.);
+        }
+    }
+    #[test]
+    fn case_changed_release_stops_enhanced_movement() {
+        let mut input = Input::default();
+        input.key(key(KeyCode::Char('w'), KeyEventKind::Press), true);
+        input.key(key(KeyCode::Char('W'), KeyEventKind::Release), true);
+        assert_eq!(input.axis(true), 0.);
     }
     #[test]
     fn fallback_explicit_stop() {
