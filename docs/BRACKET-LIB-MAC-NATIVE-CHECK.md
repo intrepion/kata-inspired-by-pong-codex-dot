@@ -1,0 +1,7 @@
+# bracket-lib Mac native package check
+
+2026-11-12 UTC, macOS ARM64. The existing contrast-patched package at `/private/tmp/pong-bracket-contrast-mac-package-20261112/Pong bracket-lib.app` was opened by its exact path through the supported desktop tool. Its executable SHA-256 was `8e6c75ccca7625a83e0c9b93ace64e030cfd5f8be5888bc3e7a024c22458257d`, matching the earlier [package manifest](packaging/mac-bracket-contrast-package-20261112.json). This is an existing binary, not a fresh build of the current source. Repository evidence base was `6defdf14d770f808fdb13996871de7357abb6d02`; that hash identifies the documentation checkpoint, not the binary build commit.
+
+The native window showed Ready and a legible separate header and divider. Desktop-tool key events started play with Space; held W moved the left paddle up, held S moved it down, and CPU scoring reached 2. Space showed Paused; R returned the score to 0–0 and Playing. The window close control exited the app, and desktop inventory no longer listed the pilot app as running. A short Q key event did not produce a confirmed exit before the window was closed; keyboard quit remains unverified. Screens were visually inspected during the run; no screenshot artifact was saved.
+
+This is bounded native desktop automation, not a physical keyboard test. Full match, focus loss, resizing, overlapping held keys, and package distribution remain unverified. The earlier manifest's scripted replay and app-owned captures are separate evidence; no new unit tests, replay, or capture run was performed here.
