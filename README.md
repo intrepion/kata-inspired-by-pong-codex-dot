@@ -4,12 +4,12 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 07:49 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 07:51 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Network restored; fresh TS15, core9, sampler3, replay5 and fixed cross-platform runner5 tests passed. Three Macroquad release benchmark repeats completed; Windows portable ZIP creation/extraction + extracted scripted replay passed (07:32 UTC); processes exited. | Portable snapshot repaired as a strict semantic comparison; Windows max numeric delta 0.00002 within explicit 0.001 bound, all discrete fields exact. [Contract and regression tests](docs/PORTABLE-SNAPSHOT-COMPARISON.md). Linux/Mac reruns also passed (zero baseline delta). [Checks](docs/WINDOWS-CONTINUATION-20261112.md); [benchmark pilot](docs/benchmarks/WINDOWS-MACROQUAD-PILOT.md). |
-| Mac | Yew focus recheck remains inconclusive; test app closed. Pixels offline release build running for fifth timing adapter. | [Yew observations](docs/MAC-YEW-FOCUS-RECHECK.md). Pixels benchmark not yet measured; four earlier pilots published. |
+| Mac | Pixels offline release build,3 adapter tests,10 runner/sanitizer tests and three valid callback repeats complete; benchmark processes exited. Five Mac timing adapters recorded. | [Pixels Mac timing](docs/benchmarks/PIXELS-MAC-PILOT.md). Yew OS-focus check remains inconclusive; packaging partial, no engine ranking claimed. |
 | Omarchy ARM64 | Fifth shared benchmark adapter, pixels/winit: release, 3 Rust + 10 Node tests, Clippy, 3 valid timed repeats and replay regression passed. | [pixels pilot](docs/benchmarks/PIXELS-ADAPTER.md): CPU raster plus GPU presentation; callback timing only. Package safety tests passed separately; no manual-input claim. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
