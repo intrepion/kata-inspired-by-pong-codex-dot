@@ -1,0 +1,7 @@
+# Mac ggez contact timing recheck
+
+2026-11-12, macOS ARM64. Source checkpoint `a431871677c58e5abb2c9218b822eef428afe9fa` includes physics fix `c77bf3ac147e41f67d88962f5c615fcc113d6465`. Offline locked release build reused a copy-on-write, timestamp-preserved copy of the existing release cache; Cargo rebuilt the local Pong crates and vendored ggez. Binary SHA-256: `c0a7dbc004637f2feb6e79b9af45165a330b4c576182342469afceeeda5bc777`.
+
+The exact binary was packaged locally and opened through the supported desktop tool. Enter started play; held W/S moved the left paddle in opposite directions; Space showed Paused; R reset the score to 0–0 and resumed play. A subsequent run reached 0–7 and displayed Over. After Enter, play resumed and the next observation showed 0–1, consistent with restart and subsequent scoring; the immediate 0–0 frame was not observed. Window close exited the pilot app. The long held-W call timed out in the desktop tool before the Over observation; no claim is made about uninterrupted key duration. Screens were inspected but not saved. This is bounded native automation, not physical input or verification of a specific collision trajectory.
+
+Direct shell launch with `--scripted-test --scripted-captures` exited 1 before replay with `GraphicsInitializationError`; no replay or app-owned captures are claimed. Normal app-bundle launch worked. Earlier evidence and binaries remain historical; no signing or clean-machine qualification is inferred.
