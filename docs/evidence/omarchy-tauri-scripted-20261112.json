@@ -1,0 +1,58 @@
+{
+  "platform": "Omarchy ARM64",
+  "webkitgtk": "2.54.2",
+  "base_commit": "1181148",
+  "exit_code": 0,
+  "records": 13,
+  "baseline_semantically_identical": true,
+  "final_tick": 1440,
+  "build": "pass",
+  "strict_clippy": "pass",
+  "adapter_tests": 2,
+  "shared_core_scenario_wasm_tests": 15,
+  "capture_kind": "normal embedded Canvas2D toDataURL; court only, not full webview/OS screenshot",
+  "inspected_ticks": [
+    480,
+    1440
+  ],
+  "known_visual_limit": "Existing pause text partially overlaps ball at480",
+  "real_input_QA": false,
+  "images": [
+    {
+      "file": "tick-0120.png",
+      "width": 900,
+      "height": 500,
+      "sha256": "d06f3680c76490634970f9a31b48957a96223e17f2f5111a9377368ee28c4693"
+    },
+    {
+      "file": "tick-0240.png",
+      "width": 900,
+      "height": 500,
+      "sha256": "c8fb92ecede7308866f4a91cddaefa50ff3ad23772be39279a7ce294f36befeb"
+    },
+    {
+      "file": "tick-0480.png",
+      "width": 900,
+      "height": 500,
+      "sha256": "bc8890d7ee503e8c7ed79bcf4bffd0dd4ed59e7dcf71026d8d2e295557a86e6b"
+    },
+    {
+      "file": "tick-0600.png",
+      "width": 900,
+      "height": 500,
+      "sha256": "2e55f28626481fe603dfed388414dd6ee4c3b8b0939f123dfa8b76100c5f556f"
+    },
+    {
+      "file": "tick-1320.png",
+      "width": 900,
+      "height": 500,
+      "sha256": "891bcbfcec701e4294ed7bdb36becf8a80d04ecf1d0bf0c62c704fc2ebcf5935"
+    },
+    {
+      "file": "tick-1440.png",
+      "width": 900,
+      "height": 500,
+      "sha256": "7c888604dbc7b74e7e56b8b72914e52ab8387b383ff45d1575c7e68b1f9df885"
+    }
+  ]
+}

@@ -4,13 +4,13 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 03:21 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 03:47 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Miniquad fresh MSVC build, one test, and scripted replay (1440 ticks / six captures) passed per worker report; native Return/Space start attempts still failed. Bevy scoped fix/evidence was published in `55d0975`. | **Disconnected; testing paused.** No active test window. Miniquad results/evidence remain uncommitted and await reconnect/publication; no native-input pass claimed. |
 | Mac | Yew and Leptos native-wrapper checks assigned, followed by Dioxus native desktop. Existing test binaries use an older checkpoint. | Preparing visual checks with existing `6ceb22a` binaries; Pong Yew app-access call pending, possibly approval. Gameplay not yet confirmed; Dioxus build queued. |
-| Omarchy ARM64 | GPUI dependency compatibility fixed and native state-only replay passed; Yew/Leptos/Dioxus shared replay builds/tests passed. | Publishing verified subset. Browser runtime/export links remain unverified; GPUI has no supported app-owned image export. |
+| Omarchy ARM64 | Tauri native shared replay and Canvas2D exports verified; GPUI state-only replay passes. | Publishing Tauri evidence. Browser-only runtime checks and mobile replay remain pending; no new interactive-input claim. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -60,7 +60,7 @@ Each desktop cell is **build / runtime evidence**:
 | Rust WASM + Canvas browser | B / I | B / I | B / localhost serves; UI blocked |
 | Macroquad | B / I | B / R; keyboard play unverified | B / S + scripted replay and app-frame PNGs inspected; real input blocked |
 | Bevy | B / I | B / I + scripted captures **with DX12**; default Vulkan **F** ([details](docs/WINDOWS-BEVY-DIAGNOSIS.md)) | B / S + scripted/PNG sample passed; real input blocked |
-| Tauri + Rust WASM | B / I | B / I | B / S; UI blocked |
+| Tauri + Rust WASM | B / I | B / I | B / native scripted Canvas PNG samples passed; real input unverified |
 | Miniquad | B / I | Fresh MSVC B + 1 test; scripted/six PNG reported passed; native Return/Space still no start | B / S + scripted/PNG sample passed; real input blocked |
 | pixels + winit | B / I | B / I | B / S + scripted/source PNG passed; real input blocked |
 | raw wgpu + winit | B / I | B / I | B / S + scripted/PNG sample passed; real input blocked |
@@ -175,9 +175,10 @@ rendering evidence, **not** real keyboard/focus or smooth-motion validation.
 | Raw web-WASM | Implemented; ABI tests passed | Canvas export implemented, browser run unverified | Not counted among nineteen verified render adapters |
 | GPUI | Passed (native state-only) | Unsupported; request explicitly rejected | Telemetry only, not visual QA |
 | Yew / Leptos / Dioxus web | Shared replay tests and WASM builds pass | SVG scene-source export implemented, browser run unverified | SVG source is not screenshot evidence |
+| Tauri + Rust WASM | Passed (native WebKitGTK) | Six canvas PNGs; pause/reset inspected | Court only, not DOM scores or full webview |
 | Remaining Rust / Swift / Kotlin adapters | Not wired yet | Not wired yet | No implied pass |
 
-All nineteen finish at tick 1440 with the same baseline telemetry. Shared core has
+All twenty render-evidence adapters finish at tick 1440 with the same baseline telemetry. Shared core has
 14 passing tests; raylib has one additional viewport test. Details and artifact
 hashes: [scripted testing](docs/SCRIPTED-TESTING.md).
 
