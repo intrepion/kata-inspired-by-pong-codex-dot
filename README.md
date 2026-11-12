@@ -4,13 +4,13 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 06:56 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 07:16 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Fresh original TypeScript and raw-WASM browser replay completed on `0cbe38f`; TS15 tests, WASM2 ABI and7 Rust scenario/WASM tests passed. | Bounded browser batch complete; tabs closed. Bundle downloads, true focus-loss and responsive override unverified. See [follow-up](docs/WINDOWS-BROWSER-REPLAY-FOLLOWUP.md). |
 | Mac | Fresh `4088089` Dioxus build, shared controller 4/4, native replay and actual held movement/release, pause/resume, full match 2:7 and restart passed. | Dioxus batch complete; test apps exited. Yew real OS focus-loss remains unverified. [Evidence](docs/MAC-DIOXUS-REQUALIFICATION.md). |
-| Omarchy ARM64 | Third shared benchmark adapter (SDL3) release build and three bounded pilot runs completed; processes exited. | Runtime SDL backend recorded; callback timing only, no displayed FPS or engine ranking. Packaging pilot limits unchanged. |
+| Omarchy ARM64 | SDL3 benchmark published; isolated Linux ARM64 portable archive creation, checksum verification, bounded installed replay and scoped uninstall passed. | [SDL3 package pilot](docs/packaging/SDL3-LINUX-PILOT.md) is not a release; dependency notices, clean-machine and cross-distro tests remain pending. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
