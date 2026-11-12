@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 [workspace]
 [dependencies]
+pong-benchmark = { path = "../../crates/pong-benchmark" }
 pong-core = { path = "../../crates/pong-core" }
 blue_engine = { version = "=0.10.0", default-features = false, features = ["static_link"] }
 pong-scenario = { path = "../../crates/pong-scenario" }

@@ -58,3 +58,5 @@ test('raw wgpu metadata excludes skipped surface frames',()=>{const config=parse
 test('bracket-lib distinguishes graphical tiles from terminal and retained cap',()=>{const config=parseArguments([...base,'--adapter','bracket-lib']);assert.match(config.presentation,/not terminal/);assert.match(config.pacing,/60fps cap/);});
 
 test('Bevy metadata labels main-world frame callback scope',()=>{const config=parseArguments([...base,'--adapter','bevy']);assert.match(config.pacing,/main-world Last/);assert.match(config.pacing,/not GPU timing/);});
+
+test('Blue Engine timing excludes headless mode and identifies upload boundary',()=>{const config=parseArguments([...base,'--adapter','blue-engine']);assert.match(config.presentation,/headless excluded/);assert.match(config.pacing,/object upload precedes/);});

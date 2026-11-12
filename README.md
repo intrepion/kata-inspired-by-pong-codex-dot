@@ -4,13 +4,13 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 08:42 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 08:50 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | SDL3 static release, 3 valid timing repeats, 2 adapter + 17 shared tests and 12.2s replay/capture passed; processes exited. Nine Windows timing adapters recorded. | [SDL3 Windows evidence](docs/benchmarks/SDL3-WINDOWS-PILOT.md). Next: Nannou build/pilot. Native-input/installation gates separate. |
 | Mac | Bevy twelfth adapter offline release build running; eleven Mac timing pilots remain recorded. | Next: tests, main-world callback timing and replay. This metric is not render/presentation timing. Yew focus inconclusive; packaging partial. |
-| Omarchy ARM64 | Twelfth timing adapter Bevy: 2 Rust + 17 Node tests, release/Clippy, three valid main-world callback repeats and replay/six PNGs passed; processes exited. | [Bevy evidence](docs/benchmarks/BEVY-ADAPTER.md). Main-world timing is not rendered-frame timing. Tick600 inspected; real-input/focus and packaging gaps separate. |
+| Omarchy ARM64 | Thirteenth timing adapter Blue Engine: 2 Rust + 18 Node tests, release/Clippy, three valid native repeats and replay passed; processes exited. | [Blue Engine evidence](docs/benchmarks/BLUE-ENGINE-ADAPTER.md). Found and corrected teardown lifetime crash; failed evidence retained. Native screenshots/input and installation remain separate. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -254,5 +254,6 @@ Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md
 | raw wgpu | [3/3](docs/benchmarks/WGPU-MAC-PILOT.md) | [3/3](docs/benchmarks/WGPU-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/WGPU-ADAPTER.md) |
 | bracket-lib | [3/3](docs/benchmarks/BRACKET-LIB-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/BRACKET-LIB-ADAPTER.md) |
 | Bevy (main-world callback) | Not recorded | Not recorded | [3/3](docs/benchmarks/BEVY-ADAPTER.md) |
+| Blue Engine (native callback) | Not recorded | Not recorded | [3/3; initial failure retained](docs/benchmarks/BLUE-ENGINE-ADAPTER.md) |
 
 Other implementations have not yet been qualified through this shared timing protocol. Package lifecycle status is a separate dimension: Mac [Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md) and [SDL3](docs/packaging/SDL3-MAC-PILOT.md) have local extracted-app gameplay/removal evidence, not signed or clean-machine release qualification.

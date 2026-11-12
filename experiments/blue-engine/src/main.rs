@@ -2,6 +2,15 @@ use blue_engine::{prelude::*, primitive_shapes::square};
 use pong_core::*;
 use std::time::Instant;
 
+#[cfg(any(feature = "windowed", test))]
+fn benchmark_args(args: &[String]) -> bool {
+    let enabled = args.iter().any(|a| a == "--benchmark");
+    assert!(
+        !enabled || !args.iter().any(|a| a.starts_with("--scripted")),
+        "benchmark and replay/capture modes are distinct"
+    );
+    enabled
+}
 fn rect(engine: &mut Engine, name: &str, x: f32, y: f32, width: f32, height: f32, z: f32) {
     if let Some(object) = engine.objects.get_mut(name) {
         // Hide zero-sized score markers without creating a singular inverse matrix.
@@ -18,9 +27,30 @@ fn rect(engine: &mut Engine, name: &str, x: f32, y: f32, width: f32, height: f32
 #[cfg(all(feature = "windowed", feature = "capture-headless"))]
 compile_error!("Use --no-default-features --features capture-headless for headless export");
 fn main() -> Result<(), blue_engine::error::Error> {
+    #[cfg(feature = "capture-headless")]
+    assert!(
+        !std::env::args().any(|a| a == "--benchmark"),
+        "benchmark requires windowed build"
+    );
+    #[cfg(feature = "windowed")]
+    let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
+    #[cfg(feature = "windowed")]
+    let mut benchmark: Option<pong_benchmark::Frames> = None;
+    #[cfg(feature = "windowed")]
+    let mut benchmark_done = false;
+    #[cfg(feature = "windowed")]
+    let mut scenario = pong_scenario::Scenario::default();
     let mut engine = Engine::new_config(EngineSettings {
-        width: if cfg!(feature = "capture-headless") { 1024 } else { 1000 },
-        height: if cfg!(feature = "capture-headless") { 640 } else { 680 },
+        width: if cfg!(feature = "capture-headless") {
+            1024
+        } else {
+            1000
+        },
+        height: if cfg!(feature = "capture-headless") {
+            640
+        } else {
+            680
+        },
         title: "Pong Blue Engine",
         present_mode: blue_engine::wgpu::PresentMode::AutoVsync,
         ..Default::default()
@@ -82,7 +112,7 @@ fn main() -> Result<(), blue_engine::error::Error> {
             rect(&mut engine, &name, 0., 0., 0., 0., 0.);
         }
     }
-    let mut game = Game::new(42);
+    let mut game = Game::new(pong_scenario::SEED);
     let mut demo = pong_scenario::Demo::from_args();
     #[cfg(feature = "windowed")]
     assert!(
@@ -131,7 +161,16 @@ fn main() -> Result<(), blue_engine::error::Error> {
         if demo.as_ref().is_some_and(|d| d.finished()) { std::process::exit(0); }
         if let Some(demo) = &mut demo { demo.advance(&mut game, dt); }
         #[cfg(feature = "windowed")]
-        if demo.is_none() {
+        if benchmarking {
+            accumulator+=dt;
+            while accumulator>=pong_scenario::STEP {
+                if scenario.finished() { scenario=pong_scenario::Scenario::default();game=Game::new(pong_scenario::SEED); }
+                scenario.advance(&mut game);
+                accumulator-=pong_scenario::STEP;
+            }
+        }
+        #[cfg(feature="windowed")]
+        if demo.is_none() && !benchmarking {
         let focused = engine.window.as_ref().is_some_and(|window| window.has_focus());
         if !focused {
             game.pause();
@@ -171,11 +210,44 @@ fn main() -> Result<(), blue_engine::error::Error> {
             let width = if point < game.scores[side] { 8. } else { 0. };
             rect(engine, &name, 330.+side as f32*170.+point as f32*12., 20., width, 18., 0.);
         }}
+        #[cfg(feature="windowed")]
+        if benchmarking && !benchmark_done {
+            let (width,height)=(engine.renderer.config.width,engine.renderer.config.height);
+            let frames=benchmark.get_or_insert_with(||pong_benchmark::Frames::new(width,height));
+            if frames.frame(width,height) {
+                benchmark_done=true;
+                println!("PONG_BENCHMARK {}",frames.report());
+                engine.window.close_engine();
+            }
+        }
         #[cfg(feature = "capture-headless")]
         if let Some(path) = demo.as_mut().and_then(|d| d.capture_path()) {
             // Rendering precedes changed-object upload in the framework loop.
             pending = Some((path, 1));
         }
     })?;
+    // Blue Engine drops its window before camera/object GPU references. Keep the
+    // native display alive until all renderer-owned resources have been dropped.
+    #[cfg(feature = "windowed")]
+    {
+        let window_lifetime = engine.window.window.clone();
+        drop(engine);
+        drop(window_lifetime);
+    }
     Ok(())
+}
+
+#[cfg(test)]
+mod benchmark_tests {
+    use super::benchmark_args;
+    #[test]
+    fn opt_in_only() {
+        assert!(!benchmark_args(&[]));
+        assert!(benchmark_args(&["--benchmark".into()]));
+    }
+    #[test]
+    #[should_panic(expected = "distinct")]
+    fn reject_combined_modes() {
+        benchmark_args(&["--benchmark".into(), "--scripted-test".into()]);
+    }
 }
