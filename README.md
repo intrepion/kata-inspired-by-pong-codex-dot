@@ -4,13 +4,13 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 08:10 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 08:13 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Piston fresh release build running (08:07 UTC), shared dependencies compiling. Miniquad three-repeat pilot/replay complete and published. | Next: Piston tests and bounded timing after compilation. [Latest completed Windows pilot](docs/benchmarks/MINIQUAD-WINDOWS-PILOT.md). No Piston timing pass yet. |
-| Mac | ggez eighth adapter offline release build running. Seven timing adapters recorded; Piston replay slowdown has been assigned a separate fix. | [Piston evidence](docs/benchmarks/PISTON-MAC-PILOT.md) preserves 30-second failure and extended completion. Next: ggez tests and three bounded repeats. Yew focus inconclusive; packaging partial. |
-| Omarchy ARM64 | Eighth shared timing adapter ggez: three valid release callback repeats, replay and six app-owned screenshots passed; processes exited. | [ggez evidence](docs/benchmarks/GGEZ-ADAPTER.md). 2 Rust + 13 Node tests/Clippy pass; tick 600 inspected. Not a real-input or full visual acceptance claim. |
+| Mac | ggez eighth timing adapter: release build, 2 Rust + 13 Node tests and 3 valid repeats complete; replay finished in 12.320 seconds with 13 states and six frames. Processes exited. | [ggez Mac evidence](docs/benchmarks/GGEZ-MAC-PILOT.md). Piston timing fix is separate; original slowdown evidence retained. Yew focus inconclusive; packaging partial. |
+| Omarchy ARM64 | Nannou ninth timing adapter: 2 Rust + 14 Node tests pass; strict Clippy/release build running. Existing eight adapter pilots remain verified. | Next: bounded Nannou timing and replay after build; not yet a completed benchmark. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -65,7 +65,7 @@ Each desktop cell is **build / runtime evidence**:
 | pixels + winit | B / I | B / I | B / S + scripted/source PNG passed; real input blocked |
 | raw wgpu + winit | B / I | B / I | B / S + scripted/PNG sample passed; real input blocked |
 | Piston | B / I | B / I | B / S + scripted/PNG sample passed; real input blocked |
-| ggez | Not recorded | Not recorded | [3/3](docs/benchmarks/GGEZ-ADAPTER.md) |
+| ggez | [3/3](docs/benchmarks/GGEZ-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/GGEZ-ADAPTER.md) |
 | ggez | B / I; Mac surface fix verified | B / I on earlier snapshot | B / S + scripted/PNG sample passed; real input blocked |
 | nannou | B / I before pacing follow-up | B / I | B / S + scripted/PNG sample passed; real input blocked |
 | Fyrox | B / I | B / I | B / S + scripted/PNG samples passed; real input blocked |
