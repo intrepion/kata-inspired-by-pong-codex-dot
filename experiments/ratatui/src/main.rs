@@ -23,6 +23,13 @@ use std::{
     io::{self, stdout},
     time::{Duration, Instant},
 };
+// Terminal character events carry Shift/Caps Lock case, unlike physical key codes.
+fn action_key(key: KeyCode) -> KeyCode {
+    match key {
+        KeyCode::Char(c) => KeyCode::Char(c.to_ascii_lowercase()),
+        other => other,
+    }
+}
 #[derive(Default)]
 struct Input {
     held: [bool; 4], // Up, W, Down, S: aliases release independently.
@@ -244,7 +251,7 @@ fn main() -> io::Result<()> {
             match event::read()? {
                 Event::Key(k) => {
                     if k.kind == KeyEventKind::Press {
-                        match k.code {
+                        match action_key(k.code) {
                             KeyCode::Esc | KeyCode::Char('q') => break 'game,
                             KeyCode::Char('c') if k.modifiers.contains(KeyModifiers::CONTROL) => {
                                 break 'game
@@ -301,6 +308,14 @@ mod tests {
     use super::*;
     fn key(c: KeyCode, k: KeyEventKind) -> KeyEvent {
         KeyEvent::new_with_kind(c, KeyModifiers::NONE, k)
+    }
+    #[test]
+    fn action_letters_are_case_insensitive() {
+        for (lower, upper) in [('r', 'R'), ('q', 'Q'), ('c', 'C')] {
+            assert_eq!(action_key(KeyCode::Char(upper)), KeyCode::Char(lower));
+        }
+        assert_eq!(action_key(KeyCode::Esc), KeyCode::Esc);
+        assert_eq!(action_key(KeyCode::Char(' ')), KeyCode::Char(' '));
     }
     #[test]
     fn release_stops_and_opposites_cancel() {

@@ -1,0 +1,29 @@
+{
+  "base_commit": "7cbd5b43a429964d2ff6e40ad4229716bf5906d8",
+  "source_changed": true,
+  "binary_sha256": "1089a79988f1f5cfc44440ddf6a287596456206494126ac1996829ca7f594664",
+  "release_tests": 8,
+  "clippy": "pass --all-targets -D warnings",
+  "states": 13,
+  "final": {
+    "scenario": "smoke-v1",
+    "seed": 42,
+    "tick": 1440,
+    "state": "Playing",
+    "player": 250,
+    "cpu": 250,
+    "ball": [
+      89.02103,
+      136.44139,
+      185.1054,
+      -322.69702
+    ],
+    "scores": [
+      0,
+      0
+    ],
+    "finished": true
+  },
+  "cell_checkpoints": 6,
+  "physical_terminal_input_verified": false
+}
