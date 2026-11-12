@@ -24,3 +24,11 @@ All eight shared controller release tests pass on Windows x64 GNU. Installed the
 Each game started and moved the player paddle upward from y=205 with a 250 ms Up press. Each on-screen Down hold moved the paddle downward, then its position remained unchanged after pointer release. The Yew court screenshot was inspected; Yew, Leptos and Dioxus pause status was also observed. [Sanitized browser evidence and WASM hashes](evidence/web-input-windows-20261112.json).
 
 The exact overlapping key/pointer release-order browser test remains unverified. The supported browser interface rejected raw CDP key-down/up dispatch, and it was not bypassed. Those combinations have passing controller tests but are not presented as browser acceptance. No package, deployment, performance or clean-machine gate is advanced.
+
+## Windows pointer-ID follow-up, 2026-11-12
+
+After fetching `d6685ffc5e21256dd706979ad2a46c1bae0aedb2`, an isolated checkout rebuilt the locked Yew, Leptos and Dioxus web assets offline with the existing MSVC Rust toolchain and wasm-bindgen 0.2.130. The shared controller's 11 tests passed on Windows, including independent pointer IDs, unrelated release, opposing pointers, pause and mixed keyboard/button model cases. These are unit/model results.
+
+Each rebuilt app was served from localhost and opened in Chrome through the supported browser interface. In each, Start began a match, then separate approximately one-second mouse holds on the Up and Down buttons visibly moved the player paddle in the corresponding directions. The final release observation was at the court boundary, so it cannot prove that movement stops after release in the interior. No scripted replay or app-owned capture was used in this check.
+
+The supported interactions used here do not provide simultaneous independent touch contacts or a pointer-cancel sequence. Multi-pointer ownership, cancellation, mixed keyboard/pointer release order and physical touch therefore remain unverified in a browser or device; the passing model tests are not a substitute. No raw event dispatch was used.
