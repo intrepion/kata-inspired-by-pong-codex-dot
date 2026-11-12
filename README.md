@@ -4,12 +4,12 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 08:20 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 08:21 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Softbuffer three valid callback repeats, 2 adapter + 13 shared tests and 12.1s scripted replay/capture passed (08:17 UTC); processes exited. | [Softbuffer Windows evidence](docs/benchmarks/SOFTBUFFER-WINDOWS-PILOT.md). Next: pixels release build. Packaging and OS-input gates remain separate. |
-| Mac | Piston wall-clock slowdown fixed and requalified: plain replay 12.723 seconds, capture 12.380 seconds/six frames; seven unit tests and three separate post-fix timing repeats passed. Processes exited. | [Original and fixed Piston evidence](docs/benchmarks/PISTON-MAC-PILOT.md). Eight Mac timing adapters recorded; next Nannou after shared adapter publication. Yew focus inconclusive; packaging partial. |
+| Mac | Nannou ninth adapter offline release build running. Piston wall-clock fix published and requalified (~12.5-second replay instead of ~59 seconds); eight timing adapters recorded. | [Original and fixed Piston evidence](docs/benchmarks/PISTON-MAC-PILOT.md). Next: Nannou tests, timing and replay. Yew focus inconclusive; packaging partial. |
 | Omarchy ARM64 | Ninth timing adapter Nannou: three valid release callback repeats, replay and six app-owned screenshots passed; processes exited. | [Nannou evidence](docs/benchmarks/NANNOU-ADAPTER.md). 2 Rust + 14 Node tests/Clippy pass; tick 600 inspected. Not a real-input or full visual acceptance claim. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
