@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Fifteen native timing adapters recorded; Bevy DX12 only. Fyrox HUD follow-up replay/captures passed. Miniquad portable ZIP extraction/hash/replay passed. | [Miniquad package pilot](docs/packaging/MINIQUAD-WINDOWS-PILOT.md). Continuing Windows packaging; clean-machine, notices and native-input gates remain open. |
+| Windows | Fifteen native timing adapters recorded (Bevy DX12 only). Five local portable ZIP pilots now recorded: Macroquad, Miniquad, pixels, raw wgpu and softbuffer. | [New three-adapter package batch](docs/packaging/WINDOWS-PORTABLE-BATCH.md). Continuing remaining Windows package checks; clean-machine/notices/native-input gates open. |
 | Mac | Corrected bracket-lib package requalified; Fyrox tiny HUD fixed by scaling font/header with court. Two adapter tests and native replay/six PNGs pass; before/after verified. Processes exited. | [Fyrox HUD evidence](docs/FYROX-HUD-SCALE-FIX.md) and [bracket package follow-up](docs/BRACKET-DIVIDER-FIX.md). Fyrox new-package/cross-platform requalification remains; historical timing preserved. |
 | Omarchy ARM64 | Bracket divider and Fyrox HUD corrections passed fresh native package replays and app-capture inspection. Shared GUI held-binding bug fixed. Fyrox cleanup found generated resources.registry left after manifest removal; preserved, not erased. | [Fyrox qualification and cleanup gap](docs/FYROX-HUD-SCALE-FIX.md). Clean uninstall remains incomplete for that new pilot; no real-input or new timing claims. |
 

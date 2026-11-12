@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "adapter": "softbuffer",
+  "platform": "win32",
+  "architecture": "x64",
+  "binary_sha256": "5a2cd99ce748d7fe80b02454b4dff4ec6ca5761e12d7800d3a78d0e30ab30671",
+  "archive_sha256": "bd87f6fa2d126fabf6bc4945ec18ffff6d33006c999204db8b48ab0fb14f947a",
+  "archive_bytes": 927771,
+  "extracted_binary_matches": true
+}
