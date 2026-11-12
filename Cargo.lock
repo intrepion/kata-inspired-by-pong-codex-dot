@@ -5300,6 +5300,7 @@ name = "pong-bevy"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "pong-benchmark",
  "pong-core",
  "pong-scenario",
 ]

@@ -4,6 +4,21 @@ use bevy::{prelude::*, window::PrimaryWindow};
 use pong_core::{BALL, Game, H, PADDLE_H, PADDLE_W, State, W, WIN};
 use pong_scenario::Demo;
 
+fn benchmark_args(args: &[String]) -> bool {
+    let enabled = args.iter().any(|a| a == "--benchmark");
+    assert!(
+        !enabled || !args.iter().any(|a| a.starts_with("--scripted")),
+        "benchmark and replay/capture modes are distinct"
+    );
+    enabled
+}
+#[derive(Resource)]
+struct Benchmark {
+    enabled: bool,
+    frames: Option<pong_benchmark::Frames>,
+    done: bool,
+    scenario: pong_scenario::Scenario,
+}
 #[derive(Resource)]
 struct Replay {
     demo: Option<Demo>,
@@ -26,16 +41,23 @@ struct Score;
 struct Status;
 
 fn main() {
+    let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     let seed = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .map_or(1, |d| d.as_nanos() as u64);
     let demo = Demo::from_args();
-    let seed = if demo.is_some() {
+    let seed = if demo.is_some() || benchmarking {
         pong_scenario::SEED
     } else {
         seed
     };
     App::new()
+        .insert_resource(Benchmark {
+            enabled: benchmarking,
+            frames: None,
+            done: false,
+            scenario: pong_scenario::Scenario::default(),
+        })
         .insert_resource(Replay {
             demo,
             pending: None,
@@ -52,6 +74,7 @@ fn main() {
             ..default()
         }))
         .add_systems(Startup, setup)
+        .add_systems(Last, sample_benchmark)
         .add_systems(
             Update,
             (input_and_simulation, present, capture_demo).chain(),
@@ -130,6 +153,7 @@ fn setup(
 fn input_and_simulation(
     time: Res<Time>,
     mut replay: ResMut<Replay>,
+    mut benchmark: ResMut<Benchmark>,
     keys: Res<ButtonInput<KeyCode>>,
     windows: Query<&Window, With<PrimaryWindow>>,
     mut game: ResMut<Match>,
@@ -140,6 +164,18 @@ fn input_and_simulation(
     }
     if let Some(demo) = &mut replay.demo {
         demo.advance(&mut game.0, time.delta_secs());
+        return;
+    }
+    if benchmark.enabled {
+        clock.0 += time.delta_secs().min(0.1);
+        while clock.0 >= pong_scenario::STEP {
+            if benchmark.scenario.finished() {
+                benchmark.scenario = pong_scenario::Scenario::default();
+                game.0 = Game::new(pong_scenario::SEED);
+            }
+            benchmark.scenario.advance(&mut game.0);
+            clock.0 -= pong_scenario::STEP;
+        }
         return;
     }
     let Ok(window) = windows.single() else {
@@ -251,5 +287,46 @@ fn capture_demo(
         } else if demo.finished() {
             exit.write(AppExit::Success);
         }
+    }
+}
+
+// Main-world frame boundary only; render-subapp/GPU work is not timed directly.
+fn sample_benchmark(
+    mut benchmark: ResMut<Benchmark>,
+    windows: Query<&Window, With<PrimaryWindow>>,
+    mut exit: MessageWriter<AppExit>,
+) {
+    if !benchmark.enabled || benchmark.done {
+        return;
+    }
+    let Ok(window) = windows.single() else {
+        return;
+    };
+    let (width, height) = (window.physical_width(), window.physical_height());
+    if width == 0 || height == 0 {
+        return;
+    }
+    let frames = benchmark
+        .frames
+        .get_or_insert_with(|| pong_benchmark::Frames::new(width, height));
+    if frames.frame(width, height) {
+        let report = frames.report();
+        benchmark.done = true;
+        println!("PONG_BENCHMARK {}", report);
+        exit.write(AppExit::Success);
+    }
+}
+#[cfg(test)]
+mod benchmark_tests {
+    use super::benchmark_args;
+    #[test]
+    fn opt_in_only() {
+        assert!(!benchmark_args(&[]));
+        assert!(benchmark_args(&["--benchmark".into()]));
+    }
+    #[test]
+    #[should_panic(expected = "distinct")]
+    fn reject_combined_modes() {
+        benchmark_args(&["--benchmark".into(), "--scripted-test".into()]);
     }
 }

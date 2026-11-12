@@ -56,3 +56,5 @@ test('nannou metadata states recording rather than presentation boundary',()=>{c
 test('raw wgpu metadata excludes skipped surface frames',()=>{const config=parseArguments([...base,'--adapter','wgpu']);assert.match(config.pacing,/successful surface present request only/);assert.match(config.pacing,/default surface config/);});
 
 test('bracket-lib distinguishes graphical tiles from terminal and retained cap',()=>{const config=parseArguments([...base,'--adapter','bracket-lib']);assert.match(config.presentation,/not terminal/);assert.match(config.pacing,/60fps cap/);});
+
+test('Bevy metadata labels main-world frame callback scope',()=>{const config=parseArguments([...base,'--adapter','bevy']);assert.match(config.pacing,/main-world Last/);assert.match(config.pacing,/not GPU timing/);});
