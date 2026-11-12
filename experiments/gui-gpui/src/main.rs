@@ -1,5 +1,14 @@
 use gpui::{prelude::*, *};
 use pong_gui_support::Model;
+fn court_transform(width: f32, height: f32) -> (f32, f32, f32, f32) {
+    let scale = (width / 900.).min(height / 500.).max(0.);
+    (
+        scale,
+        scale,
+        (width - 900. * scale) / 2.,
+        (height - 500. * scale) / 2.,
+    )
+}
 struct Pong {
     model: Model,
     demo: Option<pong_scenario::Demo>,
@@ -31,16 +40,7 @@ impl Render for Pong {
                 });
             });
         }
-        let g = &self.model.game;
-        let rect = |x: f32, y: f32, w: f32, h: f32, color: u32| {
-            div()
-                .absolute()
-                .left(relative(x / 900.))
-                .top(relative(y / 500.))
-                .w(relative(w / 900.))
-                .h(relative(h / 500.))
-                .bg(rgb(color))
-        };
+        let game = self.model.game.clone();
         div()
             .size_full()
             .flex()
@@ -65,15 +65,40 @@ impl Render for Pong {
             .child("RALLYLIGHT / GPUI")
             .child(self.model.status())
             .child(
-                div()
-                    .relative()
-                    .w_full()
-                    .flex_1()
-                    .bg(rgb(0x153f37))
-                    .child(rect(449., 0., 2., 500., 0x47766b))
-                    .child(rect(32., g.player - 45., 12., 90., 0xd9ffae))
-                    .child(rect(856., g.cpu - 45., 12., 90., 0xd9ffae))
-                    .child(rect(g.ball.x - 8., g.ball.y - 8., 16., 16., 0xffffff).rounded_full()),
+                canvas(
+                    |_, _, _| (),
+                    move |bounds, _, window, _| {
+                        let (sx, _, ox, oy) =
+                            court_transform(bounds.size.width.into(), bounds.size.height.into());
+                        if sx <= 0. {
+                            return;
+                        }
+                        let rect = |x: f32, y: f32, w: f32, h: f32| {
+                            Bounds::new(
+                                bounds.origin + point(px(ox + x * sx), px(oy + y * sx)),
+                                size(px(w * sx), px(h * sx)),
+                            )
+                        };
+                        window.paint_quad(fill(rect(0., 0., 900., 500.), rgb(0x153f37)));
+                        window.paint_quad(fill(rect(449., 0., 2., 500.), rgb(0x47766b)));
+                        window.paint_quad(fill(
+                            rect(32., game.player - 45., 12., 90.),
+                            rgb(0xd9ffae),
+                        ));
+                        window
+                            .paint_quad(fill(rect(856., game.cpu - 45., 12., 90.), rgb(0xd9ffae)));
+                        window.paint_quad(quad(
+                            rect(game.ball.x - 8., game.ball.y - 8., 16., 16.),
+                            px(8. * sx),
+                            rgb(0xffffff),
+                            px(0.),
+                            transparent_black(),
+                            Default::default(),
+                        ));
+                    },
+                )
+                .w_full()
+                .flex_1(),
             )
             .child("W/S or arrows: move | Enter: start | Space: pause | R: restart")
     }
@@ -120,4 +145,25 @@ fn main() {
         .expect("open GPUI window");
         cx.activate(true);
     });
+}
+
+#[cfg(test)]
+mod court_tests {
+    use super::court_transform;
+    #[test]
+    fn court_keeps_world_aspect_and_is_centered_on_resize() {
+        for (width, height) in [
+            (900., 500.),
+            (1000., 300.),
+            (300., 1000.),
+            (0., 500.),
+            (900., 0.),
+        ] {
+            let (sx, sy, ox, oy) = court_transform(width, height);
+            assert_eq!(sx, sy, "world pixels must have the same scale on both axes");
+            assert!(sx >= 0. && ox >= 0. && oy >= 0.);
+            assert!((900. * sx + 2. * ox - width).abs() < 0.001);
+            assert!((500. * sy + 2. * oy - height).abs() < 0.001);
+        }
+    }
 }

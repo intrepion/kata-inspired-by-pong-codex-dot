@@ -1,0 +1,14 @@
+{
+  "base_commit": "a4721ce27ba73f5e9f070591aa1166b29bf4e9c8",
+  "source_changed": true,
+  "binary_sha256": "3789cf5417c32bb0a38bbb152dec8630cca9b04e696a97d2dd4c58d0ac5000c2",
+  "geometry_tests": 1,
+  "shared_model_tests": 8,
+  "clippy": "pass --all-targets -D warnings",
+  "native_replay_exit": 0,
+  "states": 13,
+  "final_tick": 1440,
+  "finished": true,
+  "visual_resize_verified": false,
+  "pixel_capture_supported": false
+}
