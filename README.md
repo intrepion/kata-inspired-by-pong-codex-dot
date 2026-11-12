@@ -4,11 +4,11 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 13:17 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 13:20 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Diagnosed Miniquad native start blockage: supported Return/Space/R/Up input arrives as Unknown key enums; court clicks arrive correctly. Opt-in trace added without changing input semantics. | [Native diagnosis](docs/MINIQUAD-WINDOWS-INPUT-DIAGNOSIS.md). Five tests/Clippy and fresh scripted replay pass separately; physical keyboard/full-match acceptance remains open. |
+| Windows | Miniquad mapped-action boundary passes seven tests; Ratatui uppercase action correction passes eight tests. Both strict Clippy checks and fresh bounded replays pass. | [Miniquad diagnosis](docs/MINIQUAD-WINDOWS-INPUT-DIAGNOSIS.md) and [Ratatui follow-up](docs/RATATUI-HELD-BINDINGS-FIX.md). Correctly mapped actions verified separately from Windows Unknown-key delivery; no physical-input pass inferred. |
 | Mac | Corrected Pixels native enlarged-window gameplay checked: court/paddles/ball coherent, movement and pause/resume work at 2880×1558. Quit confirmed. Prior full match/reset checks retained. | [Pixels native interaction evidence](docs/NATIVE-HELD-BINDINGS-FIX.md). Restore attempt unconfirmed; focus/DPI/minimize and physical key overlap remain open. No new builds or active app. |
 | Omarchy ARM64 | Ratatui shifted/Caps Lock action-key bug fixed: restart/quit now normalize case. Red/green regression, eight optimized tests, strict Clippy and bounded cell replay pass. | [Ratatui action-key evidence](docs/RATATUI-HELD-BINDINGS-FIX.md#action-key-case-consistency-2026-11-12). Cell replay is not actual terminal input; previous package hashes retained. |
 

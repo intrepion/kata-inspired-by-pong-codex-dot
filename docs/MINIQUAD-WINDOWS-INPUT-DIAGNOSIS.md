@@ -15,3 +15,7 @@ The game's Enter/Space start branches never received their expected key enum in 
 Five release tests and strict all-target release Clippy pass. A fresh native scripted replay remains separately checked, not a replacement for real input. Existing portable and benchmark hashes are historical because the opt-in diagnostic adds a new binary. The traced events are limited to the intentionally requested game test keys; logs remain local.
 
 Fresh scripted run: exit 0, thirteen state reports through finished tick 1440, six app captures and no input-trace output without the flag. [Sanitized event summary and binary hash](evidence/miniquad-windows-input-diagnosis-20261112.json).
+
+## Action boundary verification
+
+The existing key-action match was extracted without changing its behavior so it can be exercised without a GPU window. Two additional tests verify mapped Enter/R/Space start correctly; Space pauses/resumes; R clears scores; repeated action keys do not trigger actions; Unknown never starts; Escape requests quit. All seven release tests and strict Clippy pass. The fresh rebuilt replay is byte-identical across all thirteen state records to the pre-extraction replay and has six PNGs. This validates app behavior for correctly mapped keys, not the unresolved supported-input translation. [New binary/result record](evidence/windows-action-boundary-followup-20261112.json).

@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-12",
+  "platform": "Windows x64 GNU",
+  "scope": "Application action regressions, not physical-keyboard acceptance",
+  "results": [
+    {
+      "adapter": "ratatui",
+      "release_tests": 8,
+      "strict_clippy": "pass",
+      "binary_sha256": "ee1235787ed5b33d9b1d50a3def9552c116eb34b338a5116c4f850fecb3e0f61",
+      "state_records": 13,
+      "final_tick": 1440,
+      "capture_count": 6,
+      "exit_code": 0
+    },
+    {
+      "adapter": "miniquad",
+      "release_tests": 7,
+      "strict_clippy": "pass",
+      "binary_sha256": "e7b506415990a3fcdf7e7fde7a320140ebd43897996c52a43f2920ae17f7d32d",
+      "state_records": 13,
+      "final_tick": 1440,
+      "capture_count": 6,
+      "exit_code": 0,
+      "replay_identical_to_pre_extraction": true
+    }
+  ]
+}

@@ -29,6 +29,24 @@ impl MovementInput {
         self.held = [false; 4];
     }
 }
+// Keep the application action boundary testable without constructing a GPU window.
+// A true return requests quit; it does not reinterpret unmapped engine keys.
+fn control_key(game: &mut Game, key: KeyCode, repeat: bool) -> bool {
+    match key {
+        KeyCode::Enter | KeyCode::R if !repeat => game.start(),
+        KeyCode::Space if !repeat => {
+            if game.state == State::Ready {
+                game.start();
+            } else {
+                game.toggle_pause();
+            }
+        }
+        KeyCode::Escape => return true,
+        _ => {}
+    }
+    false
+}
+
 struct App {
     ctx: Box<dyn RenderingBackend>,
     pipeline: Pipeline,
@@ -237,17 +255,8 @@ impl EventHandler for App {
             return;
         }
         self.movement.key(k, true);
-        match k {
-            KeyCode::Enter | KeyCode::R if !repeat => self.game.start(),
-            KeyCode::Space if !repeat => {
-                if self.game.state == State::Ready {
-                    self.game.start()
-                } else {
-                    self.game.toggle_pause()
-                }
-            }
-            KeyCode::Escape => window::request_quit(),
-            _ => {}
+        if control_key(&mut self.game, k, repeat) {
+            window::request_quit();
         }
     }
     fn key_up_event(&mut self, k: KeyCode, _: KeyMods) {
@@ -347,5 +356,41 @@ mod movement_tests {
         assert_eq!(input.axis(), 0.);
         input.key(KeyCode::W, false);
         assert_eq!(input.axis(), 0.);
+    }
+}
+
+#[cfg(test)]
+mod control_tests {
+    use super::*;
+    #[test]
+    fn mapped_start_pause_resume_and_restart_work() {
+        for key in [KeyCode::Enter, KeyCode::R, KeyCode::Space] {
+            let mut game = Game::new(42);
+            assert!(!control_key(&mut game, key, false));
+            assert_eq!(game.state, State::Playing);
+        }
+        let mut game = Game::new(42);
+        control_key(&mut game, KeyCode::Enter, false);
+        control_key(&mut game, KeyCode::Space, false);
+        assert_eq!(game.state, State::Paused);
+        control_key(&mut game, KeyCode::Space, false);
+        assert_eq!(game.state, State::Playing);
+        game.scores = [3, 4];
+        control_key(&mut game, KeyCode::R, false);
+        assert_eq!(game.scores, [0, 0]);
+    }
+    #[test]
+    fn repeat_and_unknown_do_not_start_or_pause() {
+        let mut game = Game::new(42);
+        for key in [KeyCode::Enter, KeyCode::R, KeyCode::Space, KeyCode::Unknown] {
+            control_key(&mut game, key, true);
+            assert_eq!(game.state, State::Ready);
+        }
+        assert!(!control_key(&mut game, KeyCode::Unknown, false));
+        assert_eq!(game.state, State::Ready);
+        control_key(&mut game, KeyCode::Enter, false);
+        control_key(&mut game, KeyCode::Space, true);
+        assert_eq!(game.state, State::Playing);
+        assert!(control_key(&mut game, KeyCode::Escape, false));
     }
 }
