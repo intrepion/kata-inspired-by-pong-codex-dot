@@ -16,3 +16,9 @@ Fyrox ResourceRegistry 1.0.1 defaults to `data/resources.registry`. Its mutable 
 Seven focused tests cover new empty state, preexisting empty state, no receipt, populated state, unrelated files, mismatched directory identity, absent state, and symlink/oversize refusal. All thirteen packaging tests pass on Omarchy ARM64. Inspection of the actual retained Fyrox pilot returned `preserve` because it has no pre-run receipt; no files were changed or removed.
 
 This closes the unsafe-cleanup question with a conservative tested inspection contract, **not** the clean-uninstall or release gate. The earlier residual remains available for review. Archives, timing evidence and runtime source are unchanged.
+
+## Mac portability follow-up
+
+The original seven fixtures failed on Mac because the system temporary-directory path contains a symlink ancestor. Test-created fixture roots are now canonicalized before inspection; production root validation is unchanged. An eighth regression explicitly proves both a symlink root and a symlink ancestor are still rejected. All eight focused tests pass on Mac; the broader packaging suite has eleven passes and three Linux-only skips.
+
+Read-only inspection of the retained Mac corrected-HUD package directory confirms the same two-byte `{}` registry and returns `preserve` without a pre-run receipt. No application state was deleted, and this does not close the clean-uninstall gate. Callers must supply an explicitly verified canonical run directory, rather than weakening the inspector to follow arbitrary aliases.
