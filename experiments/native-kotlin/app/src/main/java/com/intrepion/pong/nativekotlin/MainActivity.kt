@@ -21,12 +21,12 @@ class MainActivity: Activity() {
   layout.setOnApplyWindowInsetsListener { view, insets -> view.setPadding(16,16+insets.systemWindowInsetTop,16,16+insets.systemWindowInsetBottom); insets }
   setContentView(layout)
  }
- override fun onPause() { super.onPause(); if(!field.scripted) field.game.pause(); field.touchY=null; field.active=false }
+ override fun onPause() { super.onPause(); if(!field.scripted) field.game.pause(); field.touch.clear(); field.active=false }
  override fun onResume() { super.onResume(); field.active=true; field.last=0; field.postInvalidateOnAnimation() }
 }
 class PongView(context: android.content.Context, val scripted: Boolean=false): View(context) {
  private val replay=if(scripted) AndroidReplay(context) else null
- val game=replay?.scenario?.game ?: Game(); var touchY: Float?=null; var active=true; var last=0L
+ val game=replay?.scenario?.game ?: Game(); val touch=TouchInput(); var active=true; var last=0L
  private val paint=Paint(Paint.ANTI_ALIAS_FLAG)
  private var scale=1f; private var ox=0f; private var oy=0f
  override fun onDraw(canvas: Canvas) {
@@ -34,7 +34,7 @@ class PongView(context: android.content.Context, val scripted: Boolean=false): V
   if(replay!=null) {
    if(active) replay.advance()
   } else {
-  val now=System.nanoTime(); if(last!=0L) game.step((now-last)/1_000_000_000f,touchY?.let { ((it-game.player)/20f).coerceIn(-1f,1f) } ?: 0f); last=now
+  val now=System.nanoTime(); if(last!=0L) game.step((now-last)/1_000_000_000f,touch.targetY?.let { ((it-game.player)/20f).coerceIn(-1f,1f) } ?: 0f); last=now
   }
   render(canvas)
   replay?.capture(width,height,::render)
@@ -56,7 +56,20 @@ class PongView(context: android.content.Context, val scripted: Boolean=false): V
  }
  override fun onTouchEvent(event: MotionEvent): Boolean {
   if(scripted) return true
-  when(event.actionMasked) { MotionEvent.ACTION_DOWN,MotionEvent.ACTION_MOVE->touchY=(event.y-oy)/scale; MotionEvent.ACTION_UP,MotionEvent.ACTION_CANCEL->{ touchY=null; performClick() } }
+  when(event.actionMasked) {
+   MotionEvent.ACTION_DOWN,MotionEvent.ACTION_POINTER_DOWN -> {
+    val index=event.actionIndex
+    touch.down(event.getPointerId(index),(event.getY(index)-oy)/scale)
+   }
+   MotionEvent.ACTION_MOVE -> {
+    val index=touch.pointerId?.let { event.findPointerIndex(it) } ?: -1
+    if(index>=0) touch.move(event.getPointerId(index),(event.getY(index)-oy)/scale)
+    else touch.clear()
+   }
+   MotionEvent.ACTION_POINTER_UP -> touch.up(event.getPointerId(event.actionIndex))
+   MotionEvent.ACTION_UP -> { touch.clear(); performClick() }
+   MotionEvent.ACTION_CANCEL -> touch.clear()
+  }
   return true
  }
  override fun performClick(): Boolean { super.performClick(); return true }

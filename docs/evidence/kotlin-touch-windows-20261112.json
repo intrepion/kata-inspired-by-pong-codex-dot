@@ -1,0 +1,23 @@
+{
+  "date": "2026-11-12",
+  "host": "Windows x64",
+  "commands": [
+    "gradlew --offline --no-daemon --max-workers=2 :app:testDebugUnitTest :app:assembleDebug"
+  ],
+  "build": "success",
+  "tests": {
+    "GameTest": 9,
+    "ScenarioTest": 2,
+    "TouchInputTest": 3,
+    "total": 14,
+    "failures": 0,
+    "errors": 0
+  },
+  "apk_sha256": "f85c38d65628c0a659567863e4922464b0f030e0ff5f4f9b535d4caf240f5d65",
+  "apk_bytes": 910548,
+  "limitations": [
+    "Pure input-owner unit tests and Android compilation, not MotionEvent instrumentation or physical multi-touch",
+    "Two existing WindowInsets deprecated API warnings retained",
+    "No emulator or device install/release qualification"
+  ]
+}

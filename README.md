@@ -4,11 +4,11 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 13:20 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Miniquad mapped-action boundary passes seven tests; Ratatui uppercase action correction passes eight tests. Both strict Clippy checks and fresh bounded replays pass. | [Miniquad diagnosis](docs/MINIQUAD-WINDOWS-INPUT-DIAGNOSIS.md) and [Ratatui follow-up](docs/RATATUI-HELD-BINDINGS-FIX.md). Correctly mapped actions verified separately from Windows Unknown-key delivery; no physical-input pass inferred. |
+| Windows | Kotlin Android multi-touch ownership fixed: secondary fingers cannot steal movement; owner release/cancel/lifecycle clear stops it. Offline APK build and fourteen unit tests pass. | [Kotlin touch correction](docs/KOTLIN-TOUCH-OWNERSHIP-FIX.md). MotionEvent instrumentation, emulator/physical multi-touch and installation remain separate; debug APK retained locally. |
 | Mac | Ratatui action-case fix: eight tests and cached debug build pass. Native PTY uppercase R restart/pause and uppercase Q exit verified; terminal settings restored exactly. | [Ratatui follow-up](docs/RATATUI-HELD-BINDINGS-FIX.md). Physical/enhanced-terminal input and release packages remain separate. Prior Pixels gameplay evidence retained; no active test process. |
 | Omarchy ARM64 | Ratatui shifted/Caps Lock action-key bug fixed: restart/quit now normalize case. Red/green regression, eight optimized tests, strict Clippy and bounded cell replay pass. | [Ratatui action-key evidence](docs/RATATUI-HELD-BINDINGS-FIX.md#action-key-case-consistency-2026-11-12). Cell replay is not actual terminal input; previous package hashes retained. |
 
