@@ -15,3 +15,11 @@ Before correction, the new release-order regression failed in each adapter again
 - Binary hashes and runtime counts are in [Windows evidence](evidence/ash-softbuffer-held-bindings-windows-20261112.json).
 
 These are input-handler unit regressions plus native scripted integration. Scripted inputs do not prove physical OS keyboard delivery or real focus-event handling, and app-owned captures are not desktop screenshots. Previous benchmark and portable-package hashes remain historical; no new timing or package qualification is claimed. Mac and Linux requalification remains separate.
+
+## Mac ARM64 follow-up
+
+At source `af1db13`, all six ash and four softbuffer release tests pass. Strict release Clippy passes for all targets in both adapters; upstream `block 0.1.6` future-incompatibility warning remains. Ash unit tests do not initialize Vulkan. Its previously documented Mac loader/MoltenVK runtime blocker remains; no ash runtime or package pass is claimed and no loader was installed.
+
+Softbuffer was rebuilt, bundled and extracted into a fresh directory. Extracted binary hash matched the manifest; native replay exited 0 in 12.753 seconds with thirteen states through finished tick 1440 and six captures. Tick600 at1800×1000 was inspected: 0–1 score, both paddles, ball and divider coherent. Three package safety guards pass. Removing only the extracted app preserved the adjacent sentinel; remaining files are exactly the pilot notice and sentinel. [Redacted Mac package/run evidence](packaging/mac-softbuffer-held-package-20261112.json).
+
+These checks establish input-model regressions and extracted runtime integration, not physical keyboard/focus behavior, new performance results, signing, clean-machine installation or redistribution clearance. Earlier binary/package/timing hashes remain historical. Processes exited.

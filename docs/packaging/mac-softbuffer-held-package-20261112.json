@@ -1,0 +1,21 @@
+{
+  "source": "af1db13",
+  "schema": 1,
+  "platform": "darwin",
+  "architecture": "arm64",
+  "binary_sha256": "43ff405aac8bd09721c40639f6c9ef4e1141cded71aa53921a9a9fa6eebdfc1c",
+  "archive_sha256": "88a409d51e7766ff559ae51b239fbae4767942658a875ddda2484ed9e52c8e5a",
+  "archive_bytes": 449361,
+  "status": 0,
+  "signal": null,
+  "elapsed_seconds": 12.753,
+  "states": 13,
+  "final_tick": 1440,
+  "finished": true,
+  "captures": 6,
+  "sentinel_preserved": true,
+  "remaining_entries": [
+    "PILOT-NOTICE.txt",
+    "sentinel.txt"
+  ]
+}
