@@ -4,12 +4,12 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 07:34 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 07:38 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Network restored; fresh TS15, core9, sampler3, replay5 and fixed cross-platform runner5 tests passed. Three Macroquad release benchmark repeats completed; Windows portable ZIP creation/extraction + extracted scripted replay passed (07:32 UTC); processes exited. | Portable snapshot repaired as a strict semantic comparison; Windows max numeric delta 0.00002 within explicit 0.001 bound, all discrete fields exact. [Contract and regression tests](docs/PORTABLE-SNAPSHOT-COMPARISON.md). Linux/Mac reruns also passed (zero baseline delta). [Checks](docs/WINDOWS-CONTINUATION-20261112.md); [benchmark pilot](docs/benchmarks/WINDOWS-MACROQUAD-PILOT.md). |
-| Mac | Softbuffer three-repeat timing pilot published; SDL3 offline release build now running for next Mac timing adapter. | [Completed softbuffer evidence](docs/benchmarks/SOFTBUFFER-MAC-PILOT.md). SDL3 timing not yet measured; no result claimed. |
+| Mac | SDL3 offline release build and three valid bounded callback repeats complete; all benchmark processes exited. Macroquad and softbuffer pilots also recorded. | [SDL3 Mac timing](docs/benchmarks/SDL3-MAC-PILOT.md). Callback timing only, not displayed FPS or an engine ranking. Package qualification remains partial. |
 | Omarchy ARM64 | Fourth shared benchmark adapter, raylib-rs: release build, 3 Rust + 6 Node tests, strict Clippy and 3 valid timed runs completed; replay regression passed. | [raylib pilot](docs/benchmarks/RAYLIB-ADAPTER.md): retained120fps pacing; callback timing only, no engine ranking. All processes exited. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
