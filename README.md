@@ -86,7 +86,7 @@ Details: [baseline frontends](docs/desktop-comparison.md), [extra engines](exper
 | Implementation | Mac build / runtime | Windows build / runtime | Omarchy ARM64 build / runtime |
 | --- | --- | --- | --- |
 | softbuffer + winit | B / I, including focus and resize checks | B / I | B / S + scripted/PNG sample passed; real input blocked |
-| SDL3 | B / I, including focus and resize checks | B / I; LNK4098 linker warning remains | B / S + scripted/PNG sample passed; real input blocked |
+| SDL3 | B / I, including focus and resize checks | B / I; LNK4098 linker warning remains | Fresh `49f2c2f` B, 2 frontend + 3 shared tests; relocated package replay and six app-owned PNGs, exact model match; physical input unverified ([details](docs/packaging/SDL3-C77-OMARCHY-REPLAY.md)) |
 | Vulkan via ash | B / blocked: missing Vulkan loader/MoltenVK | B / I (simple clear-attachment renderer only) | B / S + scripted/PNG samples passed; real input blocked |
 | Slint | B / I | B / I: start, scoring, pause/resume, reset | B / scripted component PNG samples passed; real input unverified |
 | GPUI | B / I: Enter start, held-W movement, scoring, Space pause | B / I; maximized rendering checked | B / native state-only replay passed; visual/input unverified |
