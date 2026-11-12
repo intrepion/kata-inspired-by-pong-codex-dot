@@ -1,6 +1,6 @@
 # Scripted application-input smoke tests
 
-Macroquad, softbuffer and raylib-rs are the first supported adapters. This is **not** desktop automation
+Macroquad, softbuffer, raylib-rs, Pixels and SDL3 support the shared demo. This is **not** desktop automation
 or a replacement for interactive/visual QA. The shared `pong-scenario` crate feeds
 the same simulation boundary as the adapter's ordinary input handling. It never
 injects OS events or captures the desktop. Optional PNG export reads only its own application framebuffer. Remaining adapters do not yet implement it.
@@ -86,6 +86,8 @@ appropriate application-buffer export. No per-engine copy of the timeline.
 | Macroquad | `get_screen_data` current app buffer | Rerun after shared-helper refactor: exit 0, six PNGs, matching telemetry |
 | softbuffer | Exact CPU RGB buffer submitted to `present` | Exit 0, six PNGs, matching telemetry; paused frame inspected |
 | raylib-rs | Own backbuffer, explicit draw-batch flush before swap | Exit 0, six PNGs, matching telemetry; tick-480 image verified |
+| Pixels | Exact 900x500 CPU RGBA source, encoded RGB | Exit 0, six PNGs, matching telemetry; paused source frame inspected |
+| SDL3 | Current renderer target readback before present | Exit 0, six PNGs, matching telemetry; paused frame inspected |
 | Other Rust adapters | Not wired yet; API-specific work remains | No demo/capture claim |
 | Independent Swift/Kotlin | Not wired; should consume a portable scenario fixture | No Rust FFI/timeline duplication assumed |
 
@@ -97,3 +99,17 @@ viewport test. Renderer snapshots remain separate from real-input QA. Raylib's
 convenience screenshot function mishandled absolute paths and a post-swap read
 returned the prior frame; the adapter now exports the current app buffer before
 swap and checks output exists. No generic desktop capture fallback.
+
+Batch2 adds Pixels and SDL3 using the same arguments and common Demo.
+Pixels PNGs intentionally contain the source raster only; they cannot establish
+GPU scaling, letterboxing or final display correctness. Its score/status remain
+in the window title, which is not part of its app-buffer capture. SDL3 reads its
+renderer target via the supported API and respects converted-surface row pitch.
+Both pass builds and strict Clippy; Pixels has one framebuffer regression test;
+low-level-common has three behavior/raster tests.
+
+Some renderers (notably raylib) add their own stdout diagnostics. When comparing
+telemetry, retain only lines beginning with `{"scenario"`; do not mistake renderer
+log messages for malformed scenario JSON.
+
+Batch2 recorded evidence: [Pixels/SDL3 PNG hashes and outcomes](evidence/scripted-batch2-20261112.json).

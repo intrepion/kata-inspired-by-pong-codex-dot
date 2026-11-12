@@ -12,6 +12,7 @@ struct App {
     window: Option<Arc<Window>>,
     pixels: Option<Pixels<'static>>,
     game: Game,
+    demo: Option<pong_scenario::Demo>,
     up: bool,
     down: bool,
     last: Instant,
@@ -45,7 +46,7 @@ impl ApplicationHandler for App {
     fn window_event(&mut self, e: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
         match event {
             WindowEvent::CloseRequested => e.exit(),
-            WindowEvent::Focused(false) => {
+            WindowEvent::Focused(false) if self.demo.is_none() => {
                 self.up = false;
                 self.down = false;
                 self.game.pause();
@@ -61,7 +62,7 @@ impl ApplicationHandler for App {
                     }
                 }
             }
-            WindowEvent::KeyboardInput { event, .. } => {
+            WindowEvent::KeyboardInput { event, .. } if self.demo.is_none() => {
                 let pressed = event.state == ElementState::Pressed;
                 if let PhysicalKey::Code(k) = event.physical_key {
                     match k {
@@ -84,7 +85,11 @@ impl ApplicationHandler for App {
             }
             WindowEvent::RedrawRequested => {
                 let now = Instant::now();
-                self.acc += (now - self.last).as_secs_f32().min(0.1);
+                if let Some(demo) = &mut self.demo {
+                    demo.advance(&mut self.game, (now - self.last).as_secs_f32());
+                } else {
+                    self.acc += (now - self.last).as_secs_f32().min(0.1);
+                }
                 self.last = now;
                 while self.acc >= 1.0 / 120.0 {
                     self.game
@@ -93,14 +98,31 @@ impl ApplicationHandler for App {
                 }
                 if let Some(p) = self.pixels.as_mut() {
                     draw(p.frame_mut(), &self.game);
+                    if let Some(path) = self.demo.as_mut().and_then(|d| d.capture_path()) {
+                        // Exact application RGBA source buffer, not GPU-scaled output.
+                        let rgb: Vec<u32> = p
+                            .frame()
+                            .as_chunks::<4>()
+                            .0
+                            .iter()
+                            .map(|c| {
+                                (u32::from(c[0]) << 16) | (u32::from(c[1]) << 8) | u32::from(c[2])
+                            })
+                            .collect();
+                        pong_scenario::Demo::save_rgb(&path, &rgb, W as u32, H as u32);
+                    }
                     if let Err(err) = p.render() {
                         eprintln!("Render: {err}");
                         e.exit();
                     }
                 }
+                if self.demo.as_ref().is_some_and(|d| d.finished()) {
+                    e.exit();
+                }
                 if let Some(w) = &self.window {
                     w.set_title(&format!(
-                        "Pong pixels | {} : {} | {:?} | Arrows/W/S • Enter restart • Space pause",
+                        "Pong pixels {} | {} : {} | {:?} | Arrows/W/S • Enter restart • Space pause",
+                        if self.demo.is_some() { "SCRIPTED" } else { "" },
                         self.game.scores[0], self.game.scores[1], self.game.state
                     ));
                 }
@@ -115,7 +137,7 @@ impl ApplicationHandler for App {
     }
 }
 fn draw(frame: &mut [u8], g: &Game) {
-    for (i, p) in frame.chunks_exact_mut(4).enumerate() {
+    for (i, p) in frame.as_chunks_mut::<4>().0.iter_mut().enumerate() {
         let x = (i % W as usize) as f32;
         let y = (i / W as usize) as f32;
         let paddle = (x - 38.0).abs() < PADDLE_W / 2.0 && (y - g.player).abs() < PADDLE_H / 2.0
@@ -140,6 +162,7 @@ fn main() {
         window: None,
         pixels: None,
         game: Game::new(42),
+        demo: pong_scenario::Demo::from_args(),
         up: false,
         down: false,
         last: Instant::now(),
@@ -156,9 +179,13 @@ mod tests {
         let mut frame = vec![0; W as usize * H as usize * 4];
         let game = Game::new(42);
         draw(&mut frame, &game);
-        let pixel = |x: usize, y: usize| &frame[(y * W as usize + x)*4..(y * W as usize + x)*4+4];
-        assert_eq!(pixel(0,0), &[6,10,23,255]);
-        assert_eq!(pixel(38,game.player as usize), &[89,242,217,255]);
-        assert_eq!(pixel(game.ball.x as usize,game.ball.y as usize), &[240,250,255,255]);
+        let pixel =
+            |x: usize, y: usize| &frame[(y * W as usize + x) * 4..(y * W as usize + x) * 4 + 4];
+        assert_eq!(pixel(0, 0), &[6, 10, 23, 255]);
+        assert_eq!(pixel(38, game.player as usize), &[89, 242, 217, 255]);
+        assert_eq!(
+            pixel(game.ball.x as usize, game.ball.y as usize),
+            &[240, 250, 255, 255]
+        );
     }
 }

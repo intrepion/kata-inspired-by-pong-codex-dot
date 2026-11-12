@@ -50,7 +50,7 @@ Each desktop cell is **build / runtime evidence**:
 | Bevy | B / I | B / **F**: Vulkan exits; DX12 renders incorrectly | B / S; UI blocked |
 | Tauri + Rust WASM | B / I | B / I | B / S; UI blocked |
 | Miniquad | B / I | B / R; start input unsuccessful | B / S; UI blocked |
-| pixels + winit | B / I | B / I | B / S; UI blocked |
+| pixels + winit | B / I | B / I | B / S + scripted/source PNG passed; real input blocked |
 | raw wgpu + winit | B / I | B / I | B / S; UI blocked |
 | Piston | B / I | B / I | B / S; UI blocked |
 | ggez | B / I; Mac surface fix verified | B / I on earlier snapshot | B / S; UI blocked |
@@ -68,7 +68,7 @@ Details: [baseline frontends](docs/desktop-comparison.md), [extra engines](exper
 | Implementation | Mac build / runtime | Windows build / runtime | Omarchy ARM64 build / runtime |
 | --- | --- | --- | --- |
 | softbuffer + winit | B / I, including focus and resize checks | B / I | B / S + scripted/PNG sample passed; real input blocked |
-| SDL3 | B / I, including focus and resize checks | B / I; LNK4098 linker warning remains | B / S; UI blocked |
+| SDL3 | B / I, including focus and resize checks | B / I; LNK4098 linker warning remains | B / S + scripted/PNG sample passed; real input blocked |
 | Vulkan via ash | B / blocked: missing Vulkan loader/MoltenVK | B / I (simple clear-attachment renderer only) | B / S; UI blocked |
 | Slint | B / I | B / I: start, scoring, pause/resume, reset | U / U |
 | GPUI | B / I: Enter start, held-W movement, scoring, Space pause | B / I; maximized rendering checked | U / U |
@@ -144,8 +144,10 @@ rendering evidence, **not** real keyboard/focus or smooth-motion validation.
 | Macroquad | Passed | Six saved; paused sample rechecked | Shared clock refactor verified |
 | softbuffer | Passed | Six saved; paused sample inspected | Exact CPU presentation buffer |
 | raylib-rs | Passed | Six saved; exact tick-480 inspected | Current app backbuffer before swap |
+| Pixels | Passed | Six saved; paused source frame inspected | 900x500 CPU source buffer, not scaled GPU output |
+| SDL3 | Passed | Six saved; paused sample inspected | Renderer target before present |
 | Remaining Rust / Swift / Kotlin adapters | Not wired yet | Not wired yet | No implied pass |
 
-All three finish at tick 1440 with the same baseline telemetry. Shared core has
+All five finish at tick 1440 with the same baseline telemetry. Shared core has
 13 passing tests; raylib has one additional viewport test. Details and artifact
 hashes: [scripted testing](docs/SCRIPTED-TESTING.md).
