@@ -24,7 +24,8 @@ function candidates(root) {
  }
  visit(root); return found;
 }
-export function buildNoticeBundle(metadata,repoRoot) {
+export function buildNoticeBundle(metadata,repoRoot,{platform='Linux'}={}) {
+ if(!['Linux','Windows','macOS'].includes(platform)) throw Error('Unsupported platform label');
  if(!Array.isArray(metadata.packages)||!Array.isArray(metadata.resolve?.nodes)) throw Error('Resolved Cargo metadata required');
  const wanted=new Set(metadata.resolve.nodes.map(x=>x.id)),root=realpathSync(repoRoot),packages=[];
  for(const pkg of metadata.packages.filter(p=>wanted.has(p.id)).sort((a,b)=>a.name.localeCompare(b.name)||a.version.localeCompare(b.version))) {
@@ -34,14 +35,14 @@ export function buildNoticeBundle(metadata,repoRoot) {
   files=[...new Set(files)].sort();
   let fallback=false;
   if(!files.length&&!pkg.source&&pkg.name.startsWith('pong-')&&pkg.license==='MIT'){
-   const rel=relative(root,dir);if(rel==='..'||rel.startsWith('../')||isAbsolute(rel))throw Error('First-party fallback outside repository');
+   const rel=relative(root,dir);if(rel==='..'||rel.startsWith('../')||rel.startsWith('..\\')||isAbsolute(rel))throw Error('First-party fallback outside repository');
    files=[join(root,'LICENSE')];fallback=true;
   }
   const notices=files.map(f=>safeFile(fallback?root:dir,f));
   packages.push({name:pkg.name,version:pkg.version,license:pkg.license??null,origin:pkg.source?.startsWith('registry+')?'registry':pkg.source?'external':'local',root_mit_fallback:fallback,notices});
  }
  const missing=packages.filter(p=>!p.notices.length).map(p=>p.name+'@'+p.version);
- let text='Pong Linux dependency notice preparation\n\nResolved Cargo graph; may include build/optional packages. All discovered license choices are retained without choosing one. This is not legal clearance or a system-library inventory. Nested source comments and unlabelled bundled code require separate review.\n';
+ let text='Pong '+platform+' dependency notice preparation\n\nResolved Cargo graph; may include build/optional packages. All discovered license choices are retained without choosing one. This is not legal clearance or a system-library inventory. Nested source comments and unlabelled bundled code require separate review.\n';
  for(const p of packages)for(const f of p.notices)text+='\n===== '+p.name+' '+p.version+' | '+f.source+' | declared '+p.license+' =====\n'+f.text+'\n';
  if(Buffer.byteLength(text)>32*1024*1024)throw Error('Notice bundle too large');
  const index={schema:1,scope:'Resolved Cargo metadata, not linked-binary attribution',missing_notice_files:missing,bundle_sha256:digest(Buffer.from(text)),packages:packages.map(p=>({...p,notices:p.notices.map(({text,...f})=>f)}))};
