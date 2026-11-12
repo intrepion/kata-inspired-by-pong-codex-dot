@@ -4,13 +4,13 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 08:13 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 08:20 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Softbuffer three valid callback repeats, 2 adapter + 13 shared tests and 12.1s scripted replay/capture passed (08:17 UTC); processes exited. | [Softbuffer Windows evidence](docs/benchmarks/SOFTBUFFER-WINDOWS-PILOT.md). Next: pixels release build. Packaging and OS-input gates remain separate. |
 | Mac | ggez eighth timing adapter: release build, 2 Rust + 13 Node tests and 3 valid repeats complete; replay finished in 12.320 seconds with 13 states and six frames. Processes exited. | [ggez Mac evidence](docs/benchmarks/GGEZ-MAC-PILOT.md). Piston timing fix is separate; original slowdown evidence retained. Yew focus inconclusive; packaging partial. |
-| Omarchy ARM64 | Nannou ninth timing adapter: 2 Rust + 14 Node tests pass; strict Clippy/release build running. Existing eight adapter pilots remain verified. | Next: bounded Nannou timing and replay after build; not yet a completed benchmark. |
+| Omarchy ARM64 | Ninth timing adapter Nannou: three valid release callback repeats, replay and six app-owned screenshots passed; processes exited. | [Nannou evidence](docs/benchmarks/NANNOU-ADAPTER.md). 2 Rust + 14 Node tests/Clippy pass; tick 600 inspected. Not a real-input or full visual acceptance claim. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -65,7 +65,6 @@ Each desktop cell is **build / runtime evidence**:
 | pixels + winit | B / I | B / I | B / S + scripted/source PNG passed; real input blocked |
 | raw wgpu + winit | B / I | B / I | B / S + scripted/PNG sample passed; real input blocked |
 | Piston | B / I | B / I | B / S + scripted/PNG sample passed; real input blocked |
-| ggez | [3/3](docs/benchmarks/GGEZ-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/GGEZ-ADAPTER.md) |
 | ggez | B / I; Mac surface fix verified | B / I on earlier snapshot | B / S + scripted/PNG sample passed; real input blocked |
 | nannou | B / I before pacing follow-up | B / I | B / S + scripted/PNG sample passed; real input blocked |
 | Fyrox | B / I | B / I | B / S + scripted/PNG samples passed; real input blocked |
@@ -250,5 +249,7 @@ Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md
 | pixels/winit | [3/3](docs/benchmarks/PIXELS-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/PIXELS-ADAPTER.md) |
 | Miniquad | [3/3](docs/benchmarks/MINIQUAD-MAC-PILOT.md) | [3/3](docs/benchmarks/MINIQUAD-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/MINIQUAD-ADAPTER.md) |
 | Piston | [3/3](docs/benchmarks/PISTON-MAC-PILOT.md) | [3/3](docs/benchmarks/PISTON-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/PISTON-ADAPTER.md) |
+| ggez | [3/3](docs/benchmarks/GGEZ-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/GGEZ-ADAPTER.md) |
+| Nannou | Not recorded | Not recorded | [3/3](docs/benchmarks/NANNOU-ADAPTER.md) |
 
 Other implementations have not yet been qualified through this shared timing protocol. Package lifecycle status is a separate dimension: Mac [Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md) and [SDL3](docs/packaging/SDL3-MAC-PILOT.md) have local extracted-app gameplay/removal evidence, not signed or clean-machine release qualification.

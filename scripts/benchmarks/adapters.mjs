@@ -1,5 +1,6 @@
 // Explicit supported adapters; never guess metadata from an arbitrary binary filename.
 export const adapters = Object.freeze({
+  nannou: {presentation:'native window', renderer:'nannou Bevy/wgpu (runtime driver unqueried)', pacing:'existing 120Hz update limit; sampled at end of view command recording before rendering'},
   ggez: {presentation:'native window', renderer:'ggez wgpu canvas (runtime driver unqueried)', pacing:'existing 120Hz remainder sleep; sampled after Canvas.finish, before framework end_frame'},
   piston: {presentation:'native window', renderer:'Piston wgpu draw submission (driver unqueried)', pacing:'existing 120UPS/default render pacing; sampled after draw_2d on render events only'},
   miniquad: {presentation:'native window', renderer:'Miniquad GPU (backend enum reported; driver unqueried)', pacing:'existing Miniquad defaults; sampled after commit_frame in draw callback'},
@@ -18,7 +19,7 @@ export function parseArguments(args) {
     positional.splice(index, 2);
   }
   if(!Object.hasOwn(adapters, adapter)) throw Error('Unsupported benchmark adapter');
-  if(positional.length !== 4 || positional.some(x=>!x || x.startsWith('--'))) throw Error('usage: run.mjs BINARY NEW.json BACKEND NOTES [--adapter macroquad|softbuffer|sdl3|raylib|pixels|miniquad|piston|ggez]');
+  if(positional.length !== 4 || positional.some(x=>!x || x.startsWith('--'))) throw Error('usage: run.mjs BINARY NEW.json BACKEND NOTES [--adapter macroquad|softbuffer|sdl3|raylib|pixels|miniquad|piston|ggez|nannou]');
   const [binary, output, backend, notes] = positional;
   return {binary, output, backend, notes, adapter, ...adapters[adapter]};
 }

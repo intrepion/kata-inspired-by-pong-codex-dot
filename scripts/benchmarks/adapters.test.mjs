@@ -50,3 +50,5 @@ test('Piston metadata distinguishes render callbacks from update rate', () => {
 });
 
 test('ggez metadata does not confuse Canvas finish with end-frame presentation',()=> { const config=parseArguments([...base,'--adapter','ggez']); assert.match(config.pacing,/before framework end_frame/); assert.match(config.pacing,/120Hz remainder sleep/); });
+
+test('nannou metadata states recording rather than presentation boundary',()=>{const config=parseArguments([...base,'--adapter','nannou']);assert.match(config.pacing,/before rendering/);assert.match(config.renderer,/Bevy/);});

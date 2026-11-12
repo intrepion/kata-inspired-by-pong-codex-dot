@@ -1,7 +1,19 @@
 use nannou::prelude::*;
 use pong_core::{Game, State, BALL, H, PADDLE_H, PADDLE_W, W};
 use pong_scenario::Demo;
+fn benchmark_args(args: &[String]) -> bool {
+    let enabled = args.iter().any(|a| a == "--benchmark");
+    assert!(
+        !enabled || !args.iter().any(|a| a.starts_with("--scripted")),
+        "benchmark and replay/capture modes are distinct"
+    );
+    enabled
+}
 struct Model {
+    benchmarking: bool,
+    benchmark_done: std::sync::atomic::AtomicBool,
+    benchmark: std::sync::Mutex<Option<pong_benchmark::Frames>>,
+    scenario: pong_scenario::Scenario,
     game: Game,
     demo: Option<Demo>,
     pending: Option<(std::path::PathBuf, std::time::Instant)>,
@@ -11,6 +23,7 @@ fn main() {
     nannou::app(model).update(update).run();
 }
 fn model(app: &App) -> Model {
+    let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     // Bound CPU work even when the platform falls back to immediate presentation.
     app.set_update_rate(120.0);
     app.new_window()
@@ -20,14 +33,18 @@ fn model(app: &App) -> Model {
         .unfocused(unfocused)
         .build();
     Model {
-        game: Game::new(42),
+        benchmarking,
+        benchmark_done: std::sync::atomic::AtomicBool::new(false),
+        benchmark: std::sync::Mutex::new(None),
+        scenario: pong_scenario::Scenario::default(),
+        game: Game::new(pong_scenario::SEED),
         demo: Demo::from_args(),
         pending: None,
         accumulator: 0.0,
     }
 }
 fn unfocused(_: &App, m: &mut Model) {
-    if m.demo.is_some() {
+    if m.demo.is_some() || m.benchmarking {
         return;
     }
     m.game.pause();
@@ -56,6 +73,18 @@ fn update(app: &App, m: &mut Model) {
         if let Some(path) = demo.capture_path() {
             app.main_window().save_screenshot(path.clone());
             m.pending = Some((path, std::time::Instant::now()));
+        }
+        return;
+    }
+    if m.benchmarking {
+        m.accumulator += app.time_delta().min(0.1);
+        while m.accumulator >= pong_scenario::STEP {
+            if m.scenario.finished() {
+                m.scenario = pong_scenario::Scenario::default();
+                m.game = Game::new(pong_scenario::SEED);
+            }
+            m.scenario.advance(&mut m.game);
+            m.accumulator -= pong_scenario::STEP;
         }
         return;
     }
@@ -110,4 +139,30 @@ fn view(app: &App, m: &Model) {
         .x_y(0.0, 190.0)
         .font_size(32)
         .color(WHITE);
+    if m.benchmarking && !m.benchmark_done.load(std::sync::atomic::Ordering::Relaxed) {
+        let size = app.main_window().size_pixels();
+        let mut sampler = m.benchmark.lock().expect("benchmark sampler");
+        let frames = sampler.get_or_insert_with(|| pong_benchmark::Frames::new(size.x, size.y));
+        if frames.frame(size.x, size.y) {
+            m.benchmark_done
+                .store(true, std::sync::atomic::Ordering::Relaxed);
+            println!("PONG_BENCHMARK {}", frames.report());
+            app.quit();
+        }
+    }
+}
+
+#[cfg(test)]
+mod benchmark_tests {
+    use super::benchmark_args;
+    #[test]
+    fn opt_in_only() {
+        assert!(!benchmark_args(&[]));
+        assert!(benchmark_args(&["--benchmark".into()]));
+    }
+    #[test]
+    #[should_panic(expected = "distinct")]
+    fn reject_combined_modes() {
+        benchmark_args(&["--benchmark".into(), "--scripted-test".into()]);
+    }
 }
