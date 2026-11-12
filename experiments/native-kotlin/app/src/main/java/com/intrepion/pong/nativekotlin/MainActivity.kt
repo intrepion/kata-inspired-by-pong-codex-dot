@@ -10,25 +10,38 @@ class MainActivity: Activity() {
   super.onCreate(savedInstanceState)
   val layout=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(16,16,16,16); setBackgroundColor(Color.BLACK) }
   val title=TextView(this).apply { text="PONG � Native Kotlin"; textSize=24f; setTextColor(Color.WHITE); gravity=Gravity.CENTER }
-  field=PongView(this)
+  val scripted=intent.getBooleanExtra("pong_scripted",false) && (applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE)!=0
+  field=PongView(this,scripted)
   val buttons=LinearLayout(this).apply { gravity=Gravity.CENTER }
   val start=Button(this).apply { text="Start / Restart"; setOnClickListener { field.game.start() } }
   val pause=Button(this).apply { text="Pause / Resume"; setOnClickListener { field.game.togglePause() } }
+  start.isEnabled=!scripted; pause.isEnabled=!scripted
   buttons.addView(start); buttons.addView(pause)
   layout.addView(title); layout.addView(field,LinearLayout.LayoutParams(-1,0,1f)); layout.addView(buttons)
   layout.setOnApplyWindowInsetsListener { view, insets -> view.setPadding(16,16+insets.systemWindowInsetTop,16,16+insets.systemWindowInsetBottom); insets }
   setContentView(layout)
  }
- override fun onPause() { super.onPause(); field.game.pause(); field.touchY=null; field.active=false }
+ override fun onPause() { super.onPause(); if(!field.scripted) field.game.pause(); field.touchY=null; field.active=false }
  override fun onResume() { super.onResume(); field.active=true; field.last=0; field.postInvalidateOnAnimation() }
 }
-class PongView(context: android.content.Context): View(context) {
- val game=Game(); var touchY: Float?=null; var active=true; var last=0L
+class PongView(context: android.content.Context, val scripted: Boolean=false): View(context) {
+ private val replay=if(scripted) AndroidReplay(context) else null
+ val game=replay?.scenario?.game ?: Game(); var touchY: Float?=null; var active=true; var last=0L
  private val paint=Paint(Paint.ANTI_ALIAS_FLAG)
  private var scale=1f; private var ox=0f; private var oy=0f
  override fun onDraw(canvas: Canvas) {
   super.onDraw(canvas)
+  if(replay!=null) {
+   if(active) replay.advance()
+  } else {
   val now=System.nanoTime(); if(last!=0L) game.step((now-last)/1_000_000_000f,touchY?.let { ((it-game.player)/20f).coerceIn(-1f,1f) } ?: 0f); last=now
+  }
+  render(canvas)
+  replay?.capture(width,height,::render)
+  if(active && replay?.scenario?.finished!=true) postInvalidateOnAnimation()
+ }
+ private fun render(canvas: Canvas) {
+  canvas.drawColor(Color.BLACK)
   scale=minOf(width/900f,(height-140f)/500f).coerceAtLeast(.01f); ox=(width-900f*scale)/2; oy=(height-500f*scale)/2
   paint.color=Color.WHITE; paint.textSize=42f; paint.textAlign=Paint.Align.CENTER
   canvas.drawText("${game.scores[0]}    :    ${game.scores[1]}",width/2f,50f,paint)
@@ -40,9 +53,9 @@ class PongView(context: android.content.Context): View(context) {
   paint.textSize=24f
   val status=when(game.state) { GameState.PAUSED->"Paused"; GameState.OVER->if(game.scores[0]==7) "You win!" else "CPU wins"; else->"First to 7 � Drag to move" }
   canvas.drawText(status,width/2f,height-20f,paint)
-  if(active) postInvalidateOnAnimation()
  }
  override fun onTouchEvent(event: MotionEvent): Boolean {
+  if(scripted) return true
   when(event.actionMasked) { MotionEvent.ACTION_DOWN,MotionEvent.ACTION_MOVE->touchY=(event.y-oy)/scale; MotionEvent.ACTION_UP,MotionEvent.ACTION_CANCEL->{ touchY=null; performClick() } }
   return true
  }
