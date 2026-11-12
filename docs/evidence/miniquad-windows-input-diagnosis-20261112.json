@@ -1,0 +1,40 @@
+{
+  "date": "2026-11-12",
+  "platform": "Windows x64 GNU",
+  "engine": "miniquad 0.4.11",
+  "binary_sha256": "ff9cdb7d043cf76716e5c60b6d42bc3499f3a59ba502b4d491733752bc5cc5b4",
+  "native_input": {
+    "requested": [
+      "Return",
+      "Space",
+      "R",
+      "Up"
+    ],
+    "observed_down": [
+      "Unknown",
+      "Unknown",
+      "Unknown",
+      "Unknown"
+    ],
+    "observed_up": [
+      "Unknown",
+      "Unknown",
+      "Unknown",
+      "Unknown"
+    ],
+    "repeat": false,
+    "state": "Ready",
+    "mouse_click": "Left",
+    "start_pass": false,
+    "physical_keyboard_tested": false
+  },
+  "release_tests": 5,
+  "strict_clippy": "passed",
+  "scripted": {
+    "exit": 0,
+    "state_records": 13,
+    "final_tick": 1440,
+    "captures": 6,
+    "input_trace_disabled": true
+  }
+}

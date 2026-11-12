@@ -4,11 +4,11 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 13:09 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 13:17 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Three notice-bearing ZIP pilots pass for softbuffer, SDL3 and ash: all staged/extracted hashes match, 39 states and 18 captures. Fixed a Windows license-fallback path containment bug with a failing-then-passing regression. | [Windows notice packages](docs/packaging/WINDOWS-NOTICE-PACKAGES.md). Thirteen packaging tests pass/seven platform skips. Legal/linked-library completeness, installer and physical-input gates remain open. |
+| Windows | Diagnosed Miniquad native start blockage: supported Return/Space/R/Up input arrives as Unknown key enums; court clicks arrive correctly. Opt-in trace added without changing input semantics. | [Native diagnosis](docs/MINIQUAD-WINDOWS-INPUT-DIAGNOSIS.md). Five tests/Clippy and fresh scripted replay pass separately; physical keyboard/full-match acceptance remains open. |
 | Mac | Corrected Pixels native enlarged-window gameplay checked: court/paddles/ball coherent, movement and pause/resume work at 2880×1558. Quit confirmed. Prior full match/reset checks retained. | [Pixels native interaction evidence](docs/NATIVE-HELD-BINDINGS-FIX.md). Restore attempt unconfirmed; focus/DPI/minimize and physical key overlap remain open. No new builds or active app. |
 | Omarchy ARM64 | Ratatui shifted/Caps Lock action-key bug fixed: restart/quit now normalize case. Red/green regression, eight optimized tests, strict Clippy and bounded cell replay pass. | [Ratatui action-key evidence](docs/RATATUI-HELD-BINDINGS-FIX.md#action-key-case-consistency-2026-11-12). Cell replay is not actual terminal input; previous package hashes retained. |
 
@@ -124,7 +124,7 @@ Details: [native Kotlin/Swift](experiments/NATIVE-MOBILE.md), [Tauri mobile](doc
 | Windows engine interaction | Most I cells mean start, scoring/ball motion, pause/resume and reset. Sustained paddle movement/release, full matches, focus/minimize and resize/DPI are mostly still unverified. |
 | Windows web interaction | Browser variants exercised keyboard/pointer and CPU win; real focus-loss still unverified. Native wrappers exercised pointer movement and basic controls, not held-key/full-match/physical-touch coverage. |
 | Omarchy visual/input testing | Many builds and smoke launches pass, but the automation connection exposes no native/browser surfaces. This is a tool-access blocker, not proof of a gameplay failure. |
-| Known defects | Windows Bevy default Vulkan crash (DX12 rendering corrected); Windows bracket-lib bitmap text remains rough despite improved layout; Miniquad/raylib supported start input unsuccessful; Godot headless editor shutdown crash. |
+| Known defects | Windows Bevy default Vulkan crash (DX12 rendering corrected); Windows bracket-lib bitmap text remains rough despite improved layout; Miniquad supported keys translate to Unknown ([diagnosis](docs/MINIQUAD-WINDOWS-INPUT-DIAGNOSIS.md)); raylib supported start input unsuccessful; Godot headless editor shutdown crash. |
 | Snapshot freshness | Windows extra-engine interaction used existing isolated GNU binaries, not a fresh latest-source rebuild. Mac nannou UI predates the pacing patch. bracket-lib header layout has been rechecked on Windows only. Requalification remains necessary before release. |
 | Packaging and compatibility | No complete signed-installer/download-install matrix, physical-mobile coverage, exhaustive OS/DPI/input matrix or accessibility audit. |
 | Performance | Fourteen Mac and fifteen Omarchy native adapter pilots recorded; Windows results are listed individually in the timing matrix below. Callback intervals only, not controlled cross-engine rankings or full acceptance. |

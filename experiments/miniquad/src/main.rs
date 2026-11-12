@@ -36,6 +36,7 @@ struct App {
     game: Game,
     demo: Option<pong_scenario::Demo>,
     benchmarking: bool,
+    trace_input: bool,
     benchmark: Option<pong_benchmark::Frames>,
     scenario: pong_scenario::Scenario,
     movement: MovementInput,
@@ -74,6 +75,7 @@ impl App {
             );
         }
         Self {
+            trace_input: std::env::args().any(|arg| arg == "--trace-input"),
             benchmarking,
             benchmark: benchmarking
                 .then(|| pong_benchmark::Frames::new(width as u32, height as u32)),
@@ -225,6 +227,12 @@ impl EventHandler for App {
         }
     }
     fn key_down_event(&mut self, k: KeyCode, _: KeyMods, repeat: bool) {
+        if self.trace_input {
+            eprintln!(
+                "PONG_INPUT key_down key={k:?} repeat={repeat} state={:?}",
+                self.game.state
+            );
+        }
         if self.demo.is_some() || self.benchmarking {
             return;
         }
@@ -243,7 +251,15 @@ impl EventHandler for App {
         }
     }
     fn key_up_event(&mut self, k: KeyCode, _: KeyMods) {
+        if self.trace_input {
+            eprintln!("PONG_INPUT key_up key={k:?} state={:?}", self.game.state);
+        }
         self.movement.key(k, false);
+    }
+    fn mouse_button_down_event(&mut self, button: MouseButton, _x: f32, _y: f32) {
+        if self.trace_input {
+            eprintln!("PONG_INPUT mouse_down button={button:?}");
+        }
     }
     fn window_minimized_event(&mut self) {
         if self.demo.is_some() || self.benchmarking {
