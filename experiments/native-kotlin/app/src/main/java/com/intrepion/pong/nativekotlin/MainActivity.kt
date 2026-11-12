@@ -9,7 +9,7 @@ class MainActivity: Activity() {
  override fun onCreate(savedInstanceState: Bundle?) {
   super.onCreate(savedInstanceState)
   val layout=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(16,16,16,16); setBackgroundColor(Color.BLACK) }
-  val title=TextView(this).apply { text="PONG � Native Kotlin"; textSize=24f; setTextColor(Color.WHITE); gravity=Gravity.CENTER }
+  val title=TextView(this).apply { text="PONG / Native Kotlin"; textSize=24f; setTextColor(Color.WHITE); gravity=Gravity.CENTER }
   val scripted=intent.getBooleanExtra("pong_scripted",false) && (applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE)!=0
   field=PongView(this,scripted)
   val buttons=LinearLayout(this).apply { gravity=Gravity.CENTER }
@@ -51,7 +51,7 @@ class PongView(context: android.content.Context, val scripted: Boolean=false): V
   paint.color=Color.CYAN; canvas.drawRect(32f,game.player-45,44f,game.player+45,paint); canvas.drawRect(856f,game.cpu-45,868f,game.cpu+45,paint)
   paint.color=Color.WHITE; canvas.drawCircle(game.ball.x,game.ball.y,8f,paint); canvas.restore()
   paint.textSize=24f
-  val status=when(game.state) { GameState.PAUSED->"Paused"; GameState.OVER->if(game.scores[0]==7) "You win!" else "CPU wins"; else->"First to 7 � Drag to move" }
+  val status=when(game.state) { GameState.PAUSED->"Paused"; GameState.OVER->if(game.scores[0]==7) "You win!" else "CPU wins"; else->"First to 7 / Drag to move" }
   canvas.drawText(status,width/2f,height-20f,paint)
  }
  override fun onTouchEvent(event: MotionEvent): Boolean {
