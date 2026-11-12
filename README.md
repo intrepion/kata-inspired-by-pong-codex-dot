@@ -4,11 +4,11 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 12:38 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 12:42 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Eight shared web-controller tests pass; fresh Yew, Leptos and Dioxus WASM builds passed localhost Chrome start/movement/button-release smoke checks. | [Web-input follow-up](docs/WEB-INPUT-SOURCES-FIX.md). Exact multi-source browser release ordering remains unverified; supported raw key dispatch was rejected, not bypassed. |
+| Windows | Five corrected-input portable ZIPs requalified: Miniquad, pixels, raw wgpu, ash and softbuffer. Exact source/extracted hashes match; five native runs, 65 states and 30 captures pass. | [Windows package follow-up](docs/packaging/WINDOWS-HELD-FIXES-PACKAGE.md). Eleven packaging tests pass/seven platform skips. Artifacts retained; clean-machine, installer and physical-input gates remain separate. |
 | Mac | Corrected Softbuffer package passed supported native UI start, held W/S movement, scoring, pause/resume and R reset. App-menu Quit confirmed process exit. Earlier alternate quit observations remain inconclusive. | [Native gameplay evidence](docs/ASH-SOFTBUFFER-HELD-BINDINGS-FIX.md). Physical overlapping-key order, focus, resize and full-match checks remain separate. |
 | Omarchy ARM64 | Requalified local packages for corrected Miniquad, pixels, raw wgpu, ash and softbuffer binaries. Five extracted native replays passed; 65 states/30 app captures, exact removal and neighbors preserved. Sixteen packaging tests pass (two platform skips). | [Linux corrected-input package follow-up](docs/packaging/LINUX-HELD-FIXES-PACKAGE.md). Old package/timing hashes retained; no physical-input, clean-distro or release claim. |
 
@@ -263,6 +263,8 @@ Other implementations have not yet been qualified through this shared timing pro
 Additional local package lifecycle: [ash/Vulkan Linux ARM64](docs/packaging/ASH-LINUX-PILOT.md) passed relocation/replay/capture/removal; runtime dependencies and release gates remain explicit.
 
 Mac [raylib-rs local package pilot](docs/packaging/RAYLIB-MAC-PILOT.md) also passed extracted native scripted replay/captures, bounded real-input controls and scoped removal; no signed distribution qualification inferred.
+
+Windows corrected held-input package follow-up: [five rebuilt portable archives](docs/packaging/WINDOWS-HELD-FIXES-PACKAGE.md) preserve historical results while recording current binary hashes.
 
 Linux portable lifecycle expansion: [Miniquad, pixels, raw wgpu and raylib-rs](docs/packaging/LINUX-PORTABLE-BATCH.md) have verified local extraction/replay/capture/removal evidence.
 
