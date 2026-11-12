@@ -4,11 +4,11 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 04:45 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 04:47 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Miniquad fresh MSVC build, one test, and scripted replay (1440 ticks / six captures) passed per worker report; native Return/Space start attempts still failed. Bevy scoped fix/evidence was published in `55d0975`. | Reconnected; recovering and publishing [Miniquad evidence](docs/WINDOWS-MINIQUAD-RECHECK.md). No active test window; native input remains unverified. Next target selection in progress. |
+| Windows | Reconnected and published recovered Miniquad evidence in `6774acb`; native start still unverified. | Running Kotlin candidate `71c513a` JUnit tests and debug APK build with existing JDK 21/Android SDK (two Gradle workers). No new native-mobile runtime pass yet. |
 | Mac | Yew and Leptos native-wrapper checks assigned, followed by Dioxus native desktop. Existing test binaries use an older checkpoint. | Preparing visual checks with existing `6ceb22a` binaries; Pong Yew app-access call pending, possibly approval. Gameplay not yet confirmed; Dioxus build queued. |
 | Omarchy ARM64 | Swift/Kotlin portable parser/replay source and derived resources prepared; host resource consistency checks pass. | Publishing source candidate only. Swift/Kotlin compiler, native tests, packaged-app resource loading and mobile UI replay remain pending platform toolchains. |
 
