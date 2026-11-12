@@ -4,13 +4,13 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 05:23 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 05:29 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Android normal-mode start/scoring/pause/resume/restart and Home/Recents pause retention passed; broken separators corrected; 11 tests pass. | Test app stopped; emulator/data preserved. Sustained drag movement remains unverified (two gestures inconclusive); [bounded results](docs/SCRIPTED-ANDROID.md). |
-| Mac | Bounded native gameplay passed for fresh Dioxus `6ceb22a` and Bevy Mesh2d `55d0975`; Yew/Leptos cached binaries also passed, exact source revision unverified. [Provenance and limits](docs/MAC-NATIVE-FOLLOWUP-20261112.md). | Assigned checks complete; all four apps closed and process check confirmed none running. No pending permission. Focus/resize/full-match, performance and installation not covered. |
-| Omarchy ARM64 | Portable Swift/Kotlin source handoff published. GPUI native state-only replay and Dioxus native SVG-source replay passed; neither establishes visual/input correctness. | Latest completed source/evidence checkpoints recorded below; current active run not confirmed. Kotlin validation subsequently passed on Windows, not Omarchy; Swift candidate compilation/XCTest and UI replay remain pending on Mac. |
+| Mac | Fresh `b92b7df` Yew/Leptos native builds and scripted state/SVG exports passed. Swift 11 tests and simulator build passed; replay core is not yet wired into the app. [Provenance and limits](docs/MAC-NATIVE-FOLLOWUP-20261112.md). | Assigned batch complete; apps closed, no active test or pending permission. Fresh SVG exports are not screenshots or new manual-input passes. Swift app replay/UI remains outstanding. |
+| Omarchy ARM64 | Portable Swift/Kotlin source handoff published. GPUI native state-only replay and Dioxus native SVG-source replay passed; neither establishes visual/input correctness. | Latest completed source/evidence checkpoints recorded below; current active run not confirmed. Kotlin validation subsequently passed on Windows, not Omarchy; Swift core tests and simulator build subsequently passed on Mac; app replay/UI remains pending. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -96,8 +96,8 @@ Details: [low-level clients](experiments/LOW-LEVEL.md), [GUI toolkits](experimen
 | Yew browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | U / U |
 | Leptos browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | U / U |
 | Dioxus browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | U / U |
-| Yew native Tauri wrapper | B / I using cached binaries; exact source revision unverified | B / I | B / scripted SVG-source checks passed; visual/input unverified |
-| Leptos native Tauri wrapper | B / I using cached binaries; exact source revision unverified | B / I | B / scripted SVG-source checks passed; visual/input unverified |
+| Yew native Tauri wrapper | Fresh `b92b7df` B + state/SVG replay; earlier I used cached binary, revision unverified | B / I | B / scripted SVG-source checks passed; visual/input unverified |
+| Leptos native Tauri wrapper | Fresh `b92b7df` B + state/SVG replay; earlier I used cached binary, revision unverified | B / I | B / scripted SVG-source checks passed; visual/input unverified |
 | Dioxus native desktop | B / I; fresh `6ceb22a` build | B / I; maximized layout checked | B / native scripted SVG-source checks passed; visual/input unverified |
 
 [Commands and detailed web-framework results](docs/web-framework-comparison.md). Browser checks use a localhost HTTP server, never file URLs. Narrow browser layout is not a physical touchscreen or mobile-package test.
@@ -107,7 +107,7 @@ Details: [low-level clients](experiments/LOW-LEVEL.md), [GUI toolkits](experimen
 | Implementation | Test host / target | Build and tests | Actual runtime evidence | Still outstanding |
 | --- | --- | --- | --- | --- |
 | Native Kotlin | Windows / Android 15 API35 emulator | Debug APK + 11 unit tests pass (latest replay candidate) | Installed; touch paddle movement, ball motion, pause/resume/restart checked | Full match, physical device, store packaging |
-| Native Swift | Mac / iPhone16 iOS18.4 simulator | Build + 9 core tests + start/pause/resume/restart XCUITest pass | Installed/launched; ready-screen pixels checked | Full touch match, physical device, store packaging |
+| Native Swift | Mac / iPhone16 iOS18.4 simulator | Fresh `b92b7df` simulator build + 11 core/scenario tests pass; earlier start/pause/resume/restart XCUITest pass | Installed/launched; ready-screen pixels checked | Full touch match, physical device, store packaging |
 | Tauri + Rust WASM iOS | Mac / iPhone16 iOS18.4 simulator | Development build passes via CLI coordinator + xcodebuild | Device Hub visual start, held Up/Down touch, scoring, pause/restart pass | White bottom safe-area strip; full match/physical device/standalone release unverified |
 | Tauri + Rust WASM Android | Windows / Android emulator | Build/install pass | Start, scoring and pause verified | Sustained touch, full match, physical device and release packaging |
 | Yew/Leptos Tauri mobile; Dioxus mobile | iOS / Android | U | U | Mobile setup, packaging and interaction qualification |
@@ -179,7 +179,7 @@ rendering evidence, **not** real keyboard/focus or smooth-motion validation.
 | Yew / Leptos native wrappers | Passed | Six SVG sources each; geometry checked | Source export, not screenshot or visual QA |
 | Dioxus native | Passed | Six SVG sources; geometry checked | Source export, not final DOM presentation or screenshot |
 | Original TypeScript | Portable-action and replay tests pass | Canvas export implemented; browser run unverified | TS physics/RNG trajectory differs from Rust; no visual pass |
-| Independent Swift / Kotlin | Kotlin: compile + 11 JUnit tests + emulator replay pass; Swift candidate tests pending | Kotlin six app-owned PNGs; pause/reset inspected; Swift not wired | [Android evidence](docs/SCRIPTED-ANDROID.md); no new physical touch claim |
+| Independent Swift / Kotlin | Kotlin: compile + 11 JUnit tests + emulator replay pass; Swift 11 tests + simulator build pass (core-only replay) | Kotlin six app-owned PNGs; pause/reset inspected; Swift not wired | [Android evidence](docs/SCRIPTED-ANDROID.md); no new physical touch claim |
 | Remaining Rust / Swift / Kotlin adapters | Not wired yet | Not wired yet | No implied pass |
 
 All twenty render-evidence adapters finish at tick 1440 with the same baseline telemetry. Shared core has
@@ -200,4 +200,4 @@ GPUI Linux state-only replay now builds and completes after a narrow, licensed x
 
 [Portable scenario and original TypeScript replay](docs/SCRIPTED-ORIGINAL-TYPESCRIPT.md): one manifest drives both timelines; Rust preserves its existing baseline exactly. TypeScript uses its own physics/RNG, so only action/checkpoint semantics are shared. Browser rendering/canvas export remains unverified.
 
-[Portable Swift/Kotlin replay source candidate](docs/SCRIPTED-NATIVE-MOBILE.md) consumes the shared manifest. Kotlin compile/JUnit and APK resource checks pass; Swift candidate compilation/XCTest and UI replay remain pending; Kotlin emulator replay/captures now pass. Existing app entry points remain unchanged.
+[Portable Swift/Kotlin replay source candidate](docs/SCRIPTED-NATIVE-MOBILE.md) consumes the shared manifest. Kotlin compile/JUnit and APK resource checks pass; Swift 11 core/scenario tests and simulator build pass, but app replay wiring/UI remains pending; Kotlin emulator replay/captures now pass. Existing app entry points remain unchanged.
