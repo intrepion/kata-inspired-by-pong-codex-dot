@@ -228,6 +228,32 @@ mod tests {
         }
     }
     #[test]
+    #[ignore = "known limitation: paddle position is evaluated at step end"]
+    fn moving_paddle_is_tested_at_contact_time() {
+        let mut g = game();
+        g.ball = Ball {
+            x: 54.,
+            y: 306.3,
+            vx: -350.,
+            vy: 0.,
+        };
+        g.step(1. / 120., 1.);
+        assert!(g.ball.vx < 0., "ball clears the paddle at contact time");
+    }
+    #[test]
+    #[ignore = "known limitation: remainder of step after impact is discarded"]
+    fn ball_advances_after_paddle_contact() {
+        let mut g = game();
+        g.ball = Ball {
+            x: 54.,
+            y: 250.,
+            vx: -350.,
+            vy: 0.,
+        };
+        g.step(1. / 120., 0.);
+        assert!(g.ball.x > 52.8, "ball should travel away after bouncing");
+    }
+    #[test]
     fn wall_and_score() {
         let mut g = game();
         g.ball = Ball {
