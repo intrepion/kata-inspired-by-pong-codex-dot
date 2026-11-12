@@ -1,0 +1,7 @@
+# Mac Miniquad contact timing recheck
+
+2026-11-12, macOS ARM64. Source checkpoint `4f4da1dc2fa82025786383dc1ea0ca38ba23ff7a` includes physics fix `c77bf3ac147e41f67d88962f5c615fcc113d6465`. Offline locked release build reused a timestamp-preserved copy of the existing Miniquad dependency cache and recompiled only the four local Pong crates. Binary SHA-256: `48daa212b14011ff2c01c291bb7e08d01f3dc8d5cb8163c184cebd3b18fc4b02`.
+
+The exact binary was packaged locally and opened through the supported desktop tool. Enter started ball motion; held W and S moved the left paddle in opposite directions. Space displayed the pause symbol, and the ball and paddle stayed fixed while W was held for two seconds. R reset the paddle to center and resumed ball motion. The app was closed with Command-Q, and desktop inventory no longer listed the pilot as running. Screens were visually inspected, not saved. This is bounded native automation, not physical input, full-match or specific collision-trajectory verification.
+
+Direct shell launch with `--scripted-test --scripted-captures` failed before replay (exit 101) because the Miniquad macOS OpenGL pixel-format assertion failed. No scripted replay or app-owned capture pass is claimed for this build. Earlier evidence and binaries remain historical; no release signing or clean-machine qualification is inferred.
