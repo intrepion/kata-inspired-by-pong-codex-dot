@@ -2,20 +2,33 @@ use gpui::{prelude::*, *};
 use pong_gui_support::Model;
 struct Pong {
     model: Model,
+    demo: Option<pong_scenario::Demo>,
+    previous: std::time::Instant,
     focus: FocusHandle,
     _activation: Subscription,
 }
 impl Render for Pong {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
-        if !window.is_window_active() {
+        let now = std::time::Instant::now();
+        let elapsed = now.duration_since(self.previous).as_secs_f32();
+        self.previous = now;
+        if let Some(demo) = &mut self.demo {
+            demo.advance(&mut self.model.game, elapsed);
+        } else if !window.is_window_active() {
             self.model.blur();
         } else {
             self.model.tick();
         }
         let entity = cx.entity().downgrade();
-        if window.is_window_active() {
+        if window.is_window_active() || self.demo.is_some() {
             window.on_next_frame(move |_, cx| {
-                let _ = entity.update(cx, |_, cx| cx.notify());
+                let _ = entity.update(cx, |this, cx| {
+                    if this.demo.as_ref().is_some_and(|d| d.finished()) {
+                        cx.quit();
+                    } else {
+                        cx.notify();
+                    }
+                });
             });
         }
         let g = &self.model.game;
@@ -38,13 +51,15 @@ impl Render for Pong {
             .text_color(rgb(0xffffff))
             .track_focus(&self.focus)
             .on_key_down(cx.listener(|this, event: &KeyDownEvent, _, cx| {
-                if !event.is_held {
+                if this.demo.is_none() && !event.is_held {
                     this.model.key(&event.keystroke.key, true);
                     cx.notify();
                 }
             }))
             .on_key_up(cx.listener(|this, event: &KeyUpEvent, _, cx| {
-                this.model.key(&event.keystroke.key, false);
+                if this.demo.is_none() {
+                    this.model.key(&event.keystroke.key, false);
+                }
                 cx.notify();
             }))
             .child("RALLYLIGHT / GPUI")
@@ -64,7 +79,12 @@ impl Render for Pong {
     }
 }
 fn main() {
-    Application::new().run(|cx: &mut App| {
+    if std::env::args().any(|a| a == "--scripted-captures") {
+        eprintln!("GPUI 0.2.2 has no supported app-owned pixel export here; use --scripted-test for state-only replay. No screenshot is produced.");
+        std::process::exit(2);
+    }
+    let demo = pong_scenario::Demo::from_args();
+    Application::new().run(move |cx: &mut App| {
         let bounds = Bounds::centered(None, size(px(960.), px(650.)), cx);
         cx.open_window(
             WindowOptions {
@@ -75,17 +95,19 @@ fn main() {
                 window_bounds: Some(WindowBounds::Windowed(bounds)),
                 ..Default::default()
             },
-            |window, cx| {
+            move |window, cx| {
                 cx.new(|cx| {
                     let focus = cx.focus_handle();
                     focus.focus(window);
                     Pong {
                         model: Model::default(),
+                        demo,
+                        previous: std::time::Instant::now(),
                         focus,
                         _activation: cx.observe_window_activation(
                             window,
                             |this: &mut Pong, window, cx| {
-                                if !window.is_window_active() {
+                                if this.demo.is_none() && !window.is_window_active() {
                                     this.model.blur();
                                 }
                                 cx.notify();

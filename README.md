@@ -4,13 +4,13 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 03:15 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 03:21 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Miniquad fresh MSVC build, one test, and scripted replay (1440 ticks / six captures) passed per worker report; native Return/Space start attempts still failed. Bevy scoped fix/evidence was published in `55d0975`. | **Disconnected; testing paused.** No active test window. Miniquad results/evidence remain uncommitted and await reconnect/publication; no native-input pass claimed. |
 | Mac | Yew and Leptos native-wrapper checks assigned, followed by Dioxus native desktop. Existing test binaries use an older checkpoint. | Preparing visual checks with existing `6ceb22a` binaries; Pong Yew app-access call pending, possibly approval. Gameplay not yet confirmed; Dioxus build queued. |
-| Omarchy ARM64 | Slint attribution polish verified; raw WASM shared replay ABI built/tested, browser execution not yet verified. GPUI adapter blocked before typecheck by xattr/libc ENOATTR dependency incompatibility. | Publishing verified subset; Bevy Mesh2d Linux Vulkan scripted recheck passed; six images and baseline telemetry verified. GPUI candidate is not published or counted as passed. |
+| Omarchy ARM64 | GPUI dependency compatibility fixed and native state-only replay passed; Yew/Leptos/Dioxus shared replay builds/tests passed. | Publishing verified subset. Browser runtime/export links remain unverified; GPUI has no supported app-owned image export. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -173,6 +173,8 @@ rendering evidence, **not** real keyboard/focus or smooth-motion validation.
 | Slint | Passed | Six saved; pause/reset inspected | Supported software-renderer component snapshot |
 | GTK4 | Passed | Six saved; pause/reset inspected | Same Cairo scene on separate app-owned surface |
 | Raw web-WASM | Implemented; ABI tests passed | Canvas export implemented, browser run unverified | Not counted among nineteen verified render adapters |
+| GPUI | Passed (native state-only) | Unsupported; request explicitly rejected | Telemetry only, not visual QA |
+| Yew / Leptos / Dioxus web | Shared replay tests and WASM builds pass | SVG scene-source export implemented, browser run unverified | SVG source is not screenshot evidence |
 | Remaining Rust / Swift / Kotlin adapters | Not wired yet | Not wired yet | No implied pass |
 
 All nineteen finish at tick 1440 with the same baseline telemetry. Shared core has
@@ -186,3 +188,5 @@ Approved direction: use **one shared benchmark harness**, with platform-specific
 Latest Bevy Linux source requalification: [Mesh2d native Vulkan replay and inspected captures](docs/OMARCHY-BEVY-MESH-RECHECK.md). Real-input/compositor checks remain separate.
 
 Windows Miniquad follow-up (worker report): fresh MSVC build and one adapter test passed; bounded replay reached tick 1440, exported six PNGs, and paused sample looked correct. Native Return/Space still did not visibly start play. The test window was closed before Windows disconnected; evidence files remain on that machine pending retrieval. This is not a native-input pass.
+
+GPUI Linux state-only replay now builds and completes after a narrow, licensed xattr compatibility patch; see [provenance and evidence](docs/SCRIPTED-GPUI.md). No libc downgrade or image-capture claim. [Browser-framework replay](experiments/web-ui-common/SCRIPTED-DEMO.md) is tested/build-verified, but browser runtime and download links remain unverified.

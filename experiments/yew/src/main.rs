@@ -42,7 +42,7 @@ fn app() -> Html {
     };
     let pause = {
         let s = session.clone();
-        Callback::from(move |_| s.borrow_mut().game.toggle_pause())
+        Callback::from(move |_| s.borrow_mut().toggle_pause())
     };
     let touch = |key: &'static str, pressed: bool| {
         let s = session.clone();

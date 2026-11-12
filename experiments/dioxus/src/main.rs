@@ -27,7 +27,7 @@ fn App() -> Element {
     h1 {"Pong • Dioxus"} p {"Rust shared simulation · Dioxus native desktop / WASM web"}
     div { dangerous_inner_html: svg }
     button {onclick:move |_| session.write().start(),"Start / Restart"}
-    button {onclick:move |_| session.write().game.toggle_pause(),"Pause / Resume"}
+    button {onclick:move |_| session.write().toggle_pause(),"Pause / Resume"}
     button {onpointerdown:move |e:PointerEvent| {e.prevent_default();session.write().key("ArrowUp",true,false)},onpointerup:move |_|session.write().key("ArrowUp",false,false),onpointerleave:move |_|session.write().key("ArrowUp",false,false),onpointercancel:move |_|session.write().key("ArrowUp",false,false),"▲ Hold"}
     button {onpointerdown:move |e:PointerEvent| {e.prevent_default();session.write().key("ArrowDown",true,false)},onpointerup:move |_|session.write().key("ArrowDown",false,false),onpointerleave:move |_|session.write().key("ArrowDown",false,false),onpointercancel:move |_|session.write().key("ArrowDown",false,false),"▼ Hold"}
     p {"W/S or ↑/↓ move · Enter restarts · Space pauses. Click the court to focus."}

@@ -3645,10 +3645,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "pong-scenario"
+version = "0.1.0"
+dependencies = [
+ "png 0.17.16",
+ "pong-core",
+]
+
+[[package]]
 name = "pong-web-ui-common"
 version = "0.1.0"
 dependencies = [
  "pong-core",
+ "pong-scenario",
+ "web-sys",
 ]
 
 [[package]]

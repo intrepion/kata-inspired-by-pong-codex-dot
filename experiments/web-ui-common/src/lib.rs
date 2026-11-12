@@ -6,19 +6,47 @@ pub struct Session {
     up: bool,
     down: bool,
     accumulator: f64,
+    demo: Option<Replay>,
+}
+#[derive(Clone, Default)]
+struct Replay {
+    scenario: pong_scenario::Scenario,
+    reports: Vec<String>,
+    captures: Vec<(u32, String)>,
+}
+fn query_requests_demo() -> bool {
+    #[cfg(target_arch = "wasm32")]
+    return web_sys::window()
+        .and_then(|w| w.location().search().ok())
+        .map(|q| {
+            q.trim_start_matches('?')
+                .split('&')
+                .any(|v| v.split('=').next() == Some("scripted-test"))
+        })
+        .unwrap_or(false);
+    #[cfg(not(target_arch = "wasm32"))]
+    false
 }
 impl Default for Session {
     fn default() -> Self {
-        Self {
+        let mut session = Self {
             game: Game::new(42),
             up: false,
             down: false,
             accumulator: 0.0,
+            demo: None,
+        };
+        if query_requests_demo() {
+            session.enable_demo();
         }
+        session
     }
 }
 impl Session {
     pub fn key(&mut self, key: &str, pressed: bool, repeat: bool) {
+        if self.demo.is_some() {
+            return;
+        }
         match key {
             "ArrowUp" | "w" | "W" => self.up = pressed,
             "ArrowDown" | "s" | "S" => self.down = pressed,
@@ -28,20 +56,61 @@ impl Session {
         }
     }
     pub fn start(&mut self) {
+        if self.demo.is_some() {
+            return;
+        }
         self.game.start();
         self.accumulator = 0.0;
     }
     pub fn pause(&mut self) {
+        if self.demo.is_some() {
+            return;
+        }
         self.game.pause();
         self.up = false;
         self.down = false;
         self.accumulator = 0.0;
     }
+    pub fn toggle_pause(&mut self) {
+        if self.demo.is_none() {
+            self.game.toggle_pause();
+        }
+    }
+    pub fn enable_demo(&mut self) {
+        self.game = Game::new(pong_scenario::SEED);
+        self.accumulator = 0.0;
+        let mut replay = Replay::default();
+        replay.reports.push(replay.scenario.report(&self.game));
+        self.demo = Some(replay);
+    }
     pub fn tick(&mut self, dt: f64) {
         if !dt.is_finite() || dt < 0.0 {
             return;
         }
+        if self.demo.as_ref().is_some_and(|d| d.scenario.finished()) {
+            return;
+        }
         self.accumulator += dt.min(0.1);
+        if self.demo.is_some() {
+            while self.accumulator >= 1.0 / 120.0 {
+                let demo = self.demo.as_mut().unwrap();
+                demo.scenario.advance(&mut self.game);
+                self.accumulator -= 1.0 / 120.0;
+                let tick = demo.scenario.tick();
+                if tick % 120 == 0 {
+                    demo.reports.push(demo.scenario.report(&self.game));
+                }
+                if pong_scenario::CAPTURE_TICKS.contains(&tick) {
+                    let svg = self.court_svg();
+                    self.demo.as_mut().unwrap().captures.push((tick, svg));
+                    break;
+                }
+                if demo.scenario.finished() {
+                    break;
+                }
+            }
+            return;
+        }
         while self.accumulator >= 1.0 / 120.0 {
             self.game
                 .step(1.0 / 120.0, self.down as u8 as f32 - self.up as u8 as f32);
@@ -49,6 +118,27 @@ impl Session {
         }
     }
     pub fn svg(&self) -> String {
+        let mut output = self.court_svg();
+        if let Some(demo) = &self.demo {
+            output.push_str(&format!("<p>Scripted replay: tick {} / {}. Inputs disabled. SVG exports are app-generated scene markup, not browser screenshots.</p>", demo.scenario.tick(), pong_scenario::END_TICK));
+            if demo.scenario.finished() {
+                output.push_str(&download(
+                    "telemetry.jsonl",
+                    "application/x-ndjson",
+                    &demo.reports.join("\n"),
+                ));
+                for (tick, svg) in &demo.captures {
+                    output.push_str(&download(
+                        &format!("tick-{tick:04}.svg"),
+                        "image/svg+xml",
+                        svg,
+                    ));
+                }
+            }
+        }
+        output
+    }
+    fn court_svg(&self) -> String {
         let g = &self.game;
         let status = match g.state {
             State::Ready => "Press Enter or Start",
@@ -84,6 +174,36 @@ pub const CSS:&str="body{margin:0;background:#080f19;color:#eef6ff;font:16px sys
 mod tests {
     use super::*;
     #[test]
+    fn shared_demo_is_bounded_and_exports_six_scenes() {
+        let mut s = Session::default();
+        s.enable_demo();
+        let mut expected = Game::new(pong_scenario::SEED);
+        let mut reference = pong_scenario::Scenario::default();
+        while !reference.finished() {
+            reference.advance(&mut expected);
+        }
+        for _ in 0..1000 {
+            s.tick(0.1);
+            s.start();
+            s.pause();
+            s.toggle_pause();
+            s.key("ArrowUp", true, false);
+        }
+        let demo = s.demo.as_ref().unwrap();
+        assert_eq!(demo.scenario.tick(), pong_scenario::END_TICK);
+        assert_eq!(demo.reports.len(), 13);
+        assert_eq!(demo.reports.last().unwrap(), &reference.report(&expected));
+        assert_eq!(
+            demo.captures.iter().map(|c| c.0).collect::<Vec<_>>(),
+            pong_scenario::CAPTURE_TICKS
+        );
+        assert!(demo
+            .captures
+            .iter()
+            .all(|(_, svg)| svg.starts_with("<svg") && !svg.contains("Download")));
+        assert_eq!(s.svg().matches("download=").count(), 7);
+    }
+    #[test]
     fn repeats_do_not_restart() {
         let mut s = Session::default();
         s.key("Enter", true, false);
@@ -114,4 +234,13 @@ mod tests {
         }
         assert!((a.game.ball.x - b.game.ball.x).abs() < 0.001);
     }
+}
+
+fn download(name: &str, mime: &str, text: &str) -> String {
+    let encoded: String = text
+        .as_bytes()
+        .iter()
+        .map(|b| format!("%{b:02X}"))
+        .collect();
+    format!("<p><a download=\"{name}\" href=\"data:{mime};charset=utf-8,{encoded}\">Download {name}</a></p>")
 }
