@@ -244,7 +244,7 @@ Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md
 | Adapter | Mac ARM64 | Windows | Omarchy ARM64 |
 | --- | --- | --- | --- |
 | Macroquad | [3/3](docs/benchmarks/MACROQUAD-MAC-PILOT.md) | [3/3](docs/benchmarks/WINDOWS-MACROQUAD-PILOT.md) | [3/3](docs/benchmarks/README.md) |
-| softbuffer/winit | [3/3](docs/benchmarks/SOFTBUFFER-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/SOFTBUFFER-ADAPTER.md) |
+| softbuffer/winit | [3/3](docs/benchmarks/SOFTBUFFER-MAC-PILOT.md) | [3/3](docs/benchmarks/SOFTBUFFER-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/SOFTBUFFER-ADAPTER.md) |
 | SDL3 | [3/3](docs/benchmarks/SDL3-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/SDL3-ADAPTER.md) |
 | raylib-rs | [3/3](docs/benchmarks/RAYLIB-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/RAYLIB-ADAPTER.md) |
 | pixels/winit | [3/3](docs/benchmarks/PIXELS-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/PIXELS-ADAPTER.md) |
