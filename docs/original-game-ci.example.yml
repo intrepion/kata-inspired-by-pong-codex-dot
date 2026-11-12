@@ -1,0 +1,21 @@
+name: Original browser game checks
+on:
+  push:
+    paths: ['game.ts', 'game.js', 'tsconfig.json', 'package*.json', 'tests/**', '.github/workflows/original-game.yml']
+  pull_request:
+    paths: ['game.ts', 'game.js', 'tsconfig.json', 'package*.json', 'tests/**', '.github/workflows/original-game.yml']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm test
+      - name: Generated JavaScript matches TypeScript source
+        run: git diff --exit-code -- game.js

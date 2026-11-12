@@ -6,13 +6,15 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 [Play Rallylight online](https://intrepion.github.io/kata-inspired-by-pong-codex-dot/).
 
-Run `python3 -m http.server 8000 --bind 127.0.0.1` and visit `http://127.0.0.1:8000`. Do not open the HTML file directly. No dependencies or build step are needed for the original game.
+Run `python3 -m http.server 8000 --bind 127.0.0.1` and visit `http://127.0.0.1:8000`. Do not open the HTML file directly. The checked-in generated game.js can be served directly. To develop the TypeScript source, run `npm ci`, `npm test`, then `npm run serve` and visit `http://127.0.0.1:4189/`. Edit `game.ts`, not generated `game.js`.
 
 Move with the up/down arrows or W/S. Press Space or use the Pause button to pause. On a touch screen, hold the arrow buttons or drag on the court. The game pauses when the tab is hidden or the window loses focus. Hit the ball near the edge of your paddle to change its angle.
 
 ## Test
 
-Run `node --test tests/game.test.js`.
+Run `npm ci && npm test` to type-check/build with pinned TypeScript and run all 12 regression tests. `node --test tests/game.test.js` tests the checked-in generated JavaScript only.
+
+The original browser game is now maintained in strict TypeScript. Rust comparison work exposed and fixed combined-input double speed, low-frame-rate slowdown, and nonfinite-value poisoning. The browser uses 120 Hz steps with at most 100 ms of catch-up per frame; pauses and restarts reset timing. See [original browser verification](docs/original-browser-verification.md) for evidence and limits.
 
 ## License
 
@@ -24,11 +26,11 @@ See [docs/arcade-metadata.md](docs/arcade-metadata.md) for the game-owned manife
 
 ## Rust / desktop comparison
 
-Four frontends share a Rust game simulation. See [the comparison guide](docs/desktop-comparison.md) for architecture, commands, and verification. The original web game remains unchanged.
+Four frontends share a Rust game simulation. See [the comparison guide](docs/desktop-comparison.md) for architecture, commands, and verification. The original web game now has a strict TypeScript source and regression fixes; its UI and intended gameplay remain the same.
 
 ## Implementation testing dashboard
 
-Updated **2026-11-11** on the experimental `codex/pong-comparison-checkpoint-20261111` branch. This is a testing checkpoint, **not a release certification**. The original hosted game is unchanged; compiled downloads/installers are not published yet.
+Updated **2026-11-12** on the experimental `codex/pong-comparison-checkpoint-20261111` branch. This is a testing checkpoint, **not a release certification**. The original hosted game is unchanged; compiled downloads/installers are not published yet.
 
 Each desktop cell is **build / runtime evidence**:
 
@@ -42,7 +44,7 @@ Each desktop cell is **build / runtime evidence**:
 
 | Implementation | Mac build / runtime | Windows build / runtime | Omarchy ARM64 build / runtime |
 | --- | --- | --- | --- |
-| Original JavaScript browser game | No build required; existing 6 logic tests pass; no new all-platform UI certification | Same baseline | Same baseline |
+| Original TypeScript + Canvas browser | Updated UI not rechecked on Mac | Strict TS build + 12 tests pass; localhost start/rally/pause/resume smoke | Updated UI not rechecked on Omarchy |
 | Rust WASM + Canvas browser | B / I | B / I | B / localhost serves; UI blocked |
 | Macroquad | B / I | B / R; keyboard play unverified | B / S; UI blocked |
 | Bevy | B / I | B / **F**: Vulkan exits; DX12 renders incorrectly | B / S; UI blocked |

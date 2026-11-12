@@ -1,0 +1,12 @@
+{
+  "name": "rallylight",
+  "private": true,
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "test": "npm run build && node --test tests/game.test.js",
+    "serve": "node scripts/serve.cjs"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

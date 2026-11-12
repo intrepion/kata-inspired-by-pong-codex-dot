@@ -103,3 +103,6 @@ $RECYCLE.BIN/
 # Local web-framework build tooling and outputs
 /target-web-frameworks/
 /tools-local/
+
+# Original TypeScript game development dependencies
+/node_modules/
