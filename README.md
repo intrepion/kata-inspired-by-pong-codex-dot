@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Bevy DX12: 3 valid timing repeats, 2 tests, replay and six captures passed. Default Vulkan crashed and is explicitly rejected. Fourteen timing adapters measured. | [Bevy evidence](docs/benchmarks/BEVY-WINDOWS-PILOT.md). Next: fresh Fyrox release build and timing/replay qualification. |
+| Windows | Fyrox: 3 valid timings, 2 tests, replay and six captures passed. All fifteen currently instrumented native adapters have Windows timing evidence; Bevy requires DX12 and default Vulkan remains rejected. | [Fyrox evidence](docs/benchmarks/FYROX-WINDOWS-PILOT.md). Next: broader Windows portable-package pilots; native input and clean-machine gates remain separate. |
 | Mac | Corrected bracket-lib package requalified; Fyrox tiny HUD fixed by scaling font/header with court. Two adapter tests and native replay/six PNGs pass; before/after verified. Processes exited. | [Fyrox HUD evidence](docs/FYROX-HUD-SCALE-FIX.md) and [bracket package follow-up](docs/BRACKET-DIVIDER-FIX.md). Fyrox new-package/cross-platform requalification remains; historical timing preserved. |
 | Omarchy ARM64 | Fixed shared GTK/Slint/GPUI held-binding bug: releasing W while Up remains held no longer stops movement (also S/Down). Two failing regressions now pass; six model tests, strict Clippy and 17 core/scenario tests pass. | [GUI input fix](docs/GUI-HELD-BINDINGS-FIX.md). Fresh GTK native replay passed; real OS input remains unverified. GPUI packaging deferred for this gameplay fix. |
 
@@ -255,7 +255,7 @@ Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md
 | bracket-lib | [3/3](docs/benchmarks/BRACKET-LIB-MAC-PILOT.md) | [3/3](docs/benchmarks/BRACKET-LIB-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/BRACKET-LIB-ADAPTER.md) |
 | Bevy (main-world callback) | [3/3](docs/benchmarks/BEVY-MAC-PILOT.md) | [DX12 3/3; Vulkan rejected](docs/benchmarks/BEVY-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/BEVY-ADAPTER.md) |
 | Blue Engine (native callback) | [3/3](docs/benchmarks/BLUE-ENGINE-MAC-PILOT.md) | [3/3](docs/benchmarks/BLUE-ENGINE-WINDOWS-PILOT.md) | [3/3; initial failure retained](docs/benchmarks/BLUE-ENGINE-ADAPTER.md) |
-| Fyrox (pre-render callback) | [3/3](docs/benchmarks/FYROX-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/FYROX-ADAPTER.md) |
+| Fyrox (pre-render callback) | [3/3](docs/benchmarks/FYROX-MAC-PILOT.md) | [3/3](docs/benchmarks/FYROX-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/FYROX-ADAPTER.md) |
 | ash / Vulkan | Not recorded; Vulkan loader previously blocked | [3/3](docs/benchmarks/ASH-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/ASH-ADAPTER.md) |
 
 Other implementations have not yet been qualified through this shared timing protocol. Package lifecycle status is a separate dimension: Mac [Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md) and [SDL3](docs/packaging/SDL3-MAC-PILOT.md) have local extracted-app gameplay/removal evidence, not signed or clean-machine release qualification.
