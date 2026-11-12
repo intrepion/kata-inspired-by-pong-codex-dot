@@ -23,3 +23,9 @@ At source `af1db13`, all six ash and four softbuffer release tests pass. Strict 
 Softbuffer was rebuilt, bundled and extracted into a fresh directory. Extracted binary hash matched the manifest; native replay exited 0 in 12.753 seconds with thirteen states through finished tick 1440 and six captures. Tick600 at1800×1000 was inspected: 0–1 score, both paddles, ball and divider coherent. Three package safety guards pass. Removing only the extracted app preserved the adjacent sentinel; remaining files are exactly the pilot notice and sentinel. [Redacted Mac package/run evidence](packaging/mac-softbuffer-held-package-20261112.json).
 
 These checks establish input-model regressions and extracted runtime integration, not physical keyboard/focus behavior, new performance results, signing, clean-machine installation or redistribution clearance. Earlier binary/package/timing hashes remain historical. Processes exited.
+
+## Omarchy ARM64 requalification
+
+At `af1db13`, fresh optimized builds, all ten adapter tests (ash six, softbuffer four) and strict all-target Clippy pass. Both rebuilt native executables exit 0 after 13 scripted states through tick 1440 and six app-owned captures each. Tick 600 inspections show score 0:1, both paddles, ball and divider. Softbuffer replay began after its fresh build completed.
+
+[Redacted hashes/results](evidence/ash-softbuffer-held-bindings-linux-20261112.json). These app-owned images are not compositor evidence or physical-key tests. Existing benchmark and package hashes remain historical; no new timing or package qualification is inferred. Raw logs and captures remain local, and both native processes exited.

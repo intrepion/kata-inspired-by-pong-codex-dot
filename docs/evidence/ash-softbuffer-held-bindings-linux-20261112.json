@@ -1,0 +1,33 @@
+{
+  "platform": "Linux ARM64",
+  "source_commit": "af1db13312fa363f3ec9d91c35f7a0e4d68120bf",
+  "scope": "model tests and native scripted integration, not OS input or new package/timing qualification",
+  "results": [
+    {
+      "adapter": "ash",
+      "tests": 6,
+      "strict_clippy": "pass",
+      "release_build": "pass",
+      "binary_sha256": "3f89901d560c84aa7100bd837fe6799a5f3088fc86ca4a2f3c49d77878c949a9",
+      "native_exit": 0,
+      "states": 13,
+      "final_tick": 1440,
+      "app_capture_count": 6,
+      "inspected": "tick0600: score0:1, paddles, ball and divider present",
+      "capture_sha256": "a6ce96e6ddc7eaefd2e8b1044dfbce7c0bba26729ddf63ec4931e8282473916e"
+    },
+    {
+      "adapter": "softbuffer",
+      "tests": 4,
+      "strict_clippy": "pass",
+      "release_build": "pass",
+      "binary_sha256": "3eec2e7b19d9a2ca9ef8a9e31879affdb463d2ac6be594d91707a883c7381752",
+      "native_exit": 0,
+      "states": 13,
+      "final_tick": 1440,
+      "app_capture_count": 6,
+      "inspected": "tick0600: score0:1, paddles, ball and divider present",
+      "capture_sha256": "a6ce96e6ddc7eaefd2e8b1044dfbce7c0bba26729ddf63ec4931e8282473916e"
+    }
+  ]
+}
