@@ -17,3 +17,9 @@ The root MIT license does not relicense Slint. The existing Slint Royalty-free D
 Direct ELF dependencies include fontconfig, libc, libm and libgcc. Dynamically loaded platform libraries and display services are not exhaustively described by that list and are not bundled. A clean-machine, different distro or architecture was not tested.
 
 This qualifies local archive extraction/runtime/removal only. Real keyboard/release/focus behavior, compositor styling, public installers, signing, upgrades and complete notices remain separate gates.
+
+## Corrected GUI input model requalification (2026-11-12)
+
+Fresh offline locked optimized build from `fca3d4d` includes both held-alias and case-changing key-identity corrections. Eight shared model tests pass. A new archive was extracted into a fresh directory; every manifest hash passed. The extracted native scripted run exited 0 with 13 states through tick 1440, finished=true, and six app-owned captures. Tick 600 was inspected: readable score, court, paddles, ball and controls, with Slint attribution retained. Sixteen packaging safety tests pass; two Windows-only tests skip.
+
+[Redacted hashes and results](linux-gui-identity-followup-20261112.json). The new archive, extraction and logs are retained; this follow-up does not repeat uninstall qualification or replace historical hashes. Scripted replay does not prove actual OS-keyboard alias/release behavior. Capture remains Slint component output, not compositor capture. Dependency, clean-machine and public-installer gates remain open.
