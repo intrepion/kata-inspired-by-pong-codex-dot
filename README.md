@@ -14,6 +14,8 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
+Windows collision-revision follow-up: Yew, Leptos and Dioxus rebuilt at `9cee3c3` and completed localhost scripted replays; a separate normal Yew mouse smoke check also passed. [Scope and limits](docs/WINDOWS-WEB-COLLISION-RECHECK.md).
+
 ## Play
 
 [Play Rallylight online](https://intrepion.github.io/kata-inspired-by-pong-codex-dot/).
