@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Ratatui input fix requalified: seven release tests, strict Clippy and rebuilt cell replay passed. Offline single-job cached builds; no timing competition with WSL work. | [Windows Ratatui follow-up](docs/RATATUI-HELD-BINDINGS-FIX.md). Old package hashes preserved; real enhanced-terminal/OS input and release gates remain open. |
+| Windows | Miniquad/pixels/raw wgpu held-binding fixes requalified: fourteen release tests, three rebuilt scripted runs and eighteen captures passed. Offline cached builds used one job. | [Windows native-binding follow-up](docs/NATIVE-HELD-BINDINGS-FIX.md). Prior timing/package hashes remain historical; actual OS-input gates remain open. |
 | Mac | Ratatui held-key fix requalified: seven tests, fresh debug build, 13-state cell replay and six cell-buffer pairs pass. Bounded PTY start/quit exits 0 with exact terminal-settings restoration. No process remains. | [Ratatui follow-up](docs/RATATUI-HELD-BINDINGS-FIX.md). Enhanced-terminal physical key/release testing and release packaging remain separate. |
 | Omarchy ARM64 | Fixed overlapping movement bindings in Miniquad, pixels and raw wgpu. Fourteen tests, strict Clippy and three rebuilt native replays pass; each replay produced 13 states and six app captures. | [Three-adapter input fix](docs/NATIVE-HELD-BINDINGS-FIX.md). Captures inspected; real keyboard, new timing and package requalification remain separate. |
 

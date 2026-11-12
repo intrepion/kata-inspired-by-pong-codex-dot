@@ -1,0 +1,37 @@
+{
+  "platform": "Windows x64 GNU",
+  "source": "cdf65cc",
+  "scope": "Input boundary release tests and native scripted replay; no OS-keyboard or benchmark qualification",
+  "results": [
+    {
+      "adapter": "miniquad",
+      "binary_sha256": "d0de137b556841d46085ac54248276bf50b9a2a242f361ff6ffa3c57f6b6ff15",
+      "tests": 5,
+      "replay_exit": 0,
+      "state_records": 13,
+      "finished": true,
+      "final_tick": 1440,
+      "capture_count": 6
+    },
+    {
+      "adapter": "pixels",
+      "binary_sha256": "3fd87fe7777cc7b029024732ca7dbf015532fdc5a57fe5991cd7f21342b258bb",
+      "tests": 5,
+      "replay_exit": 0,
+      "state_records": 13,
+      "finished": true,
+      "final_tick": 1440,
+      "capture_count": 6
+    },
+    {
+      "adapter": "wgpu",
+      "binary_sha256": "93dedd5e595176622fbe02ea735a7021acd558ddb6e8df291ddeba382cd179de",
+      "tests": 4,
+      "replay_exit": 0,
+      "state_records": 13,
+      "finished": true,
+      "final_tick": 1440,
+      "capture_count": 6
+    }
+  ]
+}

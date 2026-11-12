@@ -17,3 +17,9 @@ Each adapter includes tests for both directions/both release orders, repeated pr
 All native replays finish at tick 1440. Tick 600 captures were inspected: court, paddles, ball and existing score markers render. These are application-owned evidence, not compositor screenshots; pixels exports its CPU source buffer rather than the presented window. The scripted scenario bypasses real key events, so direct input tests establish the fix while native replay checks integration did not regress.
 
 Binary hashes are recorded in [the redacted result](evidence/native-held-bindings-linux-20261112.json). Prior package and timing hashes remain historical; this batch does not requalify packages, benchmark performance, Windows/Mac binaries or actual OS-keyboard behavior.
+
+## Windows x64 GNU follow-up
+
+At sourcecdf65cc, all14release tests pass (Miniquad5/pixels5/wgpu4). Offline cached builds used one Cargo job and completed in1.64s/5.21s/5.74s. Native scripted runs from new isolated directories each exit0, emit thirteen state records ending finished tick1440, and produce six app-owned PNGs. Tick600 inspected for each: paddles, ball, divider and existing tally-style score marks visible. pixels remains CPU-source-buffer evidence, not final presentation.
+
+[Redacted Windows hashes/results](evidence/native-held-bindings-windows-20261112.json). Tests exercise input boundaries; scripted replay bypasses real key events. No OS-input/focus, new benchmark, strict-Clippy rerun or updated portable-package qualification is claimed. Previous timing/archive hashes remain historical. No desktop approval retry or large parallel build was used during concurrent WSL CI work.
