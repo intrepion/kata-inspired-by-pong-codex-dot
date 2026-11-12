@@ -66,12 +66,14 @@ fn setup(
 ) {
     commands.spawn(Camera2d);
     commands.spawn((
-        Sprite::from_color(Color::srgb(0.082, 0.247, 0.216), Vec2::new(W, H)),
+        Mesh2d(meshes.add(Rectangle::new(W, H))),
+        MeshMaterial2d(materials.add(Color::srgb(0.082, 0.247, 0.216))),
         Transform::from_xyz(0., 0., 0.),
     ));
     for y in (0..18).map(|i| -H / 2. + i as f32 * 28. + 10.) {
         commands.spawn((
-            Sprite::from_color(Color::srgba(0.66, 0.90, 0.73, 0.25), Vec2::new(2., 12.)),
+            Mesh2d(meshes.add(Rectangle::new(2., 12.))),
+            MeshMaterial2d(materials.add(Color::srgba(0.66, 0.90, 0.73, 0.25))),
             Transform::from_xyz(0., y, 1.),
         ));
     }
@@ -81,7 +83,8 @@ fn setup(
     ] {
         commands.spawn((
             actor,
-            Sprite::from_color(color, Vec2::new(PADDLE_W, PADDLE_H)),
+            Mesh2d(meshes.add(Rectangle::new(PADDLE_W, PADDLE_H))),
+            MeshMaterial2d(materials.add(color)),
             Transform::from_xyz(0., 0., 2.),
         ));
     }
