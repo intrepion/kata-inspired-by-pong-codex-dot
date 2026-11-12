@@ -5,15 +5,34 @@ use ggez::{
     Context, GameResult,
 };
 use pong_core::*;
+use pong_scenario::Demo;
 use std::time::{Duration, Instant};
 struct App {
     game: Game,
+    demo: Option<Demo>,
+    capture: graphics::ScreenImage,
+    pending: Option<(std::path::PathBuf, graphics::Image)>,
     held: [bool; 4],
     accumulator: f32,
     last_update: Instant,
 }
 impl event::EventHandler for App {
-    fn update(&mut self, _ctx: &mut Context) -> GameResult {
+    fn update(&mut self, ctx: &mut Context) -> GameResult {
+        // Previous draw has now passed through ggez end_frame and been submitted.
+        if let Some((path, image)) = self.pending.take() {
+            let bytes = image.to_pixels(ctx)?;
+            let rgb: Vec<u32> = bytes
+                .as_chunks::<4>()
+                .0
+                .iter()
+                .map(|p| (u32::from(p[0]) << 16) | (u32::from(p[1]) << 8) | u32::from(p[2]))
+                .collect();
+            Demo::save_rgb(&path, &rgb, image.width(), image.height());
+            if self.demo.as_ref().is_some_and(Demo::finished) {
+                ctx.request_quit();
+                return Ok(());
+            }
+        }
         // ggez 0.10 runs update/draw from about_to_wait with ControlFlow::Poll.
         // Vsync alone does not guarantee a CPU frame cap on every compositor.
         // Sleep only the remainder of a 120 Hz frame, allowing the OS/AX time to run.
@@ -22,7 +41,13 @@ impl event::EventHandler for App {
             std::thread::sleep(remaining);
         }
         let now = Instant::now();
-        self.accumulator += now.duration_since(self.last_update).as_secs_f32().min(0.1);
+        let elapsed = now.duration_since(self.last_update).as_secs_f32().min(0.1);
+        if let Some(demo) = &mut self.demo {
+            demo.advance(&mut self.game, elapsed);
+            self.last_update = now;
+            return Ok(());
+        }
+        self.accumulator += elapsed;
         self.last_update = now;
         while self.accumulator >= 1. / 120. {
             self.game.step(
@@ -39,7 +64,13 @@ impl event::EventHandler for App {
         let s = (w / W).min(h / (H + 140.)).max(0.001);
         let ox = (w - W * s) / 2.;
         let oy = (h - (H + 140.) * s) / 2. + 95. * s;
-        let mut c = graphics::Canvas::from_frame(ctx, Color::from_rgb(12, 33, 30));
+        let path = self.demo.as_mut().and_then(Demo::capture_path);
+        let image = path.as_ref().map(|_| self.capture.image(ctx));
+        let mut c = if let Some(image) = &image {
+            graphics::Canvas::from_image(ctx, image.clone(), Color::from_rgb(12, 33, 30))
+        } else {
+            graphics::Canvas::from_frame(ctx, Color::from_rgb(12, 33, 30))
+        };
         let mut rect = |x: f32, y: f32, w: f32, h: f32, col: Color| {
             c.draw(
                 &graphics::Quad,
@@ -90,9 +121,23 @@ impl event::EventHandler for App {
                     .scale([s, s]),
             );
         }
-        c.finish(ctx)
+        c.finish(ctx)?;
+        if let (Some(path), Some(image)) = (path, image) {
+            // Present the very same texture that was exported, not a synthetic screenshot.
+            let mut screen = graphics::Canvas::from_frame(ctx, Color::BLACK);
+            screen.draw(&image, DrawParam::default());
+            screen.finish(ctx)?;
+            self.pending = Some((path, image));
+        }
+        if self.pending.is_none() && self.demo.as_ref().is_some_and(Demo::finished) {
+            ctx.request_quit();
+        }
+        Ok(())
     }
     fn key_down_event(&mut self, _: &mut Context, input: KeyInput, repeated: bool) -> GameResult {
+        if self.demo.is_some() {
+            return Ok(());
+        }
         let key = input.event.physical_key;
         for (i, k) in [
             KeyCode::KeyW,
@@ -141,6 +186,9 @@ impl event::EventHandler for App {
         Ok(())
     }
     fn focus_event(&mut self, _: &mut Context, gained: bool) -> GameResult {
+        if self.demo.is_some() {
+            return Ok(());
+        }
         if !gained {
             self.game.pause();
             self.held = [false; 4];
@@ -158,11 +206,16 @@ fn main() -> GameResult {
                 .resizable(true),
         )
         .build()?;
+    let capture =
+        graphics::ScreenImage::new_raw(&ctx, graphics::ImageFormat::Rgba8UnormSrgb, 1., 1., 1);
     event::run(
         ctx,
         events,
         App {
             game: Game::new(42),
+            demo: Demo::from_args(),
+            capture,
+            pending: None,
             held: [false; 4],
             accumulator: 0.,
             last_update: Instant::now(),

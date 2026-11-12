@@ -1,0 +1,152 @@
+{
+  "date": "2026-11-12",
+  "platform": "Omarchy live Wayland session",
+  "scope": "scripted input + application-rendered snapshots, not physical keyboard/full visual interaction/performance",
+  "identical_telemetry": true,
+  "adapters": {
+    "bevy": {
+      "exit_code": 0,
+      "telemetry_samples": 13,
+      "final_tick": 1440,
+      "captures": [
+        {
+          "file": "tick-0120.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "d90a4b989a44d9449b21fc847b869e4e5ec747089753d197b8ccfb2a26976526"
+        },
+        {
+          "file": "tick-0240.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "dfdff49ce8bebd6f99e3f73eca09e4706881f838480867337f2a27dbc847d938"
+        },
+        {
+          "file": "tick-0480.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "ca6490e641b89b8c5ede9523ae4a0907fe4b80ad86ba7e821e96abd80bbd7b54"
+        },
+        {
+          "file": "tick-0600.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "b3f43a3540446220e5bc4400c22b7897c1de54e7a31df35571684b2e41854a10"
+        },
+        {
+          "file": "tick-1320.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "7e854318160d8127516d617a66485b1e251be2d27c402c47dc02dcc91597dacf"
+        },
+        {
+          "file": "tick-1440.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "ee7819e0c7e437d26924ceb3be5fdd11c7ec3143b7dca36b8bbc919710ccace1"
+        }
+      ],
+      "visual_samples_inspected": [
+        480,
+        1440
+      ],
+      "capture_method": "framework screenshot with simulation held until complete PNG"
+    },
+    "nannou": {
+      "exit_code": 0,
+      "telemetry_samples": 13,
+      "final_tick": 1440,
+      "captures": [
+        {
+          "file": "tick-0120.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "c2b3695d9adff8248d7ef577e0e0344069f7a185062eff1c534c87ab64dcdb03"
+        },
+        {
+          "file": "tick-0240.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "c540cc6392e69203abbce7d3f9d3f481dce86dd0f0df1413a9ad3107723b75d8"
+        },
+        {
+          "file": "tick-0480.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "395fa681b768ac3e4dddfeb53e03da42adda87058bea57bcfda796379113f8e7"
+        },
+        {
+          "file": "tick-0600.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "6fd2b6f9491f9c2823f8d6423e431ac012e6f985263974212031d1318a324ee1"
+        },
+        {
+          "file": "tick-1320.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "2a721a6dad99afb30de2c5fc0720a0f180e6b580c88e26eb7fed7ffb458eda91"
+        },
+        {
+          "file": "tick-1440.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "68bc7b74fa85e1e3f18eafecfdfcc5076cd85553246ebaf0eb9dfcabd5714732"
+        }
+      ],
+      "visual_samples_inspected": [
+        480,
+        1440
+      ],
+      "capture_method": "framework screenshot with simulation held until complete PNG"
+    },
+    "ggez": {
+      "exit_code": 0,
+      "telemetry_samples": 13,
+      "final_tick": 1440,
+      "captures": [
+        {
+          "file": "tick-0120.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "76fdf6fd97a203abd494bbc23d1f5dc83dd87aa27985a41c2b4cae0b758ae436"
+        },
+        {
+          "file": "tick-0240.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "881c416e8adfe5a82a21c6700652f3789c1a213db36804861423647fe1f4e053"
+        },
+        {
+          "file": "tick-0480.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "3a810746724d43399d306e7464e54861c259bb21923fe39ce89d2dc0e58a9a7b"
+        },
+        {
+          "file": "tick-0600.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "bcec0afe16c15f95908eb7b6f5e7780d9584adfc17bf62ab6ea08f8cf965aeda"
+        },
+        {
+          "file": "tick-1320.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "e1dc27e83cde9f05114f73836afae473ee06cb05ac0caf90662af14a0673e09d"
+        },
+        {
+          "file": "tick-1440.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "ed68fb88e1cbf9939dbc0386590e7bbb2e077a5a811de0e817bf814e5fb6d7a8"
+        }
+      ],
+      "visual_samples_inspected": [
+        480,
+        1440
+      ],
+      "capture_method": "app render texture presented and read after ggez end_frame submission"
+    }
+  }
+}

@@ -27,9 +27,17 @@ impl Renderer {
             .request_device(&wgpu::DeviceDescriptor::default())
             .await
             .unwrap();
-        let config = surface
+        let mut config = surface
             .get_default_config(&adapter, size.width.max(1), size.height.max(1))
             .unwrap();
+        // Ask the surface capability API; never assume presentation textures can be read.
+        if surface
+            .get_capabilities(&adapter)
+            .usages
+            .contains(wgpu::TextureUsages::COPY_SRC)
+        {
+            config.usage |= wgpu::TextureUsages::COPY_SRC;
+        }
         surface.configure(&device, &config);
         let uniform = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("court state"),
@@ -105,7 +113,10 @@ impl Renderer {
         }
         Ok(())
     }
-    pub fn render(&mut self, g: &Game) -> Result<(), String> {
+    pub fn render(&mut self, g: &Game, capture: Option<&std::path::Path>) -> Result<(), String> {
+        if capture.is_some() && !self.config.usage.contains(wgpu::TextureUsages::COPY_SRC) {
+            return Err("Surface does not support app-owned COPY_SRC capture".into());
+        }
         let data = [
             g.player,
             g.cpu,
@@ -123,10 +134,18 @@ impl Renderer {
             | wgpu::CurrentSurfaceTexture::Suboptimal(f) => f,
             wgpu::CurrentSurfaceTexture::Lost | wgpu::CurrentSurfaceTexture::Outdated => {
                 self.surface.configure(&self.device, &self.config);
-                return Ok(());
+                return if capture.is_some() {
+                    Err("Capture target temporarily unavailable".into())
+                } else {
+                    Ok(())
+                };
             }
             wgpu::CurrentSurfaceTexture::Timeout | wgpu::CurrentSurfaceTexture::Occluded => {
-                return Ok(())
+                return if capture.is_some() {
+                    Err("Capture target temporarily unavailable".into())
+                } else {
+                    Ok(())
+                }
             }
             wgpu::CurrentSurfaceTexture::Validation => {
                 return Err("Surface validation failed".into())
@@ -155,7 +174,81 @@ impl Renderer {
             pass.set_bind_group(0, &self.bind, &[]);
             pass.draw(0..3, 0..1);
         }
+        let readback = if capture.is_some() {
+            match self.config.format {
+                wgpu::TextureFormat::Rgba8Unorm
+                | wgpu::TextureFormat::Rgba8UnormSrgb
+                | wgpu::TextureFormat::Bgra8Unorm
+                | wgpu::TextureFormat::Bgra8UnormSrgb => {}
+                other => return Err(format!("Capture pixel format unsupported: {other:?}")),
+            }
+            let stride = (self.config.width * 4).div_ceil(256) * 256;
+            let buffer = self.device.create_buffer(&wgpu::BufferDescriptor {
+                label: Some("app capture readback"),
+                size: u64::from(stride) * u64::from(self.config.height),
+                usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+                mapped_at_creation: false,
+            });
+            encoder.copy_texture_to_buffer(
+                wgpu::TexelCopyTextureInfo {
+                    texture: &frame.texture,
+                    mip_level: 0,
+                    origin: wgpu::Origin3d::ZERO,
+                    aspect: wgpu::TextureAspect::All,
+                },
+                wgpu::TexelCopyBufferInfo {
+                    buffer: &buffer,
+                    layout: wgpu::TexelCopyBufferLayout {
+                        offset: 0,
+                        bytes_per_row: Some(stride),
+                        rows_per_image: Some(self.config.height),
+                    },
+                },
+                wgpu::Extent3d {
+                    width: self.config.width,
+                    height: self.config.height,
+                    depth_or_array_layers: 1,
+                },
+            );
+            Some((buffer, stride))
+        } else {
+            None
+        };
         self.queue.submit([encoder.finish()]);
+        if let (Some(path), Some((buffer, stride))) = (capture, readback) {
+            let (tx, rx) = std::sync::mpsc::channel();
+            buffer.map_async(wgpu::MapMode::Read, .., move |result| {
+                let _ = tx.send(result);
+            });
+            self.device
+                .poll(wgpu::PollType::Wait {
+                    submission_index: None,
+                    timeout: Some(std::time::Duration::from_secs(5)),
+                })
+                .map_err(|e| e.to_string())?;
+            rx.recv_timeout(std::time::Duration::from_secs(1))
+                .map_err(|e| e.to_string())?
+                .map_err(|e| e.to_string())?;
+            let bytes = buffer.get_mapped_range(..);
+            let bgra = matches!(
+                self.config.format,
+                wgpu::TextureFormat::Bgra8Unorm | wgpu::TextureFormat::Bgra8UnormSrgb
+            );
+            let mut rgb =
+                Vec::with_capacity(self.config.width as usize * self.config.height as usize);
+            for row in bytes
+                .chunks(stride as usize)
+                .take(self.config.height as usize)
+            {
+                for c in row[..self.config.width as usize * 4].as_chunks::<4>().0 {
+                    let (r, b) = if bgra { (c[2], c[0]) } else { (c[0], c[2]) };
+                    rgb.push((u32::from(r) << 16) | (u32::from(c[1]) << 8) | u32::from(b));
+                }
+            }
+            pong_scenario::Demo::save_rgb(path, &rgb, self.config.width, self.config.height);
+            drop(bytes);
+            buffer.unmap();
+        }
         frame.present();
         Ok(())
     }

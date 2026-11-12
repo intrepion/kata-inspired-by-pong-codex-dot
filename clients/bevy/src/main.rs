@@ -1,6 +1,14 @@
 //! Bevy owns input and presentation; pong-core owns all gameplay.
+use bevy::render::view::screenshot::{Screenshot, save_to_disk};
 use bevy::{prelude::*, window::PrimaryWindow};
 use pong_core::{BALL, Game, H, PADDLE_H, PADDLE_W, State, W, WIN};
+use pong_scenario::Demo;
+
+#[derive(Resource)]
+struct Replay {
+    demo: Option<Demo>,
+    pending: Option<(std::path::PathBuf, std::time::Instant)>,
+}
 
 #[derive(Resource)]
 struct Match(Game);
@@ -21,7 +29,17 @@ fn main() {
     let seed = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .map_or(1, |d| d.as_nanos() as u64);
+    let demo = Demo::from_args();
+    let seed = if demo.is_some() {
+        pong_scenario::SEED
+    } else {
+        seed
+    };
     App::new()
+        .insert_resource(Replay {
+            demo,
+            pending: None,
+        })
         .insert_resource(Match(Game::new(seed)))
         .insert_resource(Clock::default())
         .insert_resource(ClearColor(Color::srgb(0.035, 0.08, 0.075)))
@@ -34,7 +52,10 @@ fn main() {
             ..default()
         }))
         .add_systems(Startup, setup)
-        .add_systems(Update, (input_and_simulation, present).chain())
+        .add_systems(
+            Update,
+            (input_and_simulation, present, capture_demo).chain(),
+        )
         .run();
 }
 
@@ -105,11 +126,19 @@ fn setup(
 
 fn input_and_simulation(
     time: Res<Time>,
+    mut replay: ResMut<Replay>,
     keys: Res<ButtonInput<KeyCode>>,
     windows: Query<&Window, With<PrimaryWindow>>,
     mut game: ResMut<Match>,
     mut clock: ResMut<Clock>,
 ) {
+    if replay.pending.is_some() {
+        return;
+    }
+    if let Some(demo) = &mut replay.demo {
+        demo.advance(&mut game.0, time.delta_secs());
+        return;
+    }
     let Ok(window) = windows.single() else {
         return;
     };
@@ -187,6 +216,37 @@ fn present(
                 State::Playing if g.serve > 0. => "Next serve".into(),
                 State::Playing => String::new(),
             };
+        }
+    }
+}
+
+// Freeze the replay while asynchronous GPU readback writes this exact checkpoint.
+fn capture_demo(
+    mut commands: Commands,
+    mut replay: ResMut<Replay>,
+    mut exit: MessageWriter<AppExit>,
+) {
+    if let Some((path, since)) = &replay.pending {
+        let complete = std::fs::read(path)
+            .is_ok_and(|b| b.ends_with(&[0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130]));
+        assert!(
+            since.elapsed().as_secs() < 30,
+            "screenshot readback timed out: {}",
+            path.display()
+        );
+        if !complete {
+            return;
+        }
+        replay.pending = None;
+    }
+    if let Some(demo) = &mut replay.demo {
+        if let Some(path) = demo.capture_path() {
+            commands
+                .spawn(Screenshot::primary_window())
+                .observe(save_to_disk(path.clone()));
+            replay.pending = Some((path, std::time::Instant::now()));
+        } else if demo.finished() {
+            exit.write(AppExit::Success);
         }
     }
 }

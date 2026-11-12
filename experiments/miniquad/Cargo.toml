@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 miniquad = "=0.4.11"
 pong-core = { path = "../../crates/pong-core" }
+pong-scenario = { path = "../../crates/pong-scenario" }

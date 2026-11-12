@@ -9,3 +9,4 @@ winit="=0.30.13"
 pollster="=0.4.0"
 bytemuck={version="1",features=["derive"]}
 pong-core={path="../../crates/pong-core"}
+pong-scenario = { path = "../../crates/pong-scenario" }

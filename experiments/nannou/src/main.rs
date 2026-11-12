@@ -1,7 +1,10 @@
 use nannou::prelude::*;
 use pong_core::{Game, State, BALL, H, PADDLE_H, PADDLE_W, W};
+use pong_scenario::Demo;
 struct Model {
     game: Game,
+    demo: Option<Demo>,
+    pending: Option<(std::path::PathBuf, std::time::Instant)>,
     accumulator: f32,
 }
 fn main() {
@@ -18,14 +21,44 @@ fn model(app: &App) -> Model {
         .build();
     Model {
         game: Game::new(42),
+        demo: Demo::from_args(),
+        pending: None,
         accumulator: 0.0,
     }
 }
 fn unfocused(_: &App, m: &mut Model) {
+    if m.demo.is_some() {
+        return;
+    }
     m.game.pause();
     m.accumulator = 0.0;
 }
 fn update(app: &App, m: &mut Model) {
+    if let Some((path, since)) = &m.pending {
+        let complete = std::fs::read(path)
+            .is_ok_and(|b| b.ends_with(&[0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130]));
+        assert!(
+            since.elapsed().as_secs() < 30,
+            "screenshot readback timed out: {}",
+            path.display()
+        );
+        if !complete {
+            return;
+        }
+        m.pending = None;
+    }
+    if let Some(demo) = &mut m.demo {
+        if demo.finished() {
+            app.quit();
+            return;
+        }
+        demo.advance(&mut m.game, app.time_delta());
+        if let Some(path) = demo.capture_path() {
+            app.main_window().save_screenshot(path.clone());
+            m.pending = Some((path, std::time::Instant::now()));
+        }
+        return;
+    }
     let k = app.keys();
     if k.just_pressed(KeyCode::Enter) || k.just_pressed(KeyCode::KeyR) {
         m.game.start();

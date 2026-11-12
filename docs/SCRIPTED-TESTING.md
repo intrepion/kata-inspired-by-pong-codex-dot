@@ -88,6 +88,11 @@ appropriate application-buffer export. No per-engine copy of the timeline.
 | raylib-rs | Own backbuffer, explicit draw-batch flush before swap | Exit 0, six PNGs, matching telemetry; tick-480 image verified |
 | Pixels | Exact 900x500 CPU RGBA source, encoded RGB | Exit 0, six PNGs, matching telemetry; paused source frame inspected |
 | SDL3 | Current renderer target readback before present | Exit 0, six PNGs, matching telemetry; paused frame inspected |
+| Bevy | Framework screenshot observer; awaits completed PNG | Exit 0, six PNGs; pause/reset inspected |
+| nannou | Framework main-window export; awaits completed PNG | Exit 0, six PNGs; pause/reset inspected |
+| ggez | App-owned render texture, presented then read after submit | Exit 0, six PNGs; pause/reset inspected |
+| Miniquad | Own active OpenGL framebuffer read before swap; flipped rows | Exit 0, six PNGs; paused frame inspected |
+| raw wgpu | Current surface texture COPY_SRC with padded-row readback | Exit 0, six PNGs; paused frame inspected |
 | Other Rust adapters | Not wired yet; API-specific work remains | No demo/capture claim |
 | Independent Swift/Kotlin | Not wired; should consume a portable scenario fixture | No Rust FFI/timeline duplication assumed |
 
@@ -113,3 +118,7 @@ telemetry, retain only lines beginning with `{"scenario"`; do not mistake render
 log messages for malformed scenario JSON.
 
 Batch2 recorded evidence: [Pixels/SDL3 PNG hashes and outcomes](evidence/scripted-batch2-20261112.json).
+
+Batch3 adds Bevy, nannou, ggez, Miniquad and raw wgpu. All five pass builds and strict Clippy; Miniquad also passes its geometry test. Shared core/scenario tests remain green. All five runs produce 13 baseline-identical telemetry records and six PNGs. Bevy and nannou hold the simulation until asynchronous exports finish (bounded timeout); ggez reads the exact app render texture after submission. Miniquad explicitly supports OpenGL capture only, not Metal. wgpu requires surface COPY_SRC and an RGBA8/BGRA8 format, with bounded map waits; unsupported capture fails rather than using a desktop fallback. Existing render styles differ: Miniquad has a square ball, wgpu a round ball and lighter sRGB court. These are not evidence of equal pixel output or compositor correctness.
+
+Batch3 evidence: [GPU framework outcomes](evidence/scripted-gpu-batch-20261112.json), [low-level outcomes](evidence/scripted-lowlevel-batch3-20261112.json).

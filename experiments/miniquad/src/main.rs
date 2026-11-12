@@ -12,6 +12,7 @@ struct App {
     pipeline: Pipeline,
     bindings: Bindings,
     game: Game,
+    demo: Option<pong_scenario::Demo>,
     up: bool,
     down: bool,
     last: Instant,
@@ -50,6 +51,7 @@ impl App {
                 images: vec![],
             },
             game: Game::new(42),
+            demo: pong_scenario::Demo::from_args(),
             up: false,
             down: false,
             last: Instant::now(),
@@ -76,7 +78,11 @@ fn rect(v: &mut Vec<Vertex>, x: f32, y: f32, w: f32, h: f32, color: [f32; 3]) {
 impl EventHandler for App {
     fn update(&mut self) {
         let now = Instant::now();
-        self.acc += (now - self.last).as_secs_f32().min(0.1);
+        if let Some(demo) = &mut self.demo {
+            demo.advance(&mut self.game, (now - self.last).as_secs_f32());
+        } else {
+            self.acc += (now - self.last).as_secs_f32().min(0.1);
+        }
         self.last = now;
         while self.acc >= 1. / 120. {
             self.game
@@ -128,10 +134,50 @@ impl EventHandler for App {
         self.ctx.apply_pipeline(&self.pipeline);
         self.ctx.apply_bindings(&self.bindings);
         self.ctx.draw(0, v.len() as i32, 1);
+        if let Some(path) = self.demo.as_mut().and_then(|d| d.capture_path()) {
+            assert_eq!(
+                self.ctx.info().backend,
+                Backend::OpenGl,
+                "Miniquad capture currently supports only its OpenGL framebuffer"
+            );
+            let (width, height) = (w as u32, h as u32);
+            let mut rgba = vec![0u8; width as usize * height as usize * 4];
+            // Supported OpenGL readback from THIS app's active default render pass.
+            // No OS/window-manager capture. Pack alignment is four for RGBA bytes.
+            unsafe {
+                gl::glReadPixels(
+                    0,
+                    0,
+                    width as i32,
+                    height as i32,
+                    gl::GL_RGBA,
+                    gl::GL_UNSIGNED_BYTE,
+                    rgba.as_mut_ptr().cast(),
+                );
+                assert_eq!(
+                    gl::glGetError(),
+                    gl::GL_NO_ERROR,
+                    "application framebuffer readback failed"
+                );
+            }
+            let mut rgb = Vec::with_capacity(width as usize * height as usize);
+            for row in rgba.chunks_exact(width as usize * 4).rev() {
+                for c in row.as_chunks::<4>().0 {
+                    rgb.push((u32::from(c[0]) << 16) | (u32::from(c[1]) << 8) | u32::from(c[2]));
+                }
+            }
+            pong_scenario::Demo::save_rgb(&path, &rgb, width, height);
+        }
         self.ctx.end_render_pass();
         self.ctx.commit_frame();
+        if self.demo.as_ref().is_some_and(|d| d.finished()) {
+            window::request_quit();
+        }
     }
     fn key_down_event(&mut self, k: KeyCode, _: KeyMods, repeat: bool) {
+        if self.demo.is_some() {
+            return;
+        }
         match k {
             KeyCode::Up | KeyCode::W => self.up = true,
             KeyCode::Down | KeyCode::S => self.down = true,
@@ -155,6 +201,9 @@ impl EventHandler for App {
         }
     }
     fn window_minimized_event(&mut self) {
+        if self.demo.is_some() {
+            return;
+        }
         self.game.pause();
         self.up = false;
         self.down = false;

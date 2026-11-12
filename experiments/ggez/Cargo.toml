@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 [workspace]
 [dependencies]
+pong-scenario = { path = "../../crates/pong-scenario" }
 pong-core = { path = "../../crates/pong-core" }
 ggez = { version = "=0.10.0", default-features = false }
 

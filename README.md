@@ -47,14 +47,14 @@ Each desktop cell is **build / runtime evidence**:
 | Original TypeScript + Canvas browser | Updated UI not rechecked on Mac | Strict TS build + 12 tests pass; localhost start/rally/pause/resume smoke | Updated UI not rechecked on Omarchy |
 | Rust WASM + Canvas browser | B / I | B / I | B / localhost serves; UI blocked |
 | Macroquad | B / I | B / R; keyboard play unverified | B / S + scripted replay and app-frame PNGs inspected; real input blocked |
-| Bevy | B / I | B / **F**: Vulkan exits; DX12 renders incorrectly | B / S; UI blocked |
+| Bevy | B / I | B / **F**: Vulkan exits; DX12 renders incorrectly | B / S + scripted/PNG sample passed; real input blocked |
 | Tauri + Rust WASM | B / I | B / I | B / S; UI blocked |
-| Miniquad | B / I | B / R; start input unsuccessful | B / S; UI blocked |
+| Miniquad | B / I | B / R; start input unsuccessful | B / S + scripted/PNG sample passed; real input blocked |
 | pixels + winit | B / I | B / I | B / S + scripted/source PNG passed; real input blocked |
-| raw wgpu + winit | B / I | B / I | B / S; UI blocked |
+| raw wgpu + winit | B / I | B / I | B / S + scripted/PNG sample passed; real input blocked |
 | Piston | B / I | B / I | B / S; UI blocked |
-| ggez | B / I; Mac surface fix verified | B / I on earlier snapshot | B / S; UI blocked |
-| nannou | B / I before pacing follow-up | B / I | B / S; UI blocked |
+| ggez | B / I; Mac surface fix verified | B / I on earlier snapshot | B / S + scripted/PNG sample passed; real input blocked |
+| nannou | B / I before pacing follow-up | B / I | B / S + scripted/PNG sample passed; real input blocked |
 | Fyrox | B / I | B / I | B / S; UI blocked |
 | Blue Engine | B / I | B / I | B / S; UI blocked |
 | raylib-rs | B / I | B / R; start input unsuccessful; LLVM build blocker resolved | B / S + scripted/PNG sample passed; real input blocked |
@@ -146,8 +146,13 @@ rendering evidence, **not** real keyboard/focus or smooth-motion validation.
 | raylib-rs | Passed | Six saved; exact tick-480 inspected | Current app backbuffer before swap |
 | Pixels | Passed | Six saved; paused source frame inspected | 900x500 CPU source buffer, not scaled GPU output |
 | SDL3 | Passed | Six saved; paused sample inspected | Renderer target before present |
+| Bevy | Passed | Six saved; pause/reset inspected | Framework screenshot completion awaited |
+| nannou | Passed | Six saved; pause/reset inspected | Framework window-frame export; existing UI has no pause label |
+| ggez | Passed | Six saved; pause/reset inspected | Same app render texture presented and captured |
+| Miniquad | Passed | Six saved; paused sample inspected | Own OpenGL framebuffer; Metal capture unsupported |
+| raw wgpu | Passed | Six saved; paused sample inspected | Surface COPY_SRC readback; requires capability |
 | Remaining Rust / Swift / Kotlin adapters | Not wired yet | Not wired yet | No implied pass |
 
-All five finish at tick 1440 with the same baseline telemetry. Shared core has
+All ten finish at tick 1440 with the same baseline telemetry. Shared core has
 13 passing tests; raylib has one additional viewport test. Details and artifact
 hashes: [scripted testing](docs/SCRIPTED-TESTING.md).

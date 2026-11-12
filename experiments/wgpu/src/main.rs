@@ -13,10 +13,12 @@ struct App {
     window: Option<Arc<Window>>,
     renderer: Option<Renderer>,
     game: Game,
+    demo: Option<pong_scenario::Demo>,
     up: bool,
     down: bool,
     last: Instant,
     acc: f32,
+    failed: bool,
 }
 impl ApplicationHandler for App {
     fn resumed(&mut self, e: &ActiveEventLoop) {
@@ -38,7 +40,7 @@ impl ApplicationHandler for App {
     fn window_event(&mut self, e: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
         match event {
             WindowEvent::CloseRequested => e.exit(),
-            WindowEvent::Focused(false) => {
+            WindowEvent::Focused(false) if self.demo.is_none() => {
                 self.up = false;
                 self.down = false;
                 self.game.pause();
@@ -54,7 +56,7 @@ impl ApplicationHandler for App {
                     }
                 }
             }
-            WindowEvent::KeyboardInput { event, .. } => {
+            WindowEvent::KeyboardInput { event, .. } if self.demo.is_none() => {
                 let pressed = event.state == ElementState::Pressed;
                 if let PhysicalKey::Code(k) = event.physical_key {
                     match k {
@@ -77,7 +79,11 @@ impl ApplicationHandler for App {
             }
             WindowEvent::RedrawRequested => {
                 let now = Instant::now();
-                self.acc += (now - self.last).as_secs_f32().min(0.1);
+                if let Some(demo) = &mut self.demo {
+                    demo.advance(&mut self.game, (now - self.last).as_secs_f32());
+                } else {
+                    self.acc += (now - self.last).as_secs_f32().min(0.1);
+                }
                 self.last = now;
                 while self.acc >= 1.0 / 120.0 {
                     self.game
@@ -85,10 +91,16 @@ impl ApplicationHandler for App {
                     self.acc -= 1.0 / 120.0;
                 }
                 if let Some(p) = self.renderer.as_mut() {
-                    if let Err(err) = p.render(&self.game) {
+                    let capture = self.demo.as_mut().and_then(|d| d.capture_path());
+                    if let Err(err) = p.render(&self.game, capture.as_deref()) {
                         eprintln!("Render: {err}");
+                        self.failed = true;
                         e.exit();
+                        return;
                     }
+                }
+                if self.demo.as_ref().is_some_and(|d| d.finished()) {
+                    e.exit();
                 }
                 if let Some(w) = &self.window {
                     w.set_title(&format!(
@@ -113,10 +125,15 @@ fn main() {
         window: None,
         renderer: None,
         game: Game::new(42),
+        demo: pong_scenario::Demo::from_args(),
         up: false,
         down: false,
         last: Instant::now(),
         acc: 0.0,
+        failed: false,
     };
     e.run_app(&mut a).unwrap();
+    if a.failed {
+        std::process::exit(1);
+    }
 }

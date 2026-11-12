@@ -4,5 +4,6 @@ version = "0.1.0"
 edition = "2021"
 [workspace]
 [dependencies]
+pong-scenario = { path = "../../crates/pong-scenario" }
 nannou = "=0.20.0"
 pong-core = { path = "../../crates/pong-core" }
