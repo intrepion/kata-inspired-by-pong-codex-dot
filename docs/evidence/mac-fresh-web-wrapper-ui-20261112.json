@@ -6,7 +6,31 @@
   "method": "Actual native UI interaction through Computer Use; screenshots visually inspected in tool outputs",
   "yewSha256": "bd4323bdc07be4ffcda605a2e44aaf0a39ea8186906bfc3d61f82c467038eddb",
   "leptosSha256": "3b03547d82b7986116d005ff581b40e249f4cedeb4bb61e5a424221218ac76c3",
-  "bothPassed": ["court rendering", "Enter start", "W held650ms moves paddle to top", "Space pause and resume", "S held3000ms moves paddle to bottom", "CPU score0:1", "Start/Restart resets0:0"],
-  "notTestedInThisPass": ["focus loss", "resize", "full match", "installer", "performance"],
-  "screenshotsSavedAsFiles": false
+  "bothPassed": [
+    "court rendering",
+    "Enter start",
+    "W held650ms moves paddle to top",
+    "Space pause and resume",
+    "S held3000ms moves paddle to bottom",
+    "CPU score0:1",
+    "Start/Restart resets0:0"
+  ],
+  "notTestedInThisPass": [
+    "focus loss",
+    "resize",
+    "full match",
+    "installer",
+    "performance"
+  ],
+  "screenshotsSavedAsFiles": false,
+  "followup": {
+    "bothPassed": [
+      "normal full match CPU wins1:7",
+      "Enter restart resets0:0",
+      "Window menu Zoom enlarged layout with court/scores/controls visible"
+    ],
+    "leptosFocus": "Paused label observed after input in newly opened Yew",
+    "yewFocus": "Not established; game continued after targeted input/app-switch attempts. Could be app blur handling or CUA focus behavior; do not mark passed.",
+    "narrowResize": "not tested"
+  }
 }
