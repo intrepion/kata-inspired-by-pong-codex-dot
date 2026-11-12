@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | At `31478c6`, original TypeScript normal start/pause/resume and 390×844 layout passed in localhost Chrome; 15 tests passed. Raw WASM normal controls and three framework demos also verified. | Latest bounded browser results recorded; raw WASM/TypeScript scripted completion and focus-loss remain unverified. Data-URL downloads remain browser-policy blocked; no exported-file pass. |
+| Windows | Fresh original TypeScript and raw-WASM browser replay completed on `0cbe38f`; TS15 tests, WASM2 ABI and7 Rust scenario/WASM tests passed. | Bounded browser batch complete; tabs closed. Bundle downloads, true focus-loss and responsive override unverified. See [follow-up](docs/WINDOWS-BROWSER-REPLAY-FOLLOWUP.md). |
 | Mac | Published `18bc91c`: Swift simulator touch/release, Home background pause/resume, genuine full match and restart passed. Fresh Yew/Leptos actual native gameplay passed. | Assigned batch complete; apps exited and no simulator booted. No wrapper focus/resize/full-match pass claimed. Swift physical-device and store-packaging checks remain outstanding. |
 | Omarchy ARM64 | Portable Swift/Kotlin source handoff published. GPUI native state-only replay and Dioxus native SVG-source replay passed; neither establishes visual/input correctness. | Latest completed source/evidence checkpoints recorded below; current active run not confirmed. Kotlin validation subsequently passed on Windows, not Omarchy; Swift app replay and bounded simulator UI subsequently passed on Mac; these are not Omarchy runtime results. |
 
@@ -172,7 +172,7 @@ rendering evidence, **not** real keyboard/focus or smooth-motion validation.
 | Ratatui | Passed (TestBackend) | No PNG: six text + six cell/style JSON exports | Cell-buffer evidence only, not terminal screenshots |
 | Slint | Passed | Six saved; pause/reset inspected | Supported software-renderer component snapshot |
 | GTK4 | Passed | Six saved; pause/reset inspected | Same Cairo scene on separate app-owned surface |
-| Raw web-WASM | Implemented; ABI tests passed | Canvas export implemented, browser run unverified | Not counted among nineteen verified render adapters |
+| Raw web-WASM | Implemented; ABI tests passed | Canvas export implemented; Windows completion verified, bundle files unverified | Not counted among nineteen verified render adapters |
 | GPUI | Passed (native state-only) | Unsupported; request explicitly rejected | Telemetry only, not visual QA |
 | Yew / Leptos / Dioxus web | Shared replay tests/builds pass; Windows Chrome demos reached tick 1440 with 13 identical states | Six SVG links per app and final courts inspected on Windows; data-URL download blocked | SVG source is not screenshot evidence; downloaded files unverified; no Omarchy browser pass |
 | Tauri + Rust WASM | Passed (native WebKitGTK) | Six canvas PNGs; pause/reset inspected | Court only, not DOM scores or full webview |
@@ -205,3 +205,5 @@ GPUI Linux state-only replay now builds and completes after a narrow, licensed x
 Windows original TypeScript follow-up at `31478c642cf07d536cd979d82e81ea900a3c1acd`: localhost Chrome normal Start → Rally in progress, Pause → Paused, Resume → Rally in progress verified. A 390×844 screenshot showed court/scoreboard fitting, touch controls visible and no horizontal clipping; viewport override reset. `npm test` passed all 15 tests. Raw WASM and TypeScript scripted scores advanced but completion links were not observed; completion remains unverified, not a diagnosed application failure. Focus-loss and raw WASM resize remain unverified.
 
 Mac follow-up published in `18bc91c`: [Swift normal UI regression](docs/evidence/swift-ios-normal-ui-20261112.txt) passed in 47.349 seconds using genuine touch, release, background/resume, game-over and restart assertions; no physics injection. [Fresh Yew/Leptos native interaction evidence](docs/evidence/mac-fresh-web-wrapper-ui-20261112.json) records rendering, Enter start, W/S movement, Space pause/resume, CPU scoring and restart. Wrapper focus/resize/full-match remain unverified. Both apps exited and the simulator was shut down after checks.
+
+Windows follow-up: [fresh original TypeScript and raw-WASM browser replay completion](docs/WINDOWS-BROWSER-REPLAY-FOLLOWUP.md). Both completion links appeared; raw final court inspected. Bundle contents, true focus transitions and responsive override remain unverified.
