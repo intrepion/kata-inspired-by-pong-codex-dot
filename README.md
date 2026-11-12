@@ -9,7 +9,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Android normal-mode start/scoring/pause/resume/restart and Home/Recents pause retention passed; broken separators corrected; 11 tests pass. | Test app stopped; emulator/data preserved. Sustained drag movement remains unverified (two gestures inconclusive); [bounded results](docs/SCRIPTED-ANDROID.md). |
-| Mac | Yew and Leptos native bounded gameplay passed on older `6ceb22a`: start, held W/S movement, Space pause/resume, visible CPU scoring and restart. These are not latest-source rebuilds. | Leptos checks complete, no approval prompt. Dioxus native build is next, followed by updated Bevy rendering checks; neither has a new pass yet. |
+| Mac | Yew and Leptos native bounded gameplay passed using cached binaries (checkout `6ceb22a`, exact binary source revision not established): start, held W/S movement, Space pause/resume, visible CPU scoring and restart. These are not latest-source rebuilds. | Leptos checks complete, no approval prompt. Fresh Dioxus native build is active using the existing cache, with no UI result yet. Updated Bevy rendering checks follow. |
 | Omarchy ARM64 | Swift/Kotlin portable parser/replay source and derived resources prepared; host resource consistency checks pass. | Publishing source candidate only. Swift/Kotlin compiler, native tests, packaged-app resource loading and mobile UI replay remain pending platform toolchains. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
@@ -96,8 +96,8 @@ Details: [low-level clients](experiments/LOW-LEVEL.md), [GUI toolkits](experimen
 | Yew browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | U / U |
 | Leptos browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | U / U |
 | Dioxus browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | U / U |
-| Yew native Tauri wrapper | B / I on older `6ceb22a`; latest rebuild pending | B / I | B / scripted SVG-source checks passed; visual/input unverified |
-| Leptos native Tauri wrapper | B / I on older `6ceb22a`; latest rebuild pending | B / I | B / scripted SVG-source checks passed; visual/input unverified |
+| Yew native Tauri wrapper | B / I using cached binaries; exact source revision unverified | B / I | B / scripted SVG-source checks passed; visual/input unverified |
+| Leptos native Tauri wrapper | B / I using cached binaries; exact source revision unverified | B / I | B / scripted SVG-source checks passed; visual/input unverified |
 | Dioxus native desktop | U / U | B / I; maximized layout checked | U / U |
 
 [Commands and detailed web-framework results](docs/web-framework-comparison.md). Browser checks use a localhost HTTP server, never file URLs. Narrow browser layout is not a physical touchscreen or mobile-package test.
