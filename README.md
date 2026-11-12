@@ -70,7 +70,7 @@ Details: [baseline frontends](docs/desktop-comparison.md), [extra engines](exper
 | softbuffer + winit | B / I, including focus and resize checks | B / I | B / S; UI blocked |
 | SDL3 | B / I, including focus and resize checks | B / I; LNK4098 linker warning remains | B / S; UI blocked |
 | Vulkan via ash | B / blocked: missing Vulkan loader/MoltenVK | B / I (simple clear-attachment renderer only) | B / S; UI blocked |
-| Slint | B / I | U / U | U / U |
+| Slint | B / I | B / I: start, scoring, pause/resume, reset | U / U |
 | GPUI | B / I: Enter start, held-W movement, scoring, Space pause | U / U | U / U |
 | GTK4 | Blocked: native dependencies missing / U | U / U | B / S; UI blocked |
 | Ratatui | B / pseudo-terminal checks; enhanced-terminal interaction unverified | B / blocked: direct launch has no targetable window; Windows Terminal access blocked by product policy | B / pseudo-terminal startup, movement and quit; 4 tests pass |

@@ -37,3 +37,8 @@ GTK4 4.24.1 was already installed. Cargo check and build -j1 passed with gtk-rs 
 ### Slint macOS native validation
 
 Built with CARGO_PROFILE_DEV_DEBUG=0 and CARGO_PROFILE_DEV_INCREMENTAL=false to preserve disk space. Native window inspected through Computer Use: visible court, score, controls and Slint attribution. Enter started; W/S moved paddle; R reset score; Space paused; CPU scored to seven and game-over displayed. Arrow/Escape and focus-loss UI paths are not yet verified (automation key naming), although shared adapter focus-loss and input release tests pass. Test process closed after inspection.
+
+
+## Windows Slint follow-up (2026-11-12)
+
+Locked full MSVC build passed with two jobs. Supported native Computer Use verified clean court/status/attribution rendering, Enter start, scoring/ball movement, Space pause/resume, R resetting scores to 0:0, and titlebar close. Sustained paddle movement/release, full-match win behavior, focus/minimize and resize/DPI remain unverified. No source changes were required. GPUI build is still in progress, not yet a pass.
