@@ -4,12 +4,12 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 03:05 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 03:07 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Bevy Mesh2d fix passed DX12 scripted capture and native start/score/pause/resume/reset/maximize checks; 14 shared tests passed. | Publishing scoped fix/evidence. Default Vulkan still crashes; DX12 is an explicit process-local workaround. Native test window closed. |
-| Mac | Yew and Leptos native-wrapper checks assigned, followed by Dioxus native desktop. Existing test binaries use an older checkpoint. | Last reported waiting for Pong Yew Computer Use approval. Current launch/run not independently confirmed; no new pass recorded here. |
+| Windows | Bevy Mesh2d fix passed DX12 scripted capture and native start/score/pause/resume/reset/maximize checks; 14 shared tests passed. | Scoped fix/evidence published in `55d0975`; this test phase is complete and the native test window is closed. Default Vulkan still crashes; DX12 is an explicit process-local workaround. Next target not yet started. |
+| Mac | Yew and Leptos native-wrapper checks assigned, followed by Dioxus native desktop. Existing test binaries use an older checkpoint. | Preparing visual checks with existing `6ceb22a` binaries; Pong Yew app-access call pending, possibly approval. Gameplay not yet confirmed; Dioxus build queued. |
 | Omarchy ARM64 | Last known assignment: GPUI scripted-demo/capture assessment and Slint attribution-clipping polish. | Current run not confirmed. The verified baseline below covers nineteen scripted adapters; this assignment is not a new test pass. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
