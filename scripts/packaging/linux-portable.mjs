@@ -4,7 +4,7 @@ import {dirname,join,resolve} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 import {spawnSync} from 'node:child_process';
-const adapters=Object.freeze({miniquad:'pong-miniquad',pixels:'pong-pixels',wgpu:'pong-wgpu',raylib:'pong-raylib-rs',piston:'pong-piston',ggez:'pong-ggez',nannou:'pong-nannou','bracket-lib':'pong-bracket-lib',fyrox:'pong-fyrox',bevy:'pong-bevy'});
+const adapters=Object.freeze({miniquad:'pong-miniquad',pixels:'pong-pixels',wgpu:'pong-wgpu',raylib:'pong-raylib-rs',piston:'pong-piston',ggez:'pong-ggez',nannou:'pong-nannou','bracket-lib':'pong-bracket-lib',fyrox:'pong-fyrox',bevy:'pong-bevy','blue-engine':'pong-blue-engine',softbuffer:'pong-softbuffer'});
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
 const digest=p=>createHash('sha256').update(readFileSync(p)).digest('hex');
 export function packagePortable(adapter,input,output,source) {
@@ -20,7 +20,7 @@ export function packagePortable(adapter,input,output,source) {
   const executable=adapters[adapter];
   copyFileSync(binary,join(stage,executable));chmodSync(join(stage,executable),0o755);
   copyFileSync(join(root,'LICENSE'),join(stage,'LICENSE'));
-  writeFileSync(join(stage,'README.txt'),`${executable}: local Linux portable pilot\n\nRun ./${executable} from this folder. --scripted-test runs a bounded seeded replay.\n--scripted-captures NEW_DIRECTORY additionally writes application-owned captures.\nNormal controls are shown by the application.\n\nRequires compatible CPU architecture, Linux runtime, graphics drivers and display.\nDrivers/runtime libraries are not bundled or installed. Not a public release or\ncross-distro guarantee. Root MIT included; full dependency notices remain pending.\n\nInstallation is extraction only; no settings, services or PATH changes. Verify\nSHA256SUMS before launch. Uninstall only the four files listed there plus\nSHA256SUMS itself, then remove the empty dedicated folder; preserve other files.\n`);
+  writeFileSync(join(stage,'README.txt'),`${executable}: local Linux portable pilot\n\nRun ./${executable} from this folder. --scripted-test runs a bounded seeded replay.\n${adapter==='blue-engine'?'Native scripted screenshots are not implemented for this adapter.':'--scripted-captures NEW_DIRECTORY additionally writes application-owned captures.'}\nNormal controls are shown by the application.\n\nRequires compatible CPU architecture, Linux runtime, graphics drivers and display.\nDrivers/runtime libraries are not bundled or installed. Not a public release or\ncross-distro guarantee. Root MIT included; full dependency notices remain pending.\n\nInstallation is extraction only; no settings, services or PATH changes. Verify\nSHA256SUMS before launch. Uninstall only the four files listed there plus\nSHA256SUMS itself, then remove the empty dedicated folder; preserve other files.\n`);
   writeFileSync(join(stage,'BUILD-INFO.txt'),`source_commit=${source}\nadapter=${adapter}\narchitecture=${process.arch}\nbinary_sha256=${digest(binary)}\nartifact_scope=local portable pilot; not public release\nprovenance_limit=supplied commit is not proof for arbitrary binary input\n`);
   const files=[executable,'LICENSE','README.txt','BUILD-INFO.txt'];
   writeFileSync(join(stage,'SHA256SUMS'),files.map(f=>`${digest(join(stage,f))}  ${f}\n`).join(''));

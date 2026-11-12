@@ -10,7 +10,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 | --- | --- | --- |
 | Windows | ash three valid timing repeats, 4 release tests and 13.0s replay/capture passed; processes exited. Twelve Windows timing adapters recorded. | [ash Windows evidence](docs/benchmarks/ASH-WINDOWS-PILOT.md). Next: Blue Engine build/pilot. OS-input and packaging gates remain separate. |
 | Mac | Fourteen timing pilots complete. Raylib extracted-app real-input controls and Miniquad relocated replay/six PNGs now pass; 12 package guard tests pass. Processes exited. | [raylib native controls](docs/packaging/RAYLIB-MAC-PILOT.md) and [Miniquad package](docs/packaging/MINIQUAD-MAC-PILOT.md). Ash loader and distribution gates remain. |
-| Omarchy ARM64 | Six additional portable lifecycle pilots passed: Piston, ggez, Nannou, bracket-lib, Fyrox and Bevy. Exact timed binaries, relocated replay/six captures and exact uninstall verified; 24 Node tests pass. | [Six-adapter Linux batch](docs/packaging/LINUX-PORTABLE-BATCH2.md). Thirteen native local package pilots now recorded; remaining package adapters next. |
+| Omarchy ARM64 | Blue Engine and softbuffer relocated package replays passed; exact-file uninstall verified. All fifteen native timed adapters now have local portable lifecycle pilots; 24 Node tests pass. | [Final two Linux pilots](docs/packaging/LINUX-PORTABLE-BATCH3.md). Next: dependency notice preparation. Clean-machine, cross-distro and OS-input gates remain separate. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -279,6 +279,7 @@ These are local archive extraction, relocated runtime and removal checks, **not 
 | Miniquad | [Local replay/capture pilot](docs/packaging/MINIQUAD-MAC-PILOT.md) | Not recorded | [Four-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH.md) |
 | pixels, raw wgpu | Not recorded | Not recorded | [Four-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH.md) |
 | Piston, ggez, Nannou, bracket-lib, Fyrox, Bevy | Not recorded | Not recorded | [Six-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH2.md) |
+| Blue Engine, softbuffer | Not recorded | Not recorded | [Final two local pilots](docs/packaging/LINUX-PORTABLE-BATCH3.md); Blue native captures unsupported |
 | Other adapters | Not recorded | Not recorded | Not recorded |
 
 Evidence and limitations: [packaging index](docs/packaging/README.md), [Mac Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md), [Windows Macroquad](docs/packaging/MACROQUAD-WINDOWS-PILOT.md), [Mac SDL3](docs/packaging/SDL3-MAC-PILOT.md), [Mac raylib](docs/packaging/RAYLIB-MAC-PILOT.md), [Linux ash](docs/packaging/ASH-LINUX-PILOT.md).
