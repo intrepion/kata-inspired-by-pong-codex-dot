@@ -158,3 +158,7 @@ rendering evidence, **not** real keyboard/focus or smooth-motion validation.
 All twelve finish at tick 1440 with the same baseline telemetry. Shared core has
 14 passing tests; raylib has one additional viewport test. Details and artifact
 hashes: [scripted testing](docs/SCRIPTED-TESTING.md).
+
+### Planned benchmark and packaging architecture
+
+Approved direction: use **one shared benchmark harness**, with platform-specific helpers only where useful. Keep packaging alongside each application until repeated common steps justify extracting shared tooling. This is a plan, not measured performance or completed release packaging. See [benchmark and packaging plan](docs/BENCHMARK-PLAN.md).
