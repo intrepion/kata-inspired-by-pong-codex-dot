@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | ash three valid timing repeats, 4 release tests and 13.0s replay/capture passed; processes exited. Twelve Windows timing adapters recorded. | [ash Windows evidence](docs/benchmarks/ASH-WINDOWS-PILOT.md). Next: Blue Engine build/pilot. OS-input and packaging gates remain separate. |
+| Windows | Blue Engine 3 valid native timing repeats, 2 tests and plain replay passed; native screenshot mode remains unsupported. Thirteen Windows timing adapters measured. Bevy release build compiling. | [Blue Windows evidence](docs/benchmarks/BLUE-ENGINE-WINDOWS-PILOT.md). Next Bevy/Fyrox; no headless capture substituted for native evidence. |
 | Mac | Fourteen timing pilots complete. Raylib extracted-app real-input controls and Miniquad relocated replay/six PNGs now pass; 12 package guard tests pass. Processes exited. | [raylib native controls](docs/packaging/RAYLIB-MAC-PILOT.md) and [Miniquad package](docs/packaging/MINIQUAD-MAC-PILOT.md). Ash loader and distribution gates remain. |
 | Omarchy ARM64 | Blue Engine and softbuffer relocated package replays passed; exact-file uninstall verified. All fifteen native timed adapters now have local portable lifecycle pilots; 24 Node tests pass. | [Final two Linux pilots](docs/packaging/LINUX-PORTABLE-BATCH3.md). Next: dependency notice preparation. Clean-machine, cross-distro and OS-input gates remain separate. |
 
@@ -254,7 +254,7 @@ Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md
 | raw wgpu | [3/3](docs/benchmarks/WGPU-MAC-PILOT.md) | [3/3](docs/benchmarks/WGPU-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/WGPU-ADAPTER.md) |
 | bracket-lib | [3/3](docs/benchmarks/BRACKET-LIB-MAC-PILOT.md) | [3/3](docs/benchmarks/BRACKET-LIB-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/BRACKET-LIB-ADAPTER.md) |
 | Bevy (main-world callback) | [3/3](docs/benchmarks/BEVY-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/BEVY-ADAPTER.md) |
-| Blue Engine (native callback) | [3/3](docs/benchmarks/BLUE-ENGINE-MAC-PILOT.md) | Not recorded | [3/3; initial failure retained](docs/benchmarks/BLUE-ENGINE-ADAPTER.md) |
+| Blue Engine (native callback) | [3/3](docs/benchmarks/BLUE-ENGINE-MAC-PILOT.md) | [3/3](docs/benchmarks/BLUE-ENGINE-WINDOWS-PILOT.md) | [3/3; initial failure retained](docs/benchmarks/BLUE-ENGINE-ADAPTER.md) |
 | Fyrox (pre-render callback) | [3/3](docs/benchmarks/FYROX-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/FYROX-ADAPTER.md) |
 | ash / Vulkan | Not recorded; Vulkan loader previously blocked | [3/3](docs/benchmarks/ASH-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/ASH-ADAPTER.md) |
 
