@@ -121,7 +121,7 @@ Details: [native Kotlin/Swift](experiments/NATIVE-MOBILE.md), [Tauri mobile](doc
 
 | Check or issue | Current evidence / remaining work |
 | --- | --- |
-| Shared simulation | 9 Rust core/WASM tests; 6 original JS tests + 2 compiled-WASM ABI tests passed. This is not frontend input QA. |
+| Shared simulation | Omarchy: 13 Rust core model tests pass, including scoring, restart and paddle face-crossing cases. Mac also passed core, scenario and WASM model tests and WASM compilation. Windows validation and rebuilt frontend interaction remain pending; [collision review](docs/RUST-PADDLE-FACE-COLLISION.md). |
 | Adapter regressions | Windows web controller 3/3, low-level controller 3/3, Ratatui 5/5 (Omarchy current), bracket-lib 6/6, GUI support 4/4; other adapter results linked above. |
 | Windows engine interaction | Most I cells mean start, scoring/ball motion, pause/resume and reset. Sustained paddle movement/release, full matches, focus/minimize and resize/DPI are mostly still unverified. |
 | Windows web interaction | Browser variants exercised keyboard/pointer and CPU win; real focus-loss still unverified. Native wrappers exercised pointer movement and basic controls, not held-key/full-match/physical-touch coverage. |

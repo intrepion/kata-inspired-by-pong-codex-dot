@@ -112,6 +112,8 @@ impl Game {
         }
         let b = &mut self.ball;
         let old_x = b.x;
+        let old_y = b.y;
+        let old_vy = b.vy;
         b.x += b.vx * dt;
         b.y += b.vy * dt;
         if b.y < BALL {
@@ -124,13 +126,27 @@ impl Game {
         }
         for (x, y, dir) in [(38., self.player, 1.), (W - 38., self.cpu, -1.)] {
             let face = x + dir * (PADDLE_W / 2. + BALL);
-            if (if dir == 1. {
+            let crosses = if dir == 1. {
                 old_x >= face && b.x <= face
             } else {
                 old_x <= face && b.x >= face
-            }) && (b.y - y).abs() <= PADDLE_H / 2. + BALL
-            {
-                let angle = ((b.y - y) / (PADDLE_H / 2.)).clamp(-1., 1.) * 1.05;
+            };
+            if !crosses || old_x == b.x {
+                continue;
+            }
+            // Evaluate at the face crossing, including a wall bounce that
+            // happened earlier in this step. At game speeds there is at most
+            // one wall crossing per bounded simulation step.
+            let fraction = (face - old_x) / (b.x - old_x);
+            let mut hit_y = old_y + old_vy * dt * fraction;
+            if hit_y < BALL {
+                hit_y = 2. * BALL - hit_y;
+            } else if hit_y > H - BALL {
+                hit_y = 2. * (H - BALL) - hit_y;
+            }
+            if (hit_y - y).abs() <= PADDLE_H / 2. + BALL {
+                b.y = hit_y;
+                let angle = ((hit_y - y) / (PADDLE_H / 2.)).clamp(-1., 1.) * 1.05;
                 let speed = b.vx.hypot(b.vy).mul_add(1.055, 0.).min(720.);
                 b.x = face;
                 b.vx = dir * speed * angle.cos();
@@ -179,6 +195,39 @@ mod tests {
         assert!(g.ball.vx > 0. && g.ball.vy > 0.);
     }
     #[test]
+    fn paddle_collision_uses_height_at_face_crossing_on_both_sides() {
+        for (x, vx) in [(60., -350.), (840., 350.)] {
+            for (y, vy, should_bounce) in [(180., 600., false), (215., -600., true)] {
+                let mut g = game();
+                g.ball = Ball { x, y, vx, vy };
+                g.step(0.033, 0.);
+                assert_eq!(
+                    g.ball.vx.signum() != vx.signum(),
+                    should_bounce,
+                    "crossing at x={x}, y={y}, vy={vy}"
+                );
+            }
+        }
+    }
+    #[test]
+    fn paddle_crossing_accounts_for_a_prior_wall_bounce() {
+        for (x, vx) in [(60., -350.), (840., 350.)] {
+            let mut g = game();
+            g.player = 45.;
+            g.cpu = 45.;
+            g.ball = Ball {
+                x,
+                y: 10.,
+                vx,
+                vy: -600.,
+            };
+            g.step(0.033, 0.);
+            assert_eq!(g.ball.vx.signum(), -vx.signum());
+            // Reflected position at the face is inside the court.
+            assert!(g.ball.y >= BALL && g.ball.y < 30.);
+        }
+    }
+    #[test]
     fn wall_and_score() {
         let mut g = game();
         g.ball = Ball {
@@ -201,6 +250,60 @@ mod tests {
         assert_eq!(g.state, State::Over);
         g.start();
         assert_eq!(g.scores, [0, 0]);
+    }
+    #[test]
+    fn nonwinning_scores_reset_ball_and_serve_toward_conceding_side() {
+        for (ball_x, velocity, expected_scores, serve_direction) in
+            [(905., 350., [1, 0], -1.), (-5., -350., [0, 1], 1.)]
+        {
+            let mut g = game();
+            g.ball = Ball {
+                x: ball_x,
+                y: 20.,
+                vx: velocity,
+                vy: 0.,
+            };
+            g.step(0.033, 0.);
+            assert_eq!(g.scores, expected_scores);
+            assert_eq!(g.state, State::Playing);
+            assert_eq!((g.ball.x, g.ball.y), (W / 2., H / 2.));
+            assert_eq!(g.ball.vx.signum(), serve_direction);
+            assert!(g.serve > 0.);
+            let ball = (g.ball.x, g.ball.y);
+            g.step(0.033, 0.);
+            assert_eq!((g.ball.x, g.ball.y), ball);
+        }
+    }
+    #[test]
+    fn either_winner_freezes_until_restart() {
+        for (ball_x, velocity, initial, expected) in
+            [(905., 350., [6, 0], [7, 0]), (-5., -350., [0, 6], [0, 7])]
+        {
+            let mut g = game();
+            g.scores = initial;
+            g.ball = Ball {
+                x: ball_x,
+                y: 20.,
+                vx: velocity,
+                vy: 0.,
+            };
+            g.step(0.033, 0.);
+            assert_eq!(g.scores, expected);
+            assert_eq!(g.state, State::Over);
+            let (ball, player) = ((g.ball.x, g.ball.y), g.player);
+            g.step(0.033, 1.);
+            g.toggle_pause();
+            assert_eq!(g.state, State::Over);
+            assert_eq!((g.ball.x, g.ball.y), ball);
+            assert_eq!(g.player, player);
+            assert_eq!(g.scores, expected);
+            g.start();
+            assert_eq!(g.state, State::Playing);
+            assert_eq!(g.scores, [0, 0]);
+            assert_eq!((g.player, g.cpu), (H / 2., H / 2.));
+            assert_eq!((g.ball.x, g.ball.y), (W / 2., H / 2.));
+            assert!(g.serve > 0.);
+        }
     }
     #[test]
     fn pause_freezes() {
