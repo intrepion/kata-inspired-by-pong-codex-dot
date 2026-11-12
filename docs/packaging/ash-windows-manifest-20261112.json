@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "adapter": "ash",
+  "platform": "win32",
+  "architecture": "x64",
+  "binary_sha256": "7169607c468461e2ca7becacbe4225082781520b886c695c7ecb20095d9d17b3",
+  "archive_sha256": "a2285588b7002b05125a49cee4942f5a4792bf5be007e08c7e24628ed1df3a36",
+  "archive_bytes": 1060035,
+  "extracted_binary_matches": true
+}

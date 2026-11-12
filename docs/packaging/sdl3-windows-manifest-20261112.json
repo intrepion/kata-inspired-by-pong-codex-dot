@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "adapter": "sdl3",
+  "platform": "win32",
+  "architecture": "x64",
+  "binary_sha256": "3044282093a2352663737034aa33e886825db2715613488b66f1b3df732f7ba5",
+  "archive_sha256": "1429f0a54777c05179abc2cfa9f26b406c1ec62a9008ece6465933469034c956",
+  "archive_bytes": 2869630,
+  "extracted_binary_matches": true
+}

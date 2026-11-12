@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "adapter": "piston",
+  "platform": "win32",
+  "architecture": "x64",
+  "binary_sha256": "384ab7046a2a0e39b41ba1030b79e0991f9d2aaf1553665fa6ba82e06d208387",
+  "archive_sha256": "ba32c5ddb5910fa69d0f6ecafd7ea35b9edc082e415bf756850fce7faa1db1c3",
+  "archive_bytes": 7460886,
+  "extracted_binary_matches": true
+}

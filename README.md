@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Fifteen native timing adapters recorded (Bevy DX12 only). Five local portable ZIP pilots now recorded: Macroquad, Miniquad, pixels, raw wgpu and softbuffer. | [New three-adapter package batch](docs/packaging/WINDOWS-PORTABLE-BATCH.md). Continuing remaining Windows package checks; clean-machine/notices/native-input gates open. |
+| Windows | Fifteen native timing adapters recorded (Bevy DX12 only). Ten local portable ZIP pilots recorded; latest SDL3, ash, raylib, Piston and ggez extracted replay/capture passed. | [Five-adapter batch](docs/packaging/WINDOWS-PORTABLE-BATCH2.md). Continuing remaining packages; visual caveats and clean-machine/notices/native-input gates remain. |
 | Mac | Corrected Fyrox package replay and six captures pass; readable HUD verified. App bundle removed, but generated registry outside it remains, so full cleanup is incomplete. Six shared GUI binding tests and strict Clippy pass. Processes exited. | [Fyrox package follow-up](docs/FYROX-HUD-SCALE-FIX.md) and [GUI model tests](docs/GUI-HELD-BINDINGS-FIX.md). Runtime-state cleanup policy and real-input/release gates remain; historical benchmarks preserved. |
 | Omarchy ARM64 | Bracket divider and Fyrox HUD corrections passed fresh native package replays and app-capture inspection. Shared GUI held-binding bug fixed. Fyrox cleanup found generated resources.registry left after manifest removal; preserved, not erased. | [Fyrox qualification and cleanup gap](docs/FYROX-HUD-SCALE-FIX.md). Clean uninstall remains incomplete for that new pilot; no real-input or new timing claims. |
 
@@ -273,12 +273,12 @@ These are local archive extraction, relocated runtime and removal checks, **not 
 | Adapter | Mac | Windows | Omarchy ARM64 |
 | --- | --- | --- | --- |
 | Macroquad | Local pilot | Local pilot | Local pilot |
-| SDL3 | Local pilot | Not recorded | Local pilot |
-| raylib | [Local replay + bounded native input](docs/packaging/RAYLIB-MAC-PILOT.md) | Not recorded | Local pilot |
-| ash | Loader blocked | Not recorded | Local pilot |
+| SDL3 | Local pilot | [Local ZIP/replay pilot](docs/packaging/WINDOWS-PORTABLE-BATCH2.md) | Local pilot |
+| raylib | [Local replay + bounded native input](docs/packaging/RAYLIB-MAC-PILOT.md) | [Local ZIP/replay pilot](docs/packaging/WINDOWS-PORTABLE-BATCH2.md) | Local pilot |
+| ash | Loader blocked | [Local ZIP/replay pilot](docs/packaging/WINDOWS-PORTABLE-BATCH2.md) | Local pilot |
 | Miniquad | [Local replay/capture pilot](docs/packaging/MINIQUAD-MAC-PILOT.md) | [Local ZIP/replay pilot](docs/packaging/MINIQUAD-WINDOWS-PILOT.md) | [Four-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH.md) |
 | pixels, raw wgpu | [Local replay/capture pilots](docs/packaging/MAC-PIXELS-WGPU-PILOT.md) | [Local ZIP/replay pilots](docs/packaging/WINDOWS-PORTABLE-BATCH.md) | [Four-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH.md) |
-| Piston, ggez | [Local replay/capture pilots](docs/packaging/MAC-PISTON-GGEZ-PILOT.md) | Not recorded | [Six-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH2.md) |
+| Piston, ggez | [Local replay/capture pilots](docs/packaging/MAC-PISTON-GGEZ-PILOT.md) | [Local ZIP/replay pilot](docs/packaging/WINDOWS-PORTABLE-BATCH2.md) | [Six-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH2.md) |
 | Fyrox | [Corrected HUD replay passed; full cleanup incomplete](docs/FYROX-HUD-SCALE-FIX.md) | Not recorded | [Corrected HUD replay passed; full cleanup incomplete](docs/FYROX-HUD-SCALE-FIX.md) |
 | Nannou, bracket-lib, Bevy | [Local replay/capture pilots](docs/packaging/MAC-FOUR-ENGINE-PILOT.md) | Not recorded | [Six-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH2.md) |
 | Blue Engine, softbuffer | [Local pilots; Blue state-only](docs/packaging/MAC-SOFTBUFFER-BLUE-PILOT.md) | [softbuffer ZIP/replay](docs/packaging/WINDOWS-PORTABLE-BATCH.md); Blue not recorded | [Final two local pilots](docs/packaging/LINUX-PORTABLE-BATCH3.md); Blue native captures unsupported |
