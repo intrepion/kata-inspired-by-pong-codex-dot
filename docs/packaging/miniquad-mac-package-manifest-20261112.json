@@ -1,0 +1,8 @@
+{
+  "schema": 1,
+  "platform": "darwin",
+  "architecture": "arm64",
+  "binary_sha256": "973ec344e7d3ab4aa3599612d5b85abeb20423c99f4e5975473ee7d9f1ef7898",
+  "archive_sha256": "f6953a08ab5ae86b97b6002bb081083677cc6bd63ecb8326990b973344756e06",
+  "archive_bytes": 367700
+}
