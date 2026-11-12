@@ -9,7 +9,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Piston fresh release build running (08:07 UTC), shared dependencies compiling. Miniquad three-repeat pilot/replay complete and published. | Next: Piston tests and bounded timing after compilation. [Latest completed Windows pilot](docs/benchmarks/MINIQUAD-WINDOWS-PILOT.md). No Piston timing pass yet. |
-| Mac | Piston seventh timing adapter: build, 2 Rust + 12 Node tests and 3 valid timing runs complete. Follow-up replay timed out at 30 seconds; extended diagnostic finished in 59.266 seconds. Processes exited. | [Piston evidence and slowdown](docs/benchmarks/PISTON-MAC-PILOT.md). Simulation timing needs a separately tested fix; this is not a normal-deadline replay pass. Yew focus inconclusive; packaging partial. |
+| Mac | ggez eighth adapter offline release build running. Seven timing adapters recorded; Piston replay slowdown has been assigned a separate fix. | [Piston evidence](docs/benchmarks/PISTON-MAC-PILOT.md) preserves 30-second failure and extended completion. Next: ggez tests and three bounded repeats. Yew focus inconclusive; packaging partial. |
 | Omarchy ARM64 | Eighth shared timing adapter ggez: three valid release callback repeats, replay and six app-owned screenshots passed; processes exited. | [ggez evidence](docs/benchmarks/GGEZ-ADAPTER.md). 2 Rust + 13 Node tests/Clippy pass; tick 600 inspected. Not a real-input or full visual acceptance claim. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
