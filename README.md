@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | raylib-rs three valid timing repeats, 3 adapter + 15 shared tests and 12.5s replay/capture passed; LLVM header lookup corrected per-command. | [raylib Windows evidence](docs/benchmarks/RAYLIB-WINDOWS-PILOT.md). Next: raw wgpu build/pilot. Footer visual-quality caveat retained; no native-input claim. |
+| Windows | Raw wgpu three valid callback repeats, 2 adapter tests and 12.5s replay/capture passed; processes exited. | [wgpu Windows evidence](docs/benchmarks/WGPU-WINDOWS-PILOT.md). Next: ggez build/pilot. No displayed-FPS or native-input claim. |
 | Mac | Nannou ninth adapter offline release build running. Piston wall-clock fix published and requalified (~12.5-second replay instead of ~59 seconds); eight timing adapters recorded. | [Original and fixed Piston evidence](docs/benchmarks/PISTON-MAC-PILOT.md). Next: Nannou tests, timing and replay. Yew focus inconclusive; packaging partial. |
 | Omarchy ARM64 | Fixed Piston requalified: 7 tests, plain replay12.092s, capture replay12.128s/six PNGs and three post-fix callback runs passed; processes exited. | [Piston post-fix evidence](docs/benchmarks/PISTON-ADAPTER.md#wall-clock-fix-requalification-on-omarchy). Ten adapters have timing pilots; real-input/focus and packaging gaps remain separate. |
 
