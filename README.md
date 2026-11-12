@@ -46,7 +46,7 @@ Each desktop cell is **build / runtime evidence**:
 | --- | --- | --- | --- |
 | Original TypeScript + Canvas browser | Updated UI not rechecked on Mac | Strict TS build + 12 tests pass; localhost start/rally/pause/resume smoke | Updated UI not rechecked on Omarchy |
 | Rust WASM + Canvas browser | B / I | B / I | B / localhost serves; UI blocked |
-| Macroquad | B / I | B / R; keyboard play unverified | B / S; UI blocked |
+| Macroquad | B / I | B / R; keyboard play unverified | B / S + scripted replay passed; visual/real input blocked |
 | Bevy | B / I | B / **F**: Vulkan exits; DX12 renders incorrectly | B / S; UI blocked |
 | Tauri + Rust WASM | B / I | B / I | B / S; UI blocked |
 | Miniquad | B / I | B / R; start input unsuccessful | B / S; UI blocked |
@@ -118,3 +118,16 @@ Details: [native Kotlin/Swift](experiments/NATIVE-MOBILE.md), [Tauri mobile](doc
 | Performance | No controlled cross-engine benchmark; debug build sizes/timings are not fair comparisons. |
 
 Keep this dashboard updated with every meaningful testing checkpoint. This dashboard also incorporates coordinator-confirmed later GPUI, Tauri mobile and Omarchy Ratatui worker results that are not yet reflected in every linked document. Detailed logs contain earlier states followed by newer corrections: use the latest dated follow-up, not an obsolete blocker paragraph. **U means unrun/unverified, not failed; I does not mean everything passed.** Comfy and rend3 were intentionally excluded, not left waiting for tests.
+
+### Scripted input testing (separate from interactive QA)
+
+Macroquad now supports an opt-in, fixed-seed, 12-second application-input replay.
+It exercises start, held movement, release, pause/resume and restart while the normal
+window renders. See [scripted test commands and limits](docs/SCRIPTED-TESTING.md).
+The shared driver has two regression tests (plus nine existing core tests).
+No OS input injection or desktop capture is involved; telemetry does not establish
+visual correctness or real keyboard behavior. Other adapters are not wired yet.
+
+Omarchy ARM64: two native replay runs exited 0 at tick 1440 with identical 13-line
+[telemetry](docs/evidence/omarchy-macroquad-scripted-20261112.jsonl). Build, 11 tests
+and strict Clippy passed. This is **not** a visual/interactive PASS.

@@ -6,3 +6,4 @@ license="MIT"
 [dependencies]
 macroquad="0.4"
 pong-core={path="../../crates/pong-core"}
+pong-scenario = { path = "../../crates/pong-scenario" }

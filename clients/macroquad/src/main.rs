@@ -22,39 +22,60 @@ fn conf() -> Conf {
 }
 #[macroquad::main(conf)]
 async fn main() {
-    let mut g = Game::new(miniquad::date::now() as u64);
+    let scripted = std::env::args().any(|arg| arg == "--scripted-test");
+    let mut scenario = pong_scenario::Scenario::default();
+    let mut g = Game::new(if scripted {
+        pong_scenario::SEED
+    } else {
+        miniquad::date::now() as u64
+    });
+    if scripted {
+        println!("{}", scenario.report(&g));
+    }
     let mut accumulator = 0.;
     let subscriber = macroquad::input::utils::register_input_subscriber();
     let mut focus = FocusEvents::default();
     loop {
         macroquad::input::utils::repeat_all_miniquad_input(&mut focus, subscriber);
-        if focus.lost {
-            g.pause();
-            accumulator = 0.;
-            focus.lost = false;
-        }
-        if is_key_pressed(KeyCode::Enter) {
-            if g.state == State::Paused {
-                g.toggle_pause()
-            } else if g.state != State::Playing {
+        if !scripted {
+            if focus.lost {
+                g.pause();
+                accumulator = 0.;
+                focus.lost = false;
+            }
+            if is_key_pressed(KeyCode::Enter) {
+                if g.state == State::Paused {
+                    g.toggle_pause()
+                } else if g.state != State::Playing {
+                    g.start()
+                }
+            }
+            if is_key_pressed(KeyCode::R) {
                 g.start()
             }
-        }
-        if is_key_pressed(KeyCode::R) {
-            g.start()
-        }
-        if is_key_pressed(KeyCode::Space) {
-            g.toggle_pause()
-        }
-        if is_key_pressed(KeyCode::Escape) {
-            g.pause()
+            if is_key_pressed(KeyCode::Space) {
+                g.toggle_pause()
+            }
+            if is_key_pressed(KeyCode::Escape) {
+                g.pause()
+            }
         }
         let input = (is_key_down(KeyCode::Down) || is_key_down(KeyCode::S)) as i32
             - (is_key_down(KeyCode::Up) || is_key_down(KeyCode::W)) as i32;
         accumulator += get_frame_time().min(0.1);
         while accumulator >= 1. / 120. {
-            g.step(1. / 120., input as f32);
+            if scripted {
+                scenario.advance(&mut g);
+                if scenario.tick() % 120 == 0 {
+                    println!("{}", scenario.report(&g));
+                }
+            } else {
+                g.step(1. / 120., input as f32);
+            }
             accumulator -= 1. / 120.;
+            if scripted && scenario.finished() {
+                break;
+            }
         }
         clear_background(Color::from_hex(0x0c211e));
         let scale = (screen_width() / W)
@@ -111,6 +132,22 @@ async fn main() {
             19.,
             WHITE,
         );
+        if scripted {
+            draw_text(
+                format!(
+                    "SCRIPTED INPUT / tick {} / {}",
+                    scenario.tick(),
+                    pong_scenario::END_TICK
+                ),
+                440.,
+                30.,
+                20.,
+                YELLOW,
+            );
+        }
         next_frame().await;
+        if scripted && scenario.finished() {
+            break;
+        }
     }
 }
