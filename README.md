@@ -10,7 +10,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 | --- | --- | --- |
 | Windows | Bevy DX12: 3 valid timing repeats, 2 tests, replay and six captures passed. Default Vulkan crashed and is explicitly rejected. Fourteen timing adapters measured. | [Bevy evidence](docs/benchmarks/BEVY-WINDOWS-PILOT.md). Next: fresh Fyrox release build and timing/replay qualification. |
 | Mac | Fixed bracket-lib divider black boxes/low contrast; nine Rust tests, strict Clippy and native replay/six PNGs pass. Before/after screenshots verified; processes exited. | [Divider fix evidence](docs/BRACKET-DIVIDER-FIX.md). Earlier benchmark/package hashes remain historical; new-source cross-platform/package requalification pending. |
-| Omarchy ARM64 | Slint toolkit package passed fresh optimized build, four GUI-model and 28 Node tests, extracted replay/six own-window snapshots and exact uninstall. Existing Slint license text and visible attribution preserved; process exited. | [Slint Linux package report](docs/packaging/SLINT-LINUX-PILOT.md). Component snapshots are not compositor screenshots or OS-input passes. |
+| Omarchy ARM64 | Fixed shared GTK/Slint/GPUI held-binding bug: releasing W while Up remains held no longer stops movement (also S/Down). Two failing regressions now pass; six model tests, strict Clippy and 17 core/scenario tests pass. | [GUI input fix](docs/GUI-HELD-BINDINGS-FIX.md). Fresh GTK native replay passed; real OS input remains unverified. GPUI packaging deferred for this gameplay fix. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 

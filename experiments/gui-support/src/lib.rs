@@ -51,9 +51,15 @@ impl Model {
         } else {
             self.held.remove(key);
         }
+        // Each direction may have several physical bindings held at once.
+        // Releasing one binding must not release the others.
+        self.up = ["w", "W", "Up", "up"]
+            .iter()
+            .any(|key| self.held.contains(*key));
+        self.down = ["s", "S", "Down", "down"]
+            .iter()
+            .any(|key| self.held.contains(*key));
         match key {
-            "w" | "W" | "Up" | "up" => self.up = pressed,
-            "s" | "S" | "Down" | "down" => self.down = pressed,
             "Enter" | "Return" | "enter" if pressed => {
                 if self.game.state == State::Paused {
                     self.game.toggle_pause()
@@ -125,5 +131,34 @@ mod repeat_tests {
         b.advance(0.1);
         assert_eq!(a.game.player, b.game.player);
         assert_eq!(a.game.ball.x, b.game.ball.x);
+    }
+}
+
+#[cfg(test)]
+mod alias_tests {
+    use super::*;
+    #[test]
+    fn releasing_one_up_binding_keeps_other_held_binding_active() {
+        let mut model = Model::default();
+        model.key("Enter", true);
+        model.key("w", true);
+        model.key("Up", true);
+        model.key("w", false);
+        assert!(model.up);
+        let before = model.game.player;
+        model.advance(0.05);
+        assert!(model.game.player < before);
+        model.key("Up", false);
+        assert!(!model.up);
+    }
+    #[test]
+    fn releasing_one_down_binding_keeps_other_held_binding_active() {
+        let mut model = Model::default();
+        model.key("S", true);
+        model.key("down", true);
+        model.key("down", false);
+        assert!(model.down);
+        model.key("S", false);
+        assert!(!model.down);
     }
 }
