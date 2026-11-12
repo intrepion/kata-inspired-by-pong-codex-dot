@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Miniquad fresh release, 3 adapter tests, 11 runner/sanitizer tests and three valid callback repeats passed (08:04 UTC); replay/capture regression passed; processes exited. | [Miniquad Windows evidence](docs/benchmarks/MINIQUAD-WINDOWS-PILOT.md). Macroquad portable package pilot remains partial; no new OS-input or installer claim. |
+| Windows | Piston fresh release build running (08:07 UTC), shared dependencies compiling. Miniquad three-repeat pilot/replay complete and published. | Next: Piston tests and bounded timing after compilation. [Latest completed Windows pilot](docs/benchmarks/MINIQUAD-WINDOWS-PILOT.md). No Piston timing pass yet. |
 | Mac | Piston seventh adapter offline release build running from ebdc9da; timing has not started. Six completed timing adapters remain recorded. | Next: adapter/shared tests, then three bounded Piston repeats after build completes. Yew focus remains inconclusive; packaging partial. |
 | Omarchy ARM64 | Seventh shared benchmark adapter Piston: three valid release callback runs and scripted replay passed; processes exited. | [Piston evidence](docs/benchmarks/PISTON-ADAPTER.md). 2 Rust + 12 Node tests/Clippy pass. Default rendering cadence retained, not a displayed-FPS or real-input claim. |
 
