@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Softbuffer three valid callback repeats, 2 adapter + 13 shared tests and 12.1s scripted replay/capture passed (08:17 UTC); processes exited. | [Softbuffer Windows evidence](docs/benchmarks/SOFTBUFFER-WINDOWS-PILOT.md). Next: pixels release build. Packaging and OS-input gates remain separate. |
+| Windows | Pixels three valid callback repeats, 3 adapter tests and 12.5s replay/capture passed; processes exited. | [Pixels Windows evidence](docs/benchmarks/PIXELS-WINDOWS-PILOT.md). Next: requalify new Piston clock fix, then next adapter. OS-input/installer gates separate. |
 | Mac | Nannou ninth adapter offline release build running. Piston wall-clock fix published and requalified (~12.5-second replay instead of ~59 seconds); eight timing adapters recorded. | [Original and fixed Piston evidence](docs/benchmarks/PISTON-MAC-PILOT.md). Next: Nannou tests, timing and replay. Yew focus inconclusive; packaging partial. |
 | Omarchy ARM64 | Ninth timing adapter Nannou: three valid release callback repeats, replay and six app-owned screenshots passed; processes exited. | [Nannou evidence](docs/benchmarks/NANNOU-ADAPTER.md). 2 Rust + 14 Node tests/Clippy pass; tick 600 inspected. Not a real-input or full visual acceptance claim. |
 
@@ -246,7 +246,7 @@ Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md
 | softbuffer/winit | [3/3](docs/benchmarks/SOFTBUFFER-MAC-PILOT.md) | [3/3](docs/benchmarks/SOFTBUFFER-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/SOFTBUFFER-ADAPTER.md) |
 | SDL3 | [3/3](docs/benchmarks/SDL3-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/SDL3-ADAPTER.md) |
 | raylib-rs | [3/3](docs/benchmarks/RAYLIB-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/RAYLIB-ADAPTER.md) |
-| pixels/winit | [3/3](docs/benchmarks/PIXELS-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/PIXELS-ADAPTER.md) |
+| pixels/winit | [3/3](docs/benchmarks/PIXELS-MAC-PILOT.md) | [3/3](docs/benchmarks/PIXELS-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/PIXELS-ADAPTER.md) |
 | Miniquad | [3/3](docs/benchmarks/MINIQUAD-MAC-PILOT.md) | [3/3](docs/benchmarks/MINIQUAD-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/MINIQUAD-ADAPTER.md) |
 | Piston | [3/3](docs/benchmarks/PISTON-MAC-PILOT.md) | [3/3](docs/benchmarks/PISTON-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/PISTON-ADAPTER.md) |
 | ggez | [3/3](docs/benchmarks/GGEZ-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/GGEZ-ADAPTER.md) |
