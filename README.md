@@ -9,8 +9,8 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Five corrected-input portable ZIPs requalified: Miniquad, pixels, raw wgpu, ash and softbuffer. Exact source/extracted hashes match; five native runs, 65 states and 30 captures pass. | [Windows package follow-up](docs/packaging/WINDOWS-HELD-FIXES-PACKAGE.md). Eleven packaging tests pass/seven platform skips. Artifacts retained; clean-machine, installer and physical-input gates remain separate. |
-| Mac | Corrected Softbuffer package passed supported native UI start, held W/S movement, scoring, pause/resume and R reset. App-menu Quit confirmed process exit. Earlier alternate quit observations remain inconclusive. | [Native gameplay evidence](docs/ASH-SOFTBUFFER-HELD-BINDINGS-FIX.md). Physical overlapping-key order, focus, resize and full-match checks remain separate. |
-| Omarchy ARM64 | Requalified local packages for corrected Miniquad, pixels, raw wgpu, ash and softbuffer binaries. Five extracted native replays passed; 65 states/30 app captures, exact removal and neighbors preserved. Sixteen packaging tests pass (two platform skips). | [Linux corrected-input package follow-up](docs/packaging/LINUX-HELD-FIXES-PACKAGE.md). Old package/timing hashes retained; no physical-input, clean-distro or release claim. |
+| Mac | Softbuffer native match reached 2–7 Over; Space restarted at 0–0 Playing. App-menu Quit confirmed exit. Focus-switch and Escape observations remain inconclusive, not silently passed. | [Full-match evidence and limits](docs/ASH-SOFTBUFFER-HELD-BINDINGS-FIX.md). Resize, physical overlapping-key order and verified OS-focus checks remain open. |
+| Omarchy ARM64 | First GPUI optimized local package pilot passed: eight model tests, sixteen packaging tests, checksum/extracted native state replay and exact six-file uninstall. Unsupported capture exits 2 without output. | [GPUI Linux package evidence](docs/packaging/GPUI-LINUX-PILOT.md). State-only, no visual/input pass; 30 dependency notice-file gaps remain explicit. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -289,7 +289,7 @@ These are local archive extraction, relocated runtime and removal checks, **not 
 | Ratatui | Not recorded | [Local ZIP/cell replay only](docs/packaging/RATATUI-WINDOWS-PILOT.md) | [Terminal local pilot](docs/packaging/RATATUI-LINUX-PILOT.md); cells + bounded PTY, not screenshots |
 | GTK4 | Not recorded | Not recorded | [Local package pilot](docs/packaging/GTK-LINUX-PILOT.md); existing GTK4 libraries required |
 | Slint | Not recorded | [Local ZIP/own-window snapshots](docs/packaging/SLINT-WINDOWS-PILOT.md) | [Local package pilot](docs/packaging/SLINT-LINUX-PILOT.md); own-window snapshots, license text included |
-| GPUI | Not recorded | [Local ZIP/state-only replay](docs/packaging/GPUI-WINDOWS-PILOT.md) | Not recorded |
+| GPUI | Not recorded | [Local ZIP/state-only replay](docs/packaging/GPUI-WINDOWS-PILOT.md) | [Local archive/state-only replay](docs/packaging/GPUI-LINUX-PILOT.md) |
 | Other adapters | Not recorded | Not recorded | Not recorded |
 
 Evidence and limitations: [packaging index](docs/packaging/README.md), [Mac Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md), [Windows Macroquad](docs/packaging/MACROQUAD-WINDOWS-PILOT.md), [Mac SDL3](docs/packaging/SDL3-MAC-PILOT.md), [Mac raylib](docs/packaging/RAYLIB-MAC-PILOT.md), [Linux ash](docs/packaging/ASH-LINUX-PILOT.md).
