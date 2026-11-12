@@ -4,12 +4,12 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 09:38 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 09:43 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Blue Engine 3 valid native timing repeats, 2 tests and plain replay passed; native screenshot mode remains unsupported. Thirteen Windows timing adapters measured. Bevy release build compiling. | [Blue Windows evidence](docs/benchmarks/BLUE-ENGINE-WINDOWS-PILOT.md). Next Bevy/Fyrox; no headless capture substituted for native evidence. |
-| Mac | Six local package pilots recorded: pixels and raw wgpu relocated replay/six PNGs and exact removal now pass. Eighteen package guard tests pass; processes exited. Fourteen timing pilots remain complete. | [pixels/raw-wgpu package evidence](docs/packaging/MAC-PIXELS-WGPU-PILOT.md). Remaining native package/input and distribution gates separate; ash loader blocked. |
+| Mac | Eight local package pilots recorded. Fixed Piston and ggez relocated replay/six PNGs and exact removal passed; 24 package guards pass. Processes exited; fourteen timing pilots remain complete. | [Piston/ggez package evidence](docs/packaging/MAC-PISTON-GGEZ-PILOT.md). Remaining native package/input and distribution gates separate; ash loader blocked. |
 | Omarchy ARM64 | Miniquad, ash and SDL3 notice-bearing local archives verified. Twelve additional dependency graphs scanned; ten need upstream notice-source review. 28 Node tests pass; all native replay processes exited. | [Notice feasibility and blockers](docs/packaging/LINUX-NOTICE-FEASIBILITY.md). Actual legal/native/system review and distribution qualification remain separate. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
@@ -278,7 +278,8 @@ These are local archive extraction, relocated runtime and removal checks, **not 
 | ash | Loader blocked | Not recorded | Local pilot |
 | Miniquad | [Local replay/capture pilot](docs/packaging/MINIQUAD-MAC-PILOT.md) | Not recorded | [Four-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH.md) |
 | pixels, raw wgpu | [Local replay/capture pilots](docs/packaging/MAC-PIXELS-WGPU-PILOT.md) | Not recorded | [Four-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH.md) |
-| Piston, ggez, Nannou, bracket-lib, Fyrox, Bevy | Not recorded | Not recorded | [Six-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH2.md) |
+| Piston, ggez | [Local replay/capture pilots](docs/packaging/MAC-PISTON-GGEZ-PILOT.md) | Not recorded | [Six-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH2.md) |
+| Nannou, bracket-lib, Fyrox, Bevy | Not recorded | Not recorded | [Six-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH2.md) |
 | Blue Engine, softbuffer | Not recorded | Not recorded | [Final two local pilots](docs/packaging/LINUX-PORTABLE-BATCH3.md); Blue native captures unsupported |
 | Other adapters | Not recorded | Not recorded | Not recorded |
 
