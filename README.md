@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Raw wgpu three valid callback repeats, 2 adapter tests and 12.5s replay/capture passed; processes exited. | [wgpu Windows evidence](docs/benchmarks/WGPU-WINDOWS-PILOT.md). Next: ggez build/pilot. No displayed-FPS or native-input claim. |
+| Windows | ggez three valid timing repeats, 2 adapter tests and 12.5s replay/capture passed; processes exited. Eight Windows timing adapters recorded. | [ggez Windows evidence](docs/benchmarks/GGEZ-WINDOWS-PILOT.md). Next: SDL3 build/pilot. OS-input/installation qualification remains separate. |
 | Mac | Nannou ninth adapter: build, 2 Rust + 14 Node tests, three valid repeat timings and 13.132-second replay/six frames complete. Initial short timing sample retained as invalid. Processes exited. | [Nannou Mac evidence](docs/benchmarks/NANNOU-MAC-PILOT.md). Raw wgpu release build running; fixed Piston requalified. Yew focus inconclusive; packaging partial. |
 | Omarchy ARM64 | Eleventh timing adapter bracket-lib: 8 Rust + 16 Node tests, release/Clippy, three valid callback repeats and replay/six PNGs passed; processes exited. | [Graphical tile evidence](docs/benchmarks/BRACKET-LIB-ADAPTER.md). Tick600 inspected; fixed-Piston requalification remains passed. Real-input/focus and packaging gaps separate. |
 
@@ -249,7 +249,7 @@ Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md
 | pixels/winit | [3/3](docs/benchmarks/PIXELS-MAC-PILOT.md) | [3/3](docs/benchmarks/PIXELS-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/PIXELS-ADAPTER.md) |
 | Miniquad | [3/3](docs/benchmarks/MINIQUAD-MAC-PILOT.md) | [3/3](docs/benchmarks/MINIQUAD-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/MINIQUAD-ADAPTER.md) |
 | Piston | [3/3](docs/benchmarks/PISTON-MAC-PILOT.md) | [3/3](docs/benchmarks/PISTON-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/PISTON-ADAPTER.md) |
-| ggez | [3/3](docs/benchmarks/GGEZ-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/GGEZ-ADAPTER.md) |
+| ggez | [3/3](docs/benchmarks/GGEZ-MAC-PILOT.md) | [3/3](docs/benchmarks/GGEZ-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/GGEZ-ADAPTER.md) |
 | Nannou | [3/3 repeat; initial rejection retained](docs/benchmarks/NANNOU-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/NANNOU-ADAPTER.md) |
 | raw wgpu | Not recorded | [3/3](docs/benchmarks/WGPU-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/WGPU-ADAPTER.md) |
 | bracket-lib | Not recorded | Not recorded | [3/3](docs/benchmarks/BRACKET-LIB-ADAPTER.md) |
