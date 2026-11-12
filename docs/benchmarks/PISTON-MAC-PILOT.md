@@ -17,3 +17,23 @@ The approximately 33.5 ms median and 50.1 ms p95 are slower callback intervals t
 The same binary's initial 30-second bounded scripted replay **timed out**, with 7 records and final tick 720. A separately labelled 75-second diagnostic completed in 59.266 seconds, exit 0, 13 records and final tick 1440. A nominal 12-second scenario taking about 59 seconds exposes a simulation timing problem, not a successful normal-duration acceptance test. Both original logs remain local.
 
 Source inspection found the adapter advances using update-event `u.dt`, while pistoncore-event_loop 1.0.0 defaults `ups_reset` to 2 and skips overdue updates. With 120 requested UPS and slow render callbacks this is a plausible cause of lost simulated time; no isolated causal fix has yet been tested. A wall-clock/fixed-step regression fix should be separately validated and rebenchmarked. Existing raw timing results are preserved rather than relabelled as post-fix evidence.
+
+## Wall-clock fix and Mac replay requalification
+
+A red regression reproduced the mechanism: twelve wall-clock seconds delivered in 50 ms callbacks advanced only 240 simulated ticks using update-event dt instead of approximately 1440. The fix measures monotonic elapsed time, preserves 120 Hz fixed steps and the 100 ms catch-up cap, and resets backlog on start/pause/resume/restart/focus loss. Seven Piston unit tests, eight shared scenario integration tests and thirteen shared Node tests passed. Source originated as commit `4903aa0`; runtime binary SHA-256 `9ea7bd078b870d7bf66fd19242f74561c9fb0b1aaddcf7ecf3bd4e15ddbb8f2f` was built before one additional test-only change.
+
+A first worker's shell session could not attach to the Mac GUI (LaunchServices error, no scenario telemetry), so those timed-out attempts are not gameplay failures. Retrying the identical binary in the established Mac execution session succeeded without changing permissions: plain replay completed in **12.723 seconds**, capture replay in **12.380 seconds**, both exit 0 with 13 state records, tick 1440 and finished=true. Capture produced all six PNGs; tick 600 was inspected and court/paddles/ball/score pip were visible. This is a bounded replay and framebuffer check, not a new manual-input pass.
+
+The original 30-second timeout, 59.266-second diagnostic and pre-fix timing data above remain unchanged. Post-fix timing requires separately named evidence because simulation progress now tracks wall time correctly.
+
+### Separate post-fix timing pilot
+
+[Post-fix timing data](piston-fixed-mac-pilot-20261112.json), harness/source snapshot `8c61cdf`, same fixed binary hash above. Three valid repeats, unchanged 2000×1360 dimensions, all exits 0.
+
+| Repeat | Samples | p50 ms | p95 ms | p99 ms |
+| --- | ---: | ---: | ---: | ---: |
+| 1 | 248 | 33.516 | 50.052 | 50.232 |
+| 2 | 247 | 33.523 | 50.126 | 50.231 |
+| 3 | 243 | 33.581 | 50.134 | 50.268 |
+
+The corrected simulation clock does not materially change the observed render-callback cadence; the gain is correct wall-time simulation progress, not a demonstrated rendering optimization. The same measurement limitations and unverified power/thermal conditions apply. All benchmark processes exited.
