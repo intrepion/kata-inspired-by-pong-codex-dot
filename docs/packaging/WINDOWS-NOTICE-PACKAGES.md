@@ -23,3 +23,7 @@ A discovered file for every resolved Cargo package does not establish complete o
 ## Windows containment correction
 
 A new sibling-checkout test exposed an existing Windows path-separator bug in first-party MIT fallback: a local package outside the repository could be incorrectly assigned the root license when its relative path began with a Windows parent-directory separator. The failing regression was reproduced, both separator styles are now rejected, and the test passes. Regenerating these three actual notice bundles after the fix preserves their exact hashes, so their source containment was valid and their archived texts are unchanged.
+
+## Linux cross-platform validation (2026-11-12)
+
+On Omarchy ARM64, source checkpoint `0e2bf9b98266b592f35e82d6ebd6b19cfdec39d1` passes all five notice-bundle tests, including rejection of an outside sibling checkout and byte-identical implicit/explicit Linux platform output. The combined notice, Linux portable packaging and Fyrox state-safety suites pass 18 tests; two Windows-only junction tests skip. The packaging fixture covers eighteen adapters. No production package, archive, registry or user data was modified by this cross-check. This validates shared logic, not Windows runtime behavior or license clearance.
