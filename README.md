@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | All fifteen timed native adapters now have local portable ZIP/extracted-runtime evidence. Bevy DX12 only; Blue state-only; Fyrox generated registry preserved. | [Final five-adapter batch](docs/packaging/WINDOWS-PORTABLE-BATCH3.md). Next: package safety/notice checks; installer, clean-machine and native-input gates remain open. |
+| Windows | Fifteen native timing and local portable runtime pilots recorded. Offline Windows notice scan covers thirteen standalone graphs: three have no discovered-file gaps, ten need follow-up. | [Notice feasibility](docs/packaging/WINDOWS-NOTICE-FEASIBILITY.md). Bevy DX12 only; Blue state-only; installer/clean-machine/native-input gates remain open. |
 | Mac | Corrected Fyrox package replay and six captures pass; readable HUD verified. App bundle removed, but generated registry outside it remains, so full cleanup is incomplete. Six shared GUI binding tests and strict Clippy pass. Processes exited. | [Fyrox package follow-up](docs/FYROX-HUD-SCALE-FIX.md) and [GUI model tests](docs/GUI-HELD-BINDINGS-FIX.md). Runtime-state cleanup policy and real-input/release gates remain; historical benchmarks preserved. |
 | Omarchy ARM64 | Fyrox generated-state safety investigated: seven new read-only ownership-inspection tests and all thirteen packaging tests pass. Existing registry preserved because no pre-run ownership receipt exists. | [Cleanup policy and limits](docs/packaging/FYROX-GENERATED-STATE-SAFETY.md). No automatic deletion; clean-uninstall gate remains open. Bracket/Fyrox visual fixes and shared GUI input fix verified separately. |
 

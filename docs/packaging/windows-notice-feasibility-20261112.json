@@ -1,0 +1,223 @@
+{
+  "schema": 1,
+  "target": "x86_64-pc-windows-gnu",
+  "scope": "Offline resolved Cargo graph, not linked-binary attribution; no release clearance",
+  "rows": [
+    {
+      "adapter": "miniquad",
+      "packages": 18,
+      "notice_files": 33,
+      "missing": [
+        "winapi-x86_64-pc-windows-gnu@0.4.0"
+      ]
+    },
+    {
+      "adapter": "softbuffer",
+      "packages": 35,
+      "notice_files": 68,
+      "missing": []
+    },
+    {
+      "adapter": "sdl3",
+      "packages": 34,
+      "notice_files": 113,
+      "missing": []
+    },
+    {
+      "adapter": "ash",
+      "packages": 36,
+      "notice_files": 69,
+      "missing": []
+    },
+    {
+      "adapter": "raylib-rs",
+      "packages": 52,
+      "notice_files": 104,
+      "missing": [
+        "raylib@6.0.0"
+      ]
+    },
+    {
+      "adapter": "pixels",
+      "packages": 117,
+      "notice_files": 215,
+      "missing": [
+        "gl_generator@0.14.0",
+        "gpu-descriptor@0.3.2",
+        "gpu-descriptor-types@0.2.0",
+        "hexf-parse@0.2.1",
+        "khronos_api@3.1.0",
+        "profiling@1.0.18",
+        "spirv@0.4.0+sdk-1.4.341.0",
+        "ultraviolet@0.10.0"
+      ]
+    },
+    {
+      "adapter": "wgpu",
+      "packages": 113,
+      "notice_files": 210,
+      "missing": [
+        "gl_generator@0.14.0",
+        "gpu-descriptor@0.3.2",
+        "gpu-descriptor-types@0.2.0",
+        "hexf-parse@0.2.1",
+        "khronos_api@3.1.0",
+        "profiling@1.0.18",
+        "spirv@0.4.0+sdk-1.4.341.0"
+      ]
+    },
+    {
+      "adapter": "piston",
+      "packages": 213,
+      "notice_files": 368,
+      "missing": [
+        "gl_generator@0.14.0",
+        "gpu-descriptor@0.3.2",
+        "gpu-descriptor-types@0.2.0",
+        "hexf-parse@0.2.1",
+        "khronos_api@3.1.0",
+        "profiling@1.0.18",
+        "profiling-procmacros@1.0.18",
+        "simd_helpers@0.1.0",
+        "spirv@0.4.0+sdk-1.4.341.0",
+        "zune-inflate@0.2.54"
+      ]
+    },
+    {
+      "adapter": "ggez",
+      "packages": 171,
+      "notice_files": 302,
+      "missing": [
+        "crevice-derive@0.18.0",
+        "gl_generator@0.14.0",
+        "gpu-descriptor@0.3.2",
+        "gpu-descriptor-types@0.2.0",
+        "hexf-parse@0.2.1",
+        "khronos_api@3.1.0",
+        "lyon@1.0.19",
+        "lyon_algorithms@1.0.22",
+        "lyon_geom@1.0.20",
+        "lyon_path@1.0.19",
+        "lyon_tessellation@1.0.23",
+        "profiling@1.0.18",
+        "spirv@0.4.0+sdk-1.4.341.0",
+        "xi-unicode@0.3.0"
+      ]
+    },
+    {
+      "adapter": "nannou",
+      "packages": 424,
+      "notice_files": 720,
+      "missing": [
+        "accesskit@0.24.1",
+        "accesskit_consumer@0.35.0",
+        "accesskit_windows@0.32.1",
+        "accesskit_winit@0.32.2",
+        "bevy_scene_macros@0.19.1",
+        "clipboard-win@5.4.3",
+        "constgebra@0.1.4",
+        "encase_derive@0.12.1",
+        "encase_derive_impl@0.12.1",
+        "find_folder@0.3.0",
+        "gl_generator@0.14.0",
+        "gpu-descriptor@0.3.2",
+        "gpu-descriptor-types@0.2.0",
+        "hexf-parse@0.2.1",
+        "khronos_api@3.1.0",
+        "lyon@1.0.19",
+        "lyon_algorithms@1.0.22",
+        "lyon_geom@1.0.20",
+        "lyon_path@1.0.19",
+        "lyon_tessellation@1.0.23",
+        "nannou_core@0.20.0",
+        "nannou_derive@0.20.0",
+        "nannou_draw@0.20.0",
+        "nannou_wgpu@0.20.0",
+        "profiling@1.0.18",
+        "profiling-procmacros@1.0.18",
+        "simd_helpers@0.1.0",
+        "spirv@0.4.0+sdk-1.4.341.0",
+        "svg_fmt@0.4.5",
+        "taffy@0.10.1",
+        "zune-inflate@0.2.54"
+      ]
+    },
+    {
+      "adapter": "bracket-lib",
+      "packages": 77,
+      "notice_files": 130,
+      "missing": [
+        "bracket-embedding@0.8.7",
+        "bracket-noise@0.8.7",
+        "bracket-rex@0.8.7",
+        "gl_generator@0.14.0",
+        "khronos_api@3.1.0",
+        "ultraviolet@0.9.2",
+        "winapi-x86_64-pc-windows-gnu@0.4.0",
+        "windows_x86_64_gnu@0.36.1"
+      ]
+    },
+    {
+      "adapter": "fyrox",
+      "packages": 393,
+      "notice_files": 628,
+      "missing": [
+        "clipboard-win@5.4.3",
+        "fxhash@0.2.1",
+        "fyrox@1.0.1",
+        "fyrox-core-derive@1.0.1",
+        "fyrox-graph@1.0.1",
+        "fyrox-graphics@1.0.1",
+        "fyrox-graphics-gl@1.0.1",
+        "fyrox-impl@1.0.1",
+        "fyrox-material@1.0.1",
+        "fyrox-math@1.0.1",
+        "fyrox-resource@1.0.1",
+        "fyrox-texture@1.0.1",
+        "gl_generator@0.14.0",
+        "khronos_api@3.1.0",
+        "profiling@1.0.18",
+        "profiling-procmacros@1.0.18",
+        "rstar@0.12.2",
+        "simd_helpers@0.1.0",
+        "symphonia@0.5.5",
+        "symphonia-bundle-flac@0.5.5",
+        "symphonia-bundle-mp3@0.5.5",
+        "symphonia-codec-aac@0.5.5",
+        "symphonia-codec-adpcm@0.5.5",
+        "symphonia-codec-alac@0.5.5",
+        "symphonia-codec-pcm@0.5.5",
+        "symphonia-codec-vorbis@0.5.5",
+        "symphonia-core@0.5.5",
+        "symphonia-format-mkv@0.5.5",
+        "symphonia-format-ogg@0.5.5",
+        "symphonia-format-riff@0.5.5",
+        "symphonia-metadata@0.5.5",
+        "symphonia-utils-xiph@0.5.5",
+        "winapi-x86_64-pc-windows-gnu@0.4.0",
+        "zune-inflate@0.2.54"
+      ]
+    },
+    {
+      "adapter": "blue-engine",
+      "packages": 202,
+      "notice_files": 352,
+      "missing": [
+        "blue_engine_core@0.10.0",
+        "blue_engine_dynamic@0.10.0",
+        "gl_generator@0.14.0",
+        "gpu-alloc@0.6.2",
+        "gpu-alloc-types@0.3.1",
+        "gpu-descriptor@0.3.2",
+        "gpu-descriptor-types@0.2.0",
+        "hexf-parse@0.2.1",
+        "khronos_api@3.1.0",
+        "profiling@1.0.18",
+        "profiling-procmacros@1.0.18",
+        "simd_helpers@0.1.0",
+        "spirv@0.3.0+sdk-1.3.268.0",
+        "zune-inflate@0.2.54"
+      ]
+    }
+  ]
+}
