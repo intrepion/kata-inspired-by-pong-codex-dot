@@ -25,3 +25,15 @@ A red regression reproduced the mechanism: twelve wall-clock seconds delivered i
 A first worker's shell session could not attach to the Mac GUI (LaunchServices error, no scenario telemetry), so those timed-out attempts are not gameplay failures. Retrying the identical binary in the established Mac execution session succeeded without changing permissions: plain replay completed in **12.723 seconds**, capture replay in **12.380 seconds**, both exit 0 with 13 state records, tick 1440 and finished=true. Capture produced all six PNGs; tick 600 was inspected and court/paddles/ball/score pip were visible. This is a bounded replay and framebuffer check, not a new manual-input pass.
 
 The original 30-second timeout, 59.266-second diagnostic and pre-fix timing data above remain unchanged. Post-fix timing requires separately named evidence because simulation progress now tracks wall time correctly.
+
+### Separate post-fix timing pilot
+
+[Post-fix timing data](piston-fixed-mac-pilot-20261112.json), harness/source snapshot `8c61cdf`, same fixed binary hash above. Three valid repeats, unchanged 2000×1360 dimensions, all exits 0.
+
+| Repeat | Samples | p50 ms | p95 ms | p99 ms |
+| --- | ---: | ---: | ---: | ---: |
+| 1 | 248 | 33.516 | 50.052 | 50.232 |
+| 2 | 247 | 33.523 | 50.126 | 50.231 |
+| 3 | 243 | 33.581 | 50.134 | 50.268 |
+
+The corrected simulation clock does not materially change the observed render-callback cadence; the gain is correct wall-time simulation progress, not a demonstrated rendering optimization. The same measurement limitations and unverified power/thermal conditions apply. All benchmark processes exited.
