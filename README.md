@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Nannou release build actively compiling Bevy/wgpu dependencies (08:55 UTC), two jobs; no approval blocker. Nine completed timing adapters remain published. | [Latest completed SDL3 pilot](docs/benchmarks/SDL3-WINDOWS-PILOT.md). Timing will start after compilation; no Nannou result claimed yet. |
+| Windows | Nannou release completed after 24m39s; 3 valid timing repeats, 2 adapter tests and 12.9s replay/capture passed. Ten Windows timing adapters recorded. | [Nannou Windows evidence](docs/benchmarks/NANNOU-WINDOWS-PILOT.md). Next: bracket-lib. Runner regression 21 pass/1 POSIX-only skip. |
 | Mac | Fourteen native timing pilots complete; raylib local package archive/extraction, relocated replay and six PNGs passed. Nine packaging guards and 22 benchmark-runner tests pass; processes exited. | [raylib Mac packaging evidence](docs/packaging/RAYLIB-MAC-PILOT.md). Ash loader, remaining input/visual and distribution gates remain separate. |
 | Omarchy ARM64 | Fifteen timing adapters and ash local package lifecycle recorded. Packaging follow-up: 95 dependency declarations inventoried, two local missing MIT metadata entries corrected; 6 Node + 4 Rust tests pass. | [ash packaging evidence](docs/packaging/ASH-LINUX-PILOT.md). Full third-party notice bundling, real-input/focus, public installers and clean-machine checks remain open. No active runtime process. |
 
