@@ -22,7 +22,7 @@ export function runPilot(options, binaryArguments = ['--benchmark']) {
     const backendLine=r.stdout?.split('\n').find(x=>x.startsWith('PONG_BENCHMARK_BACKEND '));
     const reported_backend=backendLine?JSON.parse(backendLine.slice('PONG_BENCHMARK_BACKEND '.length)):null;
     const sample=line?JSON.parse(line.slice('PONG_BENCHMARK '.length)):null;
-    result.runs.push({iteration:i+1,exit:r.status,error:r.error?.message??null,load_before:before,load_after:os.loadavg(),stderr:r.stderr,reported_backend,sample,
+    result.runs.push({iteration:i+1,exit:r.status,signal:r.signal??null,error:r.error?.message??null,load_before:before,load_after:os.loadavg(),stderr:r.stderr,reported_backend,sample,
       valid:r.status===0 && sample?.samples>0 && !sample.resized && sample.sampled_seconds>=9.5});
     writeFileSync(output,JSON.stringify(result,null,2)+'\n',{flag:i===0?'wx':'w'});
     if(r.status!==0) break;

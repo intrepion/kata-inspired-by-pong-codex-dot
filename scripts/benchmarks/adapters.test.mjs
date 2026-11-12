@@ -64,3 +64,21 @@ test('Blue Engine timing excludes headless mode and identifies upload boundary',
 test("Fyrox callback metadata excludes completed GPU timing",()=>{const r=parseArguments(["binary","new.json","backend","notes","--adapter","fyrox"]); assert.match(r.pacing,/before_rendering/);});
 
 test("ash timing names serialized FIFO and excludes skipped frames",()=>{const r=parseArguments(["binary","new.json","backend","notes","--adapter","ash"]); assert.match(r.pacing,/FIFO/);assert.match(r.pacing,/successful present-request/);});
+
+for(const [label,body,exit,signal] of [
+  ['nonzero exit','process.exit(7)',7,null],
+  ['signal termination','process.kill(process.pid,"SIGTERM")',null,'SIGTERM'],
+]) test(`runner retains ${label} and rejects emitted samples`,{skip:signal!==null && process.platform==='win32'},()=>{
+  const dir=mkdtempSync(join(tmpdir(),'pong-runner-failure-'));
+  try {
+    const fixture=join(dir,'fixture.cjs'),output=join(dir,'results.json');
+    const sample={samples:2,resized:false,sampled_seconds:10,p50_ms:5,p95_ms:5,p99_ms:5};
+    writeFileSync(fixture,`require('node:fs').writeSync(1,${JSON.stringify('PONG_BENCHMARK '+JSON.stringify(sample)+'\n')});${body};`);
+    const data=runPilot(parseArguments([process.execPath,output,'fixture','not a benchmark']),[fixture]);
+    assert.equal(data.runs.length,1);
+    assert.equal(data.runs[0].exit,exit);
+    assert.equal(data.runs[0].signal,signal);
+    assert.equal(data.runs[0].sample.samples,2);
+    assert.equal(data.runs[0].valid,false);
+  } finally {rmSync(dir,{recursive:true,force:true});}
+});
