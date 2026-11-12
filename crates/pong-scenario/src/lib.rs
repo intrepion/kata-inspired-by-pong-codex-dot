@@ -5,7 +5,7 @@ pub const STEP: f32 = 1.0 / 120.0;
 pub const END_TICK: u32 = 1440;
 pub const SEED: u64 = 42;
 
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub struct Scenario {
     tick: u32,
 }
@@ -48,6 +48,7 @@ impl Scenario {
 }
 
 /// Shared native demo clock and checkpoint policy. Rendering stays in adapters.
+#[cfg(not(target_arch = "wasm32"))]
 pub struct Demo {
     scenario: Scenario,
     accumulator: f32,
@@ -55,7 +56,8 @@ pub struct Demo {
     last_capture: u32,
     started: bool,
 }
-const CAPTURE_TICKS: [u32; 6] = [120, 240, 480, 600, 1320, 1440];
+pub const CAPTURE_TICKS: [u32; 6] = [120, 240, 480, 600, 1320, 1440];
+#[cfg(not(target_arch = "wasm32"))]
 impl Demo {
     pub fn from_args() -> Option<Self> {
         let args: Vec<_> = std::env::args().collect();

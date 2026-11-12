@@ -22,7 +22,7 @@ export component PongWindow inherits Window {
   }
  }
  Text {text:"W/S or arrows: move | Enter: start | Space: pause | R: restart";color:white;}
- AboutSlint {height:80px;vertical-stretch:0;}
+ AboutSlint {height:110px;vertical-stretch:0;}
  }
  init=>{focus.focus();}
 }

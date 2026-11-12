@@ -6,4 +6,5 @@ license = "MIT"
 
 [dependencies]
 pong-core = { path = "../pong-core" }
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 png = "0.17"

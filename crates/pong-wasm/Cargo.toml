@@ -7,3 +7,4 @@ license = "MIT"
 crate-type = ["cdylib", "rlib"]
 [dependencies]
 pong-core = { path = "../pong-core" }
+pong-scenario = { path = "../pong-scenario" }

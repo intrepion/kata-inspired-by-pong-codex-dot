@@ -5328,6 +5328,7 @@ name = "pong-wasm"
 version = "0.1.0"
 dependencies = [
  "pong-core",
+ "pong-scenario",
 ]
 
 [[package]]
