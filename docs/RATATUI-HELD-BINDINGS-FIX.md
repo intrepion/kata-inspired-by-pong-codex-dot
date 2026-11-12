@@ -18,3 +18,9 @@ No desktop control, OS key injection, terminal screenshot or new package qualifi
 Source762b301: seven release tests and strict all-target release Clippy pass on Windows. Offline cached test/build used one Cargo job (3.29s/3.06s); no performance measurements or desktop-control retries during concurrent WSL work. Rebuilt executable SHA-256 `475d4c6f9547b60d893e7aa3ff810603ee87ae8090550b90ac9f157014cd9e1f`.
 
 From a new isolated working directory, scripted TestBackend replay exited0 with thirteen records through finished tick1440 and six100x30 JSON cell buffers (3000cells each), plus matching text exports. These are deterministic cell-render/model checks, not real Windows enhanced-terminal input or screenshot evidence. The existing portable package keeps its earlier hash and has not been retroactively upgraded.
+
+## Mac ARM64 follow-up
+
+At source `762b301`, seven adapter tests pass and the debug binary rebuild succeeds using the existing target cache. SHA-256: `458c7da7cb03040618dc0afa52747f8cbc43e4877563a7d76833ed47a3867c96`. Scripted replay exits 0 with thirteen states through finished tick 1440 and six JSON/text cell-buffer pairs. The tick-600 text buffer was inspected: score/state, fallback control legend, court, paddles and ball are represented. This is cell evidence, not a screenshot.
+
+A separate bounded native PTY run selected latched-input fallback, accepted Space to start (subsequent animated court updates), then lowercase q to quit. Process exit was 0 and exact `stty -g` settings before/after matched. This verifies basic PTY start/quit/restoration, not physical keyboard handling or the enhanced press/release terminal protocol; the latter correction is covered here by unit tests only. Historical package and release hashes remain unchanged.
