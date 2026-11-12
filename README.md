@@ -71,7 +71,7 @@ Each desktop cell is **build / runtime evidence**:
 | Blue Engine | B / I | B / I | B / S + headless replay/PNG samples passed; window/input unverified |
 | raylib-rs | B / I | B / R; start input unsuccessful; LLVM build blocker resolved | B / S + scripted/PNG sample passed; real input blocked |
 | Godot + Rust GDExtension | B / I for game; **F** in headless editor shutdown | U / U | B / scripted native viewport PNG samples passed; real input unverified |
-| bracket-lib (RLTK) | B / bounded native I on existing contrast package; start, movement, pause and restart checked | B / I; separate header improves readability, bitmap quality still rough | B / S on X11 and patched Wayland + scripted/PNG samples passed; real input blocked |
+| bracket-lib (RLTK) | B / bounded native I on existing contrast package; start, movement, pause, full match, restart and held-Q exit checked | B / I; separate header improves readability, bitmap quality still rough | B / S on X11 and patched Wayland + scripted/PNG samples passed; real input blocked |
 
 Details: [baseline frontends](docs/desktop-comparison.md), [extra engines](experiments/ENGINE-STATUS.md), [ggez fix](experiments/ggez/README.md), [Godot](experiments/godot/VERIFICATION.md), [bracket-lib](experiments/bracket-lib/README.md).
 
