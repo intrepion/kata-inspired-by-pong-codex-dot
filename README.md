@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Fyrox: 3 valid timings, 2 tests, replay and six captures passed. All fifteen currently instrumented native adapters have Windows timing evidence; Bevy requires DX12 and default Vulkan remains rejected. | [Fyrox evidence](docs/benchmarks/FYROX-WINDOWS-PILOT.md). Next: broader Windows portable-package pilots; native input and clean-machine gates remain separate. |
+| Windows | Fifteen native timing adapters recorded; Bevy DX12 only. Fyrox HUD follow-up replay/captures passed. Miniquad portable ZIP extraction/hash/replay passed. | [Miniquad package pilot](docs/packaging/MINIQUAD-WINDOWS-PILOT.md). Continuing Windows packaging; clean-machine, notices and native-input gates remain open. |
 | Mac | Corrected bracket-lib package requalified; Fyrox tiny HUD fixed by scaling font/header with court. Two adapter tests and native replay/six PNGs pass; before/after verified. Processes exited. | [Fyrox HUD evidence](docs/FYROX-HUD-SCALE-FIX.md) and [bracket package follow-up](docs/BRACKET-DIVIDER-FIX.md). Fyrox new-package/cross-platform requalification remains; historical timing preserved. |
 | Omarchy ARM64 | Bracket-lib divider correction requalified in a fresh local package: nine adapter tests, three package guards, native replay/13 states/six PNGs and exact uninstall passed. App capture shows readable divider without black cell boxes. | [Correction and package evidence](docs/BRACKET-DIVIDER-FIX.md). Shared GUI held-binding fix published; Fyrox HUD correction build underway. No new OS-input or timing claims. |
 
@@ -247,7 +247,7 @@ Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md
 | SDL3 | [3/3](docs/benchmarks/SDL3-MAC-PILOT.md) | [3/3](docs/benchmarks/SDL3-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/SDL3-ADAPTER.md) |
 | raylib-rs | [3/3](docs/benchmarks/RAYLIB-MAC-PILOT.md) | [3/3](docs/benchmarks/RAYLIB-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/RAYLIB-ADAPTER.md) |
 | pixels/winit | [3/3](docs/benchmarks/PIXELS-MAC-PILOT.md) | [3/3](docs/benchmarks/PIXELS-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/PIXELS-ADAPTER.md) |
-| Miniquad | [3/3](docs/benchmarks/MINIQUAD-MAC-PILOT.md) | [3/3](docs/benchmarks/MINIQUAD-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/MINIQUAD-ADAPTER.md) |
+| Miniquad | [3/3](docs/benchmarks/MINIQUAD-MAC-PILOT.md) | [Local ZIP/replay pilot](docs/packaging/MINIQUAD-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/MINIQUAD-ADAPTER.md) |
 | Piston | [3/3](docs/benchmarks/PISTON-MAC-PILOT.md) | [3/3](docs/benchmarks/PISTON-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/PISTON-ADAPTER.md) |
 | ggez | [3/3](docs/benchmarks/GGEZ-MAC-PILOT.md) | [3/3](docs/benchmarks/GGEZ-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/GGEZ-ADAPTER.md) |
 | Nannou | [3/3 repeat; initial rejection retained](docs/benchmarks/NANNOU-MAC-PILOT.md) | [3/3](docs/benchmarks/NANNOU-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/NANNOU-ADAPTER.md) |
@@ -276,7 +276,7 @@ These are local archive extraction, relocated runtime and removal checks, **not 
 | SDL3 | Local pilot | Not recorded | Local pilot |
 | raylib | [Local replay + bounded native input](docs/packaging/RAYLIB-MAC-PILOT.md) | Not recorded | Local pilot |
 | ash | Loader blocked | Not recorded | Local pilot |
-| Miniquad | [Local replay/capture pilot](docs/packaging/MINIQUAD-MAC-PILOT.md) | Not recorded | [Four-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH.md) |
+| Miniquad | [Local replay/capture pilot](docs/packaging/MINIQUAD-MAC-PILOT.md) | [Local ZIP/replay pilot](docs/packaging/MINIQUAD-WINDOWS-PILOT.md) | [Four-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH.md) |
 | pixels, raw wgpu | [Local replay/capture pilots](docs/packaging/MAC-PIXELS-WGPU-PILOT.md) | Not recorded | [Four-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH.md) |
 | Piston, ggez | [Local replay/capture pilots](docs/packaging/MAC-PISTON-GGEZ-PILOT.md) | Not recorded | [Six-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH2.md) |
 | Nannou, bracket-lib, Fyrox, Bevy | [Local replay/capture pilots](docs/packaging/MAC-FOUR-ENGINE-PILOT.md) | Not recorded | [Six-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH2.md) |

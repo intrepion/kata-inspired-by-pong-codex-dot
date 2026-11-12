@@ -17,3 +17,7 @@ This validates the observed high-resolution layout, not all screen sizes or
 manual input. Windows/Linux and newly packaged-binary requalification remain.
 Earlier benchmark/package reports retain their original hashes and screenshots.
 No new performance ranking or distribution readiness is claimed.
+
+## Windows HUD follow-up
+
+Rebuilt the corrected Fyrox adapter after the original Windows timing pilot. New binary SHA-256 `e0143624378d61c956f525bef37051815281812ca9e87c6d41b2561c50ae5a48`. Native scripted replay exited 0 in 13.344s, thirteen states and six PNGs. Inspected 800x600 tick600: score and complete control line remain readable without clipping, court and paddles remain visible. This lower-resolution check does not substitute for arbitrary-DPI acceptance. Original timing results retain the old binary hash; no new performance claim.
