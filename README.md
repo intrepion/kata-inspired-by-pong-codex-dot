@@ -4,12 +4,12 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 08:39 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 08:42 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | ggez three valid timing repeats, 2 adapter tests and 12.5s replay/capture passed; processes exited. Eight Windows timing adapters recorded. | [ggez Windows evidence](docs/benchmarks/GGEZ-WINDOWS-PILOT.md). Next: SDL3 build/pilot. OS-input/installation qualification remains separate. |
-| Mac | Bracket-lib eleventh adapter: release build, 8 Rust + 16 Node tests, three valid timings and 12.279-second replay/six frames complete. Processes exited. | [Bracket-lib Mac evidence](docs/benchmarks/BRACKET-LIB-MAC-PILOT.md), including low-contrast divider note. Next shared adapter when ready; Yew focus inconclusive, packaging partial. |
+| Mac | Bevy twelfth adapter offline release build running; eleven Mac timing pilots remain recorded. | Next: tests, main-world callback timing and replay. This metric is not render/presentation timing. Yew focus inconclusive; packaging partial. |
 | Omarchy ARM64 | Twelfth timing adapter Bevy: 2 Rust + 17 Node tests, release/Clippy, three valid main-world callback repeats and replay/six PNGs passed; processes exited. | [Bevy evidence](docs/benchmarks/BEVY-ADAPTER.md). Main-world timing is not rendered-frame timing. Tick600 inspected; real-input/focus and packaging gaps separate. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
