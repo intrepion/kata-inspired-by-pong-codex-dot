@@ -81,3 +81,16 @@ rejects changes during measurement; failed data is preserved, not averaged in.
 Verification: three sampler unit tests, nine core tests and six scenario tests
 passed; Macroquad release build and Node syntax check passed. This does not
 replace visual gameplay testing, packaging or installation tests.
+
+## Prepare a public measurement copy
+
+The runner's raw local output can contain host identity, filesystem paths, environment details and process diagnostics. Keep that original local. Use the explicit allowlist sanitizer before committing evidence:
+
+```
+node scripts/benchmarks/public-report.mjs PRIVATE_INPUT.json NEW_PUBLIC_OUTPUT.json
+node --test scripts/benchmarks/public-report.test.mjs
+```
+
+This helper retains source/binary hashes, adapter/build profile, validity/exit status and exact timing values. It omits host/environment/toolchain inventory, free-form notes, backend descriptions and process diagnostics, including unknown future fields. Document non-sensitive methodology/backend limitations separately. It does not make an unapproved publication authorized or establish comparable hardware conditions.
+
+Three tests pass for nested privacy filtering, failed-run preservation and malformed-data rejection. The actual raylib three-repeat report was converted without altering any timing sample; a second write to the same destination was rejected and left its bytes unchanged. The original raw report was untouched. No historical evidence is rewritten automatically.
