@@ -27,6 +27,12 @@ struct PongView: View {
                     touchY = y
                 }.onEnded { _ in touchY = nil })
             }.aspectRatio(1.8,contentMode:.fit)
+            .accessibilityElement(children: .ignore)
+            .accessibilityIdentifier("pong-court")
+            .accessibilityLabel("Pong court")
+#if DEBUG
+            .accessibilityValue("player=\(displayedGame.player);ballX=\(displayedGame.ball.x);state=\(String(describing: displayedGame.state))")
+#endif
             Text(displayedGame.state == .over ? (displayedGame.scores[0] == 7 ? "You win!" : "CPU wins") : displayedGame.state == .paused ? "Paused" : "First to 7 · Drag to move")
 #if DEBUG
             if scripted { Text(demo.status).accessibilityIdentifier("replay-status") }

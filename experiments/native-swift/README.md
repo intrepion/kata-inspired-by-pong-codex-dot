@@ -22,6 +22,6 @@ Locate exports with `xcrun simctl get_app_container booted com.intrepion.pong.na
 ## Tests
 
 - `swift test`: independent physics plus shared-manifest parser/replay tests.
-- `xcodebuild -project PongNativeSwift.xcodeproj -scheme PongNativeSwift -destination 'platform=iOS Simulator,name=iPhone 16 Pro' CODE_SIGNING_ALLOWED=NO test`: debug replay completion/disabled controls plus normal start/pause/resume/restart UI regression.
+- `xcodebuild -project PongNativeSwift.xcodeproj -scheme PongNativeSwift -destination 'platform=iOS Simulator,name=iPhone 16 Pro' CODE_SIGNING_ALLOWED=NO test`: debug replay completion/disabled controls plus normal start/pause/resume/restart and touch-release/background/full-match UI regressions.
 
 The Swift scenario follows the same event/input fixture, but cross-language floating-point/physics parity must not be assumed from scenario completion alone.

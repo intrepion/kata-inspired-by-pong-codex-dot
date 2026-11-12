@@ -23,4 +23,36 @@ final class PongUITests: XCTestCase {
         app.buttons["Restart"].tap()
         XCTAssertTrue(app.staticTexts["0     :     0"].exists)
     }
+
+    func testTouchReleaseBackgroundAndFullMatch() {
+        let app = XCUIApplication(); app.launch()
+        XCTAssertTrue(app.buttons["Start"].waitForExistence(timeout:15))
+        app.buttons["Start"].tap()
+        let court = app.otherElements["pong-court"]
+        XCTAssertTrue(court.waitForExistence(timeout: 10))
+        func player() -> Float {
+            let value = court.value as? String ?? ""
+            return Float(value.split(separator: ";").first?.split(separator: "=").last ?? "") ?? -999
+        }
+        let initial = player()
+        let center = court.coordinate(withNormalizedOffset: CGVector(dx: 0.3, dy: 0.5))
+        let bottom = court.coordinate(withNormalizedOffset: CGVector(dx: 0.3, dy: 0.97))
+        center.press(forDuration: 0.1, thenDragTo: bottom, withVelocity: .slow, thenHoldForDuration: 1)
+        let released = player()
+        XCTAssertGreaterThan(released, initial + 50, "Touch drag must move paddle")
+        Thread.sleep(forTimeInterval: 1)
+        XCTAssertEqual(player(), released, accuracy: 0.1, "Release must clear touch input")
+        XCUIDevice.shared.press(.home)
+        app.activate()
+        XCTAssertTrue(app.staticTexts["Paused"].waitForExistence(timeout:10))
+        XCTAssertEqual(player(), released, accuracy: 0.1, "Background must not move paddle")
+        app.buttons["Resume"].tap()
+        // Real normal gameplay, no score injection or replay. Player stays at the edge.
+        let ended = NSPredicate(format: "exists == true")
+        expectation(for: ended, evaluatedWith: app.buttons["Start"])
+        waitForExpectations(timeout: 180)
+        XCTAssertTrue(app.staticTexts["CPU wins"].exists || app.staticTexts["You win!"].exists)
+        app.buttons["Start"].tap()
+        XCTAssertTrue(app.staticTexts["0     :     0"].exists)
+    }
 }

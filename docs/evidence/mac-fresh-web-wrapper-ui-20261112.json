@@ -1,0 +1,12 @@
+{
+  "dateUTC": "2026-11-12",
+  "buildSource": "b92b7dfacdf24113f5431ad749d18cda5750069f",
+  "relevantSourceUnchangedThrough": "038f85e52cbb378fdeccb9c30a6252780a0bbdf0",
+  "platform": "macOS Apple Silicon, native Tauri WKWebView tauri://localhost",
+  "method": "Actual native UI interaction through Computer Use; screenshots visually inspected in tool outputs",
+  "yewSha256": "bd4323bdc07be4ffcda605a2e44aaf0a39ea8186906bfc3d61f82c467038eddb",
+  "leptosSha256": "3b03547d82b7986116d005ff581b40e249f4cedeb4bb61e5a424221218ac76c3",
+  "bothPassed": ["court rendering", "Enter start", "W held650ms moves paddle to top", "Space pause and resume", "S held3000ms moves paddle to bottom", "CPU score0:1", "Start/Restart resets0:0"],
+  "notTestedInThisPass": ["focus loss", "resize", "full match", "installer", "performance"],
+  "screenshotsSavedAsFiles": false
+}
