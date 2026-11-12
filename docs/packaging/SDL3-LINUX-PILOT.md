@@ -31,3 +31,13 @@ bash experiments/sdl3/packaging/linux-portable.sh RELEASE_BINARY NEW_OUTPUT_DIRE
 ```
 
 The shared gameplay core has no packaging responsibilities. This second app-local helper deliberately remains small until cross-app requirements justify a shared utility.
+
+## Packaging helper regression tests
+
+Three Linux-only Node tests now cover archive creation/checksum verification/extraction, refusal to overwrite an existing output without changing its archive or neighboring sentinel, and rejection of invalid source hashes, directory inputs and nonexecutable files before output creation. The directory-input test motivated an explicit regular-file guard. `bash -n` also passes.
+
+```
+node --test experiments/sdl3/packaging/linux-portable.test.cjs
+```
+
+These fast tests package `/bin/true` as a fixture, not Pong, and do not imply another gameplay or graphical-session pass. They use unique temporary directories and remove only their test-created fixtures. The earlier actual Pong extracted replay evidence remains separate.

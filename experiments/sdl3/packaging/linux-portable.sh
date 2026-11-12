@@ -5,7 +5,7 @@ if [[ $# != 3 ]]; then echo 'Usage: linux-portable.sh RELEASE_BINARY NEW_OUTPUT_
 binary=$(realpath "$1")
 out=$2
 revision=$3
-[[ $(uname -s) == Linux && -x "$binary" && ! -e "$out" && $revision =~ ^[0-9a-f]{40}$ ]] || { echo 'Requires Linux, executable input, new output directory and source commit' >&2; exit 2; }
+[[ $(uname -s) == Linux && -f "$binary" && -x "$binary" && ! -e "$out" && $revision =~ ^[0-9a-f]{40}$ ]] || { echo 'Requires Linux, executable regular-file input, new output directory and source commit' >&2; exit 2; }
 root=$(cd "$(dirname "$0")/../../.." && pwd)
 name="pong-sdl3-linux-$(uname -m)"
 # mkdir without -p deliberately refuses existing output rather than overwriting.
