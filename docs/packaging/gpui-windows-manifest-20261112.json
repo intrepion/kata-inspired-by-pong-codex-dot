@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "adapter": "gpui",
+  "platform": "win32",
+  "architecture": "x64",
+  "binary_sha256": "d064573eee8aedf9a861d26ad9df25dec670eeede41c92a851084180f34a579c",
+  "archive_sha256": "6e256561a5a1bed6c4c5904f0963dfd001e1fe73a643f38d77ed0035dc080616",
+  "archive_bytes": 11151011,
+  "extracted_binary_matches": true
+}

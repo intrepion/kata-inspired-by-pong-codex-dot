@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Fifteen native timing/portable pilots plus Ratatui cell and Slint snapshot pilots recorded. Notice feasibility covers all fifteen native adapter graphs. Slint real-input approval timed out; no pass inferred. | [Notice gaps](docs/packaging/WINDOWS-NOTICE-FEASIBILITY.md), [Slint limit](docs/packaging/SLINT-WINDOWS-PILOT.md). Installers, clean-machine, notices and remaining native-input gates open. |
+| Windows | GPUI fresh release and portable extracted state replay passed; eighteen local package pilots recorded. Fifteen native timing adapters remain backend-qualified as documented. | [GPUI state-only pilot](docs/packaging/GPUI-WINDOWS-PILOT.md). No approval retry; screenshots/native-input/installers/clean-machine gates remain separate. |
 | Mac | Fyrox cleanup safety tests now pass on Mac: eight focused tests, including symlink-root refusal. Fixture paths corrected for macOS temporary-directory aliases; production safety guard unchanged. Retained registry inspected read-only and preserved. | [Cleanup safety evidence](docs/packaging/FYROX-GENERATED-STATE-SAFETY.md). Corrected package replay/visual checks passed earlier; full cleanup and manual-input/release gates remain. |
 | Omarchy ARM64 | Fixed second shared GUI input defect: case-changing release no longer leaves movement stuck; case-changed repeat no longer restarts twice. Both regressions failed before correction; eight model tests and strict Clippy now pass. | [Held-binding and key-identity evidence](docs/GUI-HELD-BINDINGS-FIX.md). Model-level checks only, not new native keyboard/package passes. |
 
@@ -285,6 +285,7 @@ These are local archive extraction, relocated runtime and removal checks, **not 
 | Ratatui | Not recorded | [Local ZIP/cell replay only](docs/packaging/RATATUI-WINDOWS-PILOT.md) | [Terminal local pilot](docs/packaging/RATATUI-LINUX-PILOT.md); cells + bounded PTY, not screenshots |
 | GTK4 | Not recorded | Not recorded | [Local package pilot](docs/packaging/GTK-LINUX-PILOT.md); existing GTK4 libraries required |
 | Slint | Not recorded | [Local ZIP/own-window snapshots](docs/packaging/SLINT-WINDOWS-PILOT.md) | [Local package pilot](docs/packaging/SLINT-LINUX-PILOT.md); own-window snapshots, license text included |
+| GPUI | Not recorded | [Local ZIP/state-only replay](docs/packaging/GPUI-WINDOWS-PILOT.md) | Not recorded |
 | Other adapters | Not recorded | Not recorded | Not recorded |
 
 Evidence and limitations: [packaging index](docs/packaging/README.md), [Mac Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md), [Windows Macroquad](docs/packaging/MACROQUAD-WINDOWS-PILOT.md), [Mac SDL3](docs/packaging/SDL3-MAC-PILOT.md), [Mac raylib](docs/packaging/RAYLIB-MAC-PILOT.md), [Linux ash](docs/packaging/ASH-LINUX-PILOT.md).
