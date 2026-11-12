@@ -1,5 +1,6 @@
 // Explicit supported adapters; never guess metadata from an arbitrary binary filename.
 export const adapters = Object.freeze({
+  pixels: {presentation:'native window', renderer:'pixels CPU raster plus wgpu presentation (runtime driver unqueried)', pacing:'existing winit Poll; sampled after successful pixels.render returns'},
   raylib: {presentation:'native window', renderer:'raylib-rs GPU (driver unqueried)', pacing:'existing target120fps; sampled after EndDrawing including its pacing wait'},
   macroquad: {presentation:'native window', renderer:'Macroquad GPU', pacing:'framework next_frame boundary; requested vsync'},
   sdl3: {presentation:'native window', renderer:'SDL3 renderer (runtime driver/renderer reported by app)', pacing:'existing 8ms sleep; sampled after canvas.present returns; vsync not explicitly configured'},
@@ -14,7 +15,7 @@ export function parseArguments(args) {
     positional.splice(index, 2);
   }
   if(!Object.hasOwn(adapters, adapter)) throw Error('Unsupported benchmark adapter');
-  if(positional.length !== 4 || positional.some(x=>!x || x.startsWith('--'))) throw Error('usage: run.mjs BINARY NEW.json BACKEND NOTES [--adapter macroquad|softbuffer|sdl3|raylib]');
+  if(positional.length !== 4 || positional.some(x=>!x || x.startsWith('--'))) throw Error('usage: run.mjs BINARY NEW.json BACKEND NOTES [--adapter macroquad|softbuffer|sdl3|raylib|pixels]');
   const [binary, output, backend, notes] = positional;
   return {binary, output, backend, notes, adapter, ...adapters[adapter]};
 }

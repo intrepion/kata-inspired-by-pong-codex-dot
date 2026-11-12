@@ -8,3 +8,4 @@ pixels = "=0.17.2"
 winit = "=0.30.13"
 pong-core = { path = "../../crates/pong-core" }
 pong-scenario = { path = "../../crates/pong-scenario" }
+pong-benchmark = { path = "../../crates/pong-benchmark" }

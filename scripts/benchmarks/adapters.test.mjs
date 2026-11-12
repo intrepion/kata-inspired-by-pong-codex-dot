@@ -30,3 +30,9 @@ test('raylib metadata retains target pacing without claiming a GPU driver', () =
   assert.match(config.pacing, /EndDrawing/);
   assert.match(config.renderer, /unqueried/);
 });
+
+test('pixels metadata separates CPU raster from GPU presentation', () => {
+  const config = parseArguments(['binary', 'out.json', 'unqueried', 'pilot', '--adapter', 'pixels']);
+  assert.match(config.renderer, /CPU raster plus wgpu/);
+  assert.match(config.pacing, /successful pixels.render/);
+});

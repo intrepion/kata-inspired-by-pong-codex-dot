@@ -4,13 +4,13 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 07:42 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 07:47 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Network restored; fresh TS15, core9, sampler3, replay5 and fixed cross-platform runner5 tests passed. Three Macroquad release benchmark repeats completed; Windows portable ZIP creation/extraction + extracted scripted replay passed (07:32 UTC); processes exited. | Portable snapshot repaired as a strict semantic comparison; Windows max numeric delta 0.00002 within explicit 0.001 bound, all discrete fields exact. [Contract and regression tests](docs/PORTABLE-SNAPSHOT-COMPARISON.md). Linux/Mac reruns also passed (zero baseline delta). [Checks](docs/WINDOWS-CONTINUATION-20261112.md); [benchmark pilot](docs/benchmarks/WINDOWS-MACROQUAD-PILOT.md). |
 | Mac | Raylib release build,3 adapter tests,6 runner tests and three valid callback repeats completed; benchmark processes exited. Four Mac adapters now have timing pilots. | [Raylib Mac timing](docs/benchmarks/RAYLIB-MAC-PILOT.md). Callback intervals only, no displayed-FPS/engine ranking claim; packaging remains partial. |
-| Omarchy ARM64 | Fourth shared benchmark adapter, raylib-rs: release build, 3 Rust + 6 Node tests, strict Clippy and 3 valid timed runs completed; replay regression passed. | [raylib pilot](docs/benchmarks/RAYLIB-ADAPTER.md): retained120fps pacing; callback timing only, no engine ranking. All processes exited. |
+| Omarchy ARM64 | Fifth shared benchmark adapter, pixels/winit: release, 3 Rust + 10 Node tests, Clippy, 3 valid timed repeats and replay regression passed. | [pixels pilot](docs/benchmarks/PIXELS-ADAPTER.md): CPU raster plus GPU presentation; callback timing only. Package safety tests passed separately; no manual-input claim. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -233,3 +233,5 @@ Third shared benchmark adapter: [SDL3 pilot](docs/benchmarks/SDL3-ADAPTER.md), t
 These are differently configured machines and callback boundaries, not a controlled ranking. No public installer release is implied.
 
 Fourth shared benchmark adapter: [raylib-rs](docs/benchmarks/RAYLIB-ADAPTER.md), three valid Linux ARM64 runs using shared scenario/sampler and unchanged120fps pacing; no new manual gameplay or package claim.
+
+Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md), three valid Linux ARM64 callbacks pilots with fixed CPU source-buffer size and recorded output dimensions.

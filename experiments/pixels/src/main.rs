@@ -13,6 +13,9 @@ struct App {
     pixels: Option<Pixels<'static>>,
     game: Game,
     demo: Option<pong_scenario::Demo>,
+    benchmarking: bool,
+    benchmark: Option<pong_benchmark::Frames>,
+    scenario: pong_scenario::Scenario,
     up: bool,
     down: bool,
     last: Instant,
@@ -40,13 +43,16 @@ impl ApplicationHandler for App {
             )
             .unwrap(),
         );
+        if self.benchmarking {
+            self.benchmark = Some(pong_benchmark::Frames::new(s.width, s.height));
+        }
         self.window = Some(w);
         self.last = Instant::now();
     }
     fn window_event(&mut self, e: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
         match event {
             WindowEvent::CloseRequested => e.exit(),
-            WindowEvent::Focused(false) if self.demo.is_none() => {
+            WindowEvent::Focused(false) if self.demo.is_none() && !self.benchmarking => {
                 self.up = false;
                 self.down = false;
                 self.game.pause();
@@ -62,7 +68,9 @@ impl ApplicationHandler for App {
                     }
                 }
             }
-            WindowEvent::KeyboardInput { event, .. } if self.demo.is_none() => {
+            WindowEvent::KeyboardInput { event, .. }
+                if self.demo.is_none() && !self.benchmarking =>
+            {
                 let pressed = event.state == ElementState::Pressed;
                 if let PhysicalKey::Code(k) = event.physical_key {
                     match k {
@@ -92,8 +100,16 @@ impl ApplicationHandler for App {
                 }
                 self.last = now;
                 while self.acc >= 1.0 / 120.0 {
-                    self.game
-                        .step(1.0 / 120.0, self.down as u8 as f32 - self.up as u8 as f32);
+                    if self.benchmarking {
+                        if self.scenario.finished() {
+                            self.scenario = pong_scenario::Scenario::default();
+                            self.game = Game::new(pong_scenario::SEED);
+                        }
+                        self.scenario.advance(&mut self.game);
+                    } else {
+                        self.game
+                            .step(1.0 / 120.0, self.down as u8 as f32 - self.up as u8 as f32);
+                    }
                     self.acc -= 1.0 / 120.0;
                 }
                 if let Some(p) = self.pixels.as_mut() {
@@ -114,6 +130,15 @@ impl ApplicationHandler for App {
                     if let Err(err) = p.render() {
                         eprintln!("Render: {err}");
                         e.exit();
+                        return;
+                    }
+                }
+                if let (Some(frames), Some(w)) = (&mut self.benchmark, &self.window) {
+                    let size = w.inner_size();
+                    if frames.frame(size.width, size.height) {
+                        println!("PONG_BENCHMARK {}", frames.report());
+                        e.exit();
+                        return;
                     }
                 }
                 if self.demo.as_ref().is_some_and(|d| d.finished()) {
@@ -155,13 +180,26 @@ fn draw(frame: &mut [u8], g: &Game) {
         });
     }
 }
+fn benchmark_args(args: &[String]) -> bool {
+    let enabled = args.iter().any(|a| a == "--benchmark");
+    assert!(
+        !enabled || !args.iter().any(|a| a.starts_with("--scripted")),
+        "benchmark and replay/capture modes are distinct"
+    );
+    enabled
+}
+
 fn main() {
+    let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     let e = EventLoop::new().unwrap();
     e.set_control_flow(ControlFlow::Poll);
     let mut a = App {
         window: None,
         pixels: None,
-        game: Game::new(42),
+        game: Game::new(pong_scenario::SEED),
+        benchmarking,
+        benchmark: None,
+        scenario: pong_scenario::Scenario::default(),
         demo: pong_scenario::Demo::from_args(),
         up: false,
         down: false,
@@ -174,6 +212,16 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn benchmark_is_opt_in() {
+        assert!(!benchmark_args(&[]));
+        assert!(benchmark_args(&["--benchmark".into()]));
+    }
+    #[test]
+    #[should_panic(expected = "benchmark and replay/capture modes are distinct")]
+    fn rejects_capture_mixing() {
+        benchmark_args(&["--benchmark".into(), "--scripted-test".into()]);
+    }
     #[test]
     fn framebuffer_has_opaque_background_paddles_and_ball() {
         let mut frame = vec![0; W as usize * H as usize * 4];
