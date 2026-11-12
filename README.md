@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | GPUI aspect-fit correction passes one geometry test, eight shared model tests, strict Clippy and fresh native thirteen-state replay. Original TS pointer fix also passes seventeen tests. | [GPUI Windows evidence](docs/GPUI-COURT-ASPECT-FIX.md). Visual inspection approval timed out once; no retry, owned process closed. Native resize/input remain open. |
+| Windows | GPUI aspect-fit correction passes one geometry test, eight shared model tests, strict Clippy and fresh native thirteen-state replay. Original TS passes 17 tests and localhost Chrome start/pause smoke checks. | [GPUI Windows evidence](docs/GPUI-COURT-ASPECT-FIX.md); [original pointer follow-up](docs/ORIGINAL-TS-POINTER-BUTTONS-FIX.md). GPUI visual approval timed out; native resize/input and browser multi-touch remain open. |
 | Mac | ggez existing package passed native movement, pause/resume, full match to 0–7 Over, Enter restart to 0–0 Paused, and menu Quit with confirmed process exit. Actual window inspected. | [ggez native gameplay](docs/GGEZ-MAC-NATIVE-GAMEPLAY.md). Focus/resize/physical key overlap remain separate. No rebuild or active process; GPUI corrected renderer qualification still pending. |
 | Omarchy ARM64 | Original TypeScript pointer buttons now retain each finger independently: opposite directions cancel and releasing one finger preserves other held controls. Strict build and all seventeen tests pass. | [Original pointer-button regression](docs/ORIGINAL-TS-POINTER-BUTTONS-FIX.md). Browser/device multi-touch qualification remains pending; generated JavaScript updated from TypeScript. |
 
