@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | bracket-lib three valid timing repeats, 8 adapter tests and 12.4s replay/capture passed; processes exited. Eleven Windows timing adapters recorded. | [bracket-lib Windows evidence](docs/benchmarks/BRACKET-LIB-WINDOWS-PILOT.md). Next: ash build/pilot; divider contrast caveat retained. |
+| Windows | ash three valid timing repeats, 4 release tests and 13.0s replay/capture passed; processes exited. Twelve Windows timing adapters recorded. | [ash Windows evidence](docs/benchmarks/ASH-WINDOWS-PILOT.md). Next: Blue Engine build/pilot. OS-input and packaging gates remain separate. |
 | Mac | Fourteen native timing pilots complete; raylib local package archive/extraction, relocated replay and six PNGs passed. Nine packaging guards and 22 benchmark-runner tests pass; processes exited. | [raylib Mac packaging evidence](docs/packaging/RAYLIB-MAC-PILOT.md). Ash loader, remaining input/visual and distribution gates remain separate. |
 | Omarchy ARM64 | Four more portable lifecycle pilots passed: Miniquad, pixels, raw wgpu and raylib. Hashes, relocated 13-state replay/six captures, exact-file uninstall and sentinel preservation verified; 24 Node tests pass. | [Four-adapter Linux package batch](docs/packaging/LINUX-PORTABLE-BATCH.md). Fifteen native timing adapters recorded. No public installer, clean-machine or full notice qualification. |
 
@@ -256,7 +256,7 @@ Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md
 | Bevy (main-world callback) | [3/3](docs/benchmarks/BEVY-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/BEVY-ADAPTER.md) |
 | Blue Engine (native callback) | [3/3](docs/benchmarks/BLUE-ENGINE-MAC-PILOT.md) | Not recorded | [3/3; initial failure retained](docs/benchmarks/BLUE-ENGINE-ADAPTER.md) |
 | Fyrox (pre-render callback) | [3/3](docs/benchmarks/FYROX-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/FYROX-ADAPTER.md) |
-| ash / Vulkan | Not recorded; Vulkan loader previously blocked | Not recorded | [3/3](docs/benchmarks/ASH-ADAPTER.md) |
+| ash / Vulkan | Not recorded; Vulkan loader previously blocked | [3/3](docs/benchmarks/ASH-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/ASH-ADAPTER.md) |
 
 Other implementations have not yet been qualified through this shared timing protocol. Package lifecycle status is a separate dimension: Mac [Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md) and [SDL3](docs/packaging/SDL3-MAC-PILOT.md) have local extracted-app gameplay/removal evidence, not signed or clean-machine release qualification.
 
