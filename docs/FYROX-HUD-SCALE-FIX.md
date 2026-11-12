@@ -21,3 +21,9 @@ No new performance ranking or distribution readiness is claimed.
 ## Windows HUD follow-up
 
 Rebuilt the corrected Fyrox adapter after the original Windows timing pilot. New binary SHA-256 `e0143624378d61c956f525bef37051815281812ca9e87c6d41b2561c50ae5a48`. Native scripted replay exited 0 in 13.344s, thirteen states and six PNGs. Inspected 800x600 tick600: score and complete control line remain readable without clipping, court and paddles remain visible. This lower-resolution check does not substitute for arbitrary-DPI acceptance. Original timing results retain the old binary hash; no new performance claim.
+
+## Omarchy ARM64 local package follow-up
+
+Fresh optimized build with this HUD correction and two adapter tests pass. A new portable archive was extracted separately and all four manifest checksums verified. The extracted native process exits 0 after 13 replay states through tick 1440 and six application-owned PNG captures. Tick 600 inspection confirms readable score, state and control text; aspect-ratio letterboxing remains. Removing the five package-manifest files preserves an adjacent sentinel, but **clean uninstall is incomplete**: the engine generated `data/resources.registry` (2 bytes) inside the extracted folder. Empty-directory removal correctly refuses to delete it. This generated state is retained rather than recursively removed; package lifecycle documentation needs to account for it.
+
+[Redacted package evidence](packaging/linux-fyrox-hud-package-20261112.json). Previous benchmark/package hashes remain historical. No new timing, real-keyboard, compositor, cross-distro or redistribution clearance is implied. Archive/captures remain local.
