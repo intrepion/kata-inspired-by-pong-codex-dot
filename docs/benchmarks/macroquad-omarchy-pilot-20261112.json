@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "started_utc": "2026-11-12T05:48:25.713Z",
+  "protocol": "pong-frame-callback-v1",
+  "adapter": "macroquad",
+  "presentation": "native window",
+  "backend": "OpenGL via miniquad default Linux backend; driver not queried",
+  "notes": "Apple MacBook Pro 14-inch M1 Pro 2021. Release pilot; no screenshot export. Background activity not fully observable; results are provisional, not ranking. Window manager and vsync defaults retained.",
+  "git_revision": "9b66c4b2bb066d1d7b7df8574998f9b42c2a4d73",
+  "working_tree": "",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: aarch64-unknown-linux-gnu\nrelease: 1.99.1\nLLVM version: 23.1.1",
+  "profile": "release",
+  "binary_sha256": "9e9b7303441347d127ce95c8aaa6b8a9d58aee576b304790c7d10f4531d5dd92",
+  "host": {
+    "hostname": "alarm",
+    "os": "Linux",
+    "release": "7.2.12-3-1-ARCH",
+    "architecture": "arm64",
+    "cpu": "unknown",
+    "cpu_count": 10,
+    "memory_bytes": 33439514624
+  },
+  "environment": {
+    "DISPLAY": ":0",
+    "WAYLAND_DISPLAY": "wayland-1"
+  },
+  "unmeasured": [
+    "GPU time",
+    "displayed FPS",
+    "CPU utilization",
+    "peak memory",
+    "startup latency",
+    "power",
+    "thermal state"
+  ],
+  "runs": [
+    {
+      "iteration": 1,
+      "exit": 101,
+      "error": null,
+      "load_before": [
+        2.63,
+        3.06,
+        2.98
+      ],
+      "load_after": [
+        2.63,
+        3.06,
+        2.98
+      ],
+      "stderr": "\nthread 'main' (44) panicked at /home/intrepion/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/miniquad-0.4.11/src/native/linux_x11.rs:659:13:\nXOpenDisplay() failed!\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n",
+      "sample": null,
+      "valid": false
+    }
+  ]
+}

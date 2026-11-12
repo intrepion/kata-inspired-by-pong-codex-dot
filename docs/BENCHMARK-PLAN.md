@@ -1,6 +1,6 @@
 # Benchmark and packaging architecture plan
 
-Status: **approved direction; not implemented or benchmarked**.
+Status: **shared wall-clock sampler and first Macroquad pilot implemented; broad comparisons and packaging remain pending**. See [protocol and pilot evidence](benchmarks/README.md).
 
 ## Shared benchmark harness
 
@@ -20,4 +20,4 @@ A successful build is not a tested installer. Distribution readiness needs separ
 
 ## Evidence boundary
 
-This document records the user's chosen architecture. It adds no performance measurements, package results or new platform passes. See the root README testing dashboard and linked evidence for actual verification.
+This document records the user's chosen architecture. Benchmark pilot evidence is recorded separately; it adds no package results or new functional platform passes. See the root README testing dashboard and linked evidence for actual verification.

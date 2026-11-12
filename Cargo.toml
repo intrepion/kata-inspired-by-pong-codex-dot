@@ -1,4 +1,4 @@
 [workspace]
 resolver = "2"
-members = ["crates/pong-scenario", "crates/pong-core", "crates/pong-wasm", "clients/macroquad", "clients/bevy", "clients/tauri"]
+members = ["crates/pong-benchmark", "crates/pong-scenario", "crates/pong-core", "crates/pong-wasm", "clients/macroquad", "clients/bevy", "clients/tauri"]
 default-members = ["crates/pong-core", "crates/pong-wasm", "clients/macroquad"]
