@@ -4,13 +4,13 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 09:14 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 09:21 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | ash three valid timing repeats, 4 release tests and 13.0s replay/capture passed; processes exited. Twelve Windows timing adapters recorded. | [ash Windows evidence](docs/benchmarks/ASH-WINDOWS-PILOT.md). Next: Blue Engine build/pilot. OS-input and packaging gates remain separate. |
 | Mac | Fourteen native timing pilots complete; raylib local package archive/extraction, relocated replay and six PNGs passed. Nine packaging guards and 22 benchmark-runner tests pass; processes exited. | [raylib Mac packaging evidence](docs/packaging/RAYLIB-MAC-PILOT.md). Ash loader, remaining input/visual and distribution gates remain separate. |
-| Omarchy ARM64 | Four more portable lifecycle pilots passed: Miniquad, pixels, raw wgpu and raylib. Hashes, relocated 13-state replay/six captures, exact-file uninstall and sentinel preservation verified; 24 Node tests pass. | [Four-adapter Linux package batch](docs/packaging/LINUX-PORTABLE-BATCH.md). Fifteen native timing adapters recorded. No public installer, clean-machine or full notice qualification. |
+| Omarchy ARM64 | Six additional portable lifecycle pilots passed: Piston, ggez, Nannou, bracket-lib, Fyrox and Bevy. Exact timed binaries, relocated replay/six captures and exact uninstall verified; 24 Node tests pass. | [Six-adapter Linux batch](docs/packaging/LINUX-PORTABLE-BATCH2.md). Thirteen native local package pilots now recorded; remaining package adapters next. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
@@ -265,3 +265,19 @@ Additional local package lifecycle: [ash/Vulkan Linux ARM64](docs/packaging/ASH-
 Mac [raylib-rs local package pilot](docs/packaging/RAYLIB-MAC-PILOT.md) also passed extracted native scripted replay/captures and scoped removal; no signed distribution or manual-input package pass inferred.
 
 Linux portable lifecycle expansion: [Miniquad, pixels, raw wgpu and raylib-rs](docs/packaging/LINUX-PORTABLE-BATCH.md) have verified local extraction/replay/capture/removal evidence.
+
+### Local portable-package lifecycle coverage
+
+These are local archive extraction, relocated runtime and removal checks, **not public installer or clean-machine release qualification**. “Not recorded” is not a failure. Native input remains a separate gate.
+
+| Adapter | Mac | Windows | Omarchy ARM64 |
+| --- | --- | --- | --- |
+| Macroquad | Local pilot | Local pilot | Local pilot |
+| SDL3 | Local pilot | Not recorded | Local pilot |
+| raylib | Local replay pilot; native interaction follow-up pending publication | Not recorded | Local pilot |
+| ash | Loader blocked | Not recorded | Local pilot |
+| Miniquad, pixels, raw wgpu | Not recorded | Not recorded | [Four-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH.md) |
+| Piston, ggez, Nannou, bracket-lib, Fyrox, Bevy | Not recorded | Not recorded | [Six-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH2.md) |
+| Other adapters | Not recorded | Not recorded | Not recorded |
+
+Evidence and limitations: [packaging index](docs/packaging/README.md), [Mac Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md), [Windows Macroquad](docs/packaging/MACROQUAD-WINDOWS-PILOT.md), [Mac SDL3](docs/packaging/SDL3-MAC-PILOT.md), [Mac raylib](docs/packaging/RAYLIB-MAC-PILOT.md), [Linux ash](docs/packaging/ASH-LINUX-PILOT.md).
