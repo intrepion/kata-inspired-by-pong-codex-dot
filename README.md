@@ -8,7 +8,7 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
-| Windows | Lightweight package-safety coverage continued during WSL work: Windows junction/hard-link/oversized-state refusal verified. Combined Node suite32pass/8platform skips. | [State-safety follow-up](docs/packaging/FYROX-GENERATED-STATE-SAFETY.md). No competing builds/timing runs or desktop approval retries; existing package/input limitations remain. |
+| Windows | Ratatui input fix requalified: seven release tests, strict Clippy and rebuilt cell replay passed. Offline single-job cached builds; no timing competition with WSL work. | [Windows Ratatui follow-up](docs/RATATUI-HELD-BINDINGS-FIX.md). Old package hashes preserved; real enhanced-terminal/OS input and release gates remain open. |
 | Mac | Rebuilt Slint against both shared input fixes; eight model tests and native scripted replay pass (13 states, six captures). Score, controls, court and AboutSlint inspected. Debug build only; process exited. | [Slint follow-up](docs/GUI-HELD-BINDINGS-FIX.md). Real OS-input/focus and release packaging remain separate; Fyrox state preserved pending cleanup policy. |
 | Omarchy ARM64 | Fixed Ratatui enhanced-input overlapping bindings and case-changing release: two regressions reproduced, seven tests and strict Clippy now pass. Fresh optimized cell replay exits 0 with 13 states and six checkpoints. | [Ratatui input correction](docs/RATATUI-HELD-BINDINGS-FIX.md). Key-event/cell-buffer tests only; real enhanced-terminal interaction and new package qualification remain separate. |
 
