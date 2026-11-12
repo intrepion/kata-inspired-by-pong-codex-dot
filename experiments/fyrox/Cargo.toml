@@ -7,3 +7,4 @@ edition = "2021"
 pong-core = { path = "../../crates/pong-core" }
 fyrox = "=1.0.1"
 pong-scenario = { path = "../../crates/pong-scenario" }
+pong-benchmark = { path = "../../crates/pong-benchmark" }

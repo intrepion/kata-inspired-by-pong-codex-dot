@@ -24,6 +24,18 @@ struct App {
     game: Game,
     #[visit(skip)]
     #[reflect(hidden)]
+    benchmarking: bool,
+    #[visit(skip)]
+    #[reflect(hidden)]
+    benchmark: Option<pong_benchmark::Frames>,
+    #[visit(skip)]
+    #[reflect(hidden)]
+    benchmark_done: bool,
+    #[visit(skip)]
+    #[reflect(hidden)]
+    scenario: pong_scenario::Scenario,
+    #[visit(skip)]
+    #[reflect(hidden)]
     demo: Option<pong_scenario::Demo>,
     #[visit(skip)]
     #[reflect(hidden)]
@@ -43,6 +55,10 @@ impl Default for App {
     fn default() -> Self {
         Self {
             game: Game::new(42),
+            benchmarking: benchmark_args(&std::env::args().collect::<Vec<_>>()),
+            benchmark: None,
+            benchmark_done: false,
+            scenario: pong_scenario::Scenario::default(),
             demo: pong_scenario::Demo::from_args(),
             held: [false; 4],
             acc: 0.,
@@ -88,6 +104,16 @@ impl Plugin for App {
     fn update(&mut self, context: &mut PluginContext) -> GameResult {
         if let Some(demo) = &mut self.demo {
             demo.advance(&mut self.game, context.dt);
+        } else if self.benchmarking {
+            self.acc += context.dt.min(0.1);
+            while self.acc >= pong_scenario::STEP {
+                if self.scenario.finished() {
+                    self.scenario = pong_scenario::Scenario::default();
+                    self.game = Game::new(pong_scenario::SEED);
+                }
+                self.scenario.advance(&mut self.game);
+                self.acc -= pong_scenario::STEP;
+            }
         } else {
             self.acc += context.dt.min(0.1);
             while self.acc >= 1. / 120. {
@@ -133,6 +159,21 @@ impl Plugin for App {
         Ok(())
     }
     fn before_rendering(&mut self, context: PluginContext) -> GameResult {
+        if self.benchmarking && !self.benchmark_done {
+            let size = context
+                .graphics_context
+                .as_initialized_ref()
+                .window
+                .inner_size();
+            let frames = self
+                .benchmark
+                .get_or_insert_with(|| pong_benchmark::Frames::new(size.width, size.height));
+            if frames.frame(size.width, size.height) {
+                self.benchmark_done = true;
+                println!("PONG_BENCHMARK {}", frames.report());
+                context.loop_controller.exit();
+            }
+        }
         if let Some(path) = self.demo.as_mut().and_then(|d| d.capture_path()) {
             use fyrox::graphics::framebuffer::ReadTarget;
             use fyrox::renderer::ui_renderer::UiRenderInfo;
@@ -158,7 +199,9 @@ impl Plugin for App {
                 .chunks_exact(width as usize * 4)
                 .rev()
                 .flat_map(|row| {
-                    row.as_chunks::<4>().0.iter()
+                    row.as_chunks::<4>()
+                        .0
+                        .iter()
                         .map(|p| (u32::from(p[0]) << 16) | (u32::from(p[1]) << 8) | u32::from(p[2]))
                 })
                 .collect();
@@ -170,7 +213,7 @@ impl Plugin for App {
         Ok(())
     }
     fn on_os_event(&mut self, event: &Event<()>, _: PluginContext) -> GameResult {
-        if self.demo.is_some() {
+        if self.demo.is_some() || self.benchmarking {
             return Ok(());
         }
         if let Event::WindowEvent { event, .. } = event {
@@ -223,4 +266,27 @@ fn main() {
     executor.set_desired_update_rate(120.);
     executor.add_plugin(App::default());
     executor.run();
+}
+
+fn benchmark_args(args: &[String]) -> bool {
+    let enabled = args.iter().any(|a| a == "--benchmark");
+    assert!(
+        !enabled || !args.iter().any(|a| a.starts_with("--scripted")),
+        "benchmark and replay/capture modes are exclusive"
+    );
+    enabled
+}
+#[cfg(test)]
+mod benchmark_tests {
+    use super::*;
+    #[test]
+    fn opt_in_only() {
+        assert!(!benchmark_args(&[]));
+        assert!(benchmark_args(&["--benchmark".into()]));
+    }
+    #[test]
+    #[should_panic]
+    fn reject_combined_modes() {
+        benchmark_args(&["--benchmark".into(), "--scripted-test".into()]);
+    }
 }
