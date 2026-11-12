@@ -4,12 +4,12 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 08:56 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 08:57 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Nannou release build actively compiling Bevy/wgpu dependencies (08:55 UTC), two jobs; no approval blocker. Nine completed timing adapters remain published. | [Latest completed SDL3 pilot](docs/benchmarks/SDL3-WINDOWS-PILOT.md). Timing will start after compilation; no Nannou result claimed yet. |
-| Mac | Blue Engine thirteenth adapter: native release build, 2 Rust + 18 Node tests, three valid native timings and 12.173-second replay complete. Processes exited. | [Blue Engine Mac evidence](docs/benchmarks/BLUE-ENGINE-MAC-PILOT.md). No new native screenshot claim; next Fyrox. Yew focus inconclusive; packaging partial. |
+| Mac | Fyrox fourteenth adapter offline release build running; thirteen completed Mac timing pilots remain recorded. | Next: tests, native before-rendering callback timings and replay. Yew focus inconclusive; packaging partial. |
 | Omarchy ARM64 | Fourteenth timing adapter Fyrox: 2 Rust + 19 Node tests, release/Clippy, three valid native pre-render repeats and replay/six UI PNGs passed; processes exited. | [Fyrox evidence](docs/benchmarks/FYROX-ADAPTER.md). Tick600 inspected; real-input/focus and installation gates remain separate. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
