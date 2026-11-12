@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "adapter": "nannou",
+  "platform": "win32",
+  "architecture": "x64",
+  "binary_sha256": "e6ea9852e2321bbe9efbc898a4f695051bc8217f88c33c39fbeb56bdac0e7b2c",
+  "archive_sha256": "2221b6e2f663561028ec69361e2238c2809d0571b6a5faaa0a87a00e0a2fb8ee",
+  "archive_bytes": 38643305,
+  "extracted_binary_matches": true
+}

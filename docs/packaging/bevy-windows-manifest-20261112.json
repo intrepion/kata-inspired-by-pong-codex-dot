@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "adapter": "bevy",
+  "platform": "win32",
+  "architecture": "x64",
+  "binary_sha256": "326bb0663f51f6fbe8eac6a20682e04e4f83f517a8c0960951327695f1fbf333",
+  "archive_sha256": "f6f818cde120ce02667fab0ad8798e7da2766812deebd20338ea022fa2ef2392",
+  "archive_bytes": 34299689,
+  "extracted_binary_matches": true
+}

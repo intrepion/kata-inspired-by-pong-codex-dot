@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "adapter": "bracket-lib",
+  "platform": "win32",
+  "architecture": "x64",
+  "binary_sha256": "267b0d6ace1def78cf5bb5061305d48ff72a7138f544b608b3af90941e0ea40a",
+  "archive_sha256": "d22c467fe99a823dc42ae2d7ed40f5235c85c94aae7374b824ba2aff33c5acd3",
+  "archive_bytes": 1589679,
+  "extracted_binary_matches": true
+}

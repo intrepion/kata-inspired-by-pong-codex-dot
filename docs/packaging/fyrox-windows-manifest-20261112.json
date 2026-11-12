@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "adapter": "fyrox",
+  "platform": "win32",
+  "architecture": "x64",
+  "binary_sha256": "e0143624378d61c956f525bef37051815281812ca9e87c6d41b2561c50ae5a48",
+  "archive_sha256": "19b0e99c79a1991d639a70141ee1f0bdc6c4c6230c8642010b6edc718a5f54f5",
+  "archive_bytes": 21775116,
+  "extracted_binary_matches": true
+}
