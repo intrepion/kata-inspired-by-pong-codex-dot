@@ -4,12 +4,12 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 ## Current activity (last reported)
 
-**Snapshot updated: 2026-11-12 08:08 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
+**Snapshot updated: 2026-11-12 08:10 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
 
 | Computer | Last reported activity | Phase / next step |
 | --- | --- | --- |
 | Windows | Piston fresh release build running (08:07 UTC), shared dependencies compiling. Miniquad three-repeat pilot/replay complete and published. | Next: Piston tests and bounded timing after compilation. [Latest completed Windows pilot](docs/benchmarks/MINIQUAD-WINDOWS-PILOT.md). No Piston timing pass yet. |
-| Mac | Piston seventh adapter offline release build running from ebdc9da; timing has not started. Six completed timing adapters remain recorded. | Next: adapter/shared tests, then three bounded Piston repeats after build completes. Yew focus remains inconclusive; packaging partial. |
+| Mac | Piston seventh timing adapter: build, 2 Rust + 12 Node tests and 3 valid timing runs complete. Follow-up replay timed out at 30 seconds; extended diagnostic finished in 59.266 seconds. Processes exited. | [Piston evidence and slowdown](docs/benchmarks/PISTON-MAC-PILOT.md). Simulation timing needs a separately tested fix; this is not a normal-deadline replay pass. Yew focus inconclusive; packaging partial. |
 | Omarchy ARM64 | Eighth shared timing adapter ggez: three valid release callback repeats, replay and six app-owned screenshots passed; processes exited. | [ggez evidence](docs/benchmarks/GGEZ-ADAPTER.md). 2 Rust + 13 Node tests/Clippy pass; tick 600 inspected. Not a real-input or full visual acceptance claim. |
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
@@ -249,6 +249,6 @@ Fifth shared benchmark adapter: [pixels/winit](docs/benchmarks/PIXELS-ADAPTER.md
 | raylib-rs | [3/3](docs/benchmarks/RAYLIB-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/RAYLIB-ADAPTER.md) |
 | pixels/winit | [3/3](docs/benchmarks/PIXELS-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/PIXELS-ADAPTER.md) |
 | Miniquad | [3/3](docs/benchmarks/MINIQUAD-MAC-PILOT.md) | [3/3](docs/benchmarks/MINIQUAD-WINDOWS-PILOT.md) | [3/3](docs/benchmarks/MINIQUAD-ADAPTER.md) |
-| Piston | Not recorded | Not recorded | [3/3](docs/benchmarks/PISTON-ADAPTER.md) |
+| Piston | [3/3](docs/benchmarks/PISTON-MAC-PILOT.md) | Not recorded | [3/3](docs/benchmarks/PISTON-ADAPTER.md) |
 
 Other implementations have not yet been qualified through this shared timing protocol. Package lifecycle status is a separate dimension: Mac [Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md) and [SDL3](docs/packaging/SDL3-MAC-PILOT.md) have local extracted-app gameplay/removal evidence, not signed or clean-machine release qualification.
