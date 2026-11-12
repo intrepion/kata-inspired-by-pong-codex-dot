@@ -30,3 +30,9 @@ zero in 13.191 seconds with thirteen states and six PNGs. Tick 600 confirms the
 corrected divider survived packaging. Exact extracted app removal preserved an
 adjacent sentinel. [New package manifest/result](packaging/mac-bracket-contrast-package-20261112.json)
 records the new hashes. No new timing pilot or manual package input pass inferred.
+
+## Omarchy ARM64 package requalification
+
+Fresh optimized build incorporating this correction, nine adapter tests and three Linux package-guard tests pass. A newly archived binary was extracted to a separate directory and all checksum entries verified. Native scripted execution exits 0 with 13 states through tick 1440 and six app-owned PNGs. Tick 600 inspection confirms readable header/divider and no black divider-cell backgrounds. Exact five-file uninstall preserves an adjacent sentinel.
+
+[Redacted package evidence](packaging/linux-bracket-contrast-package-20261112.json). Existing benchmark and old package hashes remain historical; this is not a new timing, compositor/keyboard, clean-distro or redistribution clearance. Existing vendored freetype warnings remain visible. Archives and full captures are retained locally.
