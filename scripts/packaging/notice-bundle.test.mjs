@@ -41,7 +41,7 @@ test('audited upstream notices enforce revision, source and notice hashes and co
 
 test('upstream rules require exact registry package and version',t=>{
  const{root,pkg}=fixture(t),registry='registry+https://github.com/rust-lang/crates.io-index';
- for(const[name,version]of [['spirv','0.4.0+sdk-1.4.341.0'],['profiling','1.0.18'],['profiling-procmacros','1.0.18'],['zune-inflate','0.2.54'],['gpu-descriptor','0.3.2'],['gpu-descriptor-types','0.2.0'],['gl_generator','0.14.0'],['khronos_api','3.1.0'],['blue_engine_core','0.10.0'],['blue_engine_dynamic','0.10.0'],['alloc-stdlib','0.3.0'],['dlopen2','0.8.2'],['dlopen2_derive','0.4.3'],['libappindicator-sys','0.9.0'],['selectors','0.38.0']]){
+ for(const[name,version]of [['accesskit','0.24.1'],['accesskit_consumer','0.35.0'],['accesskit_windows','0.32.1'],['accesskit_winit','0.32.2'],['spirv','0.4.0+sdk-1.4.341.0'],['profiling','1.0.18'],['profiling-procmacros','1.0.18'],['zune-inflate','0.2.54'],['gpu-descriptor','0.3.2'],['gpu-descriptor-types','0.2.0'],['gl_generator','0.14.0'],['khronos_api','3.1.0'],['blue_engine_core','0.10.0'],['blue_engine_dynamic','0.10.0'],['alloc-stdlib','0.3.0'],['dlopen2','0.8.2'],['dlopen2_derive','0.4.3'],['libappindicator-sys','0.9.0'],['selectors','0.38.0']]){
   assert.throws(()=>buildNoticeBundle(meta(pkg,{name,version,source:registry}),root),/ENOENT/);
   assert.deepEqual(buildNoticeBundle(meta(pkg,{name,version,source:'git+https://example.invalid/repo'}),root).index.missing_notice_files,[name+'@'+version]);
   assert.deepEqual(buildNoticeBundle(meta(pkg,{name,version:'999.0.0',source:registry}),root).index.missing_notice_files,[name+'@999.0.0']);
