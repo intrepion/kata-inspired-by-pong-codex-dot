@@ -120,6 +120,8 @@ Windows passed the shared web keyboard-hold tests and rebuilt all three web cons
 
 Windows passed the shared web restart-held regression and rebuilt its three WASM consumers; [the report](docs/packaging/WEB-RESTART-HELD-WINDOWS.md) records scope and browser limits.
 
+Windows passed four polling-adapter match-end regressions; [the report](docs/packaging/POLLING-GAMEOVER-WINDOWS.md) records the remaining native build gaps.
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
