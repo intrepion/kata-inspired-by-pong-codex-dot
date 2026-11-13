@@ -42,7 +42,7 @@ fn handle_key(
     }
     let previous = game.state;
     match key {
-        KeyCode::Enter | KeyCode::KeyR if pressed && !repeat => {
+        KeyCode::Enter | KeyCode::NumpadEnter | KeyCode::KeyR if pressed && !repeat => {
             movement.clear();
             game.start();
         }
@@ -462,8 +462,25 @@ mod movement_tests {
         assert_eq!(game.state, State::Playing);
     }
     #[test]
+    fn keypad_enter_starts_and_ignores_repeat_release_and_unfocused_input() {
+        let mut game = Game::new(42);
+        let mut movement = MovementInput::default();
+        handle_focused_key(&mut game, &mut movement, false, KeyCode::NumpadEnter, true, false);
+        assert_eq!(game.state, State::Ready);
+        handle_key(&mut game, &mut movement, KeyCode::NumpadEnter, false, false);
+        handle_key(&mut game, &mut movement, KeyCode::NumpadEnter, true, true);
+        assert_eq!(game.state, State::Ready);
+        handle_key(&mut game, &mut movement, KeyCode::NumpadEnter, true, false);
+        assert_eq!(game.state, State::Playing);
+        game.scores = [3, 2];
+        handle_key(&mut game, &mut movement, KeyCode::NumpadEnter, true, true);
+        assert_eq!(game.scores, [3, 2]);
+        handle_key(&mut game, &mut movement, KeyCode::NumpadEnter, true, false);
+        assert_eq!(game.scores, [0, 0]);
+    }
+    #[test]
     fn active_restart_clears_held_movement_until_fresh_press() {
-        for restart in [KeyCode::Enter, KeyCode::KeyR] {
+        for restart in [KeyCode::Enter, KeyCode::NumpadEnter, KeyCode::KeyR] {
             let mut game = Game::new(42);
             game.start();
             let mut movement = MovementInput::default();
@@ -486,7 +503,7 @@ mod movement_tests {
             KeyCode::KeyS,
             KeyCode::ArrowDown,
         ] {
-            for restart in [KeyCode::Enter, KeyCode::KeyR] {
+            for restart in [KeyCode::Enter, KeyCode::NumpadEnter, KeyCode::KeyR] {
                 let mut game = Game::new(42);
                 game.start();
                 let mut input = MovementInput::default();
