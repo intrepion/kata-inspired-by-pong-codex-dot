@@ -17,3 +17,15 @@ test('unverified profile is preserved and provenance limitation is explicit',()=
  const raw=fixture();raw.profile='unverified';const out=publicReport(raw);
  assert.equal(out.profile,'unverified');assert.match(out.provenance_limit,/does not prove binary source/);
 });
+
+test('run numbers must be a nonempty ordered prefix of the three-run protocol',()=>{
+ const base=fixture().runs[0];
+ for(const ids of [[],[0],[2],[1,1],[1,3],[2,1],[1,2,3,4]]) {
+  const raw=fixture();raw.runs=ids.map(iteration=>({...base,iteration}));
+  assert.throws(()=>publicReport(raw),/run sequence/i,JSON.stringify(ids));
+ }
+ for(const ids of [[1],[1,2],[1,2,3]]) {
+  const raw=fixture();raw.runs=ids.map(iteration=>({...base,iteration}));
+  assert.deepEqual(publicReport(raw).runs.map(run=>run.iteration),ids);
+ }
+});

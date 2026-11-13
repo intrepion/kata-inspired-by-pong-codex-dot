@@ -8,6 +8,7 @@ export function publicReport(raw) {
   if(!/^[a-z0-9-]+$/.test(raw.adapter)) throw Error('Invalid adapter identifier');
   if(!/^[a-f0-9]{40}$/.test(raw.git_revision) || !/^[a-f0-9]{64}$/.test(raw.binary_sha256)) throw Error('Source and binary hashes required');
   if(!['release','debug','unverified'].includes(raw.profile)) throw Error('Known build profile required');
+  if(raw.runs.length<1 || raw.runs.length>3 || raw.runs.some((run,index)=>run?.iteration!==index+1)) throw Error('Invalid benchmark run sequence');
   const result={profile:raw.profile,schema:1,protocol:'pong-frame-callback-v1',adapter:raw.adapter,git_revision:raw.git_revision,binary_sha256:raw.binary_sha256,
     provenance_limit:'Profile is caller supplied or unverified; checkout revision does not prove binary source.',
     privacy:'Publication copy: allowlisted timing/provenance fields only. Host identity, environment, toolchain, notes and process diagnostics omitted. Original retained locally.',

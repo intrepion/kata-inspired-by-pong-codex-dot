@@ -84,6 +84,8 @@ replace visual gameplay testing, packaging or installation tests.
 
 Windows Blue Engine held-input callback pilots have three valid runs each: [release](BLUE-ENGINE-WINDOWS-HELD-RELEASE-PILOT.md) and [debug](BLUE-ENGINE-WINDOWS-HELD-DEBUG-PILOT.md). They are not controlled comparisons.
 
+The public exporter also rejects empty, duplicated, out-of-order or excess run sequences while retaining valid partial prefixes. [Windows tests](PUBLIC-RUN-SEQUENCE-GUARD.md).
+
 ## Prepare a public measurement copy
 
 The runner's raw local output can contain host identity, filesystem paths, environment details and process diagnostics. Keep that original local. Use the explicit allowlist sanitizer before committing evidence:
