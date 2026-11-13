@@ -45,6 +45,8 @@ export function auditedSourceHeaders(root,entries) {
 // Exact upstream or source-referenced license texts; each rule is bound to the published crate's
 // recorded VCS revision and a source file independently matched to upstream.
 const upstreamRules=Object.freeze({
+ 'blue_engine_core@0.10.0':{rev:'3009d16d2429064d87d8cb40b9814bd595bb683f',path:'crates/blue_engine_core',sourceHash:'249d232154713cc1fc5d2e7855cc00a2e594b1cd56885a0707756020ce8cf92f',files:[['blue-engine-LICENSE.txt','62048053433f2ed52d4162d67b28d497a74b6a0c85c709569557f01cd8a02146','https://github.com/AryanpurTech/BlueEngine/blob/3009d16d2429064d87d8cb40b9814bd595bb683f/LICENSE.txt']]},
+ 'blue_engine_dynamic@0.10.0':{rev:'e3ee0f8d8f38a9ff63d09f941d2f542683078194',path:'crates/blue_engine_dynamic',sourcePath:'Cargo.toml.orig',sourceHash:'c76e4fe32e6a742d4529d3ee7a731470d92a5324cf36529ead8a702c1d96aea5',files:[['blue-engine-LICENSE.txt','62048053433f2ed52d4162d67b28d497a74b6a0c85c709569557f01cd8a02146','https://github.com/AryanpurTech/BlueEngine/blob/e3ee0f8d8f38a9ff63d09f941d2f542683078194/LICENSE.txt']]},
  'selectors@0.38.0':{rev:'572ecba2d1600e7c3d490586692a209faf703baa',path:'selectors',sourcePath:'lib.rs',sourceHash:'d54c6e13e9e952dac17d209171df8657e3cae93beaddace4906150cdec8d02e9',files:[['mozilla-MPL-2.0.txt','fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85','https://github.com/mozilla/openbadges-bakery/blob/3057b06f75997c22ad4f039960dd2688578c3d32/LICENSE-MPL-2.0']]},
  'alloc-stdlib@0.3.0':{rev:'0a81fd6928ea3b33c8cd484aa4575d50ffb98012',path:'alloc-stdlib',sourceHash:'3b1358fd99790a1063f0f2b4358d3771a75fcc3ee8e4560984326f86a8c56b0a',files:[['alloc-stdlib-LICENSE.txt','c0c56f26d9c051cac4d200c34c84e7ae9aaa853e01a982a1df08b09931e518ae','https://github.com/dropbox/rust-alloc-no-stdlib/blob/0a81fd6928ea3b33c8cd484aa4575d50ffb98012/LICENSE']]},
  'dlopen2@0.8.2':{rev:'cc80e4a0a90d499b677fdf7743699b4b3a43a989',path:'dlopen2',sourceHash:'e99da1fe29c4c9391b6e0f2de4220da7b5dafa62649a9889a9ab4a9f3722cbb5',files:[['dlopen2-LICENSE.txt','39fa265207450e77c62e90c5594a06c085b655d8374c7ced4bf7894b6bd95dd2','https://github.com/OpenByteDev/dlopen2/blob/cc80e4a0a90d499b677fdf7743699b4b3a43a989/LICENSE']]},
@@ -53,7 +55,7 @@ const upstreamRules=Object.freeze({
 });
 export function auditedUpstreamNotices(packageRoot,noticeRoot,rule) {
  const vcs=JSON.parse(safeFile(packageRoot,resolve(packageRoot,'.cargo_vcs_info.json')).text);
- if(vcs.git?.sha1!==rule.rev||vcs.path_in_vcs!==rule.path)throw Error('Audited crate revision mismatch');
+ if(vcs.git?.sha1!==rule.rev||vcs.git?.dirty===true||vcs.path_in_vcs!==rule.path)throw Error('Audited crate revision mismatch or dirty source');
  if(safeFile(packageRoot,resolve(packageRoot,rule.sourcePath??'src/lib.rs')).sha256!==rule.sourceHash)throw Error('Audited crate source hash mismatch');
  return rule.files.map(([path,expected,url])=>{
   const f=safeFile(noticeRoot,resolve(noticeRoot,path));

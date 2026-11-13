@@ -12,7 +12,7 @@ Windows original browser recheck: 24 JavaScript tests pass, collision math revie
 
 Windows Blue Engine held-input release ZIP: local extraction, payload hashes and 13-checkpoint relocated replay pass; distribution and physical input remain open. [Evidence](docs/packaging/BLUE-HELD-WINDOWS-RELEASE-PILOT.md).
 
-Windows Blue Engine notice discovery: 202 resolved packages indexed, with 14 missing conventional notice files; package and legal review remain incomplete. [Evidence](docs/packaging/BLUE-WINDOWS-NOTICE-DISCOVERY.md).
+Windows Blue Engine notice discovery: 202 resolved packages indexed; exact upstream mappings addressed two flags, with 12 still open and legal review incomplete. [Evidence](docs/packaging/BLUE-WINDOWS-NOTICE-DISCOVERY.md).
 
 ## Current activity (last reported)
 
