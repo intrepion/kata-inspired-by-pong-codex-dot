@@ -5,6 +5,15 @@ import {createHash} from 'node:crypto';
 import os from 'node:os';
 import {parseArguments} from './adapters.mjs';
 import {pathToFileURL} from 'node:url';
+export function validSample(s) {
+  const timings=['mean_ms','p50_ms','p95_ms','p99_ms','max_ms'];
+  return s?.schema===1 && s.metric==='frame_callback_interval_ms' &&
+    s.warmup_seconds===5 && s.nominal_measure_seconds===10 && s.resized===false &&
+    Number.isInteger(s.samples) && s.samples>0 && Number.isFinite(s.sampled_seconds) && s.sampled_seconds>=9.5 &&
+    Number.isInteger(s.width) && s.width>0 && Number.isInteger(s.height) && s.height>0 &&
+    timings.every(k=>Number.isFinite(s[k]) && s[k]>=0) && Array.isArray(s.intervals_ms) &&
+    s.intervals_ms.length===s.samples && s.intervals_ms.every(n=>Number.isFinite(n) && n>=0);
+}
 export function runPilot(options, binaryArguments = ['--benchmark']) {
   const {binary, output, backend, notes, adapter, presentation, renderer, pacing} = options;
   if (existsSync(output)) throw Error('Refusing to overwrite results');
@@ -23,7 +32,7 @@ export function runPilot(options, binaryArguments = ['--benchmark']) {
     const reported_backend=backendLine?JSON.parse(backendLine.slice('PONG_BENCHMARK_BACKEND '.length)):null;
     const sample=line?JSON.parse(line.slice('PONG_BENCHMARK '.length)):null;
     result.runs.push({iteration:i+1,exit:r.status,signal:r.signal??null,error:r.error?.message??null,load_before:before,load_after:os.loadavg(),stderr:r.stderr,reported_backend,sample,
-      valid:r.status===0 && sample?.samples>0 && !sample.resized && sample.sampled_seconds>=9.5});
+      valid:r.status===0 && validSample(sample)});
     writeFileSync(output,JSON.stringify(result,null,2)+'\n',{flag:i===0?'wx':'w'});
     if(r.status!==0) break;
   }

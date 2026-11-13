@@ -262,6 +262,8 @@ Windows follow-up: [fresh original TypeScript and raw-WASM browser replay comple
 
 [Omarchy portable-manifest regression](docs/MANIFEST-REGRESSION-OMARCHY.md): source 0cbe38f preserves sixteen shared tests and exact scripted baselines; Macroquad/Piston app-owned capture samples rechecked. This is not benchmark or manual-input evidence.
 
+Benchmark runner follow-up: incomplete or inconsistent callback samples are no longer marked valid; [scope and Windows verification](docs/benchmarks/RUNNER-SAMPLE-VALIDATION.md).
+
 ## Benchmark pilot
 
 The [shared Macroquad benchmark pilot](docs/benchmarks/README.md) completed three release runs on Omarchy. Median **frame-callback intervals** were about 8.33 ms, not measured display FPS. Raw samples, rejected attempts and metadata limits are retained. This is a harness pilot, **not a cross-engine ranking**; CPU/memory/startup/power/presentation metrics remain unmeasured; separate packaging pilot follows.

@@ -8,12 +8,12 @@ test('reject unknown, missing or duplicate adapter',()=>{for(const a of [[...bas
 import {mkdtempSync,writeFileSync,readFileSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {runPilot} from './run.mjs';
+import {runPilot,validSample} from './run.mjs';
 test('runner records selected adapter over three fixture processes, not a benchmark',()=>{
   const dir=mkdtempSync(join(tmpdir(),'pong-runner-fixture-'));
   try {
     const binary=join(dir,'fixture.cjs'), output=join(dir,'results.json');
-    writeFileSync(binary,'#!/usr/bin/env node\nconsole.log(\'PONG_BENCHMARK_BACKEND {"video_driver":"fixture","renderer":"fixture"}\');\nconsole.log(\'PONG_BENCHMARK '+JSON.stringify({samples:2,resized:false,sampled_seconds:10,p50_ms:5,p95_ms:5,p99_ms:5})+'\');\n',{mode:0o755});
+    writeFileSync(binary,'#!/usr/bin/env node\nconsole.log(\'PONG_BENCHMARK_BACKEND {"video_driver":"fixture","renderer":"fixture"}\');\nconsole.log(\'PONG_BENCHMARK '+JSON.stringify({schema:1,metric:'frame_callback_interval_ms',warmup_seconds:5,nominal_measure_seconds:10,samples:2,resized:false,sampled_seconds:10,mean_ms:5000,p50_ms:5000,p95_ms:5000,p99_ms:5000,max_ms:5000,width:900,height:500,intervals_ms:[5000,5000]})+'\');\n',{mode:0o755});
     const options=parseArguments([process.execPath,output,'fixture-only','synthetic runner test','--adapter','softbuffer']);
     runPilot(options,[binary]);
     const data=JSON.parse(readFileSync(output,'utf8'));
@@ -72,7 +72,7 @@ for(const [label,body,exit,signal] of [
   const dir=mkdtempSync(join(tmpdir(),'pong-runner-failure-'));
   try {
     const fixture=join(dir,'fixture.cjs'),output=join(dir,'results.json');
-    const sample={samples:2,resized:false,sampled_seconds:10,p50_ms:5,p95_ms:5,p99_ms:5};
+    const sample={schema:1,metric:'frame_callback_interval_ms',warmup_seconds:5,nominal_measure_seconds:10,samples:2,resized:false,sampled_seconds:10,mean_ms:5000,p50_ms:5000,p95_ms:5000,p99_ms:5000,max_ms:5000,width:900,height:500,intervals_ms:[5000,5000]};
     writeFileSync(fixture,`require('node:fs').writeSync(1,${JSON.stringify('PONG_BENCHMARK '+JSON.stringify(sample)+'\n')});${body};`);
     const data=runPilot(parseArguments([process.execPath,output,'fixture','not a benchmark']),[fixture]);
     assert.equal(data.runs.length,1);
@@ -81,4 +81,24 @@ for(const [label,body,exit,signal] of [
     assert.equal(data.runs[0].sample.samples,2);
     assert.equal(data.runs[0].valid,false);
   } finally {rmSync(dir,{recursive:true,force:true});}
+});
+
+test('runner rejects incomplete or inconsistent samples instead of marking them valid',()=>{
+  const dir=mkdtempSync(join(tmpdir(),'pong-runner-invalid-'));
+  try {
+    const fixture=join(dir,'fixture.cjs'),output=join(dir,'results.json');
+    writeFileSync(fixture,`console.log('PONG_BENCHMARK '+JSON.stringify({samples:2,sampled_seconds:10}));`);
+    const data=runPilot(parseArguments([process.execPath,output,'fixture','not a benchmark']),[fixture]);
+    assert.equal(data.runs.length,3);
+    assert.ok(data.runs.every(r=>r.valid===false));
+    assert.equal(data.runs[0].sample.samples,2);
+  } finally {rmSync(dir,{recursive:true,force:true});}
+});
+
+test('sample validation rejects resized, mismatched, or non-finite measurements',()=>{
+  const sample={schema:1,metric:'frame_callback_interval_ms',warmup_seconds:5,nominal_measure_seconds:10,samples:2,resized:false,sampled_seconds:10,mean_ms:5000,p50_ms:5000,p95_ms:5000,p99_ms:5000,max_ms:5000,width:900,height:500,intervals_ms:[5000,5000]};
+  assert.equal(validSample(sample),true);
+  for(const change of [{resized:true},{samples:3},{width:0},{p95_ms:NaN},{intervals_ms:[5000,-1]},{metric:'other'}]) {
+    assert.equal(validSample({...sample,...change}),false);
+  }
 });
