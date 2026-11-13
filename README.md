@@ -987,6 +987,7 @@ The unmodified Nannou release also passed a [Windows local portable pilot](docs/
 The Windows Nannou notice inventory now has [four exact AccessKit notice mappings](docs/packaging/NANNOU-ACCESSKIT-NOTICES-WINDOWS-20261113.md); 19 missing-file flags and further review remain.
 
 Five [exact Lyon notice mappings](docs/packaging/NANNOU-LYON-NOTICES-WINDOWS-20261113.md) reduce the same inventory to 14 flags; the upstream Apache notice is short and further review remains.
+The [follow-up Lyon inventory](docs/packaging/NANNOU-LYON-FULL-APACHE-WINDOWS-20261113.md) also includes a separately sourced full Apache 2.0 text; it remains an incomplete notice preparation, not release clearance.
 
 Piston Mac keypad cross-check: 17 release unit tests pass, but the locked macOS window path maps both Enter keys to the same logical Piston key; independent native delivery is not established. [Evidence and limits](docs/packaging/PISTON-KEYPAD-BACKEND-MAC-20261113.md).
 

@@ -56,6 +56,8 @@ const accesskitFiles=(rev,dual)=>[
 ];
 const lyonFiles=rev=>[
  ['lyon-LICENSE-APACHE.txt','216486f29671a4262efe32af6d84a75bef398127f8c5f369b5c8305983887a06',`https://github.com/nical/lyon/blob/${rev}/LICENSE-APACHE`],
+ // Lyon's Apache file is a short notice; include the full terms from this separately audited copy.
+ ['gl-rs-LICENSE.txt','cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30','https://github.com/rust-windowing/gl-rs/blob/ea503e8d5fb6d73c6030e6191ce738cd3bf3433e/LICENSE'],
  ['lyon-LICENSE-MIT.txt','80f275e90d799911ed3830a7f242a2ef5a4ade2092fe0aa07bfb2d2cf2f2b95e',`https://github.com/nical/lyon/blob/${rev}/LICENSE-MIT`],
 ];
 const upstreamRules=Object.freeze({
