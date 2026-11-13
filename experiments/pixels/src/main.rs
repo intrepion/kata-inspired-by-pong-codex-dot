@@ -30,6 +30,35 @@ impl MovementInput {
         self.held = [false; 4];
     }
 }
+fn handle_key(
+    game: &mut Game,
+    movement: &mut MovementInput,
+    key: KeyCode,
+    pressed: bool,
+    repeat: bool,
+) -> bool {
+    if !pressed || !repeat {
+        movement.key(key, pressed);
+    }
+    match key {
+        KeyCode::Enter | KeyCode::KeyR if pressed && !repeat => game.start(),
+        KeyCode::Space if pressed && !repeat => {
+            if game.state == State::Ready {
+                game.start();
+            } else {
+                let was_playing = game.state == State::Playing;
+                game.toggle_pause();
+                if was_playing && game.state == State::Paused {
+                    movement.clear();
+                }
+            }
+        }
+        KeyCode::Escape if pressed => return true,
+        _ => {}
+    }
+    false
+}
+
 struct App {
     window: Option<Arc<Window>>,
     pixels: Option<Pixels<'static>>,
@@ -93,20 +122,8 @@ impl ApplicationHandler for App {
             {
                 let pressed = event.state == ElementState::Pressed;
                 if let PhysicalKey::Code(k) = event.physical_key {
-                    self.movement.key(k, pressed);
-                    match k {
-                        KeyCode::Enter | KeyCode::KeyR if pressed && !event.repeat => {
-                            self.game.start()
-                        }
-                        KeyCode::Space if pressed && !event.repeat => {
-                            if self.game.state == State::Ready {
-                                self.game.start()
-                            } else {
-                                self.game.toggle_pause()
-                            }
-                        }
-                        KeyCode::Escape if pressed => e.exit(),
-                        _ => {}
+                    if handle_key(&mut self.game, &mut self.movement, k, pressed, event.repeat) {
+                        e.exit();
                     }
                 }
             }
@@ -258,6 +275,62 @@ mod tests {
 #[cfg(test)]
 mod movement_tests {
     use super::*;
+    #[test]
+    fn explicit_pause_clears_movement_until_fresh_press() {
+        for key in [
+            KeyCode::KeyW,
+            KeyCode::ArrowUp,
+            KeyCode::KeyS,
+            KeyCode::ArrowDown,
+        ] {
+            let mut game = Game::new(42);
+            let mut movement = MovementInput::default();
+            handle_key(&mut game, &mut movement, KeyCode::Enter, true, false);
+            handle_key(&mut game, &mut movement, key, true, false);
+            assert_ne!(movement.axis(), 0.);
+            handle_key(&mut game, &mut movement, KeyCode::Space, true, false);
+            assert_eq!(game.state, State::Paused);
+            assert_eq!(movement.axis(), 0.);
+            handle_key(&mut game, &mut movement, KeyCode::Space, true, false);
+            assert_eq!(game.state, State::Playing);
+            handle_key(&mut game, &mut movement, key, true, true);
+            assert_eq!(movement.axis(), 0., "repeat must not restore cleared input");
+            handle_key(&mut game, &mut movement, key, false, false);
+            handle_key(&mut game, &mut movement, key, true, false);
+            assert_ne!(movement.axis(), 0., "fresh press must move");
+        }
+    }
+    #[test]
+    fn action_keys_keep_start_pause_restart_and_quit_behavior() {
+        let mut game = Game::new(42);
+        let mut movement = MovementInput::default();
+        assert!(!handle_key(
+            &mut game,
+            &mut movement,
+            KeyCode::Space,
+            false,
+            false
+        ));
+        assert_eq!(game.state, State::Ready);
+        handle_key(&mut game, &mut movement, KeyCode::Space, true, false);
+        assert_eq!(game.state, State::Playing);
+        handle_key(&mut game, &mut movement, KeyCode::Space, true, true);
+        assert_eq!(game.state, State::Playing);
+        handle_key(&mut game, &mut movement, KeyCode::Space, true, false);
+        assert_eq!(game.state, State::Paused);
+        handle_key(&mut game, &mut movement, KeyCode::Space, true, false);
+        assert_eq!(game.state, State::Playing);
+        game.scores = [2, 4];
+        handle_key(&mut game, &mut movement, KeyCode::KeyR, true, false);
+        assert_eq!(game.scores, [0, 0]);
+        assert!(handle_key(
+            &mut game,
+            &mut movement,
+            KeyCode::Escape,
+            true,
+            false
+        ));
+    }
     #[test]
     fn aliases_release_independently_in_both_orders() {
         for (a, b, axis) in [
