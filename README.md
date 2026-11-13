@@ -18,6 +18,8 @@ Mac Miniquad pause follow-up: ten release tests pass; sequential desktop start/m
 
 Miniquad keypad Enter now shares the existing start/restart action; Windows and Mac action-boundary tests pass; Mac automated `KP_Enter` starts and resets, but its delivered key code, physical delivery and the separate Windows Unknown-key issue remain open. [Evidence](docs/MINIQUAD-KEYPAD-ENTER.md).
 
+Shared GTK/Slint/GPUI explicit-pause fix: ten model tests and Omarchy compilation checks pass; native event delivery and rebuilt packages remain pending. [Evidence](docs/GUI-EXPLICIT-PAUSE-INPUT-FIX.md).
+
 Omarchy Miniquad explicit-pause fix: ten adapter tests pass, including stale held input and repeat suppression; native input and other-platform/package rechecks remain pending. [Evidence](docs/MINIQUAD-PAUSE-HELD-INPUT-FIX.md).
 
 Windows Miniquad winner-label follow-up: eight tests and a fresh replay pass; a simulated match reaches an unobstructed CPU winner frame; native input and interactive matches remain unverified. [Evidence](docs/WINDOWS-MINIQUAD-WINNER-RECHECK.md).
