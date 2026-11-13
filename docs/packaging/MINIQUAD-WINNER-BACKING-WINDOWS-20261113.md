@@ -1,0 +1,7 @@
+# Miniquad winner backing: Windows check, 2026-11-13
+
+At checkpoint `3fe9e50bbafdb473a0022dd4094768d261cd7867`, Miniquad adapter source Git blob `c7dcb36d582cff739b26fa55233328c2ee920006` passed all 15 locked offline release tests on Windows MSVC stable Rust 1.99.1. The winner-vertex regression checks backing precedes text and that the message clears after restart; it does not render a Windows match-end screen.
+
+A locked offline release build succeeded; executable SHA-256 was `c75a9604ad5d87b1eeb4e736e098e686adcfcf67edfd41a55b4dc4d422adb8cf`. Its app-owned scripted replay exited 0 with empty stderr and all 13 parsed telemetry records matched `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`. Six captures were generated. The inspected tick 480 image shows the paused court and resume prompt, SHA-256 `d4f11bf7758690a7eed551b8d09946e3c7070f86a6baf300d65be91cb14de431`. Logs, captures and prior executable and test copies remain in sibling workspace directory `miniquad-winner-backing-windows-20261113`.
+
+The replay does not reach game over. Windows match-end presentation, native and physical keyboard delivery, accessibility, other sizes, complete dependency and system-library review, clean-machine installation and release qualification remain open. Previous Windows automation delivered Miniquad keys as Unknown; this test does not resolve that distinction or establish license clearance.
