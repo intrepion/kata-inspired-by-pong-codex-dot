@@ -1,0 +1,9 @@
+# Miniquad Ready and Paused indicators
+
+Miniquad's court previously had no Ready or Paused indicator; its static window title did not reflect the current state. An inspected pre-change Windows app-owned tick-480 capture showed the paused court without an in-court pause marker. The renderer now shows a play symbol above the centered ball while Ready and pause bars above the court center while Paused. Playing has neither; the existing game-over messages are preserved. This adds no asset or dependency and does not alter the platform-specific focus policy.
+
+At parent checkpoint `bfa3a10471a2cd36dcefd8cdd72fa18f010c652b`, a Windows MSVC stable Rust 1.99.1 geometry regression failed against the old behavior and all 15 locked offline debug tests passed with the change. `rustfmt` check passed using the installed stable GNU toolchain; the MSVC toolchain lacked its rustfmt component. Cargo reported incremental hard-link fallback. A fresh debug executable had SHA-256 `53f5e9e17a2b6f7c9845364a010130905db6aed95c0ae757b7a7924a3a77b515`. Its isolated scripted run exited 0 with empty stderr and all 13 records matched `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`.
+
+Six app-owned OpenGL captures were generated. The inspected tick-480 image showed pause bars above the court center; SHA-256 `0d129b7c2e55452d3b96599abfc22ed352554df3f1267c8a2defd5360def6149`. The standard replay does not capture Ready, so the Ready indicator has geometry-test rather than app-owned capture evidence. Prior binary artifacts, logs and captures remain in sibling workspace directories `miniquad-focus-windows-20261113` and `miniquad-state-windows-20261113`.
+
+This is Windows model and app-owned capture evidence, not physical input, actual focus-transition, cross-platform, license clearance or release qualification. In particular, the existing Windows focus callback ambiguity is unchanged.

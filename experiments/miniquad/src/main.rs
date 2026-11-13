@@ -229,6 +229,29 @@ fn game_over_vertices(game: &Game, v: &mut Vec<Vertex>) {
         status_text(v, "ENTER TO RESTART", H / 2. + 8., 2.);
     }
 }
+fn state_vertices(game: &Game, v: &mut Vec<Vertex>) {
+    match game.state {
+        State::Ready => {
+            // A play triangle made from horizontal bars, above the centered ball.
+            for (i, width) in [8., 16., 24., 16., 8.].into_iter().enumerate() {
+                rect(
+                    v,
+                    W / 2. - 12. + width / 2.,
+                    H / 2. - 86. + i as f32 * 8.,
+                    width,
+                    8.,
+                    [1., 1., 1.],
+                );
+            }
+        }
+        State::Paused => {
+            rect(v, W / 2. - 14., H / 2. - 70., 8., 40., [1., 1., 1.]);
+            rect(v, W / 2. + 14., H / 2. - 70., 8., 40., [1., 1., 1.]);
+        }
+        State::Over => game_over_vertices(game, v),
+        State::Playing => {}
+    }
+}
 impl EventHandler for App {
     fn update(&mut self) {
         let now = Instant::now();
@@ -280,7 +303,7 @@ impl EventHandler for App {
                 );
             }
         }
-        game_over_vertices(&self.game, &mut v);
+        state_vertices(&self.game, &mut v);
         self.ctx
             .buffer_update(self.bindings.vertex_buffers[0], BufferSource::slice(&v));
         self.ctx
@@ -443,6 +466,22 @@ mod tests {
         game.start();
         game_over_vertices(&game, &mut vertices);
         assert!(vertices.is_empty());
+    }
+    #[test]
+    fn ready_and_paused_indicators_are_distinct_and_absent_during_play() {
+        let mut game = Game::new(42);
+        let mut vertices = Vec::new();
+        state_vertices(&game, &mut vertices);
+        let ready = vertices.len();
+        assert!(ready > 0);
+        vertices.clear();
+        game.start();
+        state_vertices(&game, &mut vertices);
+        assert!(vertices.is_empty());
+        game.pause();
+        state_vertices(&game, &mut vertices);
+        assert_eq!(vertices.len(), 12);
+        assert_ne!(ready, vertices.len());
     }
     #[test]
     fn rectangle_is_two_triangles_in_top_down_court_coordinates() {

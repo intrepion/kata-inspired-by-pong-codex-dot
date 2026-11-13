@@ -188,6 +188,8 @@ Windows passed Piston's Ready/Paused geometry tests and inspected a paused captu
 
 Windows passed Nannou's Ready prompt model regression; [the report](docs/packaging/NANNOU-READY-WINDOWS-20261113.md) records rendering limits.
 
+Miniquad now shows Ready and Paused indicators in court; [Windows evidence](docs/packaging/MINIQUAD-STATE-WINDOWS-20261113.md) includes a paused app-owned capture and input limits.
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
