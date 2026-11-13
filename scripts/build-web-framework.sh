@@ -10,8 +10,9 @@ if [[ "$name" == dioxus ]]; then args+=(--no-default-features --features web); f
 cargo build --manifest-path "$root/experiments/$name/Cargo.toml" --target wasm32-unknown-unknown --target-dir "$target" -j 1 "${args[@]}"
 mkdir -p "$root/experiments/$name/dist"
 "$bindgen" "$target/wasm32-unknown-unknown/debug/pong-${name}.wasm" --target web --out-dir "$root/experiments/$name/dist" --out-name app
+cp "$root/clients/web-wasm/favicon.svg" "$root/experiments/$name/dist/favicon.svg"
 cat > "$root/experiments/$name/dist/index.html" <<HTML
-<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pong $name</title></head><body><div id="main"></div><script type="module" src="./boot.js"></script></body></html>
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="./favicon.svg"><title>Pong $name</title></head><body><div id="main"></div><script type="module" src="./boot.js"></script></body></html>
 HTML
 printf "import init from './app.js'; await init();\\n" > "$root/experiments/$name/dist/boot.js"
 echo "Built $name. Serve with: python3 -m http.server 5191 --bind 127.0.0.1 --directory $root/experiments/$name/dist"

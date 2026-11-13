@@ -11,6 +11,7 @@ $dist=Join-Path $root "experiments/$Name/dist"
 New-Item -ItemType Directory -Force $dist | Out-Null
 & $bindgen "$target/wasm32-unknown-unknown/debug/pong-$Name.wasm" --target web --out-dir $dist --out-name app
 if($LASTEXITCODE -ne 0){throw 'wasm-bindgen failed'}
-[IO.File]::WriteAllText("$dist/index.html",'<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pong '+$Name+'</title></head><body><div id="main"></div><script type="module" src="./boot.js"></script></body></html>')
+Copy-Item -LiteralPath (Join-Path $root 'clients/web-wasm/favicon.svg') -Destination (Join-Path $dist 'favicon.svg')
+[IO.File]::WriteAllText("$dist/index.html",'<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="./favicon.svg"><title>Pong '+$Name+'</title></head><body><div id="main"></div><script type="module" src="./boot.js"></script></body></html>')
 [IO.File]::WriteAllText("$dist/boot.js","import init from './app.js'; await init();`n")
 Write-Output "Built $Name. Serve through http://127.0.0.1, never a file URL."
