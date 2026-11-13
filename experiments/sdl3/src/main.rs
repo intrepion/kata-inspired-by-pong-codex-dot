@@ -199,6 +199,45 @@ fn main() -> Result<(), String> {
 mod tests {
     use super::*;
     #[test]
+    fn winning_score_keeps_held_movement_suppressed_on_restart() {
+        use pong_low_level_common::{State, BALL, H, W};
+        for i in 0..4 {
+            for (scores, x, vx) in [([6, 2], W + BALL - 1., 350.), ([2, 6], -BALL + 1., -350.)] {
+                let mut app = App::default();
+                app.game.start();
+                let mut gate = MovementGate::default();
+                sample_movement(&app, &mut gate, [false; 4], false);
+                let mut held = [false; 4];
+                held[i] = true;
+                assert_ne!(
+                    sample_movement(&app, &mut gate, held, false),
+                    (false, false)
+                );
+                app.game.scores = scores;
+                app.game.serve = 0.;
+                app.game.ball.x = x;
+                app.game.ball.y = H / 2.;
+                app.game.ball.vx = vx;
+                app.game.ball.vy = 0.;
+                app.game.step(0.02, 0.);
+                assert_eq!(app.game.state, State::Over);
+                gate.finish_frame(app.game.state);
+                explicit_action(&mut app);
+                assert_eq!(
+                    sample_movement(&app, &mut gate, held, false),
+                    (false, false)
+                );
+                held[i] = false;
+                sample_movement(&app, &mut gate, held, false);
+                held[i] = true;
+                assert_ne!(
+                    sample_movement(&app, &mut gate, held, false),
+                    (false, false)
+                );
+            }
+        }
+    }
+    #[test]
     fn game_over_between_samples_blocks_held_on_immediate_restart() {
         let mut app = App::default();
         app.game.start();
