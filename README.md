@@ -100,6 +100,8 @@ Mac softbuffer target-filtered license metadata screen: no declared LGPL, GPL-3 
 
 Mac bracket-lib target-filtered license screen: no declared LGPL, GPL-3 or MPL in 84 resolved packages; native/system components and full source review remain open. [Evidence](docs/packaging/BRACKET-MAC-LICENSE-SCREEN.md).
 
+Mac Blue Engine target metadata screen: no restricted declarations in 199 packages; system and source-level license review remain open. [Evidence](docs/packaging/BLUE-MAC-LICENSE-SCREEN.md).
+
 Mac SDL3 native audit: HIDAPI-named code is present; its source offers BSD-style and original alternatives to GPLv3, subject to full notice review. [Evidence](docs/packaging/SDL3-MAC-HIDAPI-LICENSE.md).
 
 Mac SDL3 no-libusb candidate: native HIDAPI stays enabled; model replay and automated keyboard smoke pass, while controller behavior remains unverified. [Evidence](docs/packaging/SDL3-MAC-NOLIBUSB-CANDIDATE.md).
