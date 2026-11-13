@@ -10,6 +10,10 @@ impl MovementGate {
         self.was_playing &= state == State::Playing;
     }
 }
+fn restart_game(game: &mut Game, gate: &mut MovementGate) {
+    game.start();
+    gate.was_playing = false;
+}
 fn movement_axis(game: &Game, gate: &mut MovementGate, held: [bool; 4], lost_focus: bool) -> f32 {
     let playing = game.state == State::Playing;
     let suppress = lost_focus || !playing || !gate.was_playing;
@@ -74,11 +78,11 @@ async fn main() {
                 if g.state == State::Paused {
                     g.toggle_pause()
                 } else if g.state != State::Playing {
-                    g.start()
+                    restart_game(&mut g, &mut movement)
                 }
             }
             if is_key_pressed(KeyCode::R) {
-                g.start()
+                restart_game(&mut g, &mut movement)
             }
             if is_key_pressed(KeyCode::Space) {
                 g.toggle_pause()
@@ -296,6 +300,29 @@ mod movement_tests {
                 held[i] = true;
                 assert_ne!(movement_axis(&game, &mut gate, held, false), 0.);
             }
+        }
+    }
+}
+
+#[cfg(test)]
+mod active_restart_tests {
+    use super::*;
+    #[test]
+    fn held_key_must_not_survive_active_restart() {
+        for i in 0..4 {
+            let mut game = Game::new(42);
+            let mut gate = MovementGate::default();
+            game.start();
+            movement_axis(&game, &mut gate, [false; 4], false);
+            let mut held = [false; 4];
+            held[i] = true;
+            assert_ne!(movement_axis(&game, &mut gate, held, false), 0.);
+            restart_game(&mut game, &mut gate);
+            assert_eq!(movement_axis(&game, &mut gate, held, false), 0.);
+            held[i] = false;
+            movement_axis(&game, &mut gate, held, false);
+            held[i] = true;
+            assert_ne!(movement_axis(&game, &mut gate, held, false), 0.);
         }
     }
 }
