@@ -113,6 +113,9 @@ impl App {
                 }
             }
         }
+        if matches!(self.game.state, State::Ready | State::Paused) {
+            rect(405., 210., 90., 80., BACKGROUND);
+        }
         if self.game.state == State::Ready {
             for (i, width) in [8., 16., 24., 32., 24., 16., 8.].into_iter().enumerate() {
                 rect(430., 222. + i as f32 * 8., width, 8., [255, 180, 80]);
@@ -132,6 +135,7 @@ impl App {
             if let Some((x, message)) = winner {
                 rect(x, 70., 34., 6., [255, 180, 80]);
                 let left = (W - message.len() as f32 * 36.) / 2.;
+                rect(left - 8., 213., message.len() as f32 * 36. + 16., 66., BACKGROUND);
                 for (i, ch) in message.bytes().enumerate() {
                     for (y, row) in result_glyph(ch).iter().enumerate() {
                         for col in 0..5 {
