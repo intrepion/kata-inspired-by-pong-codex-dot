@@ -1,0 +1,7 @@
+# Fyrox contact-timing replay on Omarchy
+
+2026-11-13, Omarchy ARM64; source `8b5ff6a5e7c64840b813114667b94ca00e9a34b8` includes contact-timing physics `c77bf3a`. A fresh offline locked release build and both release-mode Fyrox frontend tests passed. The local Linux portable pilot archive was extracted into a separate directory; its archive digest and all four extracted manifest entries verified. Archive size: 19,518,021 bytes; archive SHA-256: `ae4af206fc2cc22541c87b8edb8b8a43aa7e3a6d74ca8fedca22e2560ec3e79e`; binary SHA-256: `168379470733f427e48a63c4b7b1b974f18225d1eaba640a1f68e7dd397d4703`.
+
+With approved host-display access, the relocated binary completed `--scripted-test --scripted-captures` with exit 0. Its 13 JSON telemetry records exactly match the revised contact-timing model reference through finished tick 1440; engine diagnostic lines were excluded from comparison. Six app-owned UI render-target PNGs were produced; tick 480 was inspected and showed paused status, score, court, paddles and ball. These are application captures, not desktop/compositor screenshots. Archive, extraction, captures and telemetry remain under distinct `/tmp/pong-fyrox-c77-*` paths. The run generated `data/resources.registry` in the isolated extraction; it and historical artifacts were preserved.
+
+This is a local package extraction and scripted rendering/replay check. Physical input, focus/resize, full-match interaction, clean-machine installation, uninstall of generated state, complete dependency notices and public distribution remain unverified.
