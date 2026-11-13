@@ -151,12 +151,12 @@ Details: [low-level clients](experiments/LOW-LEVEL.md), [GUI toolkits](experimen
 | Leptos browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | U / U |
 | Dioxus browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | U / U |
 | Yew native Tauri wrapper | Fresh `b92b7df` B + state/SVG replay + bounded I; provenance/evidence published `18bc91c` | B / I | `2608321` debug B, 12 shared tests; relocated scripted SVG replay matches model; visual/input unverified ([evidence](docs/packaging/YEW-PAUSE-OMARCHY-PILOT.md)) |
-| Leptos native Tauri wrapper | Fresh `b92b7df` B + state/SVG replay + bounded I; provenance/evidence published `18bc91c` | B / I | Fresh `ebb5238` B; revised-physics scripted SVG-source replay matches model; visual/input unverified ([evidence](docs/OMARCHY-LEPTOS-CONTACT-TIMING.md)) |
+| Leptos native Tauri wrapper | Fresh `b92b7df` B + state/SVG replay + bounded I; provenance/evidence published `18bc91c` | B / I | `0cf9e95` debug B, 12 shared tests; relocated scripted SVG replay matches model; visual/input unverified ([evidence](docs/packaging/LEPTOS-PAUSE-OMARCHY-PILOT.md)) |
 | Dioxus native desktop | Fresh `4088089` B / I + native replay; held controls/release, full match and restart passed | B / I; maximized layout checked | `173c0ef` debug B, 12 shared tests; relocated scripted SVG replay matches model; input/visual unverified ([evidence](docs/packaging/DIOXUS-PAUSE-OMARCHY-PILOT.md)) |
 
 [Commands and detailed web-framework results](docs/web-framework-comparison.md). Browser checks use a localhost HTTP server, never file URLs. Narrow browser layout is not a physical touchscreen or mobile-package test.
 
-Omarchy explicit-pause follow-up: shared Rust web-controller model now clears held keyboard and pointer input on the Pause button or Space/Escape; 12 tests and adapter compilation pass. Browser/native interaction and Leptos package rebuild remain pending; Dioxus Desktop and Yew have refreshed debug package replays ([Dioxus](docs/packaging/DIOXUS-PAUSE-OMARCHY-PILOT.md), [Yew](docs/packaging/YEW-PAUSE-OMARCHY-PILOT.md)). [Fix evidence](docs/WEB-EXPLICIT-PAUSE-INPUT-FIX.md).
+Omarchy explicit-pause follow-up: shared Rust web-controller model now clears held keyboard and pointer input on the Pause button or Space/Escape; 12 tests and adapter compilation pass. Browser/native interaction remains pending on Omarchy; Dioxus Desktop, Yew and Leptos have refreshed debug package replays ([Dioxus](docs/packaging/DIOXUS-PAUSE-OMARCHY-PILOT.md), [Yew](docs/packaging/YEW-PAUSE-OMARCHY-PILOT.md), [Leptos](docs/packaging/LEPTOS-PAUSE-OMARCHY-PILOT.md)). [Fix evidence](docs/WEB-EXPLICIT-PAUSE-INPUT-FIX.md).
 
 Historical pointer ownership follow-up: shared Rust controller model tests pass (11), including independent same-button pointer release, unrelated release, opposing pointers, and pause clearing; Yew, Leptos, and Dioxus web adapters pass `cargo check` for `wasm32-unknown-unknown`; Dioxus desktop also passes `cargo check`. These are model and compilation checks, not browser or physical touch interaction. Strict Clippy remains blocked by existing replay-code and test-module lint warnings.
 
@@ -356,7 +356,7 @@ These are local archive extraction, relocated runtime and removal checks, **not 
 | GPUI | Not recorded | [Local ZIP/state-only replay](docs/packaging/GPUI-WINDOWS-PILOT.md) | [Local archive/state-only replay](docs/packaging/GPUI-LINUX-PILOT.md) |
 | Tauri + Rust WASM | Not recorded | Not recorded | [Local archive/relocated replay pilot](docs/packaging/TAURI-LINUX-PILOT.md); WebKitGTK required, notices pending |
 | Yew native Tauri wrapper | Not recorded | Not recorded | [Refreshed debug archive/relocated replay](docs/packaging/YEW-PAUSE-OMARCHY-PILOT.md); WebKitGTK required, notices pending |
-| Leptos native Tauri wrapper | Not recorded | Not recorded | [Local debug archive/relocated replay pilot](docs/packaging/LEPTOS-TAURI-LINUX-PILOT.md); WebKitGTK required, notices pending |
+| Leptos native Tauri wrapper | Not recorded | Not recorded | [Refreshed debug archive/relocated replay](docs/packaging/LEPTOS-PAUSE-OMARCHY-PILOT.md); WebKitGTK required, notices pending |
 | Dioxus Desktop | Not recorded | Not recorded | [Local debug archive/relocated replay](docs/packaging/DIOXUS-PAUSE-OMARCHY-PILOT.md); WebKitGTK and libxdo required, notices pending |
 | Other adapters | Not recorded | Not recorded | Not recorded |
 
