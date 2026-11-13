@@ -74,6 +74,8 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
+Omarchy Dioxus local-libxdo debug pilot: a package-local launcher runs model-matched replay without a pre-set library path; other dependencies, native input and distribution remain open. [Evidence](docs/packaging/DIOXUS-LOCAL-XDO-OMARCHY.md).
+
 Omarchy Dioxus desktop non-writable launch: missing host libxdo blocks startup; with the documented local library, replay passes and WebKit state is observed outside the package. [Evidence](docs/packaging/DIOXUS-READONLY-INSTALL-OMARCHY.md).
 
 Omarchy Blue Engine non-writable package launch: state-only replay matches the model; graphics warnings, physical input and clean-machine installation remain open. [Evidence](docs/packaging/BLUE-READONLY-INSTALL-OMARCHY.md).
