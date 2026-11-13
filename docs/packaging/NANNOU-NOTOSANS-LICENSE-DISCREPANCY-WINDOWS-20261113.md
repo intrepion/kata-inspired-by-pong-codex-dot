@@ -1,5 +1,7 @@
 # Windows Nannou embedded-font license discrepancy
 
+The subsequent [upstream provenance investigation](NANNOU-NOTOSANS-PROVENANCE-WINDOWS-20261113.md) found an exact 2014 Noto source blob and a later OFL move involving different font bytes. It does not resolve which terms govern the embedded file.
+
 The exact Noto Sans Regular font found in the [Windows pilot](NANNOU-NOTOSANS-WINDOWS-PILOT-20261113.md) has SHA-256 `f1ce78a25f519ef928b5b8755ca230314e47f8821e7aa89ecf000f033f389a9f`. Reading its OpenType `name` table finds copyright `Copyright 2012 Google Inc. All Rights Reserved.`, license description `Licensed under the Apache License, Version 2.0`, and license URL `http://www.apache.org/licenses/LICENSE-2.0`. Its Noto trademark record also names Google. The matching `notosans@0.1.0` source instead directs readers to its `fonts/LICENSE_OFL.txt`. The font and that notice match the exact pinned upstream blobs documented in the prior report.
 
 An open [Google Fonts issue](https://github.com/google/fonts/issues/3413) discusses the same type of discrepancy between Noto Sans name-table data and distributed OFL notices; it does not decide which terms govern this specific file. We do not choose a license or claim that including both texts resolves obligations. The earlier OFL-only candidate is preserved as historical evidence and should not be treated as release-ready.
