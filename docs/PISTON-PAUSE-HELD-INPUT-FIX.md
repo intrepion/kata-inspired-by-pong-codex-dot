@@ -7,3 +7,9 @@ The Piston input adapter now clears movement when Space or Escape transitions Pl
 With permitted display access, the new binary completed its bounded scripted replay with 13 telemetry records exactly matching `docs/evidence/rust-core-contact-timing-model-20261112.jsonl` and six app-owned PNGs. Outputs remain under `/tmp/pong-piston-pause-fix-20261113/` and `/tmp/pong-piston-pause-fix-output-20261113.txt`. These captures were not visually inspected in this run. Replay bypasses real key input and does not independently verify the pause behavior.
 
 Native/physical input, other platforms, rebuilt packages, full matches and release qualification remain pending. Existing evidence is historical; other engine adapters have independent key paths and are not covered by this fix.
+
+## Mac recheck
+
+macOS ARM64 source `8ce3d0fbe034b5ea278e12d1694e1301addddbd1`. Offline locked release build reused a copy-on-write cache; all nine Piston frontend tests passed, including the held-input pause regression. Executable SHA-256 `b9c2fdd66398dc933f74b1a677bc0f53cedc95d1f646b25054c6243803bc16f6`.
+
+The packaged app opened through supported desktop automation. Sequential Enter, held W, Space, Enter, held S and Space produced visible upward movement, Paused, resumed play, downward movement and Paused again. The test app exited. W was released before pause: held-across-pause native delivery and physical keyboard input were not demonstrated. No fresh scripted replay or capture is claimed for this Mac build.
