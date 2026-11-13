@@ -90,6 +90,8 @@ Windows Slint debug symbols contain Slint toolkit names; its GPL-or-alternative 
 
 Windows ggez non-playing movement regression: five release tests passed and 13 scripted replay records matched the reference; see [the bounded recheck](docs/packaging/GGEZ-NONPLAYING-PRESS-WINDOWS.md). Native physical input remains unverified.
 
+Windows rechecked all six native non-playing movement regressions and a Miniquad scripted replay; see [the Windows report](docs/packaging/NATIVE-NONPLAYING-INPUT-WINDOWS.md) for scope and limits.
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
