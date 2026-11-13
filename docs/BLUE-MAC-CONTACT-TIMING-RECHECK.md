@@ -7,3 +7,7 @@ Direct shell launch with `--scripted-test` exited 1 before gameplay with `Adapte
 ## Desktop retry
 
 The previously interrupted process was absent from the desktop app inventory and process list before retry. The same packaged binary opened on the supported macOS desktop interface. Automated key input started play, moved the left paddle upward, paused at 0–1, resumed, and restarted to 0–0; the window subsequently showed play continuing to 0–5. The test app was closed. This is an automated desktop interaction check, not physical input, a complete match, or a scripted replay.
+
+## Full-match desktop check
+
+On a separate run of the same packaged binary (SHA-256 above), supported desktop automation pressed Enter at 0–0, then left the player paddle unattended. The visible score progressed through 2–3 and 3–5 to **3–7, Over**. Pressing R then showed **0–0, Playing**. The test app was closed. This checks an automated native match and post-match restart; it is not physical input or a scripted model replay.
