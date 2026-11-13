@@ -46,7 +46,10 @@ export function auditedSourceHeaders(root,entries) {
 }
 // Exact upstream or source-referenced license texts; each rule is bound to the published crate's
 // recorded VCS revision and a source file independently matched to upstream.
+const gpuDescriptorFiles=Object.freeze([['gpu-descriptor-COPYING.txt','f72143f7e9d9fb8bd336b139fa22f825a299591c29f2f7338c5566347b137613','COPYING'],['gpu-descriptor-APACHE.txt','6bec8c944a6d4251be50ac86bb4ca360bcce5aea472505dee2800e160bf1cdbf','license/APACHE'],['gpu-descriptor-MIT.txt','5226e27d5fbc683db56c52853cdb9d15b69abadb525a60f95c862c2dbd77cdc8','license/MIT']]);
 const upstreamRules=Object.freeze({
+ 'gpu-descriptor@0.3.2':{rev:'bb28b4e55b742e0ea3e7a0968e7ee6287ba0e06a',path:'gpu-descriptor',sourceHashes:['6fb74a08ad9975e561f4fca7bd391f0cbd96a7cab79b17df7d979021099b50f9','86d91995ea56d2ccf12974cb28f02028d096e00acbe417b1acdaa0d7133ae9f2'],files:gpuDescriptorFiles.map(([f,h,p])=>[f,h,'https://github.com/zakarumych/gpu-descriptor/blob/bb28b4e55b742e0ea3e7a0968e7ee6287ba0e06a/'+p])},
+ 'gpu-descriptor-types@0.2.0':{rev:'9f2fb9546591322e7b77ee1e79385e01effd85e4',path:'types',sourceHashes:['0ca3f2a281ba43466fb4d29c05b35c9059806d6114cd929b85afc0c41ea9d3ac','bcf06593c390a3999f300333f63ae69542613157d316b3246faf69eded07d896'],files:gpuDescriptorFiles.map(([f,h,p])=>[f,h,'https://github.com/zakarumych/gpu-descriptor/blob/9f2fb9546591322e7b77ee1e79385e01effd85e4/'+p])},
  'gl_generator@0.14.0':{rev:'ea503e8d5fb6d73c6030e6191ce738cd3bf3433e',path:undefined,sourcePath:'lib.rs',sourceHash:'6f47da878479b503b5202bda84ad8935607264ac03c0b68203109fad9cd479db',files:[['gl-rs-LICENSE.txt','cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30','https://github.com/rust-windowing/gl-rs/blob/ea503e8d5fb6d73c6030e6191ce738cd3bf3433e/LICENSE']]},
  'khronos_api@3.1.0':{rev:'f150967b1c44ae888e6676f93f639ebc82771bdc',path:undefined,sourceHash:'befbc0e187097e6c9da1ecbd79e0e1af462b6f6466108247745f6aa38abe0673',files:[['gl-rs-LICENSE.txt','cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30','https://github.com/rust-windowing/gl-rs/blob/f150967b1c44ae888e6676f93f639ebc82771bdc/LICENSE']]},
  'blue_engine_core@0.10.0':{rev:'3009d16d2429064d87d8cb40b9814bd595bb683f',path:'crates/blue_engine_core',sourceHash:'249d232154713cc1fc5d2e7855cc00a2e594b1cd56885a0707756020ce8cf92f',files:[['blue-engine-LICENSE.txt','62048053433f2ed52d4162d67b28d497a74b6a0c85c709569557f01cd8a02146','https://github.com/AryanpurTech/BlueEngine/blob/3009d16d2429064d87d8cb40b9814bd595bb683f/LICENSE.txt']]},
@@ -60,7 +63,7 @@ const upstreamRules=Object.freeze({
 export function auditedUpstreamNotices(packageRoot,noticeRoot,rule) {
  const vcs=JSON.parse(safeFile(packageRoot,resolve(packageRoot,'.cargo_vcs_info.json')).text);
  if(vcs.git?.sha1!==rule.rev||vcs.git?.dirty===true||vcs.path_in_vcs!==rule.path)throw Error('Audited crate revision mismatch or dirty source');
- if(safeFile(packageRoot,resolve(packageRoot,rule.sourcePath??'src/lib.rs')).sha256!==rule.sourceHash)throw Error('Audited crate source hash mismatch');
+ if(!(rule.sourceHashes??[rule.sourceHash]).includes(safeFile(packageRoot,resolve(packageRoot,rule.sourcePath??'src/lib.rs')).sha256))throw Error('Audited crate source hash mismatch');
  return rule.files.map(([path,expected,url])=>{
   const f=safeFile(noticeRoot,resolve(noticeRoot,path));
   if(f.sha256!==expected)throw Error('Audited upstream notice hash mismatch');
