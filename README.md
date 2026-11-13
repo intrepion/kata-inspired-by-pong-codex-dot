@@ -20,6 +20,8 @@ Mac Slint shared pause follow-up: ten controller tests and sequential automated 
 
 Mac Miniquad pause follow-up: ten release tests pass; sequential desktop start/move/pause/resume/fresh movement checked. Held-across-pause native delivery remains open. [Evidence](docs/MINIQUAD-PAUSE-HELD-INPUT-FIX.md).
 
+Windows Nannou held-input pause follow-up: five polled-input tests and a fresh scripted replay pass; native held-key input remains open. [Evidence](docs/WINDOWS-NANNOU-HELD-PAUSE-RECHECK.md).
+
 Windows Piston pause-fix follow-up: nine action/clock tests and a fresh scripted replay pass; native held-key input remains open. [Evidence](docs/WINDOWS-PISTON-PAUSE-RECHECK.md).
 
 Windows ggez pause-fix follow-up: four action/model tests and fresh scripted replay pass; native held-key input remains open. [Evidence](docs/WINDOWS-GGEZ-PAUSE-RECHECK.md).
