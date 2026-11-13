@@ -1,0 +1,9 @@
+# Godot contact-timing replay on Omarchy
+
+2026-11-13, Omarchy ARM64; source `c457f7a9163c4bd889ad7bf13cf9b8f8ecabb4c4` includes contact-timing physics `c77bf3a`. A fresh offline locked release GDExtension build passed; its Rust test target contains zero tests. Extension SHA-256: `abf5d2cb9e9423e5c281cd58a8b63040a4b2f1870f79dadd5883d1c167882340`. Existing Godot 4.5.1 stable runtime SHA-256: `7999eb8304045a58adb9f5cbb2be0f988d595b1522a1f644f108f746ef3701f1`.
+
+The project and new extension were copied into a separate `/tmp/pong-godot-c77-project-20261113` directory. As documented in the earlier scripted test, a fresh local `.godot/extension_list.cfg` was created to discover the extension without running the editor. The first sandboxed headless smoke launch failed to open the default `user://logs` path and then crashed with signal 11; it is not counted as a pass. A second headless launch using isolated writable XDG data/config/cache directories passed the project's extension, start, movement, pause, resume and reset smoke assertions. This is model/integration behavior, not OS input.
+
+With approved host-display access and the same isolated data directories, the fresh project completed its scripted scene replay with exit 0. Its 13 JSON telemetry records exactly match the revised contact-timing model reference through finished tick 1440. Six app-owned scene-viewport PNGs were produced; tick 480 was inspected and showed the paused state, score, court, paddles and ball. These are viewport exports, not desktop/compositor screenshots. Project, data, captures and telemetry remain under distinct `/tmp/pong-godot-c77-*` paths; historical artifacts were preserved.
+
+This is a local project/runtime and scripted rendering check, not a portable package or release. Physical input, focus/resize, full-match interaction, editor shutdown, clean-machine installation, dependency notices and public distribution remain unverified.

@@ -98,7 +98,7 @@ Each desktop cell is **build / runtime evidence**:
 | Fyrox | B / I | B / I | B / S + scripted/PNG samples passed; real input blocked |
 | Blue Engine | B / I | B / I | B / S + headless replay/PNG samples passed; window/input unverified |
 | raylib-rs | Fresh `99034e6` B / native automated full match and restart; shell replay incomplete ([details](docs/RAYLIB-MAC-CONTACT-TIMING-RECHECK.md)) | B / R; start input unsuccessful; LLVM build blocker resolved | Fresh `971319e` B, 3 frontend tests; relocated package replay and six app-owned PNGs, exact model match; physical input unverified ([details](docs/packaging/RAYLIB-C77-OMARCHY-REPLAY.md)) |
-| Godot + Rust GDExtension | B / I for game; **F** in headless editor shutdown | U / U | B / scripted native viewport PNG samples passed; real input unverified |
+| Godot + Rust GDExtension | B / I for game; **F** in headless editor shutdown | U / U | Fresh `c457f7a` extension B, isolated headless smoke and scene replay; six app-owned viewport PNGs, exact model match; physical input unverified ([details](docs/GODOT-C77-OMARCHY-REPLAY.md)) |
 | bracket-lib (RLTK) | B / bounded native I on existing contrast package; start, movement, pause, full match, restart and held-Q exit checked | B / I; separate header improves readability, bitmap quality still rough | Fresh `c691bdf` B, 9 tests; relocated X11 fallback replay and six app-owned PNGs, exact model match; physical input unverified ([details](docs/packaging/BRACKET-C77-OMARCHY-REPLAY.md)) |
 
 Details: [baseline frontends](docs/desktop-comparison.md), [extra engines](experiments/ENGINE-STATUS.md), [ggez fix](experiments/ggez/README.md), [Godot](experiments/godot/VERIFICATION.md), [bracket-lib](experiments/bracket-lib/README.md).
