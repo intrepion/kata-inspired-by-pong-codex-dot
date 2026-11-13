@@ -24,6 +24,8 @@ Windows-built Yew release static ZIP: extracted hashes, localhost Chrome Start/P
 
 Swift iOS simulator bundle now has explicit version metadata; ad-hoc signing and device distribution remain open. [Evidence](docs/SWIFT-HELD-TOUCH-PAUSE-FIX.md).
 
+Windows Miniquad held-input release ZIP: ten tests, local extraction and model-matched relocated replay pass; actual key delivery and distribution remain open. [Evidence](docs/packaging/MINIQUAD-HELD-WINDOWS-RELEASE-PILOT.md).
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
