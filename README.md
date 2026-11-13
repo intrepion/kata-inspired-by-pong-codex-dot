@@ -96,6 +96,8 @@ Windows Macroquad polling regressions and replay passed; [the recheck](docs/pack
 
 Windows bracket-lib's non-playing input regression and scripted replay passed; see [the engine recheck](docs/packaging/FOUR-ENGINE-NONPLAYING-INPUT-WINDOWS.md) for limits and remaining adapters.
 
+Windows shared GUI model passed its non-playing input regression; [the recheck](docs/packaging/GUI-NONPLAYING-INPUT-WINDOWS.md) records scope and remaining frontend checks.
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
