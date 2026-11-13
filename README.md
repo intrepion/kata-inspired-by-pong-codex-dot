@@ -142,6 +142,8 @@ Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequent
 
 Dioxus local-libxdo launcher now rejects package paths containing loader separators; relocated release replay still passes. [Evidence](docs/packaging/DIOXUS-LIBRARY-PATH-SEPARATOR-FIX.md).
 
+Omarchy Miniquad winning-score fixture: real scoring reached both game-over states and scripted restart cleared them from controlled near-winning positions. [Evidence](docs/packaging/MINIQUAD-SCORING-FIXTURE-OMARCHY.md).
+
 Omarchy Miniquad winner overlay: an isolated forced-state visual fixture rendered both winner messages; real game-over progression and physical input remain open. [Evidence](docs/packaging/MINIQUAD-WINNER-FIXTURE-OMARCHY.md).
 
 Omarchy Ratatui musl empty-environment PTY: enhanced and fallback flows passed from a read-only installation with absent HOME/XDG paths; clean-machine and physical input remain open. [Evidence](docs/packaging/RATATUI-MUSL-EMPTY-ENV-OMARCHY.md).
