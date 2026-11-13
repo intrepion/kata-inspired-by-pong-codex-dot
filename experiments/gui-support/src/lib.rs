@@ -108,7 +108,10 @@ impl Model {
                 }
                 self.game.toggle_pause();
             }
-            "r" if pressed => self.game.start(),
+            "r" if pressed => {
+                self.suppress_movement();
+                self.game.start();
+            }
             "escape" if pressed => self.blur(),
             _ => {}
         }
@@ -123,6 +126,22 @@ impl Model {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn restarting_during_play_requires_fresh_movement_press() {
+        let mut model = Model::default();
+        model.key("enter", true);
+        model.key("w", true);
+        model.key("r", true);
+        model.advance(0.1);
+        assert_eq!(model.game.player, H / 2.);
+        model.key("w", true);
+        model.advance(0.1);
+        assert_eq!(model.game.player, H / 2.);
+        model.key("w", false);
+        model.key("w", true);
+        model.advance(0.1);
+        assert!(model.game.player < H / 2.);
+    }
     #[test]
     fn focus_loss_clears_input_and_pauses() {
         let mut m = Model::default();
