@@ -84,10 +84,10 @@ fn glyph(ch: u8) -> [u8; 7] {
     match ch {
         b'A'=>[14,17,17,31,17,17,17], b'C'=>[14,17,16,16,16,17,14],
         b'D'=>[30,17,17,17,17,17,30], b'E'=>[31,16,16,30,16,16,31],
-        b'I'=>[14,4,4,4,4,4,14], b'N'=>[17,25,21,19,17,17,17],
+        b'I'=>[14,4,4,4,4,4,14], b'M'=>[17,27,21,21,17,17,17], b'N'=>[17,25,21,19,17,17,17],
         b'O'=>[14,17,17,17,17,17,14], b'P'=>[30,17,17,30,16,16,16],
         b'R'=>[30,17,17,30,20,18,17], b'S'=>[15,16,16,14,1,1,30],
-        b'U'=>[17,17,17,17,17,17,14], b'V'=>[17,17,17,17,17,10,4],
+        b'T'=>[31,4,4,4,4,4,4], b'U'=>[17,17,17,17,17,17,14], b'V'=>[17,17,17,17,17,10,4],
         b'W'=>[17,17,17,21,21,21,10], b'Y'=>[17,17,10,4,4,4,4],
         _=>[0;7],
     }
@@ -114,6 +114,26 @@ fn score_label_parts() -> Vec<(f32, f32, f32, f32)> {
                 for (start, len) in glyph_runs(*bits).into_iter().flatten() {
                     parts.push((left + (ch * 6 + start) as f32 * 2., 45. + row as f32 * 2., len as f32 * 2., 2.));
                 }
+            }
+        }
+    }
+    parts
+}
+fn hint_message(state: State) -> &'static str {
+    match state {
+        State::Ready => "ENTER TO START",
+        State::Paused => "SPACE TO RESUME",
+        State::Over => "ENTER TO RESTART",
+        State::Playing => "",
+    }
+}
+fn hint_parts(message: &str) -> Vec<(f32, f32, f32, f32)> {
+    let mut parts = Vec::new();
+    let left = (W - message.len() as f32 * 12.) / 2.;
+    for (ch, character) in message.bytes().enumerate() {
+        for (row, bits) in glyph(character).iter().enumerate() {
+            for (start, len) in glyph_runs(*bits).into_iter().flatten() {
+                parts.push((left + (ch * 6 + start) as f32 * 2., 202. + row as f32 * 2., len as f32 * 2., 2.));
             }
         }
     }
@@ -243,6 +263,17 @@ fn main() -> Result<(), blue_engine::error::Error> {
         engine.objects.get_mut(name.as_str()).unwrap().set_color(1., 0.75, 0.32, 1.);
         rect(&mut engine, &name, 0., 0., 0., 0., 0.1);
     }
+    let hints = [State::Ready, State::Paused, State::Over].map(|state| hint_parts(hint_message(state)));
+    let hint_capacity = hints.iter().map(Vec::len).max().unwrap_or(0);
+    square("hint-panel", ObjectSettings::default(), &mut engine.renderer, &mut engine.objects)?;
+    engine.objects.get_mut("hint-panel").unwrap().set_color(0.047, 0.129, 0.118, 1.);
+    rect(&mut engine, "hint-panel", 0., 0., 0., 0., 0.1);
+    for i in 0..hint_capacity {
+        let name = format!("hint-{i}");
+        square(&name, ObjectSettings::default(), &mut engine.renderer, &mut engine.objects)?;
+        engine.objects.get_mut(name.as_str()).unwrap().set_color(0.85, 1., 0.68, 1.);
+        rect(&mut engine, &name, 0., 0., 0., 0., 0.2);
+    }
     let mut game = Game::new(pong_scenario::SEED);
     let mut demo = pong_scenario::Demo::from_args();
     #[cfg(feature = "windowed")]
@@ -366,6 +397,19 @@ fn main() -> Result<(), blue_engine::error::Error> {
             let (x, width) = segment.map_or((0., 0.), |(start, len)| (left + ch as f32*24. + start as f32*4., len as f32*4.));
             rect(engine, &format!("status-{i}"), x, 160. + row as f32*4., width, if width > 0. {4.} else {0.}, 0.2);
         }
+        let hint = hint_message(game.state);
+        let hint_left = (W - hint.len() as f32 * 12.) / 2.;
+        rect(engine, "hint-panel", hint_left - 5., 198., if hint.is_empty() { 0. } else { hint.len() as f32 * 12. + 10. }, 22., 0.1);
+        let parts = match game.state {
+            State::Ready => Some(&hints[0]),
+            State::Paused => Some(&hints[1]),
+            State::Over => Some(&hints[2]),
+            State::Playing => None,
+        };
+        for i in 0..hint_capacity {
+            let (x, y, width, height) = parts.and_then(|p| p.get(i)).copied().unwrap_or((0., 0., 0., 0.));
+            rect(engine, &format!("hint-{i}"), x, y, width, height, 0.2);
+        }
         #[cfg(feature="windowed")]
         if benchmarking && !benchmark_done {
             let (width,height)=(engine.renderer.config.width,engine.renderer.config.height);
@@ -424,6 +468,18 @@ mod benchmark_tests {
 #[cfg(test)]
 mod input_tests {
     use super::*;
+    #[test]
+    fn court_hints_match_state_and_have_visible_glyphs() {
+        for (state, expected) in [(State::Ready, "ENTER TO START"), (State::Paused, "SPACE TO RESUME"), (State::Over, "ENTER TO RESTART")] {
+            assert_eq!(hint_message(state), expected);
+            for ch in expected.bytes().filter(|ch| *ch != b' ') {
+                assert!(glyph(ch).iter().any(|row| *row != 0), "missing glyph {}", ch as char);
+            }
+            assert!(!hint_parts(expected).is_empty());
+        }
+        assert_eq!(hint_message(State::Playing), "");
+        assert!(hint_parts("").is_empty());
+    }
     #[test]
     fn score_labels_cover_both_sides_below_the_pips() {
         let parts = score_label_parts();
