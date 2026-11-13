@@ -1,0 +1,1208 @@
+{
+  "description": "Filename-only candidate correspondence; not source-to-object proof. All architectures retained.",
+  "binary_sha256": "e8fa5dea2c0a8724142dcb14ab639f67885507b10e5a59121234d7539bbdb1da",
+  "musl_source_sha256": "a9a118bbe84d8764da0ea0d28b3ab3fae8477fc7e4085d90102b8596fc7c75e4",
+  "map_sha256": "d26cedb28004ab7735a1ede1584de5fd3fab03037c91f66366fdbdd03f27b3cd",
+  "members": [
+    {
+      "archive_member": "_Exit.lo",
+      "candidate_source_paths": [
+        "src/exit/_Exit.c"
+      ]
+    },
+    {
+      "archive_member": "_Fork.lo",
+      "candidate_source_paths": [
+        "src/process/_Fork.c"
+      ]
+    },
+    {
+      "archive_member": "__cosdf.lo",
+      "candidate_source_paths": [
+        "src/math/__cosdf.c"
+      ]
+    },
+    {
+      "archive_member": "__environ.lo",
+      "candidate_source_paths": [
+        "src/env/__environ.c"
+      ]
+    },
+    {
+      "archive_member": "__errno_location.lo",
+      "candidate_source_paths": [
+        "src/errno/__errno_location.c"
+      ]
+    },
+    {
+      "archive_member": "__fpclassifyl.lo",
+      "candidate_source_paths": [
+        "src/math/__fpclassifyl.c"
+      ]
+    },
+    {
+      "archive_member": "__init_tls.lo",
+      "candidate_source_paths": [
+        "src/env/__init_tls.c"
+      ]
+    },
+    {
+      "archive_member": "__lctrans.lo",
+      "candidate_source_paths": [
+        "src/locale/__lctrans.c"
+      ]
+    },
+    {
+      "archive_member": "__libc_start_main.lo",
+      "candidate_source_paths": [
+        "src/env/__libc_start_main.c"
+      ]
+    },
+    {
+      "archive_member": "__lock.lo",
+      "candidate_source_paths": [
+        "src/thread/__lock.c"
+      ]
+    },
+    {
+      "archive_member": "__lockfile.lo",
+      "candidate_source_paths": [
+        "src/stdio/__lockfile.c"
+      ]
+    },
+    {
+      "archive_member": "__rem_pio2_large.lo",
+      "candidate_source_paths": [
+        "src/math/__rem_pio2_large.c"
+      ]
+    },
+    {
+      "archive_member": "__rem_pio2f.lo",
+      "candidate_source_paths": [
+        "src/math/__rem_pio2f.c"
+      ]
+    },
+    {
+      "archive_member": "__set_thread_area.lo",
+      "candidate_source_paths": [
+        "src/thread/__set_thread_area.c",
+        "src/thread/aarch64/__set_thread_area.s",
+        "src/thread/arm/__set_thread_area.c",
+        "src/thread/i386/__set_thread_area.s",
+        "src/thread/loongarch64/__set_thread_area.s",
+        "src/thread/microblaze/__set_thread_area.s",
+        "src/thread/or1k/__set_thread_area.s",
+        "src/thread/powerpc/__set_thread_area.s",
+        "src/thread/powerpc64/__set_thread_area.s",
+        "src/thread/riscv32/__set_thread_area.s",
+        "src/thread/riscv64/__set_thread_area.s",
+        "src/thread/s390x/__set_thread_area.s",
+        "src/thread/sh/__set_thread_area.c",
+        "src/thread/x32/__set_thread_area.s",
+        "src/thread/x86_64/__set_thread_area.s"
+      ]
+    },
+    {
+      "archive_member": "__signbitl.lo",
+      "candidate_source_paths": [
+        "src/math/__signbitl.c"
+      ]
+    },
+    {
+      "archive_member": "__sindf.lo",
+      "candidate_source_paths": [
+        "src/math/__sindf.c"
+      ]
+    },
+    {
+      "archive_member": "__stdio_close.lo",
+      "candidate_source_paths": [
+        "src/stdio/__stdio_close.c"
+      ]
+    },
+    {
+      "archive_member": "__stdio_exit.lo",
+      "candidate_source_paths": [
+        "src/stdio/__stdio_exit.c"
+      ]
+    },
+    {
+      "archive_member": "__stdio_seek.lo",
+      "candidate_source_paths": [
+        "src/stdio/__stdio_seek.c"
+      ]
+    },
+    {
+      "archive_member": "__stdio_write.lo",
+      "candidate_source_paths": [
+        "src/stdio/__stdio_write.c"
+      ]
+    },
+    {
+      "archive_member": "__syscall_cp.lo",
+      "candidate_source_paths": [
+        "src/thread/__syscall_cp.c"
+      ]
+    },
+    {
+      "archive_member": "__timedwait.lo",
+      "candidate_source_paths": [
+        "src/thread/__timedwait.c"
+      ]
+    },
+    {
+      "archive_member": "__tls_get_addr.lo",
+      "candidate_source_paths": [
+        "src/thread/__tls_get_addr.c"
+      ]
+    },
+    {
+      "archive_member": "__towrite.lo",
+      "candidate_source_paths": [
+        "src/stdio/__towrite.c"
+      ]
+    },
+    {
+      "archive_member": "__wait.lo",
+      "candidate_source_paths": [
+        "src/thread/__wait.c"
+      ]
+    },
+    {
+      "archive_member": "_exit.lo",
+      "candidate_source_paths": [
+        "src/unistd/_exit.c"
+      ]
+    },
+    {
+      "archive_member": "abort.lo",
+      "candidate_source_paths": [
+        "src/exit/abort.c"
+      ]
+    },
+    {
+      "archive_member": "abort_lock.lo",
+      "candidate_source_paths": [
+        "src/exit/abort_lock.c"
+      ]
+    },
+    {
+      "archive_member": "aligned_alloc.lo",
+      "candidate_source_paths": [
+        "src/malloc/mallocng/aligned_alloc.c",
+        "src/malloc/oldmalloc/aligned_alloc.c"
+      ]
+    },
+    {
+      "archive_member": "assert.lo",
+      "candidate_source_paths": [
+        "src/exit/assert.c"
+      ]
+    },
+    {
+      "archive_member": "bcmp.lo",
+      "candidate_source_paths": [
+        "src/string/bcmp.c"
+      ]
+    },
+    {
+      "archive_member": "block.lo",
+      "candidate_source_paths": [
+        "src/signal/block.c"
+      ]
+    },
+    {
+      "archive_member": "calloc.lo",
+      "candidate_source_paths": [
+        "src/malloc/calloc.c"
+      ]
+    },
+    {
+      "archive_member": "chdir.lo",
+      "candidate_source_paths": [
+        "src/unistd/chdir.c"
+      ]
+    },
+    {
+      "archive_member": "chroot.lo",
+      "candidate_source_paths": [
+        "src/linux/chroot.c"
+      ]
+    },
+    {
+      "archive_member": "clock_gettime.lo",
+      "candidate_source_paths": [
+        "src/time/clock_gettime.c"
+      ]
+    },
+    {
+      "archive_member": "clock_nanosleep.lo",
+      "candidate_source_paths": [
+        "src/time/clock_nanosleep.c"
+      ]
+    },
+    {
+      "archive_member": "clone.lo",
+      "candidate_source_paths": [
+        "src/linux/clone.c",
+        "src/thread/aarch64/clone.s",
+        "src/thread/arm/clone.s",
+        "src/thread/clone.c",
+        "src/thread/i386/clone.s",
+        "src/thread/loongarch64/clone.s",
+        "src/thread/m68k/clone.s",
+        "src/thread/microblaze/clone.s",
+        "src/thread/mips/clone.s",
+        "src/thread/mips64/clone.s",
+        "src/thread/mipsn32/clone.s",
+        "src/thread/or1k/clone.s",
+        "src/thread/powerpc/clone.s",
+        "src/thread/powerpc64/clone.s",
+        "src/thread/riscv32/clone.s",
+        "src/thread/riscv64/clone.s",
+        "src/thread/s390x/clone.s",
+        "src/thread/sh/clone.s",
+        "src/thread/x32/clone.s",
+        "src/thread/x86_64/clone.s"
+      ]
+    },
+    {
+      "archive_member": "close.lo",
+      "candidate_source_paths": [
+        "src/unistd/close.c"
+      ]
+    },
+    {
+      "archive_member": "cosf.lo",
+      "candidate_source_paths": [
+        "src/math/cosf.c"
+      ]
+    },
+    {
+      "archive_member": "default_attr.lo",
+      "candidate_source_paths": [
+        "src/thread/default_attr.c"
+      ]
+    },
+    {
+      "archive_member": "defsysinfo.lo",
+      "candidate_source_paths": [
+        "src/internal/defsysinfo.c",
+        "src/internal/i386/defsysinfo.s"
+      ]
+    },
+    {
+      "archive_member": "dl_iterate_phdr.lo",
+      "candidate_source_paths": [
+        "src/ldso/dl_iterate_phdr.c"
+      ]
+    },
+    {
+      "archive_member": "dladdr.lo",
+      "candidate_source_paths": [
+        "src/ldso/dladdr.c"
+      ]
+    },
+    {
+      "archive_member": "dup.lo",
+      "candidate_source_paths": [
+        "src/unistd/dup.c"
+      ]
+    },
+    {
+      "archive_member": "dup2.lo",
+      "candidate_source_paths": [
+        "src/unistd/dup2.c"
+      ]
+    },
+    {
+      "archive_member": "epoll.lo",
+      "candidate_source_paths": [
+        "src/linux/epoll.c"
+      ]
+    },
+    {
+      "archive_member": "execve.lo",
+      "candidate_source_paths": [
+        "src/process/execve.c"
+      ]
+    },
+    {
+      "archive_member": "execvp.lo",
+      "candidate_source_paths": [
+        "src/process/execvp.c"
+      ]
+    },
+    {
+      "archive_member": "exit.lo",
+      "candidate_source_paths": [
+        "src/exit/exit.c"
+      ]
+    },
+    {
+      "archive_member": "fcntl.lo",
+      "candidate_source_paths": [
+        "src/fcntl/fcntl.c"
+      ]
+    },
+    {
+      "archive_member": "fflush.lo",
+      "candidate_source_paths": [
+        "src/stdio/fflush.c"
+      ]
+    },
+    {
+      "archive_member": "floor.lo",
+      "candidate_source_paths": [
+        "src/math/aarch64/floor.c",
+        "src/math/floor.c",
+        "src/math/i386/floor.s",
+        "src/math/powerpc64/floor.c",
+        "src/math/s390x/floor.c"
+      ]
+    },
+    {
+      "archive_member": "fork.lo",
+      "candidate_source_paths": [
+        "src/process/fork.c"
+      ]
+    },
+    {
+      "archive_member": "fprintf.lo",
+      "candidate_source_paths": [
+        "src/stdio/fprintf.c"
+      ]
+    },
+    {
+      "archive_member": "free.lo",
+      "candidate_source_paths": [
+        "src/malloc/free.c",
+        "src/malloc/mallocng/free.c"
+      ]
+    },
+    {
+      "archive_member": "frexpl.lo",
+      "candidate_source_paths": [
+        "src/math/frexpl.c"
+      ]
+    },
+    {
+      "archive_member": "fstat.lo",
+      "candidate_source_paths": [
+        "src/stat/fstat.c"
+      ]
+    },
+    {
+      "archive_member": "fstatat.lo",
+      "candidate_source_paths": [
+        "src/stat/fstatat.c"
+      ]
+    },
+    {
+      "archive_member": "fwrite.lo",
+      "candidate_source_paths": [
+        "src/stdio/fwrite.c"
+      ]
+    },
+    {
+      "archive_member": "getauxval.lo",
+      "candidate_source_paths": [
+        "src/misc/getauxval.c"
+      ]
+    },
+    {
+      "archive_member": "getcwd.lo",
+      "candidate_source_paths": [
+        "src/unistd/getcwd.c"
+      ]
+    },
+    {
+      "archive_member": "getenv.lo",
+      "candidate_source_paths": [
+        "src/env/getenv.c"
+      ]
+    },
+    {
+      "archive_member": "getpeername.lo",
+      "candidate_source_paths": [
+        "src/network/getpeername.c"
+      ]
+    },
+    {
+      "archive_member": "getpid.lo",
+      "candidate_source_paths": [
+        "src/unistd/getpid.c"
+      ]
+    },
+    {
+      "archive_member": "getrlimit.lo",
+      "candidate_source_paths": [
+        "src/misc/getrlimit.c"
+      ]
+    },
+    {
+      "archive_member": "getsockname.lo",
+      "candidate_source_paths": [
+        "src/network/getsockname.c"
+      ]
+    },
+    {
+      "archive_member": "hypotf.lo",
+      "candidate_source_paths": [
+        "src/math/hypotf.c",
+        "src/math/i386/hypotf.s"
+      ]
+    },
+    {
+      "archive_member": "ioctl.lo",
+      "candidate_source_paths": [
+        "src/misc/ioctl.c"
+      ]
+    },
+    {
+      "archive_member": "libc.lo",
+      "candidate_source_paths": [
+        "src/internal/libc.c"
+      ]
+    },
+    {
+      "archive_member": "lite_malloc.lo",
+      "candidate_source_paths": [
+        "src/malloc/lite_malloc.c"
+      ]
+    },
+    {
+      "archive_member": "lock_ptc.lo",
+      "candidate_source_paths": [
+        "src/thread/lock_ptc.c"
+      ]
+    },
+    {
+      "archive_member": "lseek.lo",
+      "candidate_source_paths": [
+        "src/unistd/lseek.c",
+        "src/unistd/mipsn32/lseek.c",
+        "src/unistd/x32/lseek.c"
+      ]
+    },
+    {
+      "archive_member": "malloc.lo",
+      "candidate_source_paths": [
+        "src/malloc/mallocng/malloc.c",
+        "src/malloc/oldmalloc/malloc.c"
+      ]
+    },
+    {
+      "archive_member": "memchr.lo",
+      "candidate_source_paths": [
+        "src/string/memchr.c"
+      ]
+    },
+    {
+      "archive_member": "memcmp.lo",
+      "candidate_source_paths": [
+        "src/string/memcmp.c"
+      ]
+    },
+    {
+      "archive_member": "memcpy.lo",
+      "candidate_source_paths": [
+        "src/string/aarch64/memcpy.S",
+        "src/string/arm/memcpy.S",
+        "src/string/i386/memcpy.s",
+        "src/string/memcpy.c",
+        "src/string/x86_64/memcpy.s"
+      ]
+    },
+    {
+      "archive_member": "memmove.lo",
+      "candidate_source_paths": [
+        "src/string/i386/memmove.s",
+        "src/string/memmove.c",
+        "src/string/x86_64/memmove.s"
+      ]
+    },
+    {
+      "archive_member": "memset.lo",
+      "candidate_source_paths": [
+        "src/string/aarch64/memset.S",
+        "src/string/i386/memset.s",
+        "src/string/memset.c",
+        "src/string/x86_64/memset.s"
+      ]
+    },
+    {
+      "archive_member": "mkdir.lo",
+      "candidate_source_paths": [
+        "src/stat/mkdir.c"
+      ]
+    },
+    {
+      "archive_member": "mmap.lo",
+      "candidate_source_paths": [
+        "src/mman/mmap.c"
+      ]
+    },
+    {
+      "archive_member": "mprotect.lo",
+      "candidate_source_paths": [
+        "src/mman/mprotect.c"
+      ]
+    },
+    {
+      "archive_member": "mremap.lo",
+      "candidate_source_paths": [
+        "src/mman/mremap.c"
+      ]
+    },
+    {
+      "archive_member": "munmap.lo",
+      "candidate_source_paths": [
+        "src/mman/munmap.c"
+      ]
+    },
+    {
+      "archive_member": "ofl.lo",
+      "candidate_source_paths": [
+        "src/stdio/ofl.c"
+      ]
+    },
+    {
+      "archive_member": "open.lo",
+      "candidate_source_paths": [
+        "src/fcntl/open.c"
+      ]
+    },
+    {
+      "archive_member": "pause.lo",
+      "candidate_source_paths": [
+        "src/unistd/pause.c"
+      ]
+    },
+    {
+      "archive_member": "pipe.lo",
+      "candidate_source_paths": [
+        "src/unistd/mips/pipe.s",
+        "src/unistd/mips64/pipe.s",
+        "src/unistd/mipsn32/pipe.s",
+        "src/unistd/pipe.c",
+        "src/unistd/sh/pipe.s"
+      ]
+    },
+    {
+      "archive_member": "pipe2.lo",
+      "candidate_source_paths": [
+        "src/unistd/pipe2.c"
+      ]
+    },
+    {
+      "archive_member": "poll.lo",
+      "candidate_source_paths": [
+        "src/select/poll.c"
+      ]
+    },
+    {
+      "archive_member": "posix_memalign.lo",
+      "candidate_source_paths": [
+        "src/malloc/posix_memalign.c"
+      ]
+    },
+    {
+      "archive_member": "posix_spawn.lo",
+      "candidate_source_paths": [
+        "src/process/posix_spawn.c"
+      ]
+    },
+    {
+      "archive_member": "posix_spawn_file_actions_addchdir.lo",
+      "candidate_source_paths": [
+        "src/process/posix_spawn_file_actions_addchdir.c"
+      ]
+    },
+    {
+      "archive_member": "posix_spawn_file_actions_adddup2.lo",
+      "candidate_source_paths": [
+        "src/process/posix_spawn_file_actions_adddup2.c"
+      ]
+    },
+    {
+      "archive_member": "posix_spawn_file_actions_destroy.lo",
+      "candidate_source_paths": [
+        "src/process/posix_spawn_file_actions_destroy.c"
+      ]
+    },
+    {
+      "archive_member": "posix_spawn_file_actions_init.lo",
+      "candidate_source_paths": [
+        "src/process/posix_spawn_file_actions_init.c"
+      ]
+    },
+    {
+      "archive_member": "posix_spawnattr_destroy.lo",
+      "candidate_source_paths": [
+        "src/process/posix_spawnattr_destroy.c"
+      ]
+    },
+    {
+      "archive_member": "posix_spawnattr_init.lo",
+      "candidate_source_paths": [
+        "src/process/posix_spawnattr_init.c"
+      ]
+    },
+    {
+      "archive_member": "posix_spawnattr_setflags.lo",
+      "candidate_source_paths": [
+        "src/process/posix_spawnattr_setflags.c"
+      ]
+    },
+    {
+      "archive_member": "posix_spawnattr_setpgroup.lo",
+      "candidate_source_paths": [
+        "src/process/posix_spawnattr_setpgroup.c"
+      ]
+    },
+    {
+      "archive_member": "posix_spawnattr_setsigdefault.lo",
+      "candidate_source_paths": [
+        "src/process/posix_spawnattr_setsigdefault.c"
+      ]
+    },
+    {
+      "archive_member": "posix_spawnp.lo",
+      "candidate_source_paths": [
+        "src/process/posix_spawnp.c"
+      ]
+    },
+    {
+      "archive_member": "procfdname.lo",
+      "candidate_source_paths": [
+        "src/internal/procfdname.c"
+      ]
+    },
+    {
+      "archive_member": "pthread_attr_destroy.lo",
+      "candidate_source_paths": [
+        "src/thread/pthread_attr_destroy.c"
+      ]
+    },
+    {
+      "archive_member": "pthread_attr_get.lo",
+      "candidate_source_paths": [
+        "src/thread/pthread_attr_get.c"
+      ]
+    },
+    {
+      "archive_member": "pthread_cleanup_push.lo",
+      "candidate_source_paths": [
+        "src/thread/pthread_cleanup_push.c"
+      ]
+    },
+    {
+      "archive_member": "pthread_create.lo",
+      "candidate_source_paths": [
+        "src/thread/pthread_create.c"
+      ]
+    },
+    {
+      "archive_member": "pthread_getattr_np.lo",
+      "candidate_source_paths": [
+        "src/thread/pthread_getattr_np.c"
+      ]
+    },
+    {
+      "archive_member": "pthread_key_create.lo",
+      "candidate_source_paths": [
+        "src/thread/pthread_key_create.c"
+      ]
+    },
+    {
+      "archive_member": "pthread_rwlock_rdlock.lo",
+      "candidate_source_paths": [
+        "src/thread/pthread_rwlock_rdlock.c"
+      ]
+    },
+    {
+      "archive_member": "pthread_rwlock_timedrdlock.lo",
+      "candidate_source_paths": [
+        "src/thread/pthread_rwlock_timedrdlock.c"
+      ]
+    },
+    {
+      "archive_member": "pthread_rwlock_timedwrlock.lo",
+      "candidate_source_paths": [
+        "src/thread/pthread_rwlock_timedwrlock.c"
+      ]
+    },
+    {
+      "archive_member": "pthread_rwlock_tryrdlock.lo",
+      "candidate_source_paths": [
+        "src/thread/pthread_rwlock_tryrdlock.c"
+      ]
+    },
+    {
+      "archive_member": "pthread_rwlock_trywrlock.lo",
+      "candidate_source_paths": [
+        "src/thread/pthread_rwlock_trywrlock.c"
+      ]
+    },
+    {
+      "archive_member": "pthread_rwlock_unlock.lo",
+      "candidate_source_paths": [
+        "src/thread/pthread_rwlock_unlock.c"
+      ]
+    },
+    {
+      "archive_member": "pthread_rwlock_wrlock.lo",
+      "candidate_source_paths": [
+        "src/thread/pthread_rwlock_wrlock.c"
+      ]
+    },
+    {
+      "archive_member": "pthread_self.lo",
+      "candidate_source_paths": [
+        "src/thread/pthread_self.c"
+      ]
+    },
+    {
+      "archive_member": "pthread_setcancelstate.lo",
+      "candidate_source_paths": [
+        "src/thread/pthread_setcancelstate.c"
+      ]
+    },
+    {
+      "archive_member": "pthread_setspecific.lo",
+      "candidate_source_paths": [
+        "src/thread/pthread_setspecific.c"
+      ]
+    },
+    {
+      "archive_member": "pthread_sigmask.lo",
+      "candidate_source_paths": [
+        "src/thread/pthread_sigmask.c"
+      ]
+    },
+    {
+      "archive_member": "pthread_testcancel.lo",
+      "candidate_source_paths": [
+        "src/thread/pthread_testcancel.c"
+      ]
+    },
+    {
+      "archive_member": "raise.lo",
+      "candidate_source_paths": [
+        "src/signal/raise.c"
+      ]
+    },
+    {
+      "archive_member": "read.lo",
+      "candidate_source_paths": [
+        "src/unistd/read.c"
+      ]
+    },
+    {
+      "archive_member": "readlink.lo",
+      "candidate_source_paths": [
+        "src/unistd/readlink.c"
+      ]
+    },
+    {
+      "archive_member": "realloc.lo",
+      "candidate_source_paths": [
+        "src/malloc/mallocng/realloc.c",
+        "src/malloc/realloc.c"
+      ]
+    },
+    {
+      "archive_member": "realpath.lo",
+      "candidate_source_paths": [
+        "src/misc/realpath.c"
+      ]
+    },
+    {
+      "archive_member": "recv.lo",
+      "candidate_source_paths": [
+        "src/network/recv.c"
+      ]
+    },
+    {
+      "archive_member": "recvfrom.lo",
+      "candidate_source_paths": [
+        "src/network/recvfrom.c"
+      ]
+    },
+    {
+      "archive_member": "recvmsg.lo",
+      "candidate_source_paths": [
+        "src/network/recvmsg.c"
+      ]
+    },
+    {
+      "archive_member": "replaced.lo",
+      "candidate_source_paths": [
+        "src/malloc/replaced.c"
+      ]
+    },
+    {
+      "archive_member": "restore.lo",
+      "candidate_source_paths": [
+        "src/signal/aarch64/restore.s",
+        "src/signal/arm/restore.s",
+        "src/signal/i386/restore.s",
+        "src/signal/loongarch64/restore.s",
+        "src/signal/microblaze/restore.s",
+        "src/signal/powerpc/restore.s",
+        "src/signal/powerpc64/restore.s",
+        "src/signal/restore.c",
+        "src/signal/riscv32/restore.s",
+        "src/signal/riscv64/restore.s",
+        "src/signal/s390x/restore.s",
+        "src/signal/sh/restore.s",
+        "src/signal/x32/restore.s",
+        "src/signal/x86_64/restore.s"
+      ]
+    },
+    {
+      "archive_member": "scalbn.lo",
+      "candidate_source_paths": [
+        "src/math/i386/scalbn.s",
+        "src/math/scalbn.c"
+      ]
+    },
+    {
+      "archive_member": "sched_yield.lo",
+      "candidate_source_paths": [
+        "src/sched/sched_yield.c"
+      ]
+    },
+    {
+      "archive_member": "sem_destroy.lo",
+      "candidate_source_paths": [
+        "src/thread/sem_destroy.c"
+      ]
+    },
+    {
+      "archive_member": "sem_init.lo",
+      "candidate_source_paths": [
+        "src/thread/sem_init.c"
+      ]
+    },
+    {
+      "archive_member": "sem_post.lo",
+      "candidate_source_paths": [
+        "src/thread/sem_post.c"
+      ]
+    },
+    {
+      "archive_member": "sem_timedwait.lo",
+      "candidate_source_paths": [
+        "src/thread/sem_timedwait.c"
+      ]
+    },
+    {
+      "archive_member": "sem_trywait.lo",
+      "candidate_source_paths": [
+        "src/thread/sem_trywait.c"
+      ]
+    },
+    {
+      "archive_member": "sem_wait.lo",
+      "candidate_source_paths": [
+        "src/thread/sem_wait.c"
+      ]
+    },
+    {
+      "archive_member": "send.lo",
+      "candidate_source_paths": [
+        "src/network/send.c"
+      ]
+    },
+    {
+      "archive_member": "sendmsg.lo",
+      "candidate_source_paths": [
+        "src/network/sendmsg.c"
+      ]
+    },
+    {
+      "archive_member": "sendto.lo",
+      "candidate_source_paths": [
+        "src/network/sendto.c"
+      ]
+    },
+    {
+      "archive_member": "setgid.lo",
+      "candidate_source_paths": [
+        "src/unistd/setgid.c"
+      ]
+    },
+    {
+      "archive_member": "setgroups.lo",
+      "candidate_source_paths": [
+        "src/linux/setgroups.c"
+      ]
+    },
+    {
+      "archive_member": "setpgid.lo",
+      "candidate_source_paths": [
+        "src/unistd/setpgid.c"
+      ]
+    },
+    {
+      "archive_member": "setsid.lo",
+      "candidate_source_paths": [
+        "src/unistd/setsid.c"
+      ]
+    },
+    {
+      "archive_member": "setuid.lo",
+      "candidate_source_paths": [
+        "src/unistd/setuid.c"
+      ]
+    },
+    {
+      "archive_member": "setxid.lo",
+      "candidate_source_paths": [
+        "src/unistd/setxid.c"
+      ]
+    },
+    {
+      "archive_member": "sigaction.lo",
+      "candidate_source_paths": [
+        "src/signal/sigaction.c"
+      ]
+    },
+    {
+      "archive_member": "sigaddset.lo",
+      "candidate_source_paths": [
+        "src/signal/sigaddset.c"
+      ]
+    },
+    {
+      "archive_member": "sigaltstack.lo",
+      "candidate_source_paths": [
+        "src/signal/sigaltstack.c"
+      ]
+    },
+    {
+      "archive_member": "sigemptyset.lo",
+      "candidate_source_paths": [
+        "src/signal/sigemptyset.c"
+      ]
+    },
+    {
+      "archive_member": "sigismember.lo",
+      "candidate_source_paths": [
+        "src/signal/sigismember.c"
+      ]
+    },
+    {
+      "archive_member": "signal.lo",
+      "candidate_source_paths": [
+        "src/signal/signal.c"
+      ]
+    },
+    {
+      "archive_member": "sinf.lo",
+      "candidate_source_paths": [
+        "src/math/sinf.c"
+      ]
+    },
+    {
+      "archive_member": "snprintf.lo",
+      "candidate_source_paths": [
+        "src/stdio/snprintf.c"
+      ]
+    },
+    {
+      "archive_member": "socketpair.lo",
+      "candidate_source_paths": [
+        "src/network/socketpair.c"
+      ]
+    },
+    {
+      "archive_member": "sqrtf.lo",
+      "candidate_source_paths": [
+        "src/math/aarch64/sqrtf.c",
+        "src/math/arm/sqrtf.c",
+        "src/math/i386/sqrtf.c",
+        "src/math/mips/sqrtf.c",
+        "src/math/powerpc/sqrtf.c",
+        "src/math/powerpc64/sqrtf.c",
+        "src/math/riscv32/sqrtf.c",
+        "src/math/riscv64/sqrtf.c",
+        "src/math/s390x/sqrtf.c",
+        "src/math/sqrtf.c",
+        "src/math/x32/sqrtf.s",
+        "src/math/x86_64/sqrtf.c"
+      ]
+    },
+    {
+      "archive_member": "stat.lo",
+      "candidate_source_paths": [
+        "src/stat/stat.c"
+      ]
+    },
+    {
+      "archive_member": "stderr.lo",
+      "candidate_source_paths": [
+        "src/stdio/stderr.c"
+      ]
+    },
+    {
+      "archive_member": "stpcpy.lo",
+      "candidate_source_paths": [
+        "src/string/stpcpy.c"
+      ]
+    },
+    {
+      "archive_member": "strchr.lo",
+      "candidate_source_paths": [
+        "src/string/strchr.c"
+      ]
+    },
+    {
+      "archive_member": "strchrnul.lo",
+      "candidate_source_paths": [
+        "src/string/strchrnul.c"
+      ]
+    },
+    {
+      "archive_member": "strcmp.lo",
+      "candidate_source_paths": [
+        "src/string/strcmp.c"
+      ]
+    },
+    {
+      "archive_member": "strcpy.lo",
+      "candidate_source_paths": [
+        "src/string/strcpy.c"
+      ]
+    },
+    {
+      "archive_member": "strdup.lo",
+      "candidate_source_paths": [
+        "src/string/strdup.c"
+      ]
+    },
+    {
+      "archive_member": "strerror.lo",
+      "candidate_source_paths": [
+        "src/errno/strerror.c"
+      ]
+    },
+    {
+      "archive_member": "strerror_r.lo",
+      "candidate_source_paths": [
+        "src/string/strerror_r.c"
+      ]
+    },
+    {
+      "archive_member": "strlen.lo",
+      "candidate_source_paths": [
+        "src/string/strlen.c"
+      ]
+    },
+    {
+      "archive_member": "strncmp.lo",
+      "candidate_source_paths": [
+        "src/string/strncmp.c"
+      ]
+    },
+    {
+      "archive_member": "strnlen.lo",
+      "candidate_source_paths": [
+        "src/string/strnlen.c"
+      ]
+    },
+    {
+      "archive_member": "synccall.lo",
+      "candidate_source_paths": [
+        "src/thread/synccall.c"
+      ]
+    },
+    {
+      "archive_member": "syscall.lo",
+      "candidate_source_paths": [
+        "src/misc/syscall.c"
+      ]
+    },
+    {
+      "archive_member": "syscall_ret.lo",
+      "candidate_source_paths": [
+        "src/internal/syscall_ret.c"
+      ]
+    },
+    {
+      "archive_member": "sysconf.lo",
+      "candidate_source_paths": [
+        "src/conf/sysconf.c"
+      ]
+    },
+    {
+      "archive_member": "sysinfo.lo",
+      "candidate_source_paths": [
+        "src/linux/sysinfo.c",
+        "src/linux/x32/sysinfo.c"
+      ]
+    },
+    {
+      "archive_member": "vdso.lo",
+      "candidate_source_paths": [
+        "src/internal/vdso.c"
+      ]
+    },
+    {
+      "archive_member": "vfprintf.lo",
+      "candidate_source_paths": [
+        "src/stdio/vfprintf.c"
+      ]
+    },
+    {
+      "archive_member": "vmlock.lo",
+      "candidate_source_paths": [
+        "src/thread/vmlock.c"
+      ]
+    },
+    {
+      "archive_member": "vsnprintf.lo",
+      "candidate_source_paths": [
+        "src/stdio/vsnprintf.c"
+      ]
+    },
+    {
+      "archive_member": "waitid.lo",
+      "candidate_source_paths": [
+        "src/process/waitid.c"
+      ]
+    },
+    {
+      "archive_member": "waitpid.lo",
+      "candidate_source_paths": [
+        "src/process/waitpid.c"
+      ]
+    },
+    {
+      "archive_member": "wcrtomb.lo",
+      "candidate_source_paths": [
+        "src/multibyte/wcrtomb.c"
+      ]
+    },
+    {
+      "archive_member": "wctomb.lo",
+      "candidate_source_paths": [
+        "src/multibyte/wctomb.c"
+      ]
+    },
+    {
+      "archive_member": "write.lo",
+      "candidate_source_paths": [
+        "src/unistd/write.c"
+      ]
+    },
+    {
+      "archive_member": "writev.lo",
+      "candidate_source_paths": [
+        "src/unistd/writev.c"
+      ]
+    }
+  ]
+}

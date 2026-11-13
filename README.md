@@ -96,6 +96,8 @@ Mac softbuffer target-filtered license metadata screen: no declared LGPL, GPL-3 
 
 Mac bracket-lib target-filtered license screen: no declared LGPL, GPL-3 or MPL in 84 resolved packages; native/system components and full source review remain open. [Evidence](docs/packaging/BRACKET-MAC-LICENSE-SCREEN.md).
 
+Mac SDL3 native audit: HIDAPI-named code is present; its source offers BSD-style and original alternatives to GPLv3, subject to full notice review. [Evidence](docs/packaging/SDL3-MAC-HIDAPI-LICENSE.md).
+
 Mac GPUI target graph contains MPL-declared option-ext and a macOS cbindgen build dependency; disabling font-kit selects a no-op text system. [Evidence](docs/packaging/GPUI-MAC-MPL-PATHS.md).
 
 Mac raylib target screen: no restricted Cargo declarations in 50 packages; raylib, GLFW and stb-named code is present and native/system notice review remains open. [Evidence](docs/packaging/RAYLIB-MAC-LICENSE-SCREEN.md).
@@ -128,7 +130,7 @@ Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequent
 
 Dioxus local-libxdo launcher now rejects package paths containing loader separators; relocated release replay still passes. [Evidence](docs/packaging/DIOXUS-LIBRARY-PATH-SEPARATOR-FIX.md).
 
-Omarchy Ratatui musl distribution trace: installed target inputs match official archives; source-recipe and broad Rust license flags need final attribution review. [Evidence](docs/packaging/RATATUI-MUSL-DISTRIBUTION-TRACE.md).
+Omarchy Ratatui musl distribution trace: installed target inputs match official archives; 186 linked libc members have source-name candidates, with third-party notices and final attribution review still open. [Evidence](docs/packaging/RATATUI-MUSL-DISTRIBUTION-TRACE.md).
 
 Omarchy Ratatui musl provenance: 25 linked Cargo archives mapped and verified against cached sources; exact distributed sysroot source and notice review remain open. [Evidence](docs/packaging/RATATUI-MUSL-STATIC-PROVENANCE.md).
 
