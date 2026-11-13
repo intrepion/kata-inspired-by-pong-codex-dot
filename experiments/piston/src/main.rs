@@ -22,6 +22,54 @@ fn window_title(game: &Game) -> String {
     };
     format!("Pong Piston | {status} | YOU {} : {} CPU | Enter: play | W/S/arrows | Space: pause | R: restart", game.scores[0], game.scores[1])
 }
+fn winner_label(game: &Game) -> Option<&'static str> {
+    if game.state != State::Over {
+        return None;
+    }
+    if game.scores[0] > game.scores[1] {
+        Some("YOU WIN")
+    } else if game.scores[1] > game.scores[0] {
+        Some("CPU WINS")
+    } else {
+        None
+    }
+}
+fn result_glyph(ch: u8) -> [u8; 7] {
+    match ch {
+        b'C' => [14, 17, 16, 16, 16, 17, 14],
+        b'I' => [14, 4, 4, 4, 4, 4, 14],
+        b'N' => [17, 25, 21, 19, 17, 17, 17],
+        b'O' => [14, 17, 17, 17, 17, 17, 14],
+        b'P' => [30, 17, 17, 30, 16, 16, 16],
+        b'S' => [15, 16, 16, 14, 1, 1, 30],
+        b'U' => [17, 17, 17, 17, 17, 17, 14],
+        b'W' => [17, 17, 17, 21, 21, 21, 10],
+        b'Y' => [17, 17, 10, 4, 4, 4, 4],
+        _ => [0; 7],
+    }
+}
+fn winner_cells(game: &Game) -> Vec<[f64; 4]> {
+    let Some(message) = winner_label(game) else {
+        return Vec::new();
+    };
+    let left = (W as f64 - message.len() as f64 * 36.) / 2.;
+    let mut cells = Vec::new();
+    for (i, ch) in message.bytes().enumerate() {
+        for (y, row) in result_glyph(ch).iter().enumerate() {
+            for col in 0..5 {
+                if row & (1 << (4 - col)) != 0 {
+                    cells.push([
+                        left + i as f64 * 36. + col as f64 * 6.,
+                        225. + y as f64 * 6.,
+                        6.,
+                        6.,
+                    ]);
+                }
+            }
+        }
+    }
+    cells
+}
 
 // Returns whether the event resets the fixed-step clock.
 fn key_press(
@@ -92,7 +140,17 @@ mod control_tests {
             game.step(0.02, 0.);
             assert_eq!(game.state, State::Over);
             assert!(window_title(&game).contains(message));
+            assert_eq!(
+                winner_label(&game),
+                Some(if scores[0] == 6 {
+                    "YOU WIN"
+                } else {
+                    "CPU WINS"
+                })
+            );
+            assert!(!winner_cells(&game).is_empty());
             game.start();
+            assert!(winner_cells(&game).is_empty());
             assert!(!window_title(&game).contains(message));
             assert!(window_title(&game).contains("Playing"));
         }
@@ -356,6 +414,9 @@ fn draw_scene<G: piston_window::graphics::Graphics>(
                 g,
             );
         }
+    }
+    for cell in winner_cells(game) {
+        rectangle([0.85, 1., 0.68, 1.], cell, t, g);
     }
 }
 
