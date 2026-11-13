@@ -99,6 +99,10 @@ impl Session {
         if self.demo.is_some() {
             return;
         }
+        if self.game.state == State::Over {
+            self.held = [false; 4];
+            self.pointers.iter_mut().for_each(HashSet::clear);
+        }
         self.game.start();
         self.accumulator = 0.0;
     }
@@ -236,6 +240,45 @@ pub const CSS:&str="body{margin:0;background:#080f19;color:#eef6ff;font:16px sys
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn held_inputs_do_not_carry_through_match_end_restart() {
+        use pong_core::{Ball, BALL, H, W};
+        for pointer in [false, true] {
+            let mut s = Session::default();
+            s.start();
+            if pointer {
+                s.movement_button(Direction::Up, 7, true);
+            } else {
+                s.key("w", true, false);
+            }
+            s.game.scores = [6, 2];
+            s.game.serve = 0.;
+            s.game.ball = Ball {
+                x: W + BALL - 1.,
+                y: H / 2.,
+                vx: 350.,
+                vy: 0.,
+            };
+            s.tick(0.02);
+            assert_eq!(s.game.state, State::Over);
+            s.start();
+            if !pointer {
+                s.key("w", true, true);
+            }
+            s.tick(0.02);
+            assert_eq!(s.game.player, H / 2., "pointer={pointer}");
+            if pointer {
+                s.movement_button(Direction::Up, 7, false);
+                s.movement_button(Direction::Up, 8, true);
+            } else {
+                s.key("w", false, false);
+                s.key("w", true, false);
+            }
+            s.tick(0.02);
+            assert_ne!(s.game.player, H / 2.);
+        }
+    }
+
     #[test]
     fn nonplaying_inputs_wait_for_release_and_fresh_press() {
         for state in [State::Ready, State::Paused, State::Over] {

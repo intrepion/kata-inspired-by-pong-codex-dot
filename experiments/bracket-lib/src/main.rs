@@ -83,6 +83,20 @@ impl Pong {
                 {
                     self.suppressed.insert(key);
                 }
+                if self.game.state == State::Over
+                    && matches!(key, VirtualKeyCode::Space | VirtualKeyCode::R)
+                {
+                    for movement in [
+                        VirtualKeyCode::W,
+                        VirtualKeyCode::Up,
+                        VirtualKeyCode::S,
+                        VirtualKeyCode::Down,
+                    ] {
+                        if self.keys.contains(&movement) {
+                            self.suppressed.insert(movement);
+                        }
+                    }
+                }
                 match key {
                     VirtualKeyCode::Escape | VirtualKeyCode::Q => return true,
                     VirtualKeyCode::Space => {
@@ -351,6 +365,42 @@ mod tests {
             key: k,
             scan_code: 0,
             pressed,
+        }
+    }
+    #[test]
+    fn held_movement_does_not_carry_through_match_end_restart() {
+        use pong_core::Ball;
+        for movement in [
+            VirtualKeyCode::W,
+            VirtualKeyCode::Up,
+            VirtualKeyCode::S,
+            VirtualKeyCode::Down,
+        ] {
+            for restart in [VirtualKeyCode::Space, VirtualKeyCode::R] {
+                let mut p = Pong::new();
+                p.game.start();
+                p.event(key(movement, true));
+                p.game.scores = [6, 2];
+                p.game.serve = 0.;
+                p.game.ball = Ball {
+                    x: W + BALL - 1.,
+                    y: H / 2.,
+                    vx: 350.,
+                    vy: 0.,
+                };
+                p.game.step(0.02, 0.);
+                assert_eq!(p.game.state, State::Over);
+                p.event(key(restart, true));
+                assert_eq!(p.game.state, State::Playing);
+                let before = p.game.player;
+                p.event(key(movement, true));
+                p.advance(0.02);
+                assert_eq!(p.game.player, before, "{movement:?} {restart:?}");
+                p.event(key(movement, false));
+                p.event(key(movement, true));
+                p.advance(0.02);
+                assert_ne!(p.game.player, before);
+            }
         }
     }
     #[test]
