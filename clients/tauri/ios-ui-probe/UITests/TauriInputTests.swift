@@ -32,8 +32,11 @@ final class TauriInputTests: XCTestCase {
         XCTAssertTrue(playing.waitForExistence(timeout: 15))
         let over = app.staticTexts.matching(NSPredicate(format: "label CONTAINS 'Match over'")).firstMatch
         XCTAssertTrue(over.waitForExistence(timeout: 180), "No match over: \(app.debugDescription)")
+        let finalScore = over.label
+        XCTAssertNotNil(finalScore.range(of: #"^You (7 — [0-6]|[0-6] — 7) CPU · Match over$"#, options: .regularExpression), "Unexpected terminal score: \(finalScore)")
         start.tap()
-        XCTAssertTrue(playing.waitForExistence(timeout: 15), "Restart did not start: \(app.debugDescription)")
+        let resetScore = app.staticTexts["You 0 — 0 CPU · Playing"]
+        XCTAssertTrue(resetScore.waitForExistence(timeout: 15), "Restart did not reset the score: \(app.debugDescription)")
     }
 
 }

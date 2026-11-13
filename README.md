@@ -50,6 +50,8 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
+Omarchy Ratatui release pilot now includes a resolved-graph notice discovery bundle; relocated replay and six manifest entries verify, with notice review and clean-machine installation pending. [Evidence](docs/packaging/RATATUI-RELEASE-NOTICE-OMARCHY.md).
+
 Omarchy tab-loss check was inconclusive because the automation reported both pages visible; no unverified focus-listener changes were adopted. [Details](docs/WEB-TAB-FOCUS-ATTEMPT.md).
 
 Dioxus focus/pause fix: a fresh localhost Chrome build reproduced and corrected the first-click failure; desktop scripted replay passes, with native interaction pending. [Evidence](docs/DIOXUS-INTERNAL-FOCUS-PAUSE-FIX.md).
@@ -280,7 +282,7 @@ Details: [low-level clients](experiments/LOW-LEVEL.md), [GUI toolkits](experimen
 | Yew browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | B / bounded localhost focus and pause check ([details](docs/YEW-LEPTOS-FOCUS-CHROME-OMARCHY.md)) |
 | Leptos browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | B / bounded localhost focus and pause check ([details](docs/YEW-LEPTOS-FOCUS-CHROME-OMARCHY.md)) |
 | Dioxus browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | U / U |
-| Yew native Tauri wrapper | Fresh `b92b7df` B + state/SVG replay + bounded I; provenance/evidence published `18bc91c` | B / I | `2608321` debug B, 12 shared tests; relocated scripted SVG replay matches model; visual/input unverified ([evidence](docs/packaging/YEW-PAUSE-OMARCHY-PILOT.md)) |
+| Yew native Tauri wrapper | Fresh `b92b7df` B + state/SVG replay + bounded I; provenance/evidence published `18bc91c` | B / I | Focus-fix debug B, 2 bridge + 13 shared tests; relocated scripted SVG replay matches model; native input/visual unverified ([evidence](docs/packaging/YEW-FOCUS-OMARCHY-PACKAGE.md); [earlier pilot](docs/packaging/YEW-PAUSE-OMARCHY-PILOT.md)) |
 | Leptos native Tauri wrapper | Fresh `b92b7df` B + state/SVG replay + bounded I; provenance/evidence published `18bc91c` | B / I | `0cf9e95` debug B, 12 shared tests; relocated scripted SVG replay matches model; visual/input unverified ([evidence](docs/packaging/LEPTOS-PAUSE-OMARCHY-PILOT.md)) |
 | Dioxus native desktop | Fresh `4088089` B / I + native replay; held controls/release, full match and restart passed | B / I; maximized layout checked | Focus-fix debug B, 13 shared tests; relocated scripted SVG replay matches model; native input/visual unverified ([evidence](docs/packaging/DIOXUS-FOCUS-OMARCHY-PACKAGE.md); [earlier pilot](docs/packaging/DIOXUS-PAUSE-OMARCHY-PILOT.md)) |
 
@@ -296,7 +298,7 @@ Historical pointer ownership follow-up: shared Rust controller model tests pass 
 | --- | --- | --- | --- | --- |
 | Native Kotlin | Windows / Android 15 API35 emulator | Debug APK + 11 unit tests pass (latest replay candidate) | Installed; touch paddle movement, ball motion, pause/resume/restart checked | Full match, physical device, store packaging |
 | Native Swift | Mac / iPhone16 Pro iOS18.4 simulator (latest) | `038f85e` Debug/Release builds + 11 core tests + 2 UI tests pass | DEBUG app replay 1440 ticks / 13 states / 6 app-owned PNGs; normal touch/release, Home pause/resume, full match and restart passed (`18bc91c`) | Physical device, store packaging |
-| Tauri + Rust WASM iOS | Mac / iPhone16 iOS18.4 simulator | Development build passes via CLI coordinator + xcodebuild | Device Hub visual start, held Up/Down touch, scoring, pause/restart pass | White strip absent in updated portrait simulator shell; landscape controls fit and Start reached Playing on one simulator; [background](docs/TAURI-IOS-SAFE-AREA-20261113.md), [landscape](docs/TAURI-IOS-LANDSCAPE-20261113.md). Independent XCTest Start/Pause/Resume and unattended match/restart pass; physical input and release qualification remain open |
+| Tauri + Rust WASM iOS | Mac / iPhone16 iOS18.4 simulator | Development build passes via CLI coordinator + xcodebuild | Device Hub visual start, held Up/Down touch, scoring, pause/restart pass | White strip absent in updated portrait simulator shell; landscape controls fit and Start reached Playing on one simulator; [background](docs/TAURI-IOS-SAFE-AREA-20261113.md), [landscape](docs/TAURI-IOS-LANDSCAPE-20261113.md). Independent XCTest Start/Pause/Resume and unattended match/score reset pass; physical input and release qualification remain open |
 | Tauri + Rust WASM Android | Windows / Android emulator | Build/install pass | Start, scoring and pause verified | Sustained touch, full match, physical device and release packaging |
 | Yew/Leptos Tauri mobile; Dioxus mobile | iOS / Android | U | U | Mobile setup, packaging and interaction qualification |
 | Godot Rust mobile/web exports | iOS / Android / web | U | U | Export pipeline/templates; mobile touch controls not implemented |
