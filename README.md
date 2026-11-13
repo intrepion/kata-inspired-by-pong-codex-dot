@@ -1,5 +1,7 @@
 # Rallylight
 
+Macroquad now names the winner at match end; Mac model tests and a cached release build pass, with rendered winner-screen verification still open. [Evidence](docs/packaging/MACROQUAD-WINNER-MAC-20261113.md)
+
 ggez now names the winner at match end; Mac model tests and a cached release build pass, with rendered winner-screen verification still open. [Evidence](docs/packaging/GGEZ-WINNER-MAC-20261113.md)
 
 Bevy now suppresses movement held through active restart until release; the Mac adapter suite and cached release build pass. [Evidence](docs/packaging/BEVY-ACTIVE-RESTART-MAC-20261113.md)
