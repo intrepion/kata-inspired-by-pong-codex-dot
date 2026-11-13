@@ -1,0 +1,488 @@
+[
+  {
+    "name": "bitflags",
+    "version": "2.13.2",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "bytes",
+    "version": "1.12.1",
+    "license": "MIT",
+    "origin": "registry"
+  },
+  {
+    "name": "cfg-if",
+    "version": "1.0.5",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "cookie",
+    "version": "0.18.2",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "crossbeam-channel",
+    "version": "0.5.17",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "crossbeam-utils",
+    "version": "0.8.23",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "deranged",
+    "version": "0.5.9",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "displaydoc",
+    "version": "0.2.7",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "dpi",
+    "version": "0.1.2",
+    "license": "Apache-2.0 AND MIT",
+    "origin": "registry"
+  },
+  {
+    "name": "dunce",
+    "version": "1.0.5",
+    "license": "CC0-1.0 OR MIT-0 OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "form_urlencoded",
+    "version": "1.2.2",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "http",
+    "version": "1.5.0",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "icu_collections",
+    "version": "2.4.0",
+    "license": "Unicode-3.0",
+    "origin": "registry"
+  },
+  {
+    "name": "icu_locale_core",
+    "version": "2.4.0",
+    "license": "Unicode-3.0",
+    "origin": "registry"
+  },
+  {
+    "name": "icu_normalizer",
+    "version": "2.4.0",
+    "license": "Unicode-3.0",
+    "origin": "registry"
+  },
+  {
+    "name": "icu_normalizer_data",
+    "version": "2.4.0",
+    "license": "Unicode-3.0",
+    "origin": "registry"
+  },
+  {
+    "name": "icu_properties",
+    "version": "2.4.0",
+    "license": "Unicode-3.0",
+    "origin": "registry"
+  },
+  {
+    "name": "icu_properties_data",
+    "version": "2.4.0",
+    "license": "Unicode-3.0",
+    "origin": "registry"
+  },
+  {
+    "name": "icu_provider",
+    "version": "2.4.0",
+    "license": "Unicode-3.0",
+    "origin": "registry"
+  },
+  {
+    "name": "idna",
+    "version": "1.1.0",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "idna_adapter",
+    "version": "1.2.2",
+    "license": "Apache-2.0 OR MIT",
+    "origin": "registry"
+  },
+  {
+    "name": "itoa",
+    "version": "1.0.19",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "libc",
+    "version": "0.2.191",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "litemap",
+    "version": "0.8.3",
+    "license": "Unicode-3.0",
+    "origin": "registry"
+  },
+  {
+    "name": "lock_api",
+    "version": "0.4.14",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "log",
+    "version": "0.4.35",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "num-conv",
+    "version": "0.2.2",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "parking_lot",
+    "version": "0.12.5",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "parking_lot_core",
+    "version": "0.9.12",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "percent-encoding",
+    "version": "2.3.2",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "pong-wry-tao-probe",
+    "version": "0.1.0",
+    "license": "MIT",
+    "origin": "local"
+  },
+  {
+    "name": "potential_utf",
+    "version": "0.1.6",
+    "license": "Unicode-3.0",
+    "origin": "registry"
+  },
+  {
+    "name": "powerfmt",
+    "version": "0.2.1",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "proc-macro2",
+    "version": "1.0.107",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "quote",
+    "version": "1.0.47",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "raw-window-handle",
+    "version": "0.6.2",
+    "license": "MIT OR Apache-2.0 OR Zlib",
+    "origin": "registry"
+  },
+  {
+    "name": "scopeguard",
+    "version": "1.2.0",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "serde",
+    "version": "1.0.229",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "serde_core",
+    "version": "1.0.229",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "smallvec",
+    "version": "1.16.5",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "stable_deref_trait",
+    "version": "1.2.1",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "syn",
+    "version": "2.0.119",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "syn",
+    "version": "3.0.10",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "synstructure",
+    "version": "0.14.0",
+    "license": "MIT",
+    "origin": "registry"
+  },
+  {
+    "name": "tao",
+    "version": "0.37.2",
+    "license": "Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "thiserror",
+    "version": "2.0.21",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "thiserror-impl",
+    "version": "2.0.21",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "time",
+    "version": "0.3.55",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "time-core",
+    "version": "0.1.9",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "time-macros",
+    "version": "0.2.32",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "tinystr",
+    "version": "0.8.5",
+    "license": "Unicode-3.0",
+    "origin": "registry"
+  },
+  {
+    "name": "unicode-ident",
+    "version": "1.0.27",
+    "license": "(MIT OR Apache-2.0) AND Unicode-3.0",
+    "origin": "registry"
+  },
+  {
+    "name": "unicode-segmentation",
+    "version": "1.13.3",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "url",
+    "version": "2.5.8",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "utf_types",
+    "version": "1.0.0",
+    "license": "Apache-2.0 OR MIT",
+    "origin": "registry"
+  },
+  {
+    "name": "utf8_iter",
+    "version": "1.1.0",
+    "license": "Apache-2.0 OR MIT",
+    "origin": "registry"
+  },
+  {
+    "name": "version_check",
+    "version": "0.9.5",
+    "license": "MIT/Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "webview2-com",
+    "version": "0.39.1",
+    "license": "MIT",
+    "origin": "registry"
+  },
+  {
+    "name": "webview2-com-macros",
+    "version": "0.8.1",
+    "license": "MIT",
+    "origin": "registry"
+  },
+  {
+    "name": "webview2-com-sys",
+    "version": "0.39.1",
+    "license": "MIT",
+    "origin": "registry"
+  },
+  {
+    "name": "windows",
+    "version": "0.62.2",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "windows-collections",
+    "version": "0.3.2",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "windows-core",
+    "version": "0.62.2",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "windows-future",
+    "version": "0.3.2",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "windows-implement",
+    "version": "0.60.2",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "windows-interface",
+    "version": "0.59.3",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "windows-link",
+    "version": "0.2.1",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "windows-numerics",
+    "version": "0.3.1",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "windows-result",
+    "version": "0.4.1",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "windows-strings",
+    "version": "0.5.1",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "windows-threading",
+    "version": "0.2.1",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "windows-version",
+    "version": "0.1.7",
+    "license": "MIT OR Apache-2.0",
+    "origin": "registry"
+  },
+  {
+    "name": "writeable",
+    "version": "0.6.4",
+    "license": "Unicode-3.0",
+    "origin": "registry"
+  },
+  {
+    "name": "wry",
+    "version": "0.57.2",
+    "license": "Apache-2.0 OR MIT",
+    "origin": "registry"
+  },
+  {
+    "name": "yoke",
+    "version": "0.8.4",
+    "license": "Unicode-3.0",
+    "origin": "registry"
+  },
+  {
+    "name": "yoke-derive",
+    "version": "0.8.4",
+    "license": "Unicode-3.0",
+    "origin": "registry"
+  },
+  {
+    "name": "zerofrom",
+    "version": "0.1.8",
+    "license": "Unicode-3.0",
+    "origin": "registry"
+  },
+  {
+    "name": "zerofrom-derive",
+    "version": "0.1.8",
+    "license": "Unicode-3.0",
+    "origin": "registry"
+  },
+  {
+    "name": "zerotrie",
+    "version": "0.2.5",
+    "license": "Unicode-3.0",
+    "origin": "registry"
+  },
+  {
+    "name": "zerovec",
+    "version": "0.11.9",
+    "license": "Unicode-3.0",
+    "origin": "registry"
+  },
+  {
+    "name": "zerovec-derive",
+    "version": "0.11.7",
+    "license": "Unicode-3.0",
+    "origin": "registry"
+  }
+]
