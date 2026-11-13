@@ -81,6 +81,7 @@ impl App {
             if key == k {
                 self.held[i] = down;
                 if !down { self.suppressed[i] = false; }
+                else if self.game.state != State::Playing { self.suppressed[i] = true; }
             }
         }
         if down && !repeat {
@@ -298,6 +299,20 @@ mod benchmark_tests {
 #[cfg(test)]
 mod input_tests {
     use super::*;
+    #[test]
+    fn nonplaying_presses_stay_suppressed_until_release() {
+        for state in [State::Ready, State::Paused, State::Over] {
+            for key in [KeyCode::KeyW, KeyCode::ArrowUp, KeyCode::KeyS, KeyCode::ArrowDown] {
+                let mut app=App::default(); app.game.state=state;
+                app.key_input(key,true,false); app.key_input(KeyCode::Enter,true,false);
+                assert_eq!(app.game.state,State::Playing);
+                assert_eq!(app.movement_axis(),0.,"{state:?} {key:?}");
+                app.key_input(key,true,true); assert_eq!(app.movement_axis(),0.);
+                app.key_input(key,false,false); app.key_input(key,true,false); assert_ne!(app.movement_axis(),0.);
+            }
+        }
+    }
+
     #[test]
     fn held_movement_does_not_resume_after_pause_until_release() {
         for movement in [KeyCode::KeyW, KeyCode::ArrowUp, KeyCode::KeyS, KeyCode::ArrowDown] {
