@@ -56,6 +56,8 @@ Windows dependency discovery found Slint GPL-or-alternative declarations and an 
 
 Windows notice-heading recheck corrected an earlier bracket-lib reporting error; the retained bundle has its original Windows heading and hash. See [recheck](docs/packaging/WINDOWS-NOTICE-LABEL-RECHECK.md).
 
+Windows bracket-lib notice review identified third-party source attributions in two enabled crates; all seven prior missing-notice flags remain open. See [source review](docs/packaging/BRACKET-WINDOWS-NOTICE-SOURCE-REVIEW.md).
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
