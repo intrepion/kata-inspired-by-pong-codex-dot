@@ -805,3 +805,5 @@ SDL3 now resets its polling gate on focus loss; [Omarchy evidence](docs/packagin
 SDL3 now ignores queued pause/restart actions while unfocused; [Omarchy evidence](docs/packaging/SDL-UNFOCUSED-ACTIONS-OMARCHY.md) records the regression and its limits.
 
 Pixels, raw wgpu, ash, softbuffer and ggez now ignore live keydowns while unfocused; [Omarchy evidence](docs/packaging/WINDOWED-UNFOCUSED-ACTIONS-OMARCHY.md) records the regressions and runtime limits.
+
+Piston and Fyrox now ignore live keydowns after reported focus loss until focus returns; [Omarchy evidence](docs/packaging/PISTON-FYROX-UNFOCUSED-OMARCHY.md) documents tests and a Miniquad callback limitation.
