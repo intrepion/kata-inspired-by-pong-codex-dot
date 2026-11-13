@@ -261,6 +261,8 @@ if (typeof document !== 'undefined') {
     document.addEventListener('keydown', e => {
         if (demoRequested)
             return;
+        if (e.key === ' ' && (e.target === start || e.target === pause))
+            return;
         if (['ArrowUp', 'ArrowDown', ' ', 'w', 's', 'W', 'S'].includes(e.key))
             e.preventDefault();
         if (e.key === ' ' && !e.repeat && (game.state === 'playing' || game.state === 'paused'))

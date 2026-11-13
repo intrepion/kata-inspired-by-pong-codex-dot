@@ -234,7 +234,7 @@ if (typeof document !== 'undefined') {
         controls.suspend(); game.start();
     } loop.reset(); sync(); });
     pause.addEventListener('click', toggle);
-    document.addEventListener('keydown', e => { if(demoRequested)return; if (['ArrowUp', 'ArrowDown', ' ', 'w', 's', 'W', 'S'].includes(e.key))
+    document.addEventListener('keydown', e => { if(demoRequested)return; if (e.key === ' ' && (e.target === start || e.target === pause)) return; if (['ArrowUp', 'ArrowDown', ' ', 'w', 's', 'W', 'S'].includes(e.key))
         e.preventDefault(); if (e.key === ' ' && !e.repeat && (game.state === 'playing' || game.state === 'paused'))
         toggle(); if (game.state === 'playing') controls.keyDown(e.key, e.repeat); });
     document.addEventListener('keyup', e => controls.keyUp(e.key));
