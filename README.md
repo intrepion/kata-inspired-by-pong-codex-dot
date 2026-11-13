@@ -87,7 +87,7 @@ Each desktop cell is **build / runtime evidence**:
 | nannou | B / I before pacing follow-up | B / I | B / S + scripted/PNG sample passed; real input blocked |
 | Fyrox | B / I | B / I | B / S + scripted/PNG samples passed; real input blocked |
 | Blue Engine | B / I | B / I | B / S + headless replay/PNG samples passed; window/input unverified |
-| raylib-rs | B / I | B / R; start input unsuccessful; LLVM build blocker resolved | B / S + scripted/PNG sample passed; real input blocked |
+| raylib-rs | B / I | B / R; start input unsuccessful; LLVM build blocker resolved | Fresh `971319e` B, 3 frontend tests; relocated package replay and six app-owned PNGs, exact model match; physical input unverified ([details](docs/packaging/RAYLIB-C77-OMARCHY-REPLAY.md)) |
 | Godot + Rust GDExtension | B / I for game; **F** in headless editor shutdown | U / U | B / scripted native viewport PNG samples passed; real input unverified |
 | bracket-lib (RLTK) | B / bounded native I on existing contrast package; start, movement, pause, full match, restart and held-Q exit checked | B / I; separate header improves readability, bitmap quality still rough | B / S on X11 and patched Wayland + scripted/PNG samples passed; real input blocked |
 
