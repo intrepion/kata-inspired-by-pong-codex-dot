@@ -1,5 +1,7 @@
 # Rallylight
 
+Mac cross-check: polling and four-engine non-playing-input regression suites, shared GUI/web controllers, and Godot headless injected-input smoke pass; physical input and rebuilt client replay remain open. [Evidence](docs/packaging/NONPLAYING-INPUT-MAC-20261113.md)
+
 Fira Mono is being evaluated as a ggez font replacement; an isolated Mac pilot covers ASCII and bounded automated interaction, with release and broader layout checks outstanding. [Evidence](docs/packaging/GGEZ-MAC-FIRA-PILOT-20261113.md)
 
 An original real-time paddle game inspired by Pong. Return the ball, steer shots with your paddle, and beat the computer to seven points. The computer has a short reaction delay and a limited paddle speed, so well-placed shots can get past it. This independent kata is not affiliated with or endorsed by Atari.
