@@ -931,3 +931,5 @@ Pixels now labels score ownership and shows in-court start, resume and restart i
 Miniquad now backs its winner and restart text for legibility; [Mac](docs/packaging/MINIQUAD-WINNER-BACKING-MAC-20261113.md) and [Windows](docs/packaging/MINIQUAD-WINNER-BACKING-WINDOWS-20261113.md) evidence records the tested scope.
 
 Miniquad now shows a zero in an empty score group; [Windows scripted captures](docs/packaging/MINIQUAD-ZERO-SCORE-WINDOWS-20261113.md) show 0–0 and 0–1.
+
+Miniquad now labels its in-court score pips YOU and CPU; [Mac evidence](docs/packaging/MINIQUAD-SCORE-LABELS-MAC-20261113.md) records rendering and buffer checks.
