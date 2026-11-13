@@ -14,3 +14,5 @@ A bounded native windowed callback comparison used the prior release executable 
 | Old 2 | 1431 | 7.034 | 6.943 | 7.921 | 8.906 | 88.525 |
 
 These short noisy samples do not demonstrate a speedup or establish a regression. Logs, captures and prior/current binaries remain in sibling workspace directory `blue-hint-state-cache-windows-20261113`. Native and physical input, accessibility, other states and sizes, complete dependency and system-library review, clean-machine installation and release qualification remain open. No license clearance is claimed.
+
+The concurrent [Mac transition-frame investigation](../packaging/BLUE-TRANSITION-ORDER-MAC-20261113.md) describes a possible visibility/buffer ordering issue. State-change caching was not tested with synchronized consecutive presented frames and is not claimed to fix or diagnose it.
