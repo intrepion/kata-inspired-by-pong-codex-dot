@@ -922,6 +922,8 @@ Blue Engine now labels its in-court scores YOU and CPU; [Windows headless captur
 
 Blue Engine now shows in-court start, resume and restart hints; [Windows headless evidence](docs/packaging/BLUE-COURT-HINTS-WINDOWS-20261113.md) records the tested paused and playing states.
 
+Blue Engine now updates hint geometry only on state changes; [Windows tests, captures and bounded timings](docs/benchmarks/BLUE-HINT-STATE-CACHE-WINDOWS-20261113.md) record the scope and limits.
+
 A [bounded Windows callback benchmark](docs/benchmarks/BLUE-HINTS-WINDOWS-BOUNDED-20261113.md) compares Blue Engine builds before and after score labels and hints; its noisy sample and a baseline access violation need follow-up.
 
 The Blue Engine baseline access violation did not recur in [five further Windows runs](docs/benchmarks/BLUE-ACCESS-VIOLATION-RECHECK-WINDOWS-20261113.md); its cause remains unknown.

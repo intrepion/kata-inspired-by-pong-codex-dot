@@ -127,6 +127,13 @@ fn hint_message(state: State) -> &'static str {
         State::Playing => "",
     }
 }
+fn hint_state_changed(previous: &mut Option<State>, current: State) -> bool {
+    if *previous == Some(current) {
+        return false;
+    }
+    *previous = Some(current);
+    true
+}
 fn hint_parts(message: &str) -> Vec<(f32, f32, f32, f32)> {
     let mut parts = Vec::new();
     let left = (W - message.len() as f32 * 12.) / 2.;
@@ -287,6 +294,7 @@ fn main() -> Result<(), blue_engine::error::Error> {
     let mut pending: Option<(std::path::PathBuf, u8)> = None;
 
     let mut previous = Instant::now();
+    let mut previous_hint_state = None;
     #[cfg(feature = "windowed")]
     let mut accumulator = 0.;
     #[cfg(feature = "windowed")]
@@ -397,18 +405,20 @@ fn main() -> Result<(), blue_engine::error::Error> {
             let (x, width) = segment.map_or((0., 0.), |(start, len)| (left + ch as f32*24. + start as f32*4., len as f32*4.));
             rect(engine, &format!("status-{i}"), x, 160. + row as f32*4., width, if width > 0. {4.} else {0.}, 0.2);
         }
-        let hint = hint_message(game.state);
-        let hint_left = (W - hint.len() as f32 * 12.) / 2.;
-        rect(engine, "hint-panel", hint_left - 5., 198., if hint.is_empty() { 0. } else { hint.len() as f32 * 12. + 10. }, 22., 0.1);
-        let parts = match game.state {
-            State::Ready => Some(&hints[0]),
-            State::Paused => Some(&hints[1]),
-            State::Over => Some(&hints[2]),
-            State::Playing => None,
-        };
-        for i in 0..hint_capacity {
-            let (x, y, width, height) = parts.and_then(|p| p.get(i)).copied().unwrap_or((0., 0., 0., 0.));
-            rect(engine, &format!("hint-{i}"), x, y, width, height, 0.2);
+        if hint_state_changed(&mut previous_hint_state, game.state) {
+            let hint = hint_message(game.state);
+            let hint_left = (W - hint.len() as f32 * 12.) / 2.;
+            rect(engine, "hint-panel", hint_left - 5., 198., if hint.is_empty() { 0. } else { hint.len() as f32 * 12. + 10. }, 22., 0.1);
+            let parts = match game.state {
+                State::Ready => Some(&hints[0]),
+                State::Paused => Some(&hints[1]),
+                State::Over => Some(&hints[2]),
+                State::Playing => None,
+            };
+            for i in 0..hint_capacity {
+                let (x, y, width, height) = parts.and_then(|p| p.get(i)).copied().unwrap_or((0., 0., 0., 0.));
+                rect(engine, &format!("hint-{i}"), x, y, width, height, 0.2);
+            }
         }
         #[cfg(feature="windowed")]
         if benchmarking && !benchmark_done {
@@ -468,6 +478,14 @@ mod benchmark_tests {
 #[cfg(test)]
 mod input_tests {
     use super::*;
+    #[test]
+    fn hint_geometry_updates_on_first_frame_and_state_transitions_only() {
+        let mut previous = None;
+        for state in [State::Ready, State::Playing, State::Paused, State::Playing, State::Over, State::Playing] {
+            assert!(hint_state_changed(&mut previous, state));
+            assert!(!hint_state_changed(&mut previous, state));
+        }
+    }
     #[test]
     fn court_hints_match_state_and_have_visible_glyphs() {
         for (state, expected) in [(State::Ready, "ENTER TO START"), (State::Paused, "SPACE TO RESUME"), (State::Over, "ENTER TO RESTART")] {
