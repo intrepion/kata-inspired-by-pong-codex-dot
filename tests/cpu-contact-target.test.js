@@ -24,13 +24,13 @@ test('CPU cannot use a target it reaches after the paddle-face crossing', () => 
     game.start();
     game.serve = 0;
     game.cpu = 250;
-    game.cpuTarget = 252;
+    game.cpuTarget = 251.3;
     game.cpuReaction = 1;
     game.ball = { x: 846, y: 304.2, vx: 350, vy: 0 };
 
     // At contact the CPU is near 251.086, short of the 251.2 needed.
     // Its later end-of-step position would incorrectly produce a hit.
     game.step(1 / 120);
-    assert.ok(game.cpu > 251.2);
+    assert.equal(game.cpu, 251.3);
     assert.ok(game.ball.vx > 0, 'the shot should pass before the CPU arrives');
 });
