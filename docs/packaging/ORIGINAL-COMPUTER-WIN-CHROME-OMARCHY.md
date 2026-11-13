@@ -1,0 +1,7 @@
+# Original browser game computer win — Omarchy, 2026-11-13
+
+At checkpoint `d80140e4ed7d9418e286ab997d7a069f0a51b5d7`, the original game was served from the repository's localhost-only server and opened in Chrome through supported browser controls. Start was clicked, and after the first point an automated W hold placed the player paddle at the top edge; it was then left idle. The live match progressed to a displayed YOU 0 : 7 COMPUTER. The page displayed `Computer wins the match`, `A worthy opponent.`, the computer-win explanation, and a `Play again` button; Pause was disabled. Clicking `Play again` displayed 0–0, `Next serve` and an enabled Pause control. The server was stopped afterward.
+
+This was a bounded live browser match and automated keyboard/click interaction, not scripted model replay or physical input. It exercises one computer-win path and restart, not a player win, held input across focus loss, touch, assistive technology or a complete compatibility or release qualification. Timing varied in the browser session; no performance claim is made.
+
+Source `game.ts` SHA-256 `0a94c3226118d9a0ed47cfd889a595c2b5902022a0cac5e3f61523f17e487d4d`; served `game.js` SHA-256 `ef226fff881ea0bc720eefd1665e27f92dc46b166f9bf88a4e68167638121912`. Git showed no browser source, generated output, tests or build-configuration changes from the [pinned-build cross-check](ORIGINAL-BLUR-CLICK-OMARCHY-CROSSCHECK.md) at `8ed5039880e56edc7aef7561eb981f7c98935839`; no fresh build or test-suite run is claimed here. Previous evidence remains intact.
