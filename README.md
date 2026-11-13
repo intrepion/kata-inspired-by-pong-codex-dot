@@ -102,6 +102,8 @@ Mac softbuffer target-filtered license metadata screen: no declared LGPL, GPL-3 
 
 Mac bracket-lib target-filtered license screen: no declared LGPL, GPL-3 or MPL in 84 resolved packages; native/system components and full source review remain open. [Evidence](docs/packaging/BRACKET-MAC-LICENSE-SCREEN.md).
 
+Mac Bevy audit: the tested binary embeds Fira Mono under SIL OFL 1.1; its local pilot archive lacks the font notice. [Evidence](docs/packaging/BEVY-MAC-FONT-LICENSE.md).
+
 Mac Blue Engine target metadata screen: no restricted declarations in 199 packages; system and source-level license review remain open. [Evidence](docs/packaging/BLUE-MAC-LICENSE-SCREEN.md).
 
 Mac SDL3 native audit: HIDAPI-named code is present; its source offers BSD-style and original alternatives to GPLv3, subject to full notice review. [Evidence](docs/packaging/SDL3-MAC-HIDAPI-LICENSE.md).
