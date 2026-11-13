@@ -14,6 +14,8 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
+Windows raylib contact-timing follow-up: three adapter tests and a fresh scripted replay pass; the paused app-owned frame was inspected. The debug link emitted `LNK4098`; native input remains unverified. [Evidence](docs/WINDOWS-RAYLIB-CONTACT-TIMING.md).
+
 Windows ggez contact-timing follow-up: two adapter tests, a fresh scripted replay and bounded native start/score/pause/restart/close checks pass. Sustained and physical input remain unverified. [Evidence](docs/WINDOWS-GGEZ-CONTACT-TIMING.md).
 
 Windows Piston contact-timing follow-up: seven adapter/clock tests and a fresh scripted replay pass; the paused app-owned frame was inspected. Normal input remains unverified. [Evidence](docs/WINDOWS-PISTON-CONTACT-TIMING.md).
