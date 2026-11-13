@@ -5,3 +5,9 @@ The pinned Miniquad 0.4.11 Windows backend extracts a scan-code field from `WM_K
 On Windows MSVC, locked offline debug build and all nine Miniquad tests passed. The new test verifies mapped keypad Enter starts, repeated keydown does not restart, and a fresh press resets scores. Executable SHA-256: `7971e2e2d9249691b4e3b7c9589dce7be44d18cdb5e0331e709910ab52b78598`. These are action-boundary tests, not OS input or physical-keyboard evidence. Strict Clippy was attempted but could not run because `cargo-clippy` is not installed for this MSVC toolchain; no component was installed. Prior artifacts remain untouched.
 
 The earlier [Windows diagnosis](MINIQUAD-WINDOWS-INPUT-DIAGNOSIS.md) observed supported automation producing `Unknown` for several keys. Since that trace did not record raw `lParam` or source events, it cannot distinguish the input generator, operating system or backend as the cause. No unsupported dispatch or repeated desktop-approval attempt was used. Physical keyboard delivery, keypad Enter in a native window, full match and release qualification remain open.
+
+## Mac recheck
+
+macOS ARM64 source `ff80b4b63751bdb2bcc76e6b1f39c510ab99663d`: offline locked release build reused a copy-on-write cache and all nine Miniquad release tests passed, including the keypad action-boundary test. Executable SHA-256 `e7696e7bd36514607a3045442dc854f305dbcade0df63d7bda793a021d27ae10`.
+
+In the packaged app, supported desktop automation's `KP_Enter` action started ball motion from Ready; after a score pip appeared, a second `KP_Enter` cleared the score and play continued. The app exited. The actual native key code delivered by the automation was not traced, so this checks the action's visible effect rather than proving that macOS delivered `KeyCode::KpEnter`. No physical keypad or Windows input is implied.
