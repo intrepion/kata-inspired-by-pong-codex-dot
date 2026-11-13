@@ -903,3 +903,5 @@ Wgpu and Pixels now accept keypad Enter for start and restart; [Mac model and au
 Pixels also passed a [Windows keypad model and scripted replay check](docs/packaging/PIXELS-KEYPAD-WINDOWS-20261113.md); native keypad input and release qualification remain open.
 
 A current Ratatui static-musl candidate passed relocated Omarchy PTY and replay checks; [evidence](docs/packaging/RATATUI-MUSL-CURRENT-OMARCHY.md) retains the unresolved static-component and license review.
+
+ggez also accepts keypad Enter for start, resume and match-end restart; [Mac tests and automated-window evidence](docs/packaging/GGEZ-KEYPAD-ENTER-MAC-20261113.md) record the physical-input gap.

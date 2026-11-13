@@ -44,7 +44,7 @@ fn handle_key_down(game: &mut Game, held: &mut [bool; 4], key: KeyCode, repeated
         if key == KeyCode::KeyR {
             *held = [false; 4];
             game.start();
-        } else if key == KeyCode::Enter {
+        } else if matches!(key, KeyCode::Enter | KeyCode::NumpadEnter) {
             if game.state == State::Paused {
                 game.toggle_pause();
             } else if game.state != State::Playing {
@@ -321,7 +321,7 @@ mod control_tests {
             KeyCode::KeyS,
             KeyCode::ArrowDown,
         ] {
-            for restart in [KeyCode::Enter, KeyCode::KeyR] {
+            for restart in [KeyCode::Enter, KeyCode::NumpadEnter, KeyCode::KeyR] {
                 let mut game = Game::new(42);
                 game.start();
                 let mut held = [false; 4];
@@ -347,6 +347,28 @@ mod control_tests {
         }
     }
 
+    #[test]
+    fn keypad_enter_starts_resumes_and_restarts_but_ignores_repeats_and_blur() {
+        let mut game = Game::new(42);
+        let mut held = [false; 4];
+        handle_focused_key_down(&mut game, &mut held, false, KeyCode::NumpadEnter, false);
+        handle_key_down(&mut game, &mut held, KeyCode::NumpadEnter, true);
+        assert_eq!(game.state, State::Ready);
+        handle_key_down(&mut game, &mut held, KeyCode::NumpadEnter, false);
+        assert_eq!(game.state, State::Playing);
+        game.scores = [2, 4];
+        handle_key_down(&mut game, &mut held, KeyCode::NumpadEnter, false);
+        assert_eq!(game.scores, [2, 4]);
+        game.pause();
+        handle_key_down(&mut game, &mut held, KeyCode::NumpadEnter, false);
+        assert_eq!(game.state, State::Playing);
+        game.state = State::Over;
+        held[0] = true;
+        handle_key_down(&mut game, &mut held, KeyCode::NumpadEnter, false);
+        assert_eq!(game.state, State::Playing);
+        assert_eq!(game.scores, [0, 0]);
+        assert_eq!(held, [false; 4]);
+    }
     #[test]
     fn action_keys_keep_start_resume_restart_and_repeat_behavior() {
         let mut game = Game::new(42);
