@@ -861,3 +861,5 @@ Miniquad now shows start and resume instructions with its in-court symbols; [Oma
 SDL3 now ignores queued Escape keydowns after focus loss while retaining window-close behavior; [Omarchy regression and replay evidence](docs/packaging/SDL3-FOCUS-ESCAPE-OMARCHY.md) records the verification limits.
 
 Godot now gates queued keydowns after focus loss while still clearing released movement keys; [Omarchy synthetic-signal tests](docs/GODOT-FOCUS-ACTIONS-OMARCHY-20261113.md) record the limits.
+
+Nannou now gates live action polling while unfocused; [Omarchy regression and replay evidence](docs/packaging/NANNOU-FOCUS-ACTIONS-OMARCHY.md) describes the remaining native focus checks.
