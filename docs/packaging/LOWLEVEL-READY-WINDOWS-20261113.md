@@ -1,0 +1,7 @@
+# Windows shared low-level Ready indicator recheck
+
+At checkpoint `10f4d5bb7b8f1a2fd8db9838b1645ada816a38f6`, shared source Git blob `73a71990327e9213c46ecc749f5afe6ca285e669`, Windows MSVC stable Rust 1.99.1 passed locked offline debug tests: shared low-level model 5, ash 11, softbuffer 9 and SDL3 11. The shared suite includes `ready_play_indicator_differs_from_paused_bars`. SDL3 continued to report the known `LNK4098` `MSVCRTD` default-library conflict. Cargo also reported incremental hard-link fallback warnings. Prior test binaries were copied to sibling workspace directory `lowlevel-ready-windows-20261113` before reusing existing targets.
+
+An isolated Windows Rust fixture linked the tested shared model and rasterized Ready and Paused states at 900x500. Both were visually inspected: Ready showed a play symbol and Paused showed two bars. RGB buffers were encoded losslessly as PNG using Python's standard library; Ready PNG SHA-256 `036f3e26549234a79b70892f99ab022b6172219c855424d0cbc4319e7ea45385`, Paused PNG `c32c375a4aa117a94b4e7ad866e99beb9a026d551df8ab827603acf99009473f`. Fixture source, raw buffers and images remain in the workspace directory above. These are shared software-raster fixtures, not native window screenshots or app-owned framebuffer captures.
+
+No new frontend executable, native interaction, physical input, license clearance, clean-machine operation or release qualification is claimed.
