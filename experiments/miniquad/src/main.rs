@@ -77,9 +77,9 @@ impl App {
         let vertex = ctx.new_buffer(
             BufferType::VertexBuffer,
             BufferUsage::Stream,
-            BufferSource::empty::<Vertex>(1024),
+            BufferSource::empty::<Vertex>(4096),
         );
-        let indices: Vec<u16> = (0..1024).collect();
+        let indices: Vec<u16> = (0..4096).collect();
         let index = ctx.new_buffer(
             BufferType::IndexBuffer,
             BufferUsage::Immutable,
@@ -127,6 +127,56 @@ fn rect(v: &mut Vec<Vertex>, x: f32, y: f32, w: f32, h: f32, color: [f32; 3]) {
             pos: [x / W * 2. - 1., 1. - y / H * 2.],
             color,
         });
+    }
+}
+// Minimal 5×7 glyphs keep the status readable without a font dependency.
+fn glyph(c: char) -> [u8; 7] {
+    match c {
+        'A' => [14, 17, 17, 31, 17, 17, 17],
+        'C' => [15, 16, 16, 16, 16, 16, 15],
+        'E' => [31, 16, 16, 30, 16, 16, 31],
+        'I' => [31, 4, 4, 4, 4, 4, 31],
+        'N' => [17, 25, 25, 21, 19, 19, 17],
+        'O' => [14, 17, 17, 17, 17, 17, 14],
+        'P' => [30, 17, 17, 30, 16, 16, 16],
+        'R' => [30, 17, 17, 30, 20, 18, 17],
+        'S' => [15, 16, 16, 14, 1, 1, 30],
+        'T' => [31, 4, 4, 4, 4, 4, 4],
+        'U' => [17, 17, 17, 17, 17, 17, 14],
+        'W' => [17, 17, 17, 21, 21, 21, 10],
+        'Y' => [17, 17, 10, 4, 4, 4, 4],
+        ' ' => [0; 7],
+        _ => unreachable!("unsupported status glyph"),
+    }
+}
+fn status_text(v: &mut Vec<Vertex>, text: &str, y: f32, scale: f32) {
+    let x = W / 2. - (text.len() as f32 * 6. - 1.) * scale / 2.;
+    for (i, c) in text.chars().enumerate() {
+        for (row, bits) in glyph(c).iter().enumerate() {
+            for col in 0..5 {
+                if bits & (1 << (4 - col)) != 0 {
+                    rect(
+                        v,
+                        x + (i * 6 + col) as f32 * scale + scale / 2.,
+                        y + row as f32 * scale + scale / 2.,
+                        scale,
+                        scale,
+                        [1., 1., 1.],
+                    );
+                }
+            }
+        }
+    }
+}
+fn game_over_vertices(game: &Game, v: &mut Vec<Vertex>) {
+    if game.state == State::Over {
+        let winner = if game.scores[0] > game.scores[1] {
+            "YOU WIN"
+        } else {
+            "CPU WINS"
+        };
+        status_text(v, winner, H / 2. - 34., 4.);
+        status_text(v, "ENTER TO RESTART", H / 2. + 8., 2.);
     }
 }
 impl EventHandler for App {
@@ -180,6 +230,7 @@ impl EventHandler for App {
                 );
             }
         }
+        game_over_vertices(&self.game, &mut v);
         self.ctx
             .buffer_update(self.bindings.vertex_buffers[0], BufferSource::slice(&v));
         self.ctx
@@ -313,6 +364,26 @@ mod tests {
     #[should_panic(expected = "benchmark and replay/capture modes are distinct")]
     fn rejects_capture_mixing() {
         benchmark_args(&["--benchmark".into(), "--scripted-test".into()]);
+    }
+    #[test]
+    fn game_over_message_distinguishes_winner_and_clears_on_restart() {
+        let mut game = Game::new(42);
+        let mut vertices = Vec::new();
+        game_over_vertices(&game, &mut vertices);
+        assert!(vertices.is_empty());
+        game.state = State::Over;
+        game.scores = [7, 2];
+        game_over_vertices(&game, &mut vertices);
+        let player_count = vertices.len();
+        assert!(player_count > 0 && player_count < 4096);
+        vertices.clear();
+        game.scores = [2, 7];
+        game_over_vertices(&game, &mut vertices);
+        assert_ne!(vertices.len(), player_count);
+        vertices.clear();
+        game.start();
+        game_over_vertices(&game, &mut vertices);
+        assert!(vertices.is_empty());
     }
     #[test]
     fn rectangle_is_two_triangles_in_top_down_court_coordinates() {
