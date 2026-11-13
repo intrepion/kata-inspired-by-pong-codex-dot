@@ -1,5 +1,7 @@
 # Rallylight
 
+Piston now draws Ready and Paused indicators in the court; Mac geometry tests and a cached release build pass, with rendered verification still open. [Evidence](docs/packaging/PISTON-STATE-MAC-20261113.md)
+
 The shared low-level Ready screen now shows a play symbol instead of pause bars; Mac raster and model checks pass. [Evidence](docs/packaging/LOWLEVEL-READY-MAC-20261113.md)
 
 SDL3, ash and softbuffer now share an in-court winner indication; Mac model/raster checks pass, with native runtime verification still open. [Evidence](docs/packaging/LOWLEVEL-WINNER-MAC-20261113.md)
