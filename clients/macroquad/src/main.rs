@@ -14,6 +14,16 @@ fn restart_game(game: &mut Game, gate: &mut MovementGate) {
     game.start();
     gate.was_playing = false;
 }
+fn status_message(game: &Game) -> Option<&'static str> {
+    match game.state {
+        State::Ready => Some("Ready - Enter to play"),
+        State::Playing => None,
+        State::Paused => Some("Paused - Enter to play"),
+        State::Over if game.scores[0] > game.scores[1] => Some("YOU WIN - Enter to restart"),
+        State::Over if game.scores[1] > game.scores[0] => Some("CPU WINS - Enter to restart"),
+        State::Over => Some("Match over - Enter to restart"),
+    }
+}
 fn movement_axis(game: &Game, gate: &mut MovementGate, held: [bool; 4], lost_focus: bool) -> f32 {
     let playing = game.state == State::Playing;
     let suppress = lost_focus || !playing || !gate.was_playing;
@@ -161,9 +171,9 @@ async fn main() {
             BALL * scale,
             WHITE,
         );
-        if g.state != State::Playing {
+        if let Some(message) = status_message(&g) {
             draw_text(
-                format!("{:?} - Enter to play", g.state),
+                message,
                 ox + 220. * scale,
                 oy + 250. * scale,
                 28. * scale,
@@ -209,6 +219,32 @@ async fn main() {
 #[cfg(test)]
 mod movement_tests {
     use super::*;
+    #[test]
+    fn status_names_winner_and_clears_after_restart() {
+        let mut game = Game::new(42);
+        assert_eq!(status_message(&game), Some("Ready - Enter to play"));
+        game.start();
+        assert_eq!(status_message(&game), None);
+        game.pause();
+        assert_eq!(status_message(&game), Some("Paused - Enter to play"));
+        for (scores, x, vx, message) in [
+            ([6, 3], W + BALL - 1., 350., "YOU WIN - Enter to restart"),
+            ([2, 6], -BALL + 1., -350., "CPU WINS - Enter to restart"),
+        ] {
+            game.start();
+            game.scores = scores;
+            game.serve = 0.;
+            game.ball.x = x;
+            game.ball.y = H / 2.;
+            game.ball.vx = vx;
+            game.ball.vy = 0.;
+            game.step(0.02, 0.);
+            assert_eq!(game.state, State::Over);
+            assert_eq!(status_message(&game), Some(message));
+            game.start();
+            assert_eq!(status_message(&game), None);
+        }
+    }
     #[test]
     fn winning_score_keeps_held_movement_suppressed_on_restart() {
         for i in 0..4 {
