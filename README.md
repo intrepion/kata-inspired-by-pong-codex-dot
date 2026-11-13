@@ -18,6 +18,8 @@ Mac Slint shared pause follow-up: ten controller tests and sequential automated 
 
 Mac Miniquad pause follow-up: ten release tests pass; sequential desktop start/move/pause/resume/fresh movement checked. Held-across-pause native delivery remains open. [Evidence](docs/MINIQUAD-PAUSE-HELD-INPUT-FIX.md).
 
+Windows Softbuffer/ash pause-fix follow-up: six and eight action/model tests plus fresh scripted replays pass; native held-key input remains open. [Evidence](docs/WINDOWS-SOFTBUFFER-ASH-PAUSE-RECHECK.md).
+
 Windows Pixels/raw wgpu pause-fix follow-up: seven and six action/model tests plus fresh scripted replays pass; native held-key input remains open. [Evidence](docs/WINDOWS-PIXELS-WGPU-PAUSE-RECHECK.md).
 
 Windows GUI pause-fix follow-up: 10 shared model tests and fresh Slint/GPUI scripted runs pass; native held-key delivery remains open. [Evidence](docs/WINDOWS-GUI-EXPLICIT-PAUSE-RECHECK.md).
