@@ -28,3 +28,21 @@ test('raylib source audit applies only to the exact registry version',t=>{
  assert.deepEqual(buildNoticeBundle(meta(pkg,{...base,version:'6.0.1'}),root).index.missing_notice_files,['raylib@6.0.1']);
  assert.deepEqual(buildNoticeBundle(meta(pkg,{...base,source:'git+https://example.invalid/raylib'}),root).index.missing_notice_files,['raylib@6.0.0']);
 });
+
+test('audited upstream notices enforce revision, source and notice hashes and containment',async t=>{
+ const {auditedUpstreamNotices}=await import('./notice-bundle.mjs');const{root,pkg}=fixture(t),n=join(root,'notices');mkdirSync(n);mkdirSync(join(pkg,'src'));const hash=s=>createHash('sha256').update(s).digest('hex');
+ const code='source\n',notice='original notice\n';writeFileSync(join(pkg,'src','lib.rs'),code);writeFileSync(join(pkg,'.cargo_vcs_info.json'),JSON.stringify({git:{sha1:'revision'},path_in_vcs:'crate'}));writeFileSync(join(n,'LICENSE'),notice);
+ const rule={rev:'revision',path:'crate',sourceHash:hash(code),files:[['LICENSE',hash(notice),'https://example.org/exact/LICENSE']]};const [got]=auditedUpstreamNotices(pkg,n,rule);assert.equal(got.text,notice);assert.equal(got.source,rule.files[0][2]);
+ assert.throws(()=>auditedUpstreamNotices(pkg,n,{...rule,rev:'wrong'}),/revision mismatch/);writeFileSync(join(pkg,'src','lib.rs'),'changed');assert.throws(()=>auditedUpstreamNotices(pkg,n,rule),/source hash mismatch/);writeFileSync(join(pkg,'src','lib.rs'),code);
+ writeFileSync(join(n,'LICENSE'),'changed');assert.throws(()=>auditedUpstreamNotices(pkg,n,rule),/notice hash mismatch/);assert.throws(()=>auditedUpstreamNotices(pkg,n,{...rule,files:[['../LICENSE',hash(notice),'url']]}),/escapes/);
+ if(process.platform!=='win32'){symlinkSync(join(root,'LICENSE'),join(n,'link'));assert.throws(()=>auditedUpstreamNotices(pkg,n,{...rule,files:[['link',hash(notice),'url']]}),/Symlink/);}
+});
+
+test('upstream rules require exact registry package and version',t=>{
+ const{root,pkg}=fixture(t),registry='registry+https://github.com/rust-lang/crates.io-index';
+ for(const[name,version]of [['alloc-stdlib','0.3.0'],['dlopen2','0.8.2'],['dlopen2_derive','0.4.3'],['libappindicator-sys','0.9.0']]){
+  assert.throws(()=>buildNoticeBundle(meta(pkg,{name,version,source:registry}),root),/ENOENT/);
+  assert.deepEqual(buildNoticeBundle(meta(pkg,{name,version,source:'git+https://example.invalid/repo'}),root).index.missing_notice_files,[name+'@'+version]);
+  assert.deepEqual(buildNoticeBundle(meta(pkg,{name,version:'999.0.0',source:registry}),root).index.missing_notice_files,[name+'@999.0.0']);
+ }
+});
