@@ -33,6 +33,10 @@ impl MovementGate {
         (active[2] || active[3]) as u8 as f32 - (active[0] || active[1]) as u8 as f32
     }
 }
+fn restart(game: &mut Game, movement: &mut MovementGate) {
+    movement.was_playing = false;
+    game.start();
+}
 fn movement_with_pause(
     game: &mut Game,
     movement: &mut MovementGate,
@@ -80,7 +84,7 @@ fn main() {
             if window.is_key_pressed(KeyboardKey::KEY_ENTER)
                 || window.is_key_pressed(KeyboardKey::KEY_R)
             {
-                game.start();
+                restart(&mut game, &mut movement);
             }
             let axis = movement_with_pause(
                 &mut game,
@@ -212,6 +216,27 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn active_restart_blocks_held_direction_until_release() {
+        let mut game = Game::new(42);
+        game.start();
+        let mut movement = MovementGate::default();
+        movement_with_pause(&mut game, &mut movement, [false; 4], false);
+        assert_eq!(
+            movement_with_pause(&mut game, &mut movement, [true, false, false, false], false),
+            -1.
+        );
+        restart(&mut game, &mut movement);
+        assert_eq!(
+            movement_with_pause(&mut game, &mut movement, [true, false, false, false], false),
+            0.
+        );
+        movement_with_pause(&mut game, &mut movement, [false; 4], false);
+        assert_eq!(
+            movement_with_pause(&mut game, &mut movement, [true, false, false, false], false),
+            -1.
+        );
+    }
     #[test]
     fn winning_score_keeps_held_movement_suppressed_on_restart() {
         for i in 0..4 {

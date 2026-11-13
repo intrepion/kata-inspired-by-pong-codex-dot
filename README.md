@@ -729,3 +729,5 @@ Restarting an active Yew, Leptos or Dioxus game now clears held movement sources
 The same active-restart held-input issue is fixed at the shared GTK/Slint/GPUI model and the Pixels and raw wgpu event handlers. [Omarchy follow-up evidence](docs/packaging/RESTART-HELD-FOLLOWUP-OMARCHY.md) records regressions and the still-open overlapping browser and native-input checks.
 
 Active restart now clears held movement in ggez, Miniquad and Piston as well. The [Omarchy native follow-up](docs/packaging/RESTART-HELD-NATIVE-OMARCHY.md) records handler tests, a bounded mobile source review and remaining adapter checks.
+
+Fyrox, Nannou and raylib-rs now suppress held movement through active restart; [Omarchy adapter regressions](docs/packaging/RESTART-POLLING-FYROX-OMARCHY.md) describe the test scope and limits.
