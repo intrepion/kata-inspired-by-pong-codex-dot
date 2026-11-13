@@ -1,0 +1,5 @@
+# Windows shared low-level winner recheck
+
+At checkpoint `df654cdb20fdd99ab2f464b1b9643b53bf75c010`, Windows MSVC stable Rust 1.99.1 passed locked offline debug tests for the shared low-level model (4), ash (11) and softbuffer (9). The shared suite includes `winner_title_and_score_marker_follow_winning_point`, which drives a winning point for each side and checks title and rasterized marker behavior. The tested shared source Git blob is `917eca498d17cb3aa91c19756497fda1295b3799`, SHA-256 `0da04e454812f7a11e628eaae6c48fea36221264201e03c49a52c8f10e9f5f90`. Cargo fell back to copying incremental files where hard-linking failed; prior ash and softbuffer test binaries were copied to sibling workspace directory `lowlevel-winner-windows-20261113` before reusing their target.
+
+This is shared-model and adapter test evidence. No native window, winner capture or new replay was run. SDL3 was not rebuilt after its prior native build cache blocker. Physical input, actual winner visibility, clean-machine operation and release qualification remain open.
