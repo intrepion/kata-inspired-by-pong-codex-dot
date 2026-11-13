@@ -109,7 +109,7 @@ fn key_press(
     }
     let previous = game.state;
     match key {
-        Key::Return => {
+        Key::Return | Key::NumPadEnter => {
             if game.state == State::Paused {
                 game.toggle_pause();
             } else if game.state != State::Playing {
@@ -129,7 +129,7 @@ fn key_press(
     {
         *held = [false; 4];
     }
-    matches!(key, Key::Return | Key::R | Key::Space | Key::Escape)
+    matches!(key, Key::Return | Key::NumPadEnter | Key::R | Key::Space | Key::Escape)
 }
 fn focused_key_press(
     game: &mut Game,
@@ -152,6 +152,26 @@ fn key_release(held: &mut [bool; 4], pressed: &mut std::collections::HashSet<Key
 #[cfg(test)]
 mod control_tests {
     use super::*;
+    #[test]
+    fn keypad_enter_matches_return_without_repeats_or_unfocused_actions() {
+        let mut game = Game::new(42);
+        let mut held = [false; 4];
+        let mut pressed = std::collections::HashSet::new();
+        assert!(!focused_key_press(&mut game, &mut held, &mut pressed, false, Key::NumPadEnter));
+        assert_eq!(game.state, State::Ready);
+        assert!(focused_key_press(&mut game, &mut held, &mut pressed, true, Key::NumPadEnter));
+        assert_eq!(game.state, State::Playing);
+        game.scores = [2, 3]; game.pause();
+        assert!(!key_press(&mut game, &mut held, &mut pressed, Key::NumPadEnter));
+        assert_eq!(game.state, State::Paused);
+        key_release(&mut held, &mut pressed, Key::NumPadEnter);
+        assert!(key_press(&mut game, &mut held, &mut pressed, Key::NumPadEnter));
+        assert_eq!(game.state, State::Playing); assert_eq!(game.scores, [2, 3]);
+        key_release(&mut held, &mut pressed, Key::NumPadEnter);
+        game.state = State::Over; held[0] = true;
+        assert!(key_press(&mut game, &mut held, &mut pressed, Key::NumPadEnter));
+        assert_eq!(game.state, State::Playing); assert_eq!(game.scores, [0, 0]); assert_eq!(held, [false; 4]);
+    }
     #[test]
     fn indicator_backing_contains_each_visible_cell() {
         let mut game = Game::new(42);
@@ -250,7 +270,7 @@ mod control_tests {
     #[test]
     fn held_movement_does_not_carry_through_match_end_restart() {
         for key in [Key::W, Key::Up, Key::S, Key::Down] {
-            for restart in [Key::Return, Key::R] {
+            for restart in [Key::Return, Key::NumPadEnter, Key::R] {
                 let mut game = Game::new(42);
                 game.start();
                 let mut held = [false; 4];

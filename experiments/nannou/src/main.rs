@@ -69,15 +69,15 @@ fn live_input(game: &mut Game, movement: &mut MovementGate, focused: bool, held:
     Some((movement_with_pause(game, movement, held, pause_pressed), escape_pressed))
 }
 #[derive(Default)]
-struct ActionGate { suppressed: [bool; 4], resample: bool }
+struct ActionGate { suppressed: [bool; 5], resample: bool }
 impl ActionGate {
     fn on_focus_loss(&mut self) { self.resample = true; }
-    fn sample(&mut self, held: [bool; 4], just_pressed: [bool; 4]) -> [bool; 4] {
+    fn sample(&mut self, held: [bool; 5], just_pressed: [bool; 5]) -> [bool; 5] {
         if self.resample {
-            for i in 0..4 { self.suppressed[i] = held[i] || just_pressed[i]; }
+            for i in 0..5 { self.suppressed[i] = held[i] || just_pressed[i]; }
             self.resample = false;
         }
-        for i in 0..4 {
+        for i in 0..5 {
             if !held[i] && !just_pressed[i] { self.suppressed[i] = false; }
         }
         std::array::from_fn(|i| just_pressed[i] && !self.suppressed[i])
@@ -178,7 +178,7 @@ fn update(app: &App, m: &mut Model) {
     }
     if !m.focused { m.accumulator = 0.; return; }
     let k = app.keys();
-    let action_keys = [KeyCode::Enter, KeyCode::KeyR, KeyCode::Space, KeyCode::Escape];
+    let action_keys = [KeyCode::Enter, KeyCode::KeyR, KeyCode::Space, KeyCode::Escape, KeyCode::NumpadEnter];
     let actions = m.actions.sample(action_keys.map(|key| k.pressed(key)), action_keys.map(|key| k.just_pressed(key)));
     let Some((axis, quit)) = live_input(
         &mut m.game,
@@ -190,7 +190,7 @@ fn update(app: &App, m: &mut Model) {
             k.pressed(KeyCode::ArrowDown),
             k.pressed(KeyCode::KeyS),
         ],
-        actions[0] || actions[1],
+        actions[0] || actions[1] || actions[4],
         actions[2],
         actions[3],
     ) else { m.accumulator = 0.; return; };
@@ -264,20 +264,30 @@ mod movement_tests {
     use super::*;
     #[test]
     fn actions_held_on_focus_gain_wait_for_release() {
-        for i in 0..4 {
+        for i in 0..5 {
             let mut gate = ActionGate::default(); gate.on_focus_loss();
-            let mut down = [false; 4]; down[i] = true;
-            assert_eq!(gate.sample(down, down), [false; 4]);
-            assert_eq!(gate.sample(down, down), [false; 4]);
-            gate.sample([false; 4], [false; 4]);
+            let mut down = [false; 5]; down[i] = true;
+            assert_eq!(gate.sample(down, down), [false; 5]);
+            assert_eq!(gate.sample(down, down), [false; 5]);
+            gate.sample([false; 5], [false; 5]);
             assert_eq!(gate.sample(down, down), down);
         }
         let mut gate = ActionGate::default(); gate.on_focus_loss();
-        gate.sample([false; 4], [false; 4]);
-        assert_eq!(gate.sample([true,false,false,false], [true,false,false,false]), [true,false,false,false]);
+        gate.sample([false; 5], [false; 5]);
+        assert_eq!(gate.sample([true,false,false,false,false], [true,false,false,false,false]), [true,false,false,false,false]);
         gate.on_focus_loss();
-        gate.sample([true,false,false,false], [true,false,false,false]);
-        assert_eq!(gate.sample([true,true,false,false], [false,true,false,false]), [false,true,false,false]);
+        gate.sample([true,false,false,false,false], [true,false,false,false,false]);
+        assert_eq!(gate.sample([true,true,false,false,false], [false,true,false,false,false]), [false,true,false,false,false]);
+    }
+    #[test]
+    fn keypad_enter_has_independent_focus_gate() {
+        let mut gate = ActionGate::default();
+        gate.on_focus_loss();
+        gate.sample([true,false,false,false,false], [true,false,false,false,false]);
+        assert_eq!(gate.sample([true,false,false,false,true], [false,false,false,false,true]), [false,false,false,false,true]);
+        gate.on_focus_loss();
+        gate.sample([false,false,false,false,true], [false,false,false,false,true]);
+        assert_eq!(gate.sample([true,false,false,false,true], [true,false,false,false,false]), [true,false,false,false,false]);
     }
     #[test]
     fn unfocused_poll_cannot_resume_restart_or_quit() {
