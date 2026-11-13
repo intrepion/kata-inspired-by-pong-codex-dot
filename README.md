@@ -955,3 +955,7 @@ Miniquad zero-score marks also passed a [Mac native-window cross-check](docs/pac
 Blue Engine zero-score geometry was also checked in a [Mac native window](docs/packaging/BLUE-ZERO-SCORE-MAC-20261113.md); physical input and distribution qualification remain open.
 
 Blue Engine score-owner labels also passed a [native Mac cross-check](docs/packaging/BLUE-SCORE-LABELS-MAC-20261113.md); physical input and distribution qualification remain open.
+
+Blue Engine court hints received a [Mac native-window check](docs/packaging/BLUE-COURT-HINTS-MAC-20261113.md); a transient capture and performance remain unresolved.
+
+A [Blue Engine transition-order investigation](docs/packaging/BLUE-TRANSITION-ORDER-MAC-20261113.md) identifies a plausible one-frame mismatch; the captured transient remains unconfirmed and no fix is claimed.
