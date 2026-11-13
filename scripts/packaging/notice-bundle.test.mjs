@@ -110,5 +110,20 @@ test('supplemental standard terms do not clear a missing project notice',async()
  const {hasProjectNotice}=await import('./notice-bundle.mjs');
  assert.equal(hasProjectNotice([]),false);
  assert.equal(hasProjectNotice([{supplemental:true}]),false);
- assert.equal(hasProjectNotice([{supplemental:true},{source:'LICENSE'}]),true);
+ assert.equal(hasProjectNotice([{supplemental:true},{source:'LICENSE',text:'license text'}]),true);
+});
+
+test('empty and whitespace-only license texts remain missing',t=>{
+ const {root,pkg}=fixture(t);
+ for(const content of ['', ' \r\n\t']) {
+  writeFileSync(join(pkg,'LICENSE'),content);
+  assert.deepEqual(buildNoticeBundle(meta(pkg),root).index.missing_notice_files,['fixture@1.0.0']);
+ }
+});
+test('a genuine project notice still counts beside an empty file',t=>{
+ const {root,pkg}=fixture(t);
+ writeFileSync(join(pkg,'LICENSE'),'  \n');writeFileSync(join(pkg,'NOTICE'),'Copyright holder\n');
+ const result=buildNoticeBundle(meta(pkg),root);
+ assert.deepEqual(result.index.missing_notice_files,[]);
+ assert.equal(result.index.packages[0].notices.length,2);
 });

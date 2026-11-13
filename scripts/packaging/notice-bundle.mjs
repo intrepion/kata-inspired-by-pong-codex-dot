@@ -104,7 +104,7 @@ export function auditedUpstreamNotices(packageRoot,noticeRoot,rule) {
  });
 }
 // Generic terms help review, but cannot replace a project-specific notice.
-export function hasProjectNotice(notices) { return notices.some(n=>n.supplemental!==true); }
+export function hasProjectNotice(notices) { return notices.some(n=>n.supplemental!==true && typeof n.text==='string' && n.text.trim().length>0); }
 const hexfTerms={rev:'4225763d744183d720f575ae96d04161b4d08ea0',path:undefined,sourceHash:'511b164642efe470e88323b8afe0274e797805ff2441f0173b5b005ad4b4d1b1',files:[['spdx-CC0-1.0.txt','a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499','https://api.github.com/repos/spdx/license-list-data/git/blobs/0e259d42c996742e9e3cba14c677129b2c1b6311']]};
 export function buildNoticeBundle(metadata,repoRoot,options={}) {
  if(options===null||typeof options!=='object'||Array.isArray(options)||Object.keys(options).some(k=>k!=='platform')) throw Error('Invalid notice bundle options');
