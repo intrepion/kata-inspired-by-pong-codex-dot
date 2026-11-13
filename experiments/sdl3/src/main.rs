@@ -17,8 +17,12 @@ fn benchmark_args(args: &[String]) -> bool {
 #[derive(Default)]
 struct MovementGate {
     suppressed: [bool; 4],
+    was_playing: bool,
 }
 impl MovementGate {
+    fn finish_frame(&mut self, state: pong_low_level_common::State) {
+        self.was_playing &= state == pong_low_level_common::State::Playing;
+    }
     fn directions(&mut self, held: [bool; 4], entering_pause: bool) -> (bool, bool) {
         for (blocked, down) in self.suppressed.iter_mut().zip(held) {
             *blocked = down && (entering_pause || *blocked);
@@ -26,6 +30,17 @@ impl MovementGate {
         let active = std::array::from_fn::<_, 4, _>(|i| held[i] && !self.suppressed[i]);
         (active[0] || active[1], active[2] || active[3])
     }
+}
+fn sample_movement(
+    app: &App,
+    gate: &mut MovementGate,
+    held: [bool; 4],
+    entering_pause: bool,
+) -> (bool, bool) {
+    let playing = app.game.state == pong_low_level_common::State::Playing;
+    let suppress = entering_pause || !playing || !gate.was_playing;
+    gate.was_playing = playing;
+    gate.directions(held, suppress)
 }
 fn explicit_action(app: &mut App) -> bool {
     let previous = app.game.state;
@@ -90,7 +105,9 @@ fn main() -> Result<(), String> {
             }
         }
         let k = events.keyboard_state();
-        (app.up, app.down) = movement.directions(
+        (app.up, app.down) = sample_movement(
+            &app,
+            &mut movement,
             [
                 k.is_scancode_pressed(Scancode::W),
                 k.is_scancode_pressed(Scancode::Up),
@@ -114,6 +131,7 @@ fn main() -> Result<(), String> {
             demo.advance(&mut app.game, (now - last).as_secs_f32());
         } else {
             app.tick((now - last).as_secs_f32());
+            movement.finish_frame(app.game.state);
         }
         last = now;
         canvas.set_draw_color(Color::RGB(BACKGROUND[0], BACKGROUND[1], BACKGROUND[2]));
@@ -180,6 +198,68 @@ fn main() -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn game_over_between_samples_blocks_held_on_immediate_restart() {
+        let mut app = App::default();
+        app.game.start();
+        let mut gate = MovementGate::default();
+        sample_movement(&app, &mut gate, [false; 4], false);
+        app.game.state = pong_low_level_common::State::Over;
+        gate.finish_frame(app.game.state);
+        app.game.start();
+        assert_eq!(
+            sample_movement(&app, &mut gate, [true, false, false, false], false),
+            (false, false)
+        );
+    }
+    #[test]
+    fn movement_held_on_same_frame_as_resume_stays_suppressed() {
+        let mut app = App::default();
+        app.game.state = pong_low_level_common::State::Paused;
+        let mut gate = MovementGate::default();
+        let held = [true, false, false, false];
+        explicit_action(&mut app);
+        assert_eq!(
+            sample_movement(&app, &mut gate, held, false),
+            (false, false)
+        );
+        assert_eq!(
+            sample_movement(&app, &mut gate, held, false),
+            (false, false)
+        );
+    }
+    #[test]
+    fn nonplaying_held_keys_do_not_move_after_resume() {
+        use pong_low_level_common::State;
+        for state in [State::Ready, State::Paused, State::Over] {
+            for i in 0..4 {
+                let mut app = App::default();
+                app.game.state = state;
+                let mut gate = MovementGate::default();
+                let mut held = [false; 4];
+                held[i] = true;
+                assert_eq!(
+                    sample_movement(&app, &mut gate, held, false),
+                    (false, false),
+                    "{state:?}"
+                );
+                explicit_action(&mut app);
+                assert_eq!(app.game.state, State::Playing);
+                assert_eq!(
+                    sample_movement(&app, &mut gate, held, false),
+                    (false, false)
+                );
+                held[i] = false;
+                sample_movement(&app, &mut gate, held, false);
+                held[i] = true;
+                assert_ne!(
+                    sample_movement(&app, &mut gate, held, false),
+                    (false, false)
+                );
+            }
+        }
+    }
+
     #[test]
     fn pause_suppression_keeps_aliases_independent() {
         let mut gate = MovementGate::default();
