@@ -19,3 +19,5 @@ xcodebuild test -project TauriInputProbe.xcodeproj -scheme ProbeHost \
 ```
 
 The UI test waits for Ready, taps Start, Pause and Resume, and checks Playing, Paused and Playing. It generates simulator input; it does not establish physical touch, simultaneous touches, a full match, release packaging or accessibility quality. The test adds a separate host and test runner to the simulator; it does not uninstall apps or erase simulator data.
+
+For the unattended match-over/restart check, replace the `-only-testing` value with `TauriInputTests/TauriInputTests/testMatchOverAndRestart` and use a fresh result-bundle path. The test checks the Match over and subsequent Playing states, not the final or reset score.
