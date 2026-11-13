@@ -19,3 +19,7 @@ The same isolated project and extension were launched through a locally assemble
 The in-court pause text was unreachable because the rendering condition allowed only Ready and Over. The Godot frontend now includes Paused and draws a court-colored backing behind the status message so the ball cannot obscure it. Tested GDScript blob `8f216e4c3587fa5b1805a578ae42777dc47ef5ad`, based on checkpoint `7d4b5ba919bc9d2e64a7ab1553dc1bfd8f52476d`; the same debug extension and isolated project above were used.
 
 With the writable `--log-file` option, the headless smoke exited 0 and passed extension/start/move/pause/resume/reset assertions; the known macOS certificate-store error was emitted. In the native Godot window, desktop automation started and paused the game, visibly inspected the unobscured `Paused - Space to resume` prompt, then resumed and confirmed it disappeared. Escape exited the app. This is automated desktop interaction, not physical input or distribution qualification; prior editor-shutdown and other-platform gaps remain.
+
+## Full-match desktop check
+
+A separate run of the same isolated project, GDScript blob and debug extension above used supported desktop automation to press Space, then left the player paddle unattended. The visible score reached **3–7**, the state showed Over, and the court displayed `Match over - Space to restart`. Space restarted at **0–0, Playing**; Escape exited the engine. This is an automated native interaction, not physical input or a distribution package. The headless scripted replay remains separate evidence.
