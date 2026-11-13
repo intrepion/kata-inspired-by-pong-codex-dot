@@ -1,0 +1,9 @@
+# Windows shared GUI explicit-pause recheck
+
+On 2026-11-13, shared GUI support, GPUI and Slint were rebuilt from checkpoint `59957bbdd5f7dd9e61fa1367d522e809b557df62`, including explicit-pause held-input fix `d3fe508f90d840f6be98c88afb17da096acfefef`, with locked offline Windows MSVC debug dependencies. All 10 shared model tests passed, including held-key suppression, repeats, aliases, release and blur. GPUI's single geometry test passed; Slint's frontend test target contains zero tests. These are model/geometry checks, not OS input evidence. GPUI repeated the existing `proc-macro-error2` 2.0.1 future-compatibility warning.
+
+The fresh Slint executable SHA-256 is `c7628f0555b7c5bc13c1f63bcc9295c934105f13c4c90ec5c1bfdbadfa365a48`; GPUI is `881001e2a1d3c5a3868eeccb6bf6d81b4e0b38a434b581f9322be12e5e8aa0d9`. Previous executables were copied into the local evidence directory before rebuilding and retain their earlier hashes.
+
+Both foreground scripted runs exited 0 with empty stderr and 13 records each matching the contact-timing reference line-for-line: [Slint](evidence/windows-slint-gui-pause-20261113.jsonl), [GPUI](evidence/windows-gpui-gui-pause-20261113.jsonl). Slint generated six app-owned software-rendered component PNGs; the inspected tick 480 frame shows paused status, court, paddles, ball and Slint attribution. GPUI's export is state-only. The component image is not a desktop screenshot; the scripted scenario does not test holding a key across pause. Outputs and prior binaries remain locally in `gui-pause-windows-20261113`.
+
+Actual toolkit key delivery, held input across pause in a native window, physical keyboard input, focus/resize, complete match, GTK4 Windows build, package and release qualification remain open. The previous desktop app-approval timeout was not retried.
