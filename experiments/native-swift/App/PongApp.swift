@@ -11,7 +11,8 @@ struct PongView: View {
     private var scripted: Bool { false }
     private var displayedGame: Game { game }
 #endif
-    @State private var touchY: Float? = nil
+    @State private var touch = TouchInput()
+    @GestureState private var dragging = false
     @State private var last = Date()
     @Environment(\.scenePhase) private var phase
     private let timer = Timer.publish(every: 1.0/60, on: .main, in: .common).autoconnect()
@@ -20,12 +21,12 @@ struct PongView: View {
             Text("PONG · Native Swift").font(.headline)
             Text("\(displayedGame.scores[0])     :     \(displayedGame.scores[1])").font(.largeTitle.monospacedDigit())
             GeometryReader { geo in
-                PongCourt(game: displayedGame).gesture(DragGesture(minimumDistance:0).onChanged { value in
+                PongCourt(game: displayedGame).gesture(DragGesture(minimumDistance:0).updating($dragging) { _, active, _ in active = true }.onChanged { value in
                     guard !scripted else { return }
                     let scale = min(geo.size.width/900,geo.size.height/500)
                     let y = Float((value.location.y-(geo.size.height-500*scale)/2)/scale)
-                    touchY = y
-                }.onEnded { _ in touchY = nil })
+                    touch.update(y, playing: game.state == .playing)
+                }.onEnded { _ in touch.end() })
             }.aspectRatio(1.8,contentMode:.fit)
             .accessibilityElement(children: .ignore)
             .accessibilityIdentifier("pong-court")
@@ -38,16 +39,17 @@ struct PongView: View {
             if scripted { Text(demo.status).accessibilityIdentifier("replay-status") }
 #endif
             HStack {
-                Button(game.state == .ready || game.state == .over ? "Start" : "Restart") { game.start(); last = Date() }
-                Button(game.state == .paused ? "Resume" : "Pause") { game.togglePause(); last = Date() }.disabled(game.state == .ready || game.state == .over)
+                Button(game.state == .ready || game.state == .over ? "Start" : "Restart") { touch.suppressActive(); game.start(); last = Date() }
+                Button(game.state == .paused ? "Resume" : "Pause") { if game.state == .playing { touch.suppressActive() }; game.togglePause(); last = Date() }.disabled(game.state == .ready || game.state == .over)
             }.buttonStyle(.borderedProminent).disabled(scripted)
         }.padding().preferredColorScheme(.dark)
         .onReceive(timer) { now in
 #if DEBUG
             if scripted { demo.advance(); return }
 #endif
-            game.step(Float(now.timeIntervalSince(last)),input:touchY.map { max(-1,min(1,($0-game.player)/20)) } ?? 0); last = now }
-        .onChange(of:phase) { newPhase in guard !scripted else { return }; if newPhase != .active { game.pause(); touchY = nil }; last = Date() }
+            game.step(Float(now.timeIntervalSince(last)),input:touch.axis(player: game.player)); last = now }
+        .onChange(of: dragging) { active in if !active { touch.end() } }
+        .onChange(of:phase) { newPhase in guard !scripted else { return }; if newPhase != .active { touch.suppressActive(); game.pause() }; last = Date() }
     }
 }
 
