@@ -48,9 +48,9 @@ Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequent
 
 Dioxus focus/pause fix: a fresh localhost Chrome build reproduced and corrected the first-click failure; desktop scripted replay passes, with native interaction pending. [Evidence](docs/DIOXUS-INTERNAL-FOCUS-PAUSE-FIX.md).
 
-Leptos focus/pause fix: older localhost build reproduced the first-click failure; shared tests and raw WASM build pass, with rebuilt browser/wrapper interaction pending. Dioxus remains under investigation. [Evidence](docs/LEPTOS-DIOXUS-FOCUS-PAUSE.md).
+Leptos focus/pause fix: rebuilt localhost Chrome check passes internal and outside-page focus transitions; native wrapper and physical input remain pending. [Evidence](docs/YEW-LEPTOS-FOCUS-CHROME-OMARCHY.md).
 
-Yew focus/pause fix: an older localhost build reproduced a first-click pause failure; 13 controller tests and updated WASM compilation pass, with rebuilt browser/wrapper interaction pending. [Evidence](docs/YEW-INTERNAL-FOCUS-PAUSE-FIX.md).
+Yew focus/pause follow-up: localhost Chrome exposed and verified a further outside-focus correction; native wrapper and physical input remain pending. [Evidence](docs/YEW-LEPTOS-FOCUS-CHROME-OMARCHY.md).
 
 Dependency notice preparation now rejects inconsistent resolved Cargo graphs before indexing; this is not legal clearance. [Evidence](docs/packaging/NOTICE-GRAPH-INTEGRITY.md).
 
@@ -271,8 +271,8 @@ Details: [low-level clients](experiments/LOW-LEVEL.md), [GUI toolkits](experimen
 
 | Implementation / target | Mac | Windows | Omarchy |
 | --- | --- | --- | --- |
-| Yew browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | U / U |
-| Leptos browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | U / U |
+| Yew browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | B / bounded localhost focus and pause check ([details](docs/YEW-LEPTOS-FOCUS-CHROME-OMARCHY.md)) |
+| Leptos browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | B / bounded localhost focus and pause check ([details](docs/YEW-LEPTOS-FOCUS-CHROME-OMARCHY.md)) |
 | Dioxus browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | U / U |
 | Yew native Tauri wrapper | Fresh `b92b7df` B + state/SVG replay + bounded I; provenance/evidence published `18bc91c` | B / I | `2608321` debug B, 12 shared tests; relocated scripted SVG replay matches model; visual/input unverified ([evidence](docs/packaging/YEW-PAUSE-OMARCHY-PILOT.md)) |
 | Leptos native Tauri wrapper | Fresh `b92b7df` B + state/SVG replay + bounded I; provenance/evidence published `18bc91c` | B / I | `0cf9e95` debug B, 12 shared tests; relocated scripted SVG replay matches model; visual/input unverified ([evidence](docs/packaging/LEPTOS-PAUSE-OMARCHY-PILOT.md)) |

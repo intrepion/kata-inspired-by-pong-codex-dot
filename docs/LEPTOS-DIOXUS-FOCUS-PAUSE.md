@@ -1,5 +1,7 @@
 # Leptos and Dioxus internal-focus investigation
 
+Later browser verification and the Yew outside-focus correction are recorded in [the Omarchy Chrome follow-up](YEW-LEPTOS-FOCUS-CHROME-OMARCHY.md). The earlier results below remain historical.
+
 Follow-up: Dioxus web behavior was subsequently reproduced and corrected; see [the Dioxus fix](DIOXUS-INTERNAL-FOCUS-PAUSE-FIX.md). The investigation below remains historical.
 
 On Omarchy, Chrome loaded the existing Leptos build from a localhost server. After Start and clicking the court to focus the game root, the first Pause / Resume click left the game playing; the second showed Paused. This is automated browser interaction, not physical input. The served WASM SHA-256 was `4cf8b5974edbb45608568e1705762301d705745a12cfc832a486aebabcce0525`, the earlier debug build from `0cf9e95f3a95f3618834040dec7bd68c95e8f869` documented in [the package pilot](packaging/LEPTOS-PAUSE-OMARCHY-PILOT.md). The Leptos handler is unchanged between that revision and pre-fix checkpoint `f4c9c6138a06dedc059271c8f9ad1dd094ef8e54`. The test tab and localhost server were closed afterward; prior artifacts were retained.
