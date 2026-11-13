@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 """Exercise a Ratatui binary with synthetic terminal input in a PTY.
 
-Usage: python3 scripts/verify-ratatui-enhanced-pty.py BINARY RAW_OUTPUT [--fallback|--overlap|--ctrl-c|--fallback-ctrl-c|--small-restart|--fallback-small-restart]
+Usage: python3 scripts/verify-ratatui-enhanced-pty.py BINARY RAW_OUTPUT [--fallback|--overlap|--stop-overlap|--ctrl-c|--fallback-ctrl-c|--small-restart|--fallback-small-restart]
 RAW_OUTPUT must not exist. This is not a real-terminal or physical-input test.
 """
 import sys
 import os,pty,fcntl,termios,struct,subprocess,select,time,codecs,re,signal
-if len(sys.argv) not in (3, 4) or (len(sys.argv) == 4 and sys.argv[3] not in ('--fallback', '--overlap', '--ctrl-c', '--fallback-ctrl-c', '--small-restart', '--fallback-small-restart')):
+if len(sys.argv) not in (3, 4) or (len(sys.argv) == 4 and sys.argv[3] not in ('--fallback', '--overlap', '--stop-overlap', '--ctrl-c', '--fallback-ctrl-c', '--small-restart', '--fallback-small-restart')):
  raise SystemExit(__doc__)
 binary, raw_output = sys.argv[1:3]
 fallback = len(sys.argv) == 4 and sys.argv[3] in ('--fallback', '--fallback-ctrl-c', '--fallback-small-restart')
 overlap = len(sys.argv) == 4 and sys.argv[3] == '--overlap'
+stop_overlap = len(sys.argv) == 4 and sys.argv[3] == '--stop-overlap'
 ctrl_c = len(sys.argv) == 4 and sys.argv[3] in ('--ctrl-c', '--fallback-ctrl-c')
 small_restart = len(sys.argv) == 4 and sys.argv[3] in ('--small-restart', '--fallback-small-restart')
 if os.path.exists(raw_output):
@@ -132,6 +133,24 @@ try:
   assert termios.tcgetattr(s)==before, 'terminal attributes not restored'
   print('PASS fallback: W latches up; X stops; S latches down; pause clears movement; focus loss ignores Space/R/Q until focus gain; Q exits; termios restored')
   print('player paddle top rows:',initial[0][0],moving[0][0],latched[0][0],stopped[0][0],down[0][0],paused[0][0])
+ elif stop_overlap:
+  assert query and 'Hold' in ''.join(screen[1]), 'enhanced keyboard path unavailable'
+  state('Ready'); send(b'\x1b[32;1:1u'); state('Playing')
+  send(b'\x1b[120;1:1u', .03) # X press
+  send(b'\x1b[115;1:1u', .10) # S pressed after X
+  before_repeat = paddle()
+  send(b'\x1b[120;1:2u', .12) # X repeat must not stop S
+  after_repeat = paddle()
+  assert after_repeat[0][0] > before_repeat[0][0], (before_repeat, after_repeat)
+  send(b'\x1b[120;1:3u', .12) # X release must not stop S
+  after_release = paddle()
+  assert after_release[0][0] > after_repeat[0][0], (after_repeat, after_release)
+  send(b'\x1b[115;1:3u', .12); stopped = paddle(); pump(.15)
+  assert paddle() == stopped, (stopped, paddle())
+  send(b'\x1b[113;1:1u'); assert p.wait(timeout=2)==0
+  assert termios.tcgetattr(s)==before, 'terminal attributes not restored'
+  print('PASS enhanced: X repeat and release preserve newer S movement; S release stops; Q exits; termios restored')
+  print('player paddle top rows:', before_repeat[0][0], after_repeat[0][0], after_release[0][0])
  elif overlap:
   assert query and 'Hold' in ''.join(screen[1]), 'enhanced keyboard path unavailable'
   state('Ready'); send(b'\x1b[32;1:1u'); state('Playing'); initial=paddle()
