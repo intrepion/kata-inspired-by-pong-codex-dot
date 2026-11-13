@@ -947,3 +947,5 @@ The raw wgpu zero-score marks were also checked in a [native Mac window](docs/pa
 Miniquad zero-score marks also passed a [Mac native-window cross-check](docs/packaging/MINIQUAD-ZERO-SCORE-MAC-20261113.md), with physical input and release qualification still open.
 
 Blue Engine zero-score geometry was also checked in a [Mac native window](docs/packaging/BLUE-ZERO-SCORE-MAC-20261113.md); physical input and distribution qualification remain open.
+
+Blue Engine score-owner labels also passed a [native Mac cross-check](docs/packaging/BLUE-SCORE-LABELS-MAC-20261113.md); physical input and distribution qualification remain open.
