@@ -855,3 +855,5 @@ Nannou's in-court prompts now have a backing to separate them from the ball and 
 Raw wgpu's window title now labels the scores and winner; [Omarchy evidence](docs/packaging/WGPU-WINNER-TITLE-OMARCHY.md) records adapter tests and replay limits.
 
 Raylib now displays Ready and Paused instructions in the court, with centered backed winner text. [Omarchy evidence](docs/packaging/RAYLIB-COURT-STATES-OMARCHY.md) records the tests and paused capture.
+
+Miniquad now shows start and resume instructions with its in-court symbols; [Omarchy tests and paused capture](docs/packaging/MINIQUAD-STATE-INSTRUCTIONS-OMARCHY.md) record the scope and limitations.
