@@ -38,6 +38,8 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
+Dependency notice preparation now rejects inconsistent resolved Cargo graphs before indexing; this is not legal clearance. [Evidence](docs/packaging/NOTICE-GRAPH-INTEGRITY.md).
+
 Original browser canvas drag now retains first-pointer ownership; mocked multi-pointer tests pass, with physical multi-touch pending. [Evidence](docs/ORIGINAL-CANVAS-POINTER-OWNER.md).
 
 Original browser live-status updates now occur only when text changes; mocked DOM regression passes, with real assistive-technology checks pending. [Evidence](docs/ORIGINAL-LIVE-STATUS-FIX.md).

@@ -64,7 +64,22 @@ export function auditedUpstreamNotices(packageRoot,noticeRoot,rule) {
 export function buildNoticeBundle(metadata,repoRoot,{platform='Linux'}={}) {
  if(!['Linux','Windows','macOS'].includes(platform)) throw Error('Unsupported platform label');
  if(!Array.isArray(metadata.packages)||!Array.isArray(metadata.resolve?.nodes)) throw Error('Resolved Cargo metadata required');
- const wanted=new Set(metadata.resolve.nodes.map(x=>x.id)),root=realpathSync(repoRoot),packages=[];
+ const nodeIds=metadata.resolve.nodes.map(node=>node?.id),packageIds=metadata.packages.map(pkg=>pkg?.id);
+ if(!nodeIds.length||nodeIds.some(id=>typeof id!=='string'||!id)||new Set(nodeIds).size!==nodeIds.length||
+    packageIds.some(id=>typeof id!=='string'||!id)||new Set(packageIds).size!==packageIds.length)
+  throw Error('Invalid resolved graph or duplicate package IDs');
+ const available=new Set(packageIds);
+ if(nodeIds.some(id=>!available.has(id)))throw Error('Resolved graph references missing package metadata');
+ const wanted=new Set(nodeIds);
+ if(metadata.resolve.root!=null&&!wanted.has(metadata.resolve.root))throw Error('Resolved graph root is missing');
+ for(const node of metadata.resolve.nodes){
+  if(!Array.isArray(node.deps)||!Array.isArray(node.dependencies))throw Error('Invalid resolved graph dependency lists');
+  const deps=node.deps.map(dep=>dep?.pkg),legacy=node.dependencies;
+  if([...deps,...legacy].some(id=>typeof id!=='string'||!wanted.has(id)))throw Error('Resolved graph has a missing dependency node');
+  const a=new Set(deps),b=new Set(legacy);
+  if(a.size!==b.size||[...a].some(id=>!b.has(id)))throw Error('Resolved graph dependency lists disagree');
+ }
+ const root=realpathSync(repoRoot),packages=[];
  for(const pkg of metadata.packages.filter(p=>wanted.has(p.id)).sort((a,b)=>a.name.localeCompare(b.name)||a.version.localeCompare(b.version))) {
   if(!/^[a-zA-Z0-9_-]+$/.test(pkg.name)||!pkg.version||!pkg.manifest_path) throw Error('Invalid package metadata');
   const dir=realpathSync(dirname(pkg.manifest_path));let files=candidates(dir);
