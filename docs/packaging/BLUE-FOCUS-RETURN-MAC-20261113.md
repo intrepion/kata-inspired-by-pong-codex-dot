@@ -1,0 +1,5 @@
+# Blue Engine focus-return actions: Mac cross-check (2026-11-13)
+
+Blue Engine source blob `aa64770f5776007336bd0827f42715354d15be63` from `6832550319`, SHA-256 `611126a84f2f141821e6331d2e080253f1c2df64556c60085f3ba7c0e9ec8dbd`, was built offline and locked with the cached Mac release target. The executable SHA-256 was `13fc9238d4a942ac9a9bc5af6877abb89037636dfe95ed150ff182cfe420b860`. All 11 release tests passed, including the synthetic held-action focus-return regression. Cargo emitted the existing future-compatibility warning for `block v0.1.6`.
+
+In the native Mac window, 500 ms desktop-automation Return, Space and Space presses produced Playing, Paused and Playing. Escape then produced Paused; Command-Q closed the test app. This is a check of focused actions in that run, not proof of an OS focus transition or a key held across it. Native focus-return ordering, physical keyboard input, full gameplay and release qualification remain open. The app and prior binary are retained under `/tmp/pong-blue-focus-return-mac-20261113-v1/`.
