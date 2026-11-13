@@ -86,6 +86,8 @@ Mac softbuffer target-filtered license metadata screen: no declared LGPL, GPL-3 
 
 Mac bracket-lib target-filtered license screen: no declared LGPL, GPL-3 or MPL in 84 resolved packages; native/system components and full source review remain open. [Evidence](docs/packaging/BRACKET-MAC-LICENSE-SCREEN.md).
 
+Mac Slint audit: tested binary contains Slint core/backend symbols; GPL-3 is one of several declared alternatives, with royalty-free attribution terms requiring review. [Evidence](docs/packaging/SLINT-MAC-LICENSE-SCREEN.md). Mac Piston metadata screen found no restricted declarations in 216 packages; system and source review remain open. [Evidence](docs/packaging/PISTON-MAC-LICENSE-SCREEN.md).
+
 Mac ggez option-ext patch: Release tests and replay pass; a duplicate Unix-only test module was corrected and its isolated parser tests pass. [Evidence](docs/packaging/GGEZ-MAC-OPTION-EXT-RECHECK.md). Mac Nannou metadata screen found no restricted declarations in 435 packages; native/system review remains open. [Evidence](docs/packaging/NANNOU-MAC-LICENSE-SCREEN.md).
 
 Mac Fyrox Release license investigation: MPL-declared Symphonia code symbols are present in the tested executable; a second MPL-declared graph path lacks direct symbol confirmation. [Evidence](docs/packaging/FYROX-MAC-MPL-SCREEN.md).
