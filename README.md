@@ -146,6 +146,8 @@ Omarchy Miniquad winning-score fixture: real scoring reached both game-over stat
 
 Omarchy Miniquad winner overlay: an isolated forced-state visual fixture rendered both winner messages; real game-over progression and physical input remain open. [Evidence](docs/packaging/MINIQUAD-WINNER-FIXTURE-OMARCHY.md).
 
+Omarchy Ratatui Ctrl+C: synthetic enhanced and fallback PTY checks exited cleanly and restored terminal settings for both musl and GNU binaries. [Evidence](docs/packaging/RATATUI-CTRL-C-PTY-OMARCHY.md).
+
 Omarchy Ratatui musl empty-environment PTY: enhanced and fallback flows passed from a read-only installation with absent HOME/XDG paths; clean-machine and physical input remain open. [Evidence](docs/packaging/RATATUI-MUSL-EMPTY-ENV-OMARCHY.md).
 
 Omarchy Ratatui musl distribution trace: installed target inputs match official archives; 186 linked libc members have source-name candidates; an incomplete notice draft preserves the musl and selected math notices, with final attribution review still open. [Evidence](docs/packaging/RATATUI-MUSL-DISTRIBUTION-TRACE.md).
