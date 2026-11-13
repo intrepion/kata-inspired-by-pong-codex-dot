@@ -1,5 +1,7 @@
 # Rallylight
 
+Swift paddle collision now evaluates ball and paddle positions at contact and advances the remainder; Mac model regressions pass, with device and XCTest package checks outstanding. [Evidence](docs/packaging/SWIFT-COLLISION-MAC-20261113.md)
+
 Mac cross-check: polling and four-engine non-playing-input regression suites, shared GUI/web controllers, and Godot headless injected-input smoke pass; physical input and rebuilt client replay remain open. [Evidence](docs/packaging/NONPLAYING-INPUT-MAC-20261113.md)
 
 Fira Mono is being evaluated as a ggez font replacement; an isolated Mac pilot covers ASCII and bounded automated interaction, with release and broader layout checks outstanding. [Evidence](docs/packaging/GGEZ-MAC-FIRA-PILOT-20261113.md)
