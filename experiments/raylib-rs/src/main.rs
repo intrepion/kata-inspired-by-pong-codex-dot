@@ -237,16 +237,26 @@ fn main() {
             );
         }
         let (status_x, status_y) = status_position(ox, oy, s);
-        d.draw_text(
-            &format!(
-                "{:?} | W/S arrows | Enter/R restart | Space pause | Esc exit",
-                game.state
-            ),
-            status_x as i32,
-            status_y as i32,
-            (14.0 * s).max(1.0) as i32,
-            Color::GRAY,
-        );
+        let status_lines = [
+            format!("{:?} | W/S arrows | Enter/R restart", game.state),
+            "Space pause | Esc exit".to_owned(),
+        ];
+        let mut status_size = (12.0 * s).max(1.0) as i32;
+        let available_width = (W - 30.0) * s;
+        while status_size > 1
+            && status_lines.iter().any(|line| d.measure_text(line, status_size) as f32 > available_width)
+        {
+            status_size -= 1;
+        }
+        for (line_index, line) in status_lines.iter().enumerate() {
+            d.draw_text(
+                line,
+                status_x as i32,
+                (status_y + line_index as f32 * status_size.max(10) as f32) as i32,
+                status_size,
+                Color::GRAY,
+            );
+        }
         if let Some(demo) = &demo {
             d.draw_text(
                 &format!("SCRIPTED / tick {}", demo.tick()),
