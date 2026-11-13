@@ -19,6 +19,8 @@
 
 Ash and SDL3 have at least one discovered notice file for each resolved package, so their collected texts were used for the next local archive pilots. Missing-file lists on the other ten graphs are preserved, not filled using guessed generic license text or silently marked complete. The packager rejects those incomplete bundles.
 
+The raylib-rs missing-file gap has [exact-version source-header evidence](RAYLIB-RS-NOTICE-INVESTIGATION.md); the current collector does not include those headers.
+
 The softbuffer gap has a focused [exact-version investigation](SOFTBUFFER-DRM-FOURCC-NOTICE-INVESTIGATION.md); its notice remains unresolved.
 
 A missing file is not proof of a licensing violation. Some published crates omit a repository-root license, embed attribution in source comments, or use workspace-level notices. Exact-version upstream/source review is still needed. Conversely, finding a file does not prove all obligations are satisfied. Native bundled code, source-comment notices, platform libraries and any required source distribution remain release-review gates. No public release or legal clearance is claimed.
