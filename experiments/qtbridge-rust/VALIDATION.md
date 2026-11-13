@@ -12,12 +12,8 @@ Next manual check: start, hold W/S or arrows, verify score changes, Space freeze
 
 The six added gameplay tests exercise snapshot schema, paddle bounds, pause/resume, paddle/wall collision, scoring through game-over/restart and irregular frame partitioning. These are deterministic controller tests, not substitutes for visual inspection or actual keyboard delivery. No desktop-access workaround was used.
 
-## Toolchain availability, read-only check 2026-11-13
+## Actual Qt/QML integration checkpoint
 
-| Machine | Rust / C++ | Qt SDK | Result |
-|---|---|---|---|
-| Omarchy ARM64 | Existing Rust/C++ | Qt 6.12 Core + Quick/private development support | Full build, 9 tests with and without Qt features, native startup pass; interactive visual QA unavailable |
-| Mac ARM64 | Rust 1.99.1; Apple clang 21.0.0 / selected Xcode | No qmake/Qt SDK or Quick headers found in PATH/standard Qt/Homebrew locations | Not built; needs Qt >=6.10 SDK + private headers; upstream macOS experimental |
-| Windows x64 | Rust MSVC 1.99.1 installed (default GNU 1.99.0); VS2022 BuildTools MSVC 14.44.35207 | No qmake/Qt SDK or Quick headers found in PATH/standard Qt/MSYS2/vcpkg locations | Not built; needs Qt >=6.10 matching MSVC kit + private headers |
+Omarchy Qt6.12: the dedicated production-QML/Backend integration renderer compiled and passed actual slot calls, timed axis movement, stable pause, resume/opposite movement, restart/reset and reduced-window scaling assertions. A deliberately invalid snapshot-schema assertion prevented render completion (negative control); the unchanged production contract produced a fresh valid 900x500 PNG. The image was visually inspected: background, center net, both paddles and ball present at expected positions. Evidence: `evidence/offscreen-court.png`.
 
-No SDK was installed. The checks are discovery of available toolchains, not proof that a custom unlisted Qt installation cannot exist. Visual evidence remains unavailable rather than substituting shell-driven desktop capture/input. The full Qt-linked test suite also passed; the nine tests exercise the controller, not the rendered UI.
+This used `QT_QPA_PLATFORM=offscreen` and `QT_QUICK_BACKEND=software` only for the child process. It is synthetic application-owned test output, not desktop capture or interactive gameplay QA. No SDK installation or desktop-access workaround. Physical key/focus delivery and real GPU presentation remain unverified.

@@ -33,3 +33,18 @@ For LGPL distribution, retain notices and license texts, provide required corres
 Upstream currently lists Linux x86_64 and Windows x64; macOS ARM64 is experimental. Omarchy ARM64 is outside that stated matrix, even if local validation succeeds. Qt Bridge 0.4.1 is early-stage; this pinned implementation is a comparison experiment, not a support guarantee. QML is embedded, but Qt runtime libraries/plugins are not bundled. Browser/WASM/mobile targets are not provided.
 
 Validation results are in VALIDATION.md. Build, launch and interactive gameplay are reported separately.
+
+## Actual QML integration and offscreen render
+
+A separate `pong-qtbridge-integration` binary reuses the production Backend and Main.qml. Its injected test sequence calls actual QML-exposed Rust slots, waits across timer frames, checks movement/pause/resume/restart and scaling, and renders the court to a new temporary PNG. It does not send keyboard events, capture the desktop, or control another app.
+
+```sh
+QMAKE=/usr/bin/qmake6 cargo build --locked --manifest-path experiments/qtbridge-rust/Cargo.toml
+python3 experiments/qtbridge-rust/scripts/check-offscreen.py experiments/qtbridge-rust/target/debug/pong-qtbridge-integration
+```
+
+The script forces Qt's offscreen/software backend per-process and checks a deliberately wrong snapshot assertion fails to reach render completion before running the passing case. No persistent settings change. Fresh temporary directories prevent stale screenshots from passing. The resulting PNG signature and 900x500 dimensions are asserted; visual appearance was also inspected once. Temporary test evidence is left for inspection.
+
+![Dedicated offscreen Qt test-render, not an interactive screenshot](evidence/offscreen-court.png)
+
+This validates actual QML bindings and software rendering, **not** physical keyboard input, focus delivery, desktop GPU output, or Mac/Windows behavior.
