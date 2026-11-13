@@ -36,6 +36,12 @@ fn glyph(ch: u32) -> array<u32, 7> {
     if distance(p,state.positions.zw) < 8. { c = vec3(1.); }
     for (var side=0u; side<2u; side++) {
         let score = select(state.viewport_scores.z,state.viewport_scores.w,side==1u);
+        // An empty tally group is otherwise indistinguishable from a missing score.
+        if score < 0.5 {
+            let x = 450. + (f32(side)*2.-1.) * 30.;
+            let d = abs(p - vec2(x, 24.));
+            if d.x < 4. && d.y < 8. && (d.x >= 2. || d.y >= 6.) { c = vec3(1.); }
+        }
         for (var j=0u; j<u32(score); j++) {
             let x = 450. + (f32(side)*2.-1.) * (30. + f32(j)*16.);
             if abs(p.x-x)<4. && abs(p.y-24.)<8. { c=vec3(1.); }

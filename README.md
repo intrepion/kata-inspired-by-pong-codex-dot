@@ -902,6 +902,8 @@ Wgpu and Pixels now accept keypad Enter for start and restart; [Mac model and au
 
 Raw wgpu also passed a [Windows keypad model and scripted replay check](docs/packaging/WGPU-KEYPAD-ENTER-WINDOWS-20261113.md); native keypad input and release qualification remain open.
 
+Raw wgpu now shows an outlined zero for an empty score tally; [Windows scripted captures](docs/packaging/WGPU-ZERO-SCORE-WINDOWS-20261113.md) show 0–0 and 0–1.
+
 Pixels also passed a [Windows keypad model and scripted replay check](docs/packaging/PIXELS-KEYPAD-WINDOWS-20261113.md); native keypad input and release qualification remain open.
 
 A current Ratatui static-musl candidate passed relocated Omarchy PTY and replay checks; [evidence](docs/packaging/RATATUI-MUSL-CURRENT-OMARCHY.md) retains the unresolved static-component and license review.
