@@ -37,6 +37,8 @@ fn sample_movement(state: State, gate: &mut MovementGate, held: [bool; 4], enter
     gate.was_playing = playing;
     gate.axis(held, suppress)
 }
+#[cfg(any(feature = "windowed", test))]
+fn restart(game: &mut Game, gate: &mut MovementGate) { gate.was_playing = false; game.start(); }
 fn rect(engine: &mut Engine, name: &str, x: f32, y: f32, width: f32, height: f32, z: f32) {
     if let Some(object) = engine.objects.get_mut(name) {
         // Hide zero-sized score markers without creating a singular inverse matrix.
@@ -213,7 +215,7 @@ fn main() -> Result<(), blue_engine::error::Error> {
                 if game.state == State::Paused { game.toggle_pause(); }
                 else if game.state != State::Playing { game.start(); }
             }
-            if input.key_pressed(KeyCode::KeyR) { game.start(); }
+            if input.key_pressed(KeyCode::KeyR) { restart(&mut game, &mut movement_gate); }
             if input.key_pressed(KeyCode::Space) { game.toggle_pause(); }
             if input.key_pressed(KeyCode::Escape) { game.pause(); }
             let held = [input.key_held(KeyCode::KeyW), input.key_held(KeyCode::ArrowUp), input.key_held(KeyCode::KeyS), input.key_held(KeyCode::ArrowDown)];
@@ -273,6 +275,19 @@ fn main() -> Result<(), blue_engine::error::Error> {
 #[cfg(test)]
 mod benchmark_tests {
     use super::benchmark_args;
+    #[test]
+    fn active_restart_suppresses_movement_until_fresh_press() {
+        use super::*;
+        let mut game = Game::new(42); game.start();
+        let mut gate = MovementGate::default();
+        sample_movement(game.state, &mut gate, [false; 4], false);
+        let held = [true, false, false, false];
+        assert_eq!(sample_movement(game.state, &mut gate, held, false), -1.);
+        restart(&mut game, &mut gate);
+        assert_eq!(sample_movement(game.state, &mut gate, held, false), 0.);
+        sample_movement(game.state, &mut gate, [false; 4], false);
+        assert_eq!(sample_movement(game.state, &mut gate, held, false), -1.);
+    }
     #[test]
     fn opt_in_only() {
         assert!(!benchmark_args(&[]));
