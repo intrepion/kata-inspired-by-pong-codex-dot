@@ -76,6 +76,8 @@ A Windows Ratatui MSVC link-map build mapped 17 Cargo archives and five sysroot 
 
 Windows Ratatui's five map-named Rust archives match the official MSVC distribution; [source and system-license review remains open](docs/packaging/RATATUI-WINDOWS-RUST-DISTRIBUTION.md).
 
+Windows softbuffer link-map screen mapped 17 Cargo archives and verified seven Rust sysroot archives; [native and system-license review remains open](docs/packaging/SOFTBUFFER-WINDOWS-MAP-SCREEN.md).
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
