@@ -70,6 +70,8 @@ Windows softbuffer runtime snapshot observed 31 System32 modules, including VCRU
 
 Windows Tauri shared-library fixture passes with the scoped dirs-sys patch, but four MPL-declared build dependencies and actual desktop qualification remain open. See [probe](docs/packaging/TAURI-WINDOWS-DIRS-PATCH-PROBE.md).
 
+Pinned Tauri's tested reduced-feature Windows fixture still compiles four MPL-declared parser crates; [feature-path investigation](docs/packaging/TAURI-WINDOWS-PARSER-FEATURES.md).
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
