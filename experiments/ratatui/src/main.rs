@@ -55,7 +55,7 @@ impl Input {
             KeyCode::Down => Some(2),
             KeyCode::Char('s' | 'S') => Some(3),
             KeyCode::Char('x' | 'X') => {
-                self.clear();
+                if key.kind == KeyEventKind::Press { self.clear(); }
                 None
             }
             _ => None,
@@ -332,6 +332,18 @@ mod tests {
     use super::*;
     fn key(c: KeyCode, k: KeyEventKind) -> KeyEvent {
         KeyEvent::new_with_kind(c, KeyModifiers::NONE, k)
+    }
+    #[test]
+    fn stop_release_and_repeat_do_not_cancel_new_movement() {
+        for releases in [true, false] {
+            for kind in [KeyEventKind::Release, KeyEventKind::Repeat] {
+                let mut input = Input::default();
+                input.key(key(KeyCode::Char('x'), KeyEventKind::Press), releases);
+                input.key(key(KeyCode::Char('w'), KeyEventKind::Press), releases);
+                input.key(key(KeyCode::Char('x'), kind), releases);
+                assert_eq!(input.axis(releases), -1., "{kind:?}, releases={releases}");
+            }
+        }
     }
     #[test]
     fn action_letters_are_case_insensitive() {
