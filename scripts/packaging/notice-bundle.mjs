@@ -61,6 +61,8 @@ const lyonFiles=rev=>[
  ['lyon-LICENSE-MIT.txt','80f275e90d799911ed3830a7f242a2ef5a4ade2092fe0aa07bfb2d2cf2f2b95e',`https://github.com/nical/lyon/blob/${rev}/LICENSE-MIT`],
 ];
 const upstreamRules=Object.freeze({
+ 'encase_derive@0.12.1':{rev:'561121cd17298355de74c07a7206eb8329fd8347',path:'derive',sourceHash:'23f117b3a248546248101b428da696ed1b4569720778e64e64238969a18df9df',files:[['encase-LICENSE.txt','8876cdca96eb380d16d5ea32bf4529d85e87dedc7765ae2861a9bec7f34acbed','https://github.com/teoxoy/encase/blob/561121cd17298355de74c07a7206eb8329fd8347/LICENSE']]},
+ 'encase_derive_impl@0.12.1':{rev:'561121cd17298355de74c07a7206eb8329fd8347',path:'derive/impl',sourceHash:'01b6b10495231854af9bdf304acaa0cbea88cb8a77b7be094e2b47ce5939408c',files:[['encase-LICENSE.txt','8876cdca96eb380d16d5ea32bf4529d85e87dedc7765ae2861a9bec7f34acbed','https://github.com/teoxoy/encase/blob/561121cd17298355de74c07a7206eb8329fd8347/LICENSE']]},
  'lyon@1.0.19':{rev:'56219c95c658d4f39de7b190d98e57d5773ba241',path:'crates/lyon',sourceHash:'afbe4e0241db801f1e26409d49da6142156a6ac539523d79b6839a177cc2ab14',files:lyonFiles('56219c95c658d4f39de7b190d98e57d5773ba241')},
  'lyon_path@1.0.19':{rev:'56219c95c658d4f39de7b190d98e57d5773ba241',path:'crates/path',sourceHash:'82b7348e3343de1a6cddd4b0f1f4e96cfaa118d77146921e6d6589abd790d02e',files:lyonFiles('56219c95c658d4f39de7b190d98e57d5773ba241')},
  'lyon_algorithms@1.0.22':{rev:'db98d26a1a90076a7a894262dcb51117eef643c8',path:'crates/algorithms',sourceHash:'752ee316c0b45a3ccd0fd4d839ee01705b77d4a5ba229390e610513f798dd9c1',files:lyonFiles('db98d26a1a90076a7a894262dcb51117eef643c8')},
