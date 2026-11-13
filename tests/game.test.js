@@ -122,4 +122,8 @@ test('browser handlers clear movement on pause and reject continuing touch drags
  els.pause.emit('click');els.start.emit('click');els.up.emit('keydown',{key:' ',repeat:true,target:els.up});frame(280);const yAfterPause=playerY;frame(300);assert.equal(playerY,yAfterPause);
  els.up.emit('keyup',{key:' ',target:els.up});els.up.emit('keydown',{key:' ',repeat:false,target:els.up});frame(320);assert.ok(playerY<yAfterPause);
  els.up.emit('blur');const yBlur=playerY;frame(340);assert.equal(playerY,yBlur);
+ els.down.emit('click',{detail:0});frame(360);assert.equal(playerY,yBlur+32);
+ const afterClick=playerY;els.up.emit('click',{detail:1});frame(380);assert.equal(playerY,afterClick);
+ for(let i=0;i<100;i++)els.down.emit('click',{detail:0});frame(390);assert.equal(playerY,410);
+ els.pause.emit('click');els.up.emit('click',{detail:0});frame(400);assert.equal(playerY,410);
 });

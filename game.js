@@ -301,6 +301,11 @@ if (typeof document !== 'undefined') {
             controls.buttonUp(`key:${id}:${e.key}`);
         });
         el.addEventListener('blur', () => { controls.buttonUp(`key:${id}: `); controls.buttonUp(`key:${id}:Enter`); });
+        // Non-pointer activation (including an assistive-technology click) moves one bounded increment.
+        el.addEventListener('click', e => {
+            if (!demoRequested && game.state === 'playing' && e.detail === 0)
+                game.player = clamp(game.player + dir * 32, PADDLE_H / 2, H - PADDLE_H / 2);
+        });
         for (const event of ['pointerup', 'pointercancel', 'lostpointercapture'])
             el.addEventListener(event, e => { controls.buttonUp(e.pointerId); });
     }
