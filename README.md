@@ -170,6 +170,8 @@ Omarchy Miniquad winning-score fixture: real scoring reached both game-over stat
 
 Omarchy Miniquad winner overlay: an isolated forced-state visual fixture rendered both winner messages; real game-over progression and physical input remain open. [Evidence](docs/packaging/MINIQUAD-WINNER-FIXTURE-OMARCHY.md).
 
+Omarchy web, terminal and Godot input: non-playing movement fixes and focused tests pass; raw WebAssembly Start/Pause checked on localhost. Browser/device and native-wrapper rechecks remain open. [Evidence](docs/packaging/WEB-TERMINAL-GODOT-NONPLAYING-OMARCHY.md).
+
 Omarchy GTK, Slint and GPUI input: their shared model suppresses movement presses outside play; model tests, release builds and scripted replays pass. Native input and cross-platform checks remain open. [Evidence](docs/packaging/GUI-NONPLAYING-INPUT-OMARCHY.md).
 
 Omarchy Bevy, Blue Engine, bracket-lib and Fyrox input: non-playing movement is suppressed until release; adapter tests, release builds and scripted replays pass. Physical input and cross-platform checks remain open. [Evidence](docs/packaging/FOUR-ENGINE-NONPLAYING-INPUT-OMARCHY.md).
