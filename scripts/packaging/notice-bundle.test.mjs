@@ -41,7 +41,7 @@ test('audited upstream notices enforce revision, source and notice hashes and co
 
 test('upstream rules require exact registry package and version',t=>{
  const{root,pkg}=fixture(t),registry='registry+https://github.com/rust-lang/crates.io-index';
- for(const[name,version]of [['blue_engine_core','0.10.0'],['blue_engine_dynamic','0.10.0'],['alloc-stdlib','0.3.0'],['dlopen2','0.8.2'],['dlopen2_derive','0.4.3'],['libappindicator-sys','0.9.0'],['selectors','0.38.0']]){
+ for(const[name,version]of [['khronos_api','3.1.0'],['blue_engine_core','0.10.0'],['blue_engine_dynamic','0.10.0'],['alloc-stdlib','0.3.0'],['dlopen2','0.8.2'],['dlopen2_derive','0.4.3'],['libappindicator-sys','0.9.0'],['selectors','0.38.0']]){
   assert.throws(()=>buildNoticeBundle(meta(pkg,{name,version,source:registry}),root),/ENOENT/);
   assert.deepEqual(buildNoticeBundle(meta(pkg,{name,version,source:'git+https://example.invalid/repo'}),root).index.missing_notice_files,[name+'@'+version]);
   assert.deepEqual(buildNoticeBundle(meta(pkg,{name,version:'999.0.0',source:registry}),root).index.missing_notice_files,[name+'@999.0.0']);
@@ -81,4 +81,11 @@ test('rejects malformed platform options instead of silently defaulting',t=>{
  }
  assert(buildNoticeBundle(meta(pkg),root,{platform:'Windows'}).text.startsWith('Pong Windows dependency notice preparation\n'));
  assert(buildNoticeBundle(meta(pkg),root).text.startsWith('Pong Linux dependency notice preparation\n'));
+});
+
+test('legacy registry metadata without path is accepted only when expected',async t=>{
+ const {auditedUpstreamNotices}=await import('./notice-bundle.mjs');const{root,pkg}=fixture(t),n=join(root,'notices');mkdirSync(n);mkdirSync(join(pkg,'src'));const hash=s=>createHash('sha256').update(s).digest('hex');
+ writeFileSync(join(pkg,'.cargo_vcs_info.json'),JSON.stringify({git:{sha1:'r'}}));writeFileSync(join(pkg,'src','lib.rs'),'source');writeFileSync(join(n,'LICENSE'),'notice');
+ const rule={rev:'r',path:undefined,sourceHash:hash('source'),files:[['LICENSE',hash('notice'),'url']]};assert.equal(auditedUpstreamNotices(pkg,n,rule)[0].text,'notice');
+ writeFileSync(join(pkg,'.cargo_vcs_info.json'),JSON.stringify({git:{sha1:'r'},path_in_vcs:'other'}));assert.throws(()=>auditedUpstreamNotices(pkg,n,rule),/revision mismatch/);
 });
