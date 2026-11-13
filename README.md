@@ -14,6 +14,8 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
+Windows web pause follow-up: 12 controller tests pass; rebuilt Yew, Leptos and Dioxus show pause/resume and fresh pointer movement in localhost Chrome. Held-across-pause remains model-only. [Evidence](docs/WINDOWS-WEB-EXPLICIT-PAUSE-RECHECK.md).
+
 Windows Tauri contact-timing follow-up: the missing Windows icon is supplied; fresh native tests and scripted Canvas replay pass, with WebView2 exit diagnostic noted. [Evidence](docs/WINDOWS-TAURI-CONTACT-TIMING.md).
 
 Windows Fyrox contact-timing follow-up: two frontend tests and scripted replay pass with all 13 model checkpoints matched; a paused app-owned frame was inspected. [Evidence](docs/WINDOWS-FYROX-CONTACT-TIMING.md).
