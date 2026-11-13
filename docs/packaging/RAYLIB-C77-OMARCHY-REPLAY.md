@@ -1,0 +1,7 @@
+# raylib contact-timing replay on Omarchy
+
+2026-11-13, Omarchy ARM64; source `971319ea96bb509248e2bb5b2905db0a777c1f10` includes contact-timing physics `c77bf3a`. A fresh offline locked release build and all three raylib frontend tests passed. The local Linux portable pilot archive was extracted into a separate directory; its archive digest and all four extracted manifest entries verified. Archive size: 410,275 bytes; archive SHA-256: `699119eeb0399088f0fd2ecea1e34622de6d8e35da3401c05763da643e693868`; binary SHA-256: `ec7b669b76b8dacfb4634dbbfc7caccbe85cb37d9952518e93b1225e807d0f07`.
+
+With approved host-display access, the relocated binary completed `--scripted-test --scripted-captures` with exit 0. Its 13 JSON telemetry records exactly match the revised contact-timing model reference through finished tick 1440; raylib diagnostic lines were excluded from that comparison. Six app-owned backbuffer PNGs were produced; tick 600 was inspected and showed the score, court, paddles and ball. These are application captures, not desktop/compositor screenshots. Archive, extraction, captures and telemetry remain under distinct `/tmp/pong-raylib-c77-*` paths; historical artifacts were preserved.
+
+This is a local package extraction and scripted rendering/replay check. Physical input, focus/resize, full-match interaction, clean-machine installation, complete dependency notices and public distribution remain unverified.
