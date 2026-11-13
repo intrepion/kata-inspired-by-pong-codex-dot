@@ -883,3 +883,5 @@ Ratatui's Ctrl+C exit and terminal restoration sequences were checked in enhance
 Ratatui now blocks gameplay keys while its terminal is too small, preserving a hidden match score; [Omarchy PTY regression evidence](docs/packaging/RATATUI-SMALL-RESTART-PTY-OMARCHY.md) records resize, restart and quit checks.
 
 The original blur-click fix was cross-checked on Omarchy; [build parity, synthetic tests and localhost Chrome evidence](docs/packaging/ORIGINAL-BLUR-CLICK-OMARCHY-CROSSCHECK.md) records the remaining focus-ordering gap.
+
+The Ratatui small-terminal score-preservation fix also passed a fallback-key PTY regression; [Omarchy evidence](docs/packaging/RATATUI-SMALL-FALLBACK-PTY-OMARCHY.md) records the before/after result.
