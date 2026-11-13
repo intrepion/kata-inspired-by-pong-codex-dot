@@ -1,0 +1,9 @@
+# raylib held-fix Mac relocated package check
+
+On 2026-11-13, the existing macOS ARM64 Release pilot archive from the [held-input recheck](../RAYLIB-PAUSE-HELD-INPUT-FIX.md) was extracted into a separate directory. Archive SHA-256: `b24629fe4841a11d71d65510930dfca49ca80789eaca1bb914f29b81c4de35af`. The extracted executable SHA-256 `e04297cc55daf6fc23c383145a21849ad1cd3ed0f20061796e90c4c1df1e1897` matched its manifest and historical tested binary; the extracted Info.plist passed `plutil -lint`.
+
+The extracted binary's bounded scripted run exited 0 and exported six app-owned PNGs. Its stdout also contained raylib startup logs; after selecting the JSON telemetry lines, all 13 records matched the contact-timing model reference byte-for-byte. The inspected tick-480 image shows the score, court, paddles, ball and paused status. This is scripted state/model and app-owned capture evidence, not physical input.
+
+Separately, supported desktop automation opened the extracted app and used 300 ms key presses: Return produced Playing, Space produced Paused, R produced 0–0 Playing, and Escape exited. These are sequential automated actions, not physical keyboard input, held-across-pause or a full-match qualification. The earlier missed short-press behavior remains unexplained; it was not retested here.
+
+The historical build source was `15dabc39be97533adb47bf6317e7ec8518ac8bad`. Its raylib frontend source, manifest and lockfile, shared core and scenario source, and smoke scenario have identical Git blobs at checkpoint `d47b7f2684657a2b9faa5864b769de1ae94fc3a7`; this is not a new build or a guarantee that every build input and dependency is unchanged. Extracted files and replay remain at `/tmp/pong-raylib-pause-relocated-20261113-v1`; earlier archives and artifacts were preserved. Signing, notarization, complete dependency notices, downloaded/quarantined behavior, clean-machine operation and distribution remain open.

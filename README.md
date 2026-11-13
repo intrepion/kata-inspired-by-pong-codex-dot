@@ -70,6 +70,14 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
+Omarchy Fyrox dedicated working directory: the non-writable package ran its replay without error-level logs and wrote its registry in the dedicated folder; package launch instructions corrected. [Evidence](docs/packaging/FYROX-DEDICATED-CWD-OMARCHY.md).
+
+Omarchy Fyrox non-writable launch: replay finishes but registry writes log permission errors; package guidance now recommends a dedicated writable working directory. [Evidence](docs/packaging/FYROX-READONLY-INSTALL-OMARCHY.md).
+
+Omarchy SDL3 read-only package launch: scripted replay passes with a non-writable package directory and isolated home/XDG paths; clean-machine and physical-input checks remain open. [Evidence](docs/packaging/SDL3-READONLY-INSTALL-OMARCHY.md).
+
+Omarchy ggez isolated-directory launch: the relocated release replay passes with separate home/XDG directories; Mesa cache files were observed and retained. [Evidence](docs/packaging/GGEZ-ISOLATED-HOME-OMARCHY.md).
+
 Omarchy Fyrox held-pause release pilot: relocated replay matches the model; the app created working-directory state and future package guidance now flags it; physical input, removal and notices remain open. [Evidence](docs/packaging/FYROX-HELD-OMARCHY-RELEASE-PILOT.md).
 
 Omarchy Ratatui fallback PTY: synthetic character input verifies latched movement, stop and pause clearing; real terminal and physical input remain open. [Evidence](docs/packaging/RATATUI-FALLBACK-PTY-OMARCHY.md).
@@ -518,17 +526,17 @@ These are local archive extraction, relocated runtime and removal checks, **not 
 | --- | --- | --- | --- |
 | Macroquad | Local pilot | Local pilot | Local pilot |
 | SDL3 | Local pilot | [Local ZIP/replay pilot](docs/packaging/WINDOWS-PORTABLE-BATCH2.md) | Local pilot |
-| raylib | [Local replay + bounded native input](docs/packaging/RAYLIB-MAC-PILOT.md) | [Local ZIP/replay pilot](docs/packaging/WINDOWS-PORTABLE-BATCH2.md) | Local pilot |
+| raylib | [Held-fix relocated replay and desktop smoke](docs/packaging/RAYLIB-HELD-MAC-RELOCATED.md); [earlier pilot](docs/packaging/RAYLIB-MAC-PILOT.md) | [Local ZIP/replay pilot](docs/packaging/WINDOWS-PORTABLE-BATCH2.md) | Local pilot |
 | ash | Loader blocked | [Local ZIP/replay pilot](docs/packaging/WINDOWS-PORTABLE-BATCH2.md) | Local pilot |
 | Miniquad | [Local replay/capture pilot](docs/packaging/MINIQUAD-MAC-PILOT.md) | [Local ZIP/replay pilot](docs/packaging/MINIQUAD-WINDOWS-PILOT.md) | [Four-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH.md) |
 | pixels, raw wgpu | [Local replay/capture pilots](docs/packaging/MAC-PIXELS-WGPU-PILOT.md) | [Local ZIP/replay pilots](docs/packaging/WINDOWS-PORTABLE-BATCH.md) | [Four-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH.md) |
-| Piston, ggez | [Piston held-fix relocated replay and desktop smoke](docs/packaging/PISTON-HELD-MAC-RELOCATED.md); [earlier pilots](docs/packaging/MAC-PISTON-GGEZ-PILOT.md) | [Local ZIP/replay pilot](docs/packaging/WINDOWS-PORTABLE-BATCH2.md) | [Six-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH2.md) |
+| Piston, ggez | [Piston](docs/packaging/PISTON-HELD-MAC-RELOCATED.md) and [ggez](docs/packaging/GGEZ-HELD-MAC-RELOCATED.md) held-fix relocated checks; [earlier pilots](docs/packaging/MAC-PISTON-GGEZ-PILOT.md) | [Local ZIP/replay pilot](docs/packaging/WINDOWS-PORTABLE-BATCH2.md) | [Six-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH2.md) |
 | Fyrox | [Corrected HUD replay passed; full cleanup incomplete](docs/FYROX-HUD-SCALE-FIX.md) | [Local ZIP/replay; generated state preserved](docs/packaging/WINDOWS-PORTABLE-BATCH3.md) | [Corrected HUD replay passed; full cleanup incomplete](docs/FYROX-HUD-SCALE-FIX.md) |
 | Nannou, bracket-lib, Bevy | [Nannou held-fix relocated check](docs/packaging/NANNOU-HELD-MAC-RELOCATED.md); [earlier pilots](docs/packaging/MAC-FOUR-ENGINE-PILOT.md) | [Local ZIP/replay pilots; Bevy DX12](docs/packaging/WINDOWS-PORTABLE-BATCH3.md) | [Six-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH2.md) |
 | Blue Engine, softbuffer | [Blue held-fix relocated replay and desktop smoke](docs/packaging/BLUE-HELD-MAC-RELOCATED.md); [softbuffer pilot](docs/packaging/MAC-SOFTBUFFER-BLUE-PILOT.md) | [Blue state-only](docs/packaging/WINDOWS-PORTABLE-BATCH3.md); [softbuffer replay/capture](docs/packaging/WINDOWS-PORTABLE-BATCH.md) | [Final two local pilots](docs/packaging/LINUX-PORTABLE-BATCH3.md); Blue native captures unsupported |
 | Ratatui | [Local debug archive/cell replay](docs/packaging/RATATUI-MAC-DEBUG-PILOT.md) | [Local ZIP/cell replay only](docs/packaging/RATATUI-WINDOWS-PILOT.md) | [Terminal local pilot](docs/packaging/RATATUI-LINUX-PILOT.md); cells + bounded PTY, not screenshots |
 | GTK4 | Not recorded | Not recorded | [Local package pilot](docs/packaging/GTK-LINUX-PILOT.md); existing GTK4 libraries required |
-| Slint | Not recorded | [Local ZIP/own-window snapshots](docs/packaging/SLINT-WINDOWS-PILOT.md) | [Local package pilot](docs/packaging/SLINT-LINUX-PILOT.md); own-window snapshots, license text included |
+| Slint | [Local debug archive and desktop smoke](docs/packaging/SLINT-MAC-DEBUG-PILOT.md) | [Local ZIP/own-window snapshots](docs/packaging/SLINT-WINDOWS-PILOT.md) | [Local package pilot](docs/packaging/SLINT-LINUX-PILOT.md); own-window snapshots, license text included |
 | GPUI | Not recorded | [Local ZIP/state-only replay](docs/packaging/GPUI-WINDOWS-PILOT.md) | [Local archive/state-only replay](docs/packaging/GPUI-LINUX-PILOT.md) |
 | Tauri + Rust WASM | Not recorded | Not recorded | [Local archive/relocated replay pilot](docs/packaging/TAURI-LINUX-PILOT.md); WebKitGTK required, notices pending |
 | Yew native Tauri wrapper | Not recorded | Not recorded | [Refreshed debug archive/relocated replay](docs/packaging/YEW-PAUSE-OMARCHY-PILOT.md); WebKitGTK required, notices pending |
