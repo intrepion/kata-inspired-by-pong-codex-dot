@@ -15,6 +15,40 @@ fn benchmark_args(args: &[String]) -> bool {
     );
     enabled
 }
+fn handle_key_down(game: &mut Game, held: &mut [bool; 4], key: KeyCode, repeated: bool) {
+    for (i, k) in [
+        KeyCode::KeyW,
+        KeyCode::ArrowUp,
+        KeyCode::KeyS,
+        KeyCode::ArrowDown,
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        if key == k && !repeated {
+            held[i] = true;
+        }
+    }
+    let previous = game.state;
+    if !repeated {
+        if key == KeyCode::KeyR {
+            game.start();
+        } else if key == KeyCode::Enter {
+            if game.state == State::Paused {
+                game.toggle_pause();
+            } else if game.state != State::Playing {
+                game.start();
+            }
+        } else if key == KeyCode::Space {
+            game.toggle_pause();
+        } else if key == KeyCode::Escape {
+            game.pause();
+        }
+    }
+    if previous == State::Playing && game.state == State::Paused {
+        *held = [false; 4];
+    }
+}
 struct App {
     benchmarking: bool,
     benchmark: Option<pong_benchmark::Frames>,
@@ -165,34 +199,8 @@ impl event::EventHandler for App {
         if self.demo.is_some() || self.benchmarking {
             return Ok(());
         }
-        let key = input.event.physical_key;
-        for (i, k) in [
-            KeyCode::KeyW,
-            KeyCode::ArrowUp,
-            KeyCode::KeyS,
-            KeyCode::ArrowDown,
-        ]
-        .into_iter()
-        .enumerate()
-        {
-            if key == k {
-                self.held[i] = true;
-            }
-        }
-        if !repeated {
-            if key == KeyCode::KeyR {
-                self.game.start();
-            } else if key == KeyCode::Enter {
-                if self.game.state == State::Paused {
-                    self.game.toggle_pause();
-                } else if self.game.state != State::Playing {
-                    self.game.start();
-                }
-            } else if key == KeyCode::Space {
-                self.game.toggle_pause();
-            } else if key == KeyCode::Escape {
-                self.game.pause();
-            }
+        if let ggez::winit::keyboard::PhysicalKey::Code(key) = input.event.physical_key {
+            handle_key_down(&mut self.game, &mut self.held, key, repeated);
         }
         Ok(())
     }
@@ -222,6 +230,54 @@ impl event::EventHandler for App {
             self.accumulator = 0.;
         }
         Ok(())
+    }
+}
+#[cfg(test)]
+mod control_tests {
+    use super::*;
+    #[test]
+    fn action_keys_keep_start_resume_restart_and_repeat_behavior() {
+        let mut game = Game::new(42);
+        let mut held = [false; 4];
+        handle_key_down(&mut game, &mut held, KeyCode::Enter, true);
+        assert_eq!(game.state, State::Ready);
+        handle_key_down(&mut game, &mut held, KeyCode::Enter, false);
+        assert_eq!(game.state, State::Playing);
+        handle_key_down(&mut game, &mut held, KeyCode::Space, true);
+        assert_eq!(game.state, State::Playing);
+        handle_key_down(&mut game, &mut held, KeyCode::Space, false);
+        assert_eq!(game.state, State::Paused);
+        handle_key_down(&mut game, &mut held, KeyCode::Enter, false);
+        assert_eq!(game.state, State::Playing);
+        game.scores = [2, 4];
+        handle_key_down(&mut game, &mut held, KeyCode::KeyR, false);
+        assert_eq!(game.scores, [0, 0]);
+    }
+    #[test]
+    fn explicit_pause_clears_movement_until_fresh_press() {
+        for pause in [KeyCode::Space, KeyCode::Escape] {
+            for key in [
+                KeyCode::KeyW,
+                KeyCode::ArrowUp,
+                KeyCode::KeyS,
+                KeyCode::ArrowDown,
+            ] {
+                let mut game = Game::new(42);
+                let mut held = [false; 4];
+                handle_key_down(&mut game, &mut held, KeyCode::Enter, false);
+                handle_key_down(&mut game, &mut held, key, false);
+                assert!(held.iter().any(|v| *v));
+                handle_key_down(&mut game, &mut held, pause, false);
+                assert_eq!(game.state, State::Paused);
+                assert!(!held.iter().any(|v| *v));
+                handle_key_down(&mut game, &mut held, KeyCode::Enter, false);
+                assert_eq!(game.state, State::Playing);
+                handle_key_down(&mut game, &mut held, key, true);
+                assert!(!held.iter().any(|v| *v), "repeat restored movement");
+                handle_key_down(&mut game, &mut held, key, false);
+                assert!(held.iter().any(|v| *v), "fresh press should move");
+            }
+        }
     }
 }
 fn main() -> GameResult {

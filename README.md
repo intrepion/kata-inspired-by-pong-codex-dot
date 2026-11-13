@@ -28,6 +28,8 @@ Windows Miniquad pause-fix follow-up: 10 action/model tests and fresh scripted r
 
 Miniquad keypad Enter now shares the existing start/restart action; Windows and Mac action-boundary tests pass; Mac automated `KP_Enter` starts and resets, but its delivered key code, physical delivery and the separate Windows Unknown-key issue remain open. [Evidence](docs/MINIQUAD-KEYPAD-ENTER.md).
 
+ggez explicit-pause fix: four adapter tests pass, including Space/Escape held-input and repeat regressions; scripted replay matches the model. Native input, packages and other platforms remain pending. [Evidence](docs/GGEZ-PAUSE-HELD-INPUT-FIX.md).
+
 Softbuffer/ash explicit-pause fix: six and eight adapter tests pass, including held-input and repeat regressions; scripted replays match the model. Native input, packages and other platforms remain pending. [Evidence](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
 Pixels/raw wgpu explicit-pause fix: seven and six adapter tests pass, including held-input and repeat regressions; scripted replays match the model. Native input, packages and other platforms remain pending. [Evidence](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md).
