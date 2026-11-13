@@ -138,6 +138,8 @@ Windows passed Macroquad and Nannou active-restart tests and a Macroquad replay;
 
 Windows passed the Bevy active-restart regression; [the report](docs/packaging/BEVY-ACTIVE-RESTART-WINDOWS.md) records its input and replay limits.
 
+Windows passed the ggez winner-message tests and a scripted replay; [the report](docs/packaging/GGEZ-WINNER-WINDOWS-20261113.md) distinguishes the still-unverified winner rendering.
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
