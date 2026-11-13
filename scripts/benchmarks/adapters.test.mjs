@@ -102,3 +102,26 @@ test('sample validation rejects resized, mismatched, or non-finite measurements'
     assert.equal(validSample({...sample,...change}),false);
   }
 });
+
+test('runner retains malformed sample and backend output as invalid evidence',()=>{
+  const dir=mkdtempSync(join(tmpdir(),'pong-runner-malformed-'));
+  try {
+    const fixture=join(dir,'fixture.cjs'),output=join(dir,'results.json');
+    writeFileSync(fixture,`console.log('PONG_BENCHMARK {bad'); console.log('PONG_BENCHMARK_BACKEND {bad');`);
+    const data=runPilot(parseArguments([process.execPath,output,'fixture','not a benchmark']),[fixture]);
+    assert.equal(data.runs.length,3);
+    assert.ok(data.runs.every(r=>!r.valid && r.parse_errors.sample && r.parse_errors.backend));
+    assert.equal(JSON.parse(readFileSync(output,'utf8')).runs[0].raw_sample,'{bad');
+  } finally {rmSync(dir,{recursive:true,force:true});}
+});
+
+test('malformed backend invalidates an otherwise complete sample',()=>{
+  const dir=mkdtempSync(join(tmpdir(),'pong-runner-backend-'));
+  try {
+    const fixture=join(dir,'fixture.cjs'),output=join(dir,'results.json');
+    const sample={schema:1,metric:'frame_callback_interval_ms',warmup_seconds:5,nominal_measure_seconds:10,samples:2,resized:false,sampled_seconds:10,mean_ms:5000,p50_ms:5000,p95_ms:5000,p99_ms:5000,max_ms:5000,width:900,height:500,intervals_ms:[5000,5000]};
+    writeFileSync(fixture,`console.log('PONG_BENCHMARK '+${JSON.stringify(JSON.stringify(sample))}); console.log('PONG_BENCHMARK_BACKEND {bad');`);
+    const data=runPilot(parseArguments([process.execPath,output,'fixture','not a benchmark']),[fixture]);
+    assert.ok(data.runs.every(r=>!r.valid && r.parse_errors.backend && r.sample.samples===2));
+  } finally {rmSync(dir,{recursive:true,force:true});}
+});

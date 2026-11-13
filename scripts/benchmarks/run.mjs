@@ -29,10 +29,15 @@ export function runPilot(options, binaryArguments = ['--benchmark']) {
     const r=spawnSync(binary,binaryArguments,{encoding:'utf8',timeout:30000,maxBuffer:4*1024*1024});
     const line=r.stdout?.split('\n').find(x=>x.startsWith('PONG_BENCHMARK '));
     const backendLine=r.stdout?.split('\n').find(x=>x.startsWith('PONG_BENCHMARK_BACKEND '));
-    const reported_backend=backendLine?JSON.parse(backendLine.slice('PONG_BENCHMARK_BACKEND '.length)):null;
-    const sample=line?JSON.parse(line.slice('PONG_BENCHMARK '.length)):null;
-    result.runs.push({iteration:i+1,exit:r.status,signal:r.signal??null,error:r.error?.message??null,load_before:before,load_after:os.loadavg(),stderr:r.stderr,reported_backend,sample,
-      valid:r.status===0 && validSample(sample)});
+    const raw_sample=line?.slice('PONG_BENCHMARK '.length)??null;
+    const raw_backend=backendLine?.slice('PONG_BENCHMARK_BACKEND '.length)??null;
+    const parse_errors={sample:null,backend:null};
+    let sample=null,reported_backend=null;
+    try { if(raw_sample!==null) sample=JSON.parse(raw_sample); } catch(e) { parse_errors.sample=e.message; }
+    try { if(raw_backend!==null) reported_backend=JSON.parse(raw_backend); } catch(e) { parse_errors.backend=e.message; }
+    result.runs.push({iteration:i+1,exit:r.status,signal:r.signal??null,error:r.error?.message??null,load_before:before,load_after:os.loadavg(),stderr:r.stderr,reported_backend,sample,parse_errors,
+      raw_sample:parse_errors.sample?raw_sample:null,raw_backend:parse_errors.backend?raw_backend:null,
+      valid:r.status===0 && !parse_errors.sample && !parse_errors.backend && validSample(sample)});
     writeFileSync(output,JSON.stringify(result,null,2)+'\n',{flag:i===0?'wx':'w'});
     if(r.status!==0) break;
   }

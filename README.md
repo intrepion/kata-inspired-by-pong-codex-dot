@@ -262,7 +262,7 @@ Windows follow-up: [fresh original TypeScript and raw-WASM browser replay comple
 
 [Omarchy portable-manifest regression](docs/MANIFEST-REGRESSION-OMARCHY.md): source 0cbe38f preserves sixteen shared tests and exact scripted baselines; Macroquad/Piston app-owned capture samples rechecked. This is not benchmark or manual-input evidence.
 
-Benchmark runner follow-up: incomplete or inconsistent callback samples are no longer marked valid; [scope and Windows verification](docs/benchmarks/RUNNER-SAMPLE-VALIDATION.md).
+Benchmark runner follow-up: incomplete or inconsistent callback samples are no longer marked valid, and malformed output is retained as invalid private evidence; [scope and Windows verification](docs/benchmarks/RUNNER-SAMPLE-VALIDATION.md).
 
 ## Benchmark pilot
 
