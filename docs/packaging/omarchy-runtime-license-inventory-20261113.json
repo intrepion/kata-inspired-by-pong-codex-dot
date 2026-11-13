@@ -1,0 +1,744 @@
+{
+  "binary_sha256": {
+    "blue-engine": "f3e8732484f0c3b005b25dfc9fc9a81aed4d4c9f9df4b623b10a88ab7f4278cd",
+    "dioxus": "e795e9e3bf129ab007998e2d586f5289ade068e44c2a777fb11f425984cd87da",
+    "fyrox": "6853cba1ce1adaf16f1c84cffbd7910e8c8decd68c3b23db0a27309b3455e6a8",
+    "ggez": "607c5f3d9507b6f99b7045a683b0b3f2016f3decd17cc19ac4a15966bffd408d",
+    "gtk": "55b34dfdc25e6e74f3b9c1da30bbc29cf7cd67f0b57d0cd2d32e28745e502447",
+    "nannou": "071bbe5f32aabe0e2068da12986874f3f2801fe1d76acac43140316eefeee2ab",
+    "ratatui": "2e985f886e1480f7bf3bb3016ce10a1cf460ba30c1d36ea93db914d8d4684245",
+    "sdl3": "4a821dab5acdbfbec07364dee6e6fff1b672be66067a1fccd9e6d03524b9abb2"
+  },
+  "date": "2026-11-13",
+  "packages": [
+    {
+      "package": "alsa-lib",
+      "package_license_metadata": "LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "fyrox": [
+          "libasound.so.2"
+        ]
+      },
+      "version": "1.2.16.1-1"
+    },
+    {
+      "package": "at-spi2-core",
+      "package_license_metadata": "LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libatk-1.0.so.0",
+          "libatk-bridge-2.0.so.0",
+          "libatspi.so.0"
+        ]
+      },
+      "version": "2.62.1-1"
+    },
+    {
+      "package": "avahi",
+      "package_license_metadata": "LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "gtk": [
+          "libavahi-common.so.3",
+          "libavahi-client.so.3"
+        ]
+      },
+      "version": "1:0.9rc5-2"
+    },
+    {
+      "package": "cairo",
+      "package_license_metadata": "LGPL-2.1-only OR MPL-1.1",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libcairo-gobject.so.2",
+          "libcairo.so.2"
+        ],
+        "gtk": [
+          "libcairo-gobject.so.2",
+          "libcairo.so.2",
+          "libcairo-script-interpreter.so.2"
+        ]
+      },
+      "version": "1.18.6-1"
+    },
+    {
+      "package": "dbus",
+      "package_license_metadata": "AFL-2.1 OR GPL-2.0-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libdbus-1.so.3"
+        ],
+        "gtk": [
+          "libdbus-1.so.3"
+        ]
+      },
+      "version": "1.16.2-2"
+    },
+    {
+      "package": "e2fsprogs",
+      "package_license_metadata": "GPL  LGPL  MIT",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libcom_err.so.2"
+        ]
+      },
+      "version": "1.47.4-1"
+    },
+    {
+      "package": "enchant",
+      "package_license_metadata": "LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libenchant-2.so.2"
+        ]
+      },
+      "version": "2.8.21-1"
+    },
+    {
+      "package": "freetype2",
+      "package_license_metadata": "FTL OR GPL-2.0-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libfreetype.so.6"
+        ],
+        "gtk": [
+          "libfreetype.so.6"
+        ],
+        "nannou": [
+          "libfreetype.so.6"
+        ]
+      },
+      "version": "2.15.0-1"
+    },
+    {
+      "package": "fribidi",
+      "package_license_metadata": "LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libfribidi.so.0"
+        ],
+        "gtk": [
+          "libfribidi.so.0"
+        ]
+      },
+      "version": "1.0.18-1"
+    },
+    {
+      "package": "gdk-pixbuf2",
+      "package_license_metadata": "LGPL-2.0-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libgdk_pixbuf-2.0.so.0"
+        ],
+        "gtk": [
+          "libgdk_pixbuf-2.0.so.0"
+        ]
+      },
+      "version": "2.44.8-1"
+    },
+    {
+      "package": "glib2",
+      "package_license_metadata": "LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libgio-2.0.so.0",
+          "libgobject-2.0.so.0",
+          "libglib-2.0.so.0",
+          "libgmodule-2.0.so.0"
+        ],
+        "gtk": [
+          "libgio-2.0.so.0",
+          "libgobject-2.0.so.0",
+          "libglib-2.0.so.0",
+          "libgmodule-2.0.so.0"
+        ]
+      },
+      "version": "2.90.1-1"
+    },
+    {
+      "package": "glibc",
+      "package_license_metadata": "GPL-2.0-or-later  LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "blue-engine": [
+          "libm.so.6",
+          "libc.so.6",
+          "/lib/ld-linux-aarch64.so.1"
+        ],
+        "dioxus": [
+          "libm.so.6",
+          "libc.so.6",
+          "/lib/ld-linux-aarch64.so.1",
+          "libresolv.so.2"
+        ],
+        "fyrox": [
+          "libm.so.6",
+          "libc.so.6",
+          "/lib/ld-linux-aarch64.so.1"
+        ],
+        "ggez": [
+          "libm.so.6",
+          "libc.so.6",
+          "/lib/ld-linux-aarch64.so.1"
+        ],
+        "gtk": [
+          "libm.so.6",
+          "libc.so.6",
+          "/lib/ld-linux-aarch64.so.1"
+        ],
+        "nannou": [
+          "libm.so.6",
+          "libc.so.6",
+          "/lib/ld-linux-aarch64.so.1"
+        ],
+        "ratatui": [
+          "libm.so.6",
+          "libc.so.6",
+          "/lib/ld-linux-aarch64.so.1"
+        ],
+        "sdl3": [
+          "libm.so.6",
+          "libc.so.6",
+          "/lib/ld-linux-aarch64.so.1"
+        ]
+      },
+      "version": "2.43+r22+g8362e8ce10b2-2"
+    },
+    {
+      "package": "glycin",
+      "package_license_metadata": "MPL-2.0 OR LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libglycin-2.so.0"
+        ],
+        "gtk": [
+          "libglycin-2.so.0"
+        ]
+      },
+      "version": "2.2.6-1"
+    },
+    {
+      "package": "gmp",
+      "package_license_metadata": "GPL-2.0-or-later  LGPL-3.0-or-later",
+      "resolved_libraries_by_binary": {
+        "gtk": [
+          "libgmp.so.10"
+        ]
+      },
+      "version": "6.3.0-3"
+    },
+    {
+      "package": "gnutls",
+      "package_license_metadata": "GPL-3.0-or-later AND LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "gtk": [
+          "libgnutls.so.30"
+        ]
+      },
+      "version": "3.8.13-3"
+    },
+    {
+      "package": "graphite",
+      "package_license_metadata": "LGPL-2.1-or-later OR MPL-2.0 OR GPL-2.0-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libgraphite2.so.3"
+        ],
+        "gtk": [
+          "libgraphite2.so.3"
+        ]
+      },
+      "version": "1:1.3.15-1"
+    },
+    {
+      "package": "gst-plugins-bad-libs",
+      "package_license_metadata": "LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "gtk": [
+          "libgstplay-1.0.so.0"
+        ]
+      },
+      "version": "1.28.8-1"
+    },
+    {
+      "package": "gst-plugins-base-libs",
+      "package_license_metadata": "LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libgstallocators-1.0.so.0",
+          "libgstapp-1.0.so.0",
+          "libgstpbutils-1.0.so.0",
+          "libgstaudio-1.0.so.0",
+          "libgsttag-1.0.so.0",
+          "libgstvideo-1.0.so.0",
+          "libgstgl-1.0.so.0",
+          "libgstfft-1.0.so.0"
+        ],
+        "gtk": [
+          "libgstvideo-1.0.so.0",
+          "libgstgl-1.0.so.0",
+          "libgstallocators-1.0.so.0",
+          "libgsttag-1.0.so.0",
+          "libgstpbutils-1.0.so.0",
+          "libgstaudio-1.0.so.0"
+        ]
+      },
+      "version": "1.28.8-1"
+    },
+    {
+      "package": "gstreamer",
+      "package_license_metadata": "LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libgstbase-1.0.so.0",
+          "libgstreamer-1.0.so.0"
+        ],
+        "gtk": [
+          "libgstreamer-1.0.so.0",
+          "libgstbase-1.0.so.0"
+        ]
+      },
+      "version": "1.28.8-1"
+    },
+    {
+      "package": "gtk3",
+      "package_license_metadata": "LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libgtk-3.so.0",
+          "libgdk-3.so.0"
+        ]
+      },
+      "version": "1:3.24.52-2"
+    },
+    {
+      "package": "gtk4",
+      "package_license_metadata": "LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "gtk": [
+          "libgtk-4.so.1"
+        ]
+      },
+      "version": "1:4.24.1-1"
+    },
+    {
+      "package": "hidapi",
+      "package_license_metadata": "GPL3  BSD  custom",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libhidapi-hidraw.so.0"
+        ]
+      },
+      "version": "0.15.0-1"
+    },
+    {
+      "package": "hyphen",
+      "package_license_metadata": "GPL-2.0-only OR LGPL-2.1-or-later OR MPL-1.1",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libhyphen.so.0"
+        ]
+      },
+      "version": "2.8.10-1"
+    },
+    {
+      "package": "jbigkit",
+      "package_license_metadata": "GPL-2.0-or-later",
+      "resolved_libraries_by_binary": {
+        "gtk": [
+          "libjbig.so.2.2"
+        ]
+      },
+      "version": "2.2-1"
+    },
+    {
+      "package": "json-glib",
+      "package_license_metadata": "LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libjson-glib-1.0.so.0"
+        ],
+        "gtk": [
+          "libjson-glib-1.0.so.0"
+        ]
+      },
+      "version": "1.10.8-1"
+    },
+    {
+      "package": "keyutils",
+      "package_license_metadata": "GPL-2.0-or-later  LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libkeyutils.so.1"
+        ]
+      },
+      "version": "1.6.3-4"
+    },
+    {
+      "package": "leancrypto",
+      "package_license_metadata": "GPL-2.0-or-later  LicenseRef-BSDvariant  LicenseRef-leancrypto",
+      "resolved_libraries_by_binary": {
+        "gtk": [
+          "libleancrypto.so.1.9"
+        ]
+      },
+      "version": "1.9.1-1"
+    },
+    {
+      "package": "libatomic",
+      "package_license_metadata": "GPL-3.0-or-later WITH GCC-exception-3.1  GFDL-1.3-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libatomic.so.1"
+        ]
+      },
+      "version": "16.1.1+r12+g301eb08fa2c5-1"
+    },
+    {
+      "package": "libcloudproviders",
+      "package_license_metadata": "LGPL-3.0-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libcloudproviders.so.0"
+        ],
+        "gtk": [
+          "libcloudproviders.so.0"
+        ]
+      },
+      "version": "0.4.2-1"
+    },
+    {
+      "package": "libcolord",
+      "package_license_metadata": "GPL-2.0-or-later",
+      "resolved_libraries_by_binary": {
+        "gtk": [
+          "libcolord.so.2"
+        ]
+      },
+      "version": "1.4.8-2"
+    },
+    {
+      "package": "libdatrie",
+      "package_license_metadata": "LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libdatrie.so.1"
+        ],
+        "gtk": [
+          "libdatrie.so.1"
+        ]
+      },
+      "version": "0.2.14-1"
+    },
+    {
+      "package": "libelf",
+      "package_license_metadata": "GPL-2.0-or-later OR LGPL-3.0-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libdw.so.1",
+          "libelf.so.1"
+        ],
+        "gtk": [
+          "libdw.so.1",
+          "libelf.so.1"
+        ]
+      },
+      "version": "0.197-1"
+    },
+    {
+      "package": "libgcc",
+      "package_license_metadata": "GPL-3.0-or-later WITH GCC-exception-3.1  GFDL-1.3-or-later",
+      "resolved_libraries_by_binary": {
+        "blue-engine": [
+          "libgcc_s.so.1"
+        ],
+        "dioxus": [
+          "libgcc_s.so.1"
+        ],
+        "fyrox": [
+          "libgcc_s.so.1"
+        ],
+        "ggez": [
+          "libgcc_s.so.1"
+        ],
+        "gtk": [
+          "libgcc_s.so.1"
+        ],
+        "nannou": [
+          "libgcc_s.so.1"
+        ],
+        "ratatui": [
+          "libgcc_s.so.1"
+        ],
+        "sdl3": [
+          "libgcc_s.so.1"
+        ]
+      },
+      "version": "16.1.1+r12+g301eb08fa2c5-1"
+    },
+    {
+      "package": "libgcrypt",
+      "package_license_metadata": "BSD-3-Clause  BSD-3-Clause OR GPL-2.0-only  GPL-2.0-or-later  LGPL-2.0-or-later  LGPL-2.1-or-later  X11  LicenseRef-scancode-public-domain  LicenseRef-OCB1",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libgcrypt.so.20"
+        ]
+      },
+      "version": "1.12.4-1"
+    },
+    {
+      "package": "libgpg-error",
+      "package_license_metadata": "LGPL-2.1-or-later  BSD-3-Clause OR LGPL-2.1-or-later  FSFULLR  GPL-2.0-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libgpg-error.so.0"
+        ]
+      },
+      "version": "1.61-1"
+    },
+    {
+      "package": "libgudev",
+      "package_license_metadata": "LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libgudev-1.0.so.0"
+        ],
+        "gtk": [
+          "libgudev-1.0.so.0"
+        ]
+      },
+      "version": "238-4"
+    },
+    {
+      "package": "libidn2",
+      "package_license_metadata": "GPL2  LGPL3",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libidn2.so.0"
+        ],
+        "gtk": [
+          "libidn2.so.0"
+        ]
+      },
+      "version": "2.3.8-1"
+    },
+    {
+      "package": "libmanette",
+      "package_license_metadata": "LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libmanette-0.2.so.0"
+        ]
+      },
+      "version": "0.2.13-2"
+    },
+    {
+      "package": "libseccomp",
+      "package_license_metadata": "LGPL-2.1-only",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libseccomp.so.2"
+        ],
+        "gtk": [
+          "libseccomp.so.2"
+        ]
+      },
+      "version": "2.6.0-1"
+    },
+    {
+      "package": "libsecret",
+      "package_license_metadata": "LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libsecret-1.so.0"
+        ]
+      },
+      "version": "0.21.8.2-1"
+    },
+    {
+      "package": "libsoup3",
+      "package_license_metadata": "LGPL-2.0-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libsoup-3.0.so.0"
+        ]
+      },
+      "version": "3.8.1-1"
+    },
+    {
+      "package": "libstdc++",
+      "package_license_metadata": "GPL-3.0-or-later WITH GCC-exception-3.1  GFDL-1.3-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libstdc++.so.6"
+        ],
+        "gtk": [
+          "libstdc++.so.6"
+        ]
+      },
+      "version": "16.1.1+r12+g301eb08fa2c5-1"
+    },
+    {
+      "package": "libtasn1",
+      "package_license_metadata": "GPL-3.0-or-later  LGPL-2.1-or-later  GFDL-1.3-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libtasn1.so.6"
+        ],
+        "gtk": [
+          "libtasn1.so.6"
+        ]
+      },
+      "version": "4.21.0-1"
+    },
+    {
+      "package": "libthai",
+      "package_license_metadata": "LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libthai.so.0"
+        ],
+        "gtk": [
+          "libthai.so.0"
+        ]
+      },
+      "version": "0.1.30-1"
+    },
+    {
+      "package": "libunistring",
+      "package_license_metadata": "GPL-2.0-or-later  LGPL-3.0-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libunistring.so.5"
+        ],
+        "gtk": [
+          "libunistring.so.5"
+        ]
+      },
+      "version": "1.4.2-1"
+    },
+    {
+      "package": "lzo",
+      "package_license_metadata": "GPL",
+      "resolved_libraries_by_binary": {
+        "gtk": [
+          "liblzo2.so.2"
+        ]
+      },
+      "version": "2.10-5"
+    },
+    {
+      "package": "nettle",
+      "package_license_metadata": "LGPL-3.0-or-later OR GPL-2.0-or-later",
+      "resolved_libraries_by_binary": {
+        "gtk": [
+          "libhogweed.so.7",
+          "libnettle.so.9"
+        ]
+      },
+      "version": "4.0-1"
+    },
+    {
+      "package": "pango",
+      "package_license_metadata": "LGPL-2.0-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libpango-1.0.so.0",
+          "libpangocairo-1.0.so.0",
+          "libpangoft2-1.0.so.0"
+        ],
+        "gtk": [
+          "libpango-1.0.so.0",
+          "libpangocairo-1.0.so.0",
+          "libpangoft2-1.0.so.0"
+        ]
+      },
+      "version": "1:1.58.2-1"
+    },
+    {
+      "package": "systemd-libs",
+      "package_license_metadata": "LGPL-2.1-or-later  CC0-1.0  GPL-2.0-or-later WITH Linux-syscall-note",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libsystemd.so.0",
+          "libudev.so.1"
+        ],
+        "gtk": [
+          "libudev.so.1",
+          "libsystemd.so.0"
+        ]
+      },
+      "version": "262.1-1"
+    },
+    {
+      "package": "tinysparql",
+      "package_license_metadata": "GPL-2.0-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libtinysparql-3.0.so.0"
+        ],
+        "gtk": [
+          "libtinysparql-3.0.so.0"
+        ]
+      },
+      "version": "3.12.0-1"
+    },
+    {
+      "package": "util-linux-libs",
+      "package_license_metadata": "BSD-2-Clause  BSD-3-Clause  BSD-4-Clause-UC  GPL-2.0-only  GPL-2.0-or-later  GPL-3.0-or-later  ISC  LGPL-2.1-or-later  LicenseRef-PublicDomain",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libmount.so.1",
+          "libblkid.so.1"
+        ],
+        "gtk": [
+          "libmount.so.1",
+          "libblkid.so.1"
+        ]
+      },
+      "version": "2.42.4-1"
+    },
+    {
+      "package": "webkit2gtk-4.1",
+      "package_license_metadata": "AFL-2.0 OR GPL-2.0-or-later  Apache-2.0  Apache-2.0 WITH LLVM-exception  BSD-2-Clause  BSD-2-Clause-Views  BSD-3-Clause  BSD-Source-Code  BSL-1.0  bzip2-1.0.6  GPL-2.0-only  GPL-3.0-only WITH Autoconf-exception-3.0  GPL-3.0-or-later WITH Bison-exception-2.2  ICU  ISC  LGPL-2.1-only  LGPL-2.1-or-later  MIT  MPL-1.1  MPL-2.0  NCSA  NCSA OR MIT  OFL-1.1  SunPro  Unicode-TOU",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libwebkit2gtk-4.1.so.0",
+          "libjavascriptcoregtk-4.1.so.0"
+        ]
+      },
+      "version": "2.54.2-1"
+    },
+    {
+      "package": "xz",
+      "package_license_metadata": "GPL-2.0-or-later AND 0BSD AND LicenseRef-Public-Domain AND LGPL-2.1-or-later",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "liblzma.so.5"
+        ],
+        "gtk": [
+          "liblzma.so.5"
+        ]
+      },
+      "version": "5.8.4-1"
+    },
+    {
+      "package": "zstd",
+      "package_license_metadata": "BSD-3-Clause  GPL-2.0-only",
+      "resolved_libraries_by_binary": {
+        "dioxus": [
+          "libzstd.so.1"
+        ],
+        "gtk": [
+          "libzstd.so.1"
+        ]
+      },
+      "version": "1.5.7-3"
+    }
+  ],
+  "platform": "Omarchy ARM64",
+  "scope": "Host dynamic-loader results and installed package metadata only; not exact component licenses, a linked-code SBOM, or legal clearance",
+  "unowned_resolved_libraries": {
+    "dioxus": [
+      "libxdo.so.4"
+    ]
+  }
+}
