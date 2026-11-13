@@ -129,11 +129,9 @@ impl Session {
         if self.demo.is_some() {
             return;
         }
-        if self.game.state == State::Over {
-            self.held = [false; 4];
-            self.button_keys = [[false; 2]; 2];
-            self.pointers.iter_mut().for_each(HashSet::clear);
-        }
+        self.held = [false; 4];
+        self.button_keys = [[false; 2]; 2];
+        self.pointers.iter_mut().for_each(HashSet::clear);
         self.game.start();
         self.accumulator = 0.0;
     }
@@ -283,6 +281,26 @@ pub const CSS:&str="body{margin:0;background:#080f19;color:#eef6ff;font:16px sys
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn restarting_during_play_clears_all_held_sources() {
+        let mut s = Session::default();
+        s.start();
+        s.key("w", true, false);
+        s.movement_button(Direction::Up, 7, true);
+        s.movement_button_key(Direction::Up, " ", true, false);
+        s.start();
+        assert_eq!(s.held, [false; 4]);
+        assert!(s.pointers.iter().all(HashSet::is_empty));
+        assert_eq!(s.button_keys, [[false; 2]; 2]);
+        s.key("w", true, true);
+        s.movement_button_key(Direction::Up, " ", true, true);
+        s.tick(0.1);
+        assert_eq!(s.game.player, pong_core::H / 2.);
+        s.key("w", false, false);
+        s.key("w", true, false);
+        s.tick(0.1);
+        assert!(s.game.player < pong_core::H / 2.);
+    }
     #[test]
     fn movement_button_keys_are_independent_and_clear_on_blur_pause_and_restart() {
         let mut s = Session::default();
