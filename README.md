@@ -182,6 +182,8 @@ Omarchy Miniquad winning-score fixture: real scoring reached both game-over stat
 
 Omarchy Miniquad winner overlay: an isolated forced-state visual fixture rendered both winner messages; real game-over progression and physical input remain open. [Evidence](docs/packaging/MINIQUAD-WINNER-FIXTURE-OMARCHY.md).
 
+Omarchy web keyboard fix: focused Yew, Leptos and Dioxus Start/Pause controls preserve native Enter/Space activation; localhost checks pass. [Evidence](docs/packaging/WEB-FOCUSED-BUTTON-KEYBOARD-OMARCHY.md).
+
 Omarchy mobile physics review: Kotlin and Swift source still use endpoint paddle collision; crossing-time cases need reproduction and correction on their native toolchains. [Evidence](docs/packaging/NATIVE-MOBILE-DIAGONAL-COLLISION-GAP.md).
 
 Omarchy polling/mobile match-end: six polling adapter suites pass winning-score/restart checks; new Kotlin and Swift model tests await their toolchains. [Evidence](docs/packaging/POLLING-MOBILE-GAMEOVER-OMARCHY.md).

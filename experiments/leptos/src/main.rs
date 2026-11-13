@@ -1,6 +1,11 @@
 use leptos::prelude::*;
 use pong_web_ui_common::{Session, CSS};
 use wasm_bindgen::JsCast;
+fn preserve_activation(ev: web_sys::KeyboardEvent) {
+    if pong_web_ui_common::native_activation_key(&ev.key()) {
+        ev.stop_propagation();
+    }
+}
 fn main() {
     mount_to_body(App);
 }
@@ -27,11 +32,11 @@ fn App() -> impl IntoView {
     }>
     <h1>"Pong • Leptos"</h1><p>"Rust shared simulation · Leptos CSR / WASM"</p>
     <div inner_html=move || session.with(|s|s.svg())></div>
-    <button on:click=move |_|session.update(|s|s.start())>"Start / Restart"</button>
-    <button on:click=move |_|session.update(|s|s.toggle_pause())>"Pause / Resume"</button>
-    <button on:pointerdown=move |e:web_sys::PointerEvent|{e.prevent_default();session.update(|s|s.movement_button(pong_web_ui_common::Direction::Up,e.pointer_id(),true))} on:pointerup=move |e|session.update(|s|s.movement_button(pong_web_ui_common::Direction::Up,e.pointer_id(),false)) on:pointerleave=move |e|session.update(|s|s.movement_button(pong_web_ui_common::Direction::Up,e.pointer_id(),false)) on:pointercancel=move |e|session.update(|s|s.movement_button(pong_web_ui_common::Direction::Up,e.pointer_id(),false))>"▲ Hold"</button>
-    <button on:pointerdown=move |e:web_sys::PointerEvent|{e.prevent_default();session.update(|s|s.movement_button(pong_web_ui_common::Direction::Down,e.pointer_id(),true))} on:pointerup=move |e|session.update(|s|s.movement_button(pong_web_ui_common::Direction::Down,e.pointer_id(),false)) on:pointerleave=move |e|session.update(|s|s.movement_button(pong_web_ui_common::Direction::Down,e.pointer_id(),false)) on:pointercancel=move |e|session.update(|s|s.movement_button(pong_web_ui_common::Direction::Down,e.pointer_id(),false))>"▼ Hold"</button>
+    <button on:keydown=preserve_activation on:click=move |_|session.update(|s|s.start())>"Start / Restart"</button>
+    <button on:keydown=preserve_activation on:click=move |_|session.update(|s|s.toggle_pause())>"Pause / Resume"</button>
+    <button on:keydown=preserve_activation on:pointerdown=move |e:web_sys::PointerEvent|{e.prevent_default();session.update(|s|s.movement_button(pong_web_ui_common::Direction::Up,e.pointer_id(),true))} on:pointerup=move |e|session.update(|s|s.movement_button(pong_web_ui_common::Direction::Up,e.pointer_id(),false)) on:pointerleave=move |e|session.update(|s|s.movement_button(pong_web_ui_common::Direction::Up,e.pointer_id(),false)) on:pointercancel=move |e|session.update(|s|s.movement_button(pong_web_ui_common::Direction::Up,e.pointer_id(),false))>"▲ Hold"</button>
+    <button on:keydown=preserve_activation on:pointerdown=move |e:web_sys::PointerEvent|{e.prevent_default();session.update(|s|s.movement_button(pong_web_ui_common::Direction::Down,e.pointer_id(),true))} on:pointerup=move |e|session.update(|s|s.movement_button(pong_web_ui_common::Direction::Down,e.pointer_id(),false)) on:pointerleave=move |e|session.update(|s|s.movement_button(pong_web_ui_common::Direction::Down,e.pointer_id(),false)) on:pointercancel=move |e|session.update(|s|s.movement_button(pong_web_ui_common::Direction::Down,e.pointer_id(),false))>"▼ Hold"</button>
     <p>"W/S or ↑/↓ move · Enter restarts · Space pauses. Click the court to focus."</p>
-    <a href="https://intrepion.github.io/">"Back to Kata Arcade"</a>
+    <a on:keydown=preserve_activation href="https://intrepion.github.io/">"Back to Kata Arcade"</a>
     </main>}
 }
