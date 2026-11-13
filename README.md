@@ -837,3 +837,5 @@ Raw wgpu now shows Ready, Paused and winner messages inside the court; [Omarchy 
 Fyrox now names the winner in its in-window header; [Omarchy evidence](docs/packaging/FYROX-WINNER-OMARCHY.md) records state tests and a paused scripted capture.
 
 GTK, Slint and GPUI now name the winner in their shared status; [Omarchy evidence](docs/packaging/GUI-WINNER-STATUS-OMARCHY.md) records model tests, consumer checks and a paused Slint snapshot.
+
+bracket-lib now names the winner in its in-window header; [Omarchy evidence](docs/packaging/BRACKET-WINNER-OMARCHY.md) records tests and a paused scripted capture.

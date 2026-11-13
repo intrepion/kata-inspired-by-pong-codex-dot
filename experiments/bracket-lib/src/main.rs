@@ -172,11 +172,19 @@ fn rect(ctx: &mut BTerm, x: f32, y: f32, w: f32, h: f32, color: RGB) {
     }
 }
 fn header_lines(game: &Game) -> [String; 4] {
+    let state = match game.state {
+        State::Ready => "Ready",
+        State::Playing => "Playing",
+        State::Paused => "Paused",
+        State::Over if game.scores[0] > game.scores[1] => "YOU WIN",
+        State::Over if game.scores[1] > game.scores[0] => "CPU WINS",
+        State::Over => "Match over",
+    };
     [
         "PONG / BRACKET-LIB - GRAPHICAL RETRO EXPERIMENT".into(),
         format!(
-            "YOU {}   CPU {}   {:?}   First to 7",
-            game.scores[0], game.scores[1], game.state
+            "YOU {}   CPU {}   {}   First to 7",
+            game.scores[0], game.scores[1], state
         ),
         "W/S or arrows: move | Space: start/pause | R: restart | Q/Esc: quit".into(),
         "Focus loss or resize pauses. Space resumes.".into(),
@@ -329,6 +337,31 @@ fn main() -> BError {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn header_names_winner_and_clears_on_restart() {
+        let mut game = Game::new(42);
+        assert!(header_lines(&game)[1].contains("Ready"));
+        game.start();
+        assert!(header_lines(&game)[1].contains("Playing"));
+        game.pause();
+        assert!(header_lines(&game)[1].contains("Paused"));
+        for (scores, x, vx, expected) in [
+            ([6, 2], W + BALL - 1., 350., "YOU WIN"),
+            ([2, 6], -BALL + 1., -350., "CPU WINS"),
+        ] {
+            game.start();
+            game.scores = scores;
+            game.serve = 0.;
+            game.ball.x = x;
+            game.ball.y = H / 2.;
+            game.ball.vx = vx;
+            game.ball.vy = 0.;
+            game.step(0.02, 0.);
+            assert!(header_lines(&game)[1].contains(expected));
+            game.start();
+            assert!(header_lines(&game)[1].contains("Playing"));
+        }
+    }
     #[test]
     fn benchmark_opt_in() {
         assert!(!benchmark_args(&[]));
