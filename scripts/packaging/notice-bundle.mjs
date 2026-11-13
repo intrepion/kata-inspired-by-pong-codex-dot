@@ -103,6 +103,9 @@ export function auditedUpstreamNotices(packageRoot,noticeRoot,rule) {
   return {...f,source:url};
  });
 }
+// Generic terms help review, but cannot replace a project-specific notice.
+export function hasProjectNotice(notices) { return notices.some(n=>n.supplemental!==true); }
+const hexfTerms={rev:'4225763d744183d720f575ae96d04161b4d08ea0',path:undefined,sourceHash:'511b164642efe470e88323b8afe0274e797805ff2441f0173b5b005ad4b4d1b1',files:[['spdx-CC0-1.0.txt','a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499','https://api.github.com/repos/spdx/license-list-data/git/blobs/0e259d42c996742e9e3cba14c677129b2c1b6311']]};
 export function buildNoticeBundle(metadata,repoRoot,options={}) {
  if(options===null||typeof options!=='object'||Array.isArray(options)||Object.keys(options).some(k=>k!=='platform')) throw Error('Invalid notice bundle options');
  const platform=Object.hasOwn(options,'platform')?options.platform:'Linux';
@@ -137,13 +140,14 @@ export function buildNoticeBundle(metadata,repoRoot,options={}) {
   const notices=files.map(f=>safeFile(fallback?root:dir,f));
   const upstream=upstreamRules[pkg.name+'@'+pkg.version];
   if(upstream&&pkg.source==='registry+https://github.com/rust-lang/crates.io-index')notices.push(...auditedUpstreamNotices(dir,resolve(root,'scripts/packaging/audited-notices'),upstream));
+  if(pkg.name==='hexf-parse'&&pkg.version==='0.2.1'&&pkg.source==='registry+https://github.com/rust-lang/crates.io-index'&&pkg.license==='CC0-1.0')notices.push(...auditedUpstreamNotices(dir,resolve(root,'scripts/packaging/audited-notices'),hexfTerms).map(f=>({...f,supplemental:true})));
   if(pkg.name==='raylib'&&pkg.version==='6.0.0'&&pkg.source==='registry+https://github.com/rust-lang/crates.io-index')notices.push(...auditedSourceHeaders(dir,raylibHeaders));
   if(pkg.name==='zune-inflate'&&pkg.version==='0.2.54'&&pkg.source==='registry+https://github.com/rust-lang/crates.io-index')notices.push(...auditedSourceHeaders(dir,[['src/lib.rs','ee2b5b58f48ee36835bd4e312a26dace36be39d1c4af956f4e2e04d0620667f9']]));
   packages.push({name:pkg.name,version:pkg.version,license:pkg.license??null,origin:pkg.source?.startsWith('registry+')?'registry':pkg.source?'external':'local',root_mit_fallback:fallback,notices});
  }
- const missing=packages.filter(p=>!p.notices.length).map(p=>p.name+'@'+p.version);
+ const missing=packages.filter(p=>!hasProjectNotice(p.notices)).map(p=>p.name+'@'+p.version);
  let text='Pong '+platform+' dependency notice preparation\n\nResolved Cargo graph; may include build/optional packages. All discovered license choices are retained without choosing one. This is not legal clearance or a system-library inventory. Nested source comments and unlabelled bundled code require separate review.\n';
- for(const p of packages)for(const f of p.notices)text+='\n===== '+p.name+' '+p.version+' | '+f.source+' | declared '+p.license+' =====\n'+f.text+'\n';
+ for(const p of packages)for(const f of p.notices)text+='\n===== '+p.name+' '+p.version+' | '+(f.supplemental?'SUPPLEMENTAL STANDARD TERMS; NOT A PROJECT NOTICE | ':'')+f.source+' | declared '+p.license+' =====\n'+f.text+'\n';
  if(Buffer.byteLength(text)>32*1024*1024)throw Error('Notice bundle too large');
  const index={schema:1,scope:'Resolved Cargo metadata, not linked-binary attribution',missing_notice_files:missing,bundle_sha256:digest(Buffer.from(text)),packages:packages.map(p=>({...p,notices:p.notices.map(({text,...f})=>f)}))};
  return {text,index};

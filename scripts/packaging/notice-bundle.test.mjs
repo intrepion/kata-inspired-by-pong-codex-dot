@@ -105,3 +105,10 @@ test('audited additional source must match and remain inside the crate',async t=
  writeFileSync(join(pkg,'generated.rs'),'changed');assert.throws(()=>auditedUpstreamNotices(pkg,n,rule),/source hash mismatch/);
  assert.throws(()=>auditedUpstreamNotices(pkg,n,{...rule,additionalSources:[['../LICENSE',hash('MIT root\n')]]}),/escapes/);
 });
+
+test('supplemental standard terms do not clear a missing project notice',async()=>{
+ const {hasProjectNotice}=await import('./notice-bundle.mjs');
+ assert.equal(hasProjectNotice([]),false);
+ assert.equal(hasProjectNotice([{supplemental:true}]),false);
+ assert.equal(hasProjectNotice([{supplemental:true},{source:'LICENSE'}]),true);
+});

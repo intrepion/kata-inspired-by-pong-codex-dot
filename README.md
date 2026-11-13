@@ -991,6 +991,7 @@ The [follow-up Lyon inventory](docs/packaging/NANNOU-LYON-FULL-APACHE-WINDOWS-20
 The [Encase notice recovery](docs/packaging/NANNOU-ENCASE-NOTICES-WINDOWS-20261113.md) reduces the same inventory to 12 missing-file flags; release and license review remain open.
 The [Bevy and Taffy notice recovery](docs/packaging/NANNOU-BEVY-TAFFY-NOTICES-WINDOWS-20261113.md) reduces that inventory to 10 flags; the result remains incomplete.
 The [clipboard-win and svg_fmt recovery](docs/packaging/NANNOU-CLIPBOARD-SVG-NOTICES-WINDOWS-20261113.md) reduces it to eight flags; svg_fmt's declared license expression and release review remain open.
+The [hexf-parse follow-up](docs/packaging/NANNOU-HEXF-CC0-TERMS-WINDOWS-20261113.md) adds labeled standard CC0 terms for review while retaining its missing-project-notice flag.
 
 Piston Mac keypad cross-check: 17 release unit tests pass, but the locked macOS window path maps both Enter keys to the same logical Piston key; independent native delivery is not established. [Evidence and limits](docs/packaging/PISTON-KEYPAD-BACKEND-MAC-20261113.md).
 
