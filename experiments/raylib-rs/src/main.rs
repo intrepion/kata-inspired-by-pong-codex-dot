@@ -16,6 +16,35 @@ fn benchmark_args(args: &[String]) -> bool {
     enabled
 }
 
+#[derive(Default)]
+struct MovementGate {
+    suppressed: [bool; 4],
+}
+impl MovementGate {
+    fn axis(&mut self, held: [bool; 4], entering_pause: bool) -> f32 {
+        for (blocked, down) in self.suppressed.iter_mut().zip(held) {
+            *blocked = down && (entering_pause || *blocked);
+        }
+        let active = std::array::from_fn::<_, 4, _>(|i| held[i] && !self.suppressed[i]);
+        (active[2] || active[3]) as u8 as f32 - (active[0] || active[1]) as u8 as f32
+    }
+}
+fn movement_with_pause(
+    game: &mut Game,
+    movement: &mut MovementGate,
+    held: [bool; 4],
+    pause_pressed: bool,
+) -> f32 {
+    let was_playing = game.state == State::Playing;
+    if pause_pressed {
+        if game.state == State::Ready {
+            game.start();
+        } else {
+            game.toggle_pause();
+        }
+    }
+    movement.axis(held, was_playing && game.state == State::Paused)
+}
 fn main() {
     let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     let (mut window, thread) = raylib::init()
@@ -25,6 +54,7 @@ fn main() {
         .build();
     window.set_target_fps(120);
     let mut game = Game::new(pong_scenario::SEED);
+    let mut movement = MovementGate::default();
     let mut accumulator = 0.0;
     let mut demo = pong_scenario::Demo::from_args();
     let mut scenario = pong_scenario::Scenario::default();
@@ -46,20 +76,20 @@ fn main() {
             {
                 game.start();
             }
-            if window.is_key_pressed(KeyboardKey::KEY_SPACE) {
-                if game.state == State::Ready {
-                    game.start();
-                } else {
-                    game.toggle_pause();
-                }
-            }
-            let up =
-                window.is_key_down(KeyboardKey::KEY_W) || window.is_key_down(KeyboardKey::KEY_UP);
-            let down =
-                window.is_key_down(KeyboardKey::KEY_S) || window.is_key_down(KeyboardKey::KEY_DOWN);
+            let axis = movement_with_pause(
+                &mut game,
+                &mut movement,
+                [
+                    window.is_key_down(KeyboardKey::KEY_UP),
+                    window.is_key_down(KeyboardKey::KEY_W),
+                    window.is_key_down(KeyboardKey::KEY_DOWN),
+                    window.is_key_down(KeyboardKey::KEY_S),
+                ],
+                window.is_key_pressed(KeyboardKey::KEY_SPACE),
+            );
             accumulator += window.get_frame_time().min(0.1);
             while accumulator >= 1.0 / 120.0 {
-                game.step(1.0 / 120.0, down as u8 as f32 - up as u8 as f32);
+                game.step(1.0 / 120.0, axis);
                 accumulator -= 1.0 / 120.0;
             }
         }
@@ -175,6 +205,35 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn pause_suppression_is_per_binding_and_opposites_cancel() {
+        let mut gate = MovementGate::default();
+        assert_eq!(gate.axis([true, true, false, false], false), -1.);
+        assert_eq!(gate.axis([true, true, false, false], true), 0.);
+        assert_eq!(gate.axis([true, false, false, false], false), 0.);
+        assert_eq!(gate.axis([true, true, false, false], false), -1.);
+        assert_eq!(gate.axis([true, true, true, false], false), 0.);
+        assert_eq!(gate.axis([false, true, true, false], false), 0.);
+    }
+    #[test]
+    fn pause_suppresses_held_keys_until_release_and_fresh_press() {
+        for i in 0..4 {
+            let mut game = Game::new(42);
+            let mut gate = MovementGate::default();
+            let mut held = [false; 4];
+            held[i] = true;
+            assert_ne!(movement_with_pause(&mut game, &mut gate, held, true), 0.);
+            assert_eq!(game.state, State::Playing);
+            assert_eq!(movement_with_pause(&mut game, &mut gate, held, true), 0.);
+            assert_eq!(game.state, State::Paused);
+            assert_eq!(movement_with_pause(&mut game, &mut gate, held, true), 0.);
+            assert_eq!(game.state, State::Playing);
+            held[i] = false;
+            assert_eq!(movement_with_pause(&mut game, &mut gate, held, false), 0.);
+            held[i] = true;
+            assert_ne!(movement_with_pause(&mut game, &mut gate, held, false), 0.);
+        }
+    }
     #[test]
     fn benchmark_is_opt_in() {
         assert!(!benchmark_args(&[]));

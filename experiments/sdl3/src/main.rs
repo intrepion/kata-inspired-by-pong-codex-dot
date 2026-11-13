@@ -14,6 +14,25 @@ fn benchmark_args(args: &[String]) -> bool {
     );
     enabled
 }
+#[derive(Default)]
+struct MovementGate {
+    suppressed: [bool; 4],
+}
+impl MovementGate {
+    fn directions(&mut self, held: [bool; 4], entering_pause: bool) -> (bool, bool) {
+        for (blocked, down) in self.suppressed.iter_mut().zip(held) {
+            *blocked = down && (entering_pause || *blocked);
+        }
+        let active = std::array::from_fn::<_, 4, _>(|i| held[i] && !self.suppressed[i]);
+        (active[0] || active[1], active[2] || active[3])
+    }
+}
+fn explicit_action(app: &mut App) -> bool {
+    let previous = app.game.state;
+    app.action();
+    previous == pong_low_level_common::State::Playing
+        && app.game.state == pong_low_level_common::State::Paused
+}
 fn main() -> Result<(), String> {
     let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     let sdl = sdl3::init().map_err(|e| e.to_string())?;
@@ -34,6 +53,7 @@ fn main() -> Result<(), String> {
     }
     let mut events = sdl.event_pump().map_err(|e| e.to_string())?;
     let mut app = App::default();
+    let mut movement = MovementGate::default();
     let mut demo = pong_scenario::Demo::from_args();
     let (width, height) = canvas.output_size().map_err(|e| e.to_string())?;
     let mut benchmark = benchmarking.then(|| pong_benchmark::Frames::new(width, height));
@@ -44,6 +64,7 @@ fn main() -> Result<(), String> {
     }
     let mut last = Instant::now();
     'running: loop {
+        let mut entered_pause = false;
         for event in events.poll_iter() {
             match event {
                 Event::Quit { .. }
@@ -55,7 +76,7 @@ fn main() -> Result<(), String> {
                     keycode: Some(Keycode::Space),
                     repeat: false,
                     ..
-                } if demo.is_none() && !benchmarking => app.action(),
+                } if demo.is_none() && !benchmarking => entered_pause |= explicit_action(&mut app),
                 Event::KeyDown {
                     keycode: Some(Keycode::R),
                     repeat: false,
@@ -69,8 +90,15 @@ fn main() -> Result<(), String> {
             }
         }
         let k = events.keyboard_state();
-        app.up = k.is_scancode_pressed(Scancode::W) || k.is_scancode_pressed(Scancode::Up);
-        app.down = k.is_scancode_pressed(Scancode::S) || k.is_scancode_pressed(Scancode::Down);
+        (app.up, app.down) = movement.directions(
+            [
+                k.is_scancode_pressed(Scancode::W),
+                k.is_scancode_pressed(Scancode::Up),
+                k.is_scancode_pressed(Scancode::S),
+                k.is_scancode_pressed(Scancode::Down),
+            ],
+            entered_pause,
+        );
         let now = Instant::now();
         if benchmarking {
             accumulator += (now - last).as_secs_f32().clamp(0., 0.1);
@@ -152,6 +180,45 @@ fn main() -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn pause_suppression_keeps_aliases_independent() {
+        let mut gate = MovementGate::default();
+        assert_eq!(
+            gate.directions([true, true, false, false], true),
+            (false, false)
+        );
+        assert_eq!(
+            gate.directions([true, false, false, false], false),
+            (false, false)
+        );
+        assert_eq!(
+            gate.directions([true, true, false, false], false),
+            (true, false)
+        );
+        assert_eq!(
+            gate.directions([true, true, true, false], false),
+            (true, true)
+        );
+    }
+    #[test]
+    fn explicit_pause_suppresses_held_scancodes_until_release() {
+        for index in 0..4 {
+            let mut app = App::default();
+            let mut gate = MovementGate::default();
+            let mut held = [false; 4];
+            assert!(!explicit_action(&mut app));
+            held[index] = true;
+            assert_ne!(gate.directions(held, false), (false, false));
+            assert!(explicit_action(&mut app));
+            assert_eq!(gate.directions(held, true), (false, false));
+            assert!(!explicit_action(&mut app));
+            assert_eq!(gate.directions(held, false), (false, false));
+            held[index] = false;
+            assert_eq!(gate.directions(held, false), (false, false));
+            held[index] = true;
+            assert_ne!(gate.directions(held, false), (false, false));
+        }
+    }
     #[test]
     fn benchmark_is_opt_in() {
         assert!(!benchmark_args(&[]));

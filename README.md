@@ -14,6 +14,14 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
+Mac SDL3 pause-fix follow-up: four release tests and sequential automated movement/pause/resume pass; native held-across-pause remains open. [Evidence](docs/SDL3-PAUSE-HELD-INPUT-FIX.md).
+
+Mac raylib pause-fix follow-up: five release tests and sequential automated movement/pause/resume pass after a sustained start press; shorter Return actions did not start in this run. [Evidence](docs/RAYLIB-PAUSE-HELD-INPUT-FIX.md).
+
+Mac Nannou pause-fix follow-up: five release tests and sequential automated movement/pause/resume pass; native held-across-pause remains open. [Evidence](docs/NANNOU-PAUSE-HELD-INPUT-FIX.md).
+
+Mac Godot pause-prompt fix: headless integration smoke passes and automated desktop pause/resume shows and clears the unobscured prompt. [Evidence](docs/GODOT-MAC-CONTACT-TIMING-ATTEMPT.md).
+
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
 Mac Slint shared pause follow-up: ten controller tests and sequential automated movement/pause/resume pass; held-across-pause native input remains open. [Evidence](docs/GUI-EXPLICIT-PAUSE-INPUT-FIX.md).
@@ -35,6 +43,10 @@ Windows GUI pause-fix follow-up: 10 shared model tests and fresh Slint/GPUI scri
 Windows Miniquad pause-fix follow-up: 10 action/model tests and fresh scripted replay pass; native key delivery remains open. [Evidence](docs/WINDOWS-MINIQUAD-PAUSE-RECHECK.md). Windows Dioxus Desktop scripted export completed under approved host execution after restricted attempts stalled; actual window input remains open. [Details](docs/WINDOWS-DIOXUS-NATIVE-PAUSE-ATTEMPT.md).
 
 Miniquad keypad Enter now shares the existing start/restart action; Windows and Mac action-boundary tests pass; Mac automated `KP_Enter` starts and resets, but its delivered key code, physical delivery and the separate Windows Unknown-key issue remain open. [Evidence](docs/MINIQUAD-KEYPAD-ENTER.md).
+
+SDL3 explicit-pause fix: four adapter tests pass, including scancode held-key suppression; scripted replay matches the model. Native input, snapshot/focus behavior, packages and other platforms remain pending. [Evidence](docs/SDL3-PAUSE-HELD-INPUT-FIX.md).
+
+raylib-rs explicit-pause fix: five adapter tests pass, including polled held-key suppression; scripted replay matches the model. Native input, focus changes, packages and other platforms remain pending. [Evidence](docs/RAYLIB-PAUSE-HELD-INPUT-FIX.md).
 
 Nannou explicit-pause fix: five adapter tests pass, including polled held-key suppression; scripted replay matches the model. Native input, focus changes, packages and other platforms remain pending. [Evidence](docs/NANNOU-PAUSE-HELD-INPUT-FIX.md).
 

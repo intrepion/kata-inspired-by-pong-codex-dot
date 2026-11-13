@@ -7,3 +7,9 @@ The adapter now suppresses each movement binding held when Space enters pause un
 With permitted display access, the new binary completed its bounded scripted replay with 13 telemetry records exactly matching `docs/evidence/rust-core-contact-timing-model-20261112.jsonl` and six app-owned PNGs. Outputs remain under `/tmp/pong-nannou-held-pause-20261113/` and `/tmp/pong-nannou-held-pause-output-20261113.txt`. These captures were not visually inspected in this run. The replay bypasses real key input and does not independently verify pause behavior.
 
 Native/physical input, polling behavior across focus changes, other platforms, rebuilt packages, full matches and release qualification remain pending. The existing unfocus path was not changed. Existing evidence is historical; other engines have independent input paths.
+
+## Mac recheck
+
+macOS ARM64 source `986cbf89703320c54b53b669537f81feb348a78a`. Offline locked release build reused a copy-on-write cache and all five Nannou tests passed, including polled held-key suppression. Executable SHA-256 `9393413e9c4c74c2102e141611413366780ed3af73d4abef80cfd1dedc9f908a`.
+
+The packaged app opened through supported desktop automation. Sequential Enter, held W, Space, Space, held S and Space produced upward movement, the Paused label, resumed play, downward movement and Paused again. The app exited. W was released before pause: held-across-pause native delivery and physical input were not demonstrated. No fresh scripted replay or capture is claimed for this Mac binary.
