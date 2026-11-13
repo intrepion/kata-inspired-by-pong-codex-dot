@@ -14,6 +14,8 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
+Mac Slint shared pause follow-up: ten controller tests and sequential automated movement/pause/resume pass; held-across-pause native input remains open. [Evidence](docs/GUI-EXPLICIT-PAUSE-INPUT-FIX.md).
+
 Mac Miniquad pause follow-up: ten release tests pass; sequential desktop start/move/pause/resume/fresh movement checked. Held-across-pause native delivery remains open. [Evidence](docs/MINIQUAD-PAUSE-HELD-INPUT-FIX.md).
 
 Windows GUI pause-fix follow-up: 10 shared model tests and fresh Slint/GPUI scripted runs pass; native held-key delivery remains open. [Evidence](docs/WINDOWS-GUI-EXPLICIT-PAUSE-RECHECK.md).
@@ -144,7 +146,7 @@ Each desktop cell is **build / runtime evidence**:
 | Fyrox | Fresh `5005498` B / native automated full match and restart; shell replay incomplete ([details](docs/FYROX-MAC-CONTACT-TIMING-RECHECK.md)) | B / I | Fresh `8b5ff6a` B, 2 release tests; relocated package replay and six app-owned PNGs, exact model match; physical input unverified ([details](docs/packaging/FYROX-C77-OMARCHY-REPLAY.md)) |
 | Blue Engine | `4bab2ae` cached B; automated desktop full match and post-match restart; direct-shell replay failed before gameplay ([details](docs/BLUE-MAC-CONTACT-TIMING-RECHECK.md)) | B / I | Fresh `efbb689` B, 2 release tests; relocated windowed state replay and separate headless six-PNG replay match model; window presentation/input unverified ([details](docs/packaging/BLUE-C77-OMARCHY-REPLAY.md)) |
 | raylib-rs | Fresh `99034e6` B / native automated full match and restart; shell replay incomplete ([details](docs/RAYLIB-MAC-CONTACT-TIMING-RECHECK.md)) | B / R; start input unsuccessful; LLVM build blocker resolved | Fresh `971319e` B, 3 frontend tests; relocated package replay and six app-owned PNGs, exact model match; physical input unverified ([details](docs/packaging/RAYLIB-C77-OMARCHY-REPLAY.md)) |
-| Godot + Rust GDExtension | B / I for game; **F** in headless editor shutdown | U / U | Fresh `c457f7a` extension B, isolated headless smoke and scene replay; six app-owned viewport PNGs, exact model match; physical input unverified ([details](docs/GODOT-C77-OMARCHY-REPLAY.md)) |
+| Godot + Rust GDExtension | Historical B / I; updated extension B, sandbox smoke failed at log setup ([attempt](docs/GODOT-MAC-CONTACT-TIMING-ATTEMPT.md)); earlier editor shutdown **F** | U / U | Fresh `c457f7a` extension B, isolated headless smoke and scene replay; six app-owned viewport PNGs, exact model match; physical input unverified ([details](docs/GODOT-C77-OMARCHY-REPLAY.md)) |
 | bracket-lib (RLTK) | B / bounded native I on existing contrast package; start, movement, pause, full match, restart and held-Q exit checked | B / I; separate header improves readability, bitmap quality still rough | Fresh `c691bdf` B, 9 tests; relocated X11 fallback replay and six app-owned PNGs, exact model match; physical input unverified ([details](docs/packaging/BRACKET-C77-OMARCHY-REPLAY.md)) |
 
 Details: [baseline frontends](docs/desktop-comparison.md), [extra engines](experiments/ENGINE-STATUS.md), [ggez fix](experiments/ggez/README.md), [Godot](experiments/godot/VERIFICATION.md), [bracket-lib](experiments/bracket-lib/README.md).
