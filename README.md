@@ -911,3 +911,5 @@ Piston now accepts keypad Enter as its existing Return action; [Omarchy](docs/pa
 Nannou now accepts keypad Enter with an independent focus-return gate; [Mac checks](docs/packaging/NANNOU-KEYPAD-ENTER-MAC-20261113.md) record their input limitations.
 
 Blue Engine now accepts keypad Enter with an independent focus-return gate; [Mac checks](docs/packaging/BLUE-KEYPAD-ENTER-MAC-20261113.md) record the physical-input gap.
+
+Raylib now accepts keypad Enter for its existing restart action, with independent focus-return suppression; [Omarchy tests and replay](docs/packaging/RAYLIB-KEYPAD-ENTER-OMARCHY.md) record the native-input gap.
