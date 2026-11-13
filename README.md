@@ -138,8 +138,8 @@ Details: [low-level clients](experiments/LOW-LEVEL.md), [GUI toolkits](experimen
 | Yew browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | U / U |
 | Leptos browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | U / U |
 | Dioxus browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | U / U |
-| Yew native Tauri wrapper | Fresh `b92b7df` B + state/SVG replay + bounded I; provenance/evidence published `18bc91c` | B / I | B / scripted SVG-source checks passed; visual/input unverified |
-| Leptos native Tauri wrapper | Fresh `b92b7df` B + state/SVG replay + bounded I; provenance/evidence published `18bc91c` | B / I | B / scripted SVG-source checks passed; visual/input unverified |
+| Yew native Tauri wrapper | Fresh `b92b7df` B + state/SVG replay + bounded I; provenance/evidence published `18bc91c` | B / I | Fresh `6b9cf38` B, 2 bridge tests; revised-physics scripted SVG-source replay matches model; visual/input unverified ([evidence](docs/OMARCHY-YEW-CONTACT-TIMING.md)) |
+| Leptos native Tauri wrapper | Fresh `b92b7df` B + state/SVG replay + bounded I; provenance/evidence published `18bc91c` | B / I | Fresh `ebb5238` B; revised-physics scripted SVG-source replay matches model; visual/input unverified ([evidence](docs/OMARCHY-LEPTOS-CONTACT-TIMING.md)) |
 | Dioxus native desktop | Fresh `4088089` B / I + native replay; held controls/release, full match and restart passed | B / I; maximized layout checked | Fresh `48fffc8` B, 11 shared tests; revised-physics scripted SVG-source replay matches model; visual/input unverified ([evidence](docs/OMARCHY-DIOXUS-CONTACT-TIMING.md)) |
 
 [Commands and detailed web-framework results](docs/web-framework-comparison.md). Browser checks use a localhost HTTP server, never file URLs. Narrow browser layout is not a physical touchscreen or mobile-package test.
