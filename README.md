@@ -34,7 +34,7 @@ Miniquad keypad Enter now shares the existing start/restart action; Windows and 
 
 Piston explicit-pause fix: nine adapter tests pass, including Space/Escape held-input and repeat regressions; scripted replay matches the model. Native input, packages and other platforms remain pending. [Evidence](docs/PISTON-PAUSE-HELD-INPUT-FIX.md).
 
-ggez explicit-pause fix: four adapter tests pass, including Space/Escape held-input and repeat regressions; scripted replay matches the model. Native input, packages and other platforms remain pending. [Evidence](docs/GGEZ-PAUSE-HELD-INPUT-FIX.md).
+ggez explicit-pause fix: four adapter tests pass, including Space/Escape held-input and repeat regressions; scripted replay matches the model. Mac cached release build, four tests and sequential automated pause/resume check pass; held-across-pause native input remains pending. [Evidence](docs/GGEZ-PAUSE-HELD-INPUT-FIX.md).
 
 Softbuffer/ash explicit-pause fix: six and eight adapter tests pass, including held-input and repeat regressions; scripted replays match the model. Native input, packages and other platforms remain pending. [Evidence](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
