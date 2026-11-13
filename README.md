@@ -885,3 +885,5 @@ Ratatui now blocks gameplay keys while its terminal is too small, preserving a h
 The original blur-click fix was cross-checked on Omarchy; [build parity, synthetic tests and localhost Chrome evidence](docs/packaging/ORIGINAL-BLUR-CLICK-OMARCHY-CROSSCHECK.md) records the remaining focus-ordering gap.
 
 The Ratatui small-terminal score-preservation fix also passed a fallback-key PTY regression; [Omarchy evidence](docs/packaging/RATATUI-SMALL-FALLBACK-PTY-OMARCHY.md) records the before/after result.
+
+Raylib now suppresses action keys held on the first focused sample until release; [Omarchy evidence](docs/packaging/RAYLIB-FOCUS-HELD-ACTIONS-OMARCHY.md) records the first-sample tradeoff and remaining native checks.

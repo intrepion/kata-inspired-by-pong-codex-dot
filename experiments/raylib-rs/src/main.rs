@@ -50,6 +50,19 @@ struct MovementGate {
     suppressed: [bool; 4],
     was_playing: bool,
 }
+#[derive(Default)]
+struct ActionGate { suppressed: [bool; 4], resample: bool }
+impl ActionGate {
+    fn on_focus_loss(&mut self) { self.resample = true; }
+    fn sample(&mut self, held: [bool; 4], pressed: [bool; 4]) -> [bool; 4] {
+        if self.resample {
+            for i in 0..4 { self.suppressed[i] = held[i] || pressed[i]; }
+            self.resample = false;
+        }
+        for i in 0..4 { if !held[i] && !pressed[i] { self.suppressed[i] = false; } }
+        std::array::from_fn(|i| pressed[i] && !self.suppressed[i])
+    }
+}
 impl MovementGate {
     fn finish_frame(&mut self, state: State) {
         self.was_playing &= state == State::Playing;
@@ -100,6 +113,7 @@ fn main() {
     window.set_exit_key(None);
     let mut game = Game::new(pong_scenario::SEED);
     let mut movement = MovementGate::default();
+    let mut actions = ActionGate::default();
     let mut accumulator = 0.0;
     let mut demo = pong_scenario::Demo::from_args();
     let mut scenario = pong_scenario::Scenario::default();
@@ -111,14 +125,16 @@ fn main() {
     });
     while !window.window_should_close() {
         let focused = window.is_window_focused();
-        if escape_requests_exit(focused, window.is_key_pressed(KeyboardKey::KEY_ESCAPE)) { break; }
+        if (demo.is_some() || benchmarking) && escape_requests_exit(focused, window.is_key_pressed(KeyboardKey::KEY_ESCAPE)) { break; }
         if !focused && demo.is_none() && !benchmarking {
+            actions.on_focus_loss();
             lose_focus(&mut game, &mut movement, &mut accumulator);
         }
         if focused && demo.is_none() && !benchmarking {
-            if window.is_key_pressed(KeyboardKey::KEY_ENTER)
-                || window.is_key_pressed(KeyboardKey::KEY_R)
-            {
+            let keys = [KeyboardKey::KEY_ENTER, KeyboardKey::KEY_R, KeyboardKey::KEY_SPACE, KeyboardKey::KEY_ESCAPE];
+            let pressed = actions.sample(keys.map(|key| window.is_key_down(key)), keys.map(|key| window.is_key_pressed(key)));
+            if pressed[3] { break; }
+            if pressed[0] || pressed[1] {
                 restart(&mut game, &mut movement);
             }
             let axis = movement_with_pause(
@@ -130,7 +146,7 @@ fn main() {
                     window.is_key_down(KeyboardKey::KEY_DOWN),
                     window.is_key_down(KeyboardKey::KEY_S),
                 ],
-                window.is_key_pressed(KeyboardKey::KEY_SPACE),
+                pressed[2],
             );
             accumulator += window.get_frame_time().min(0.1);
             while accumulator >= 1.0 / 120.0 {
@@ -267,6 +283,22 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn focus_return_requires_release_of_held_actions() {
+        for i in 0..4 {
+            let mut gate = ActionGate::default(); gate.on_focus_loss();
+            let mut held = [false; 4]; held[i] = true;
+            assert_eq!(gate.sample(held, held), [false; 4]);
+            assert_eq!(gate.sample(held, held), [false; 4]);
+            gate.sample([false; 4], [false; 4]);
+            assert_eq!(gate.sample(held, held), held);
+        }
+        let mut gate = ActionGate::default(); gate.on_focus_loss();
+        gate.sample([false; 4], [false; 4]);
+        assert_eq!(gate.sample([true,false,false,false], [true,false,false,false]), [true,false,false,false]);
+        gate.on_focus_loss(); gate.sample([true,false,false,false], [true,false,false,false]);
+        assert_eq!(gate.sample([true,true,false,false], [false,true,false,false]), [false,true,false,false]);
+    }
     #[test]
     fn escape_only_exits_while_focused() {
         assert!(!escape_requests_exit(false, true));
