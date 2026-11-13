@@ -92,7 +92,7 @@ Each desktop cell is **build / runtime evidence**:
 | raw wgpu + winit | Fresh `617160c` B / native automated full match and restart; shell replay incomplete ([details](docs/WGPU-MAC-CONTACT-TIMING-RECHECK.md)) | B / I | Fresh `663aa40` B, 4 frontend tests; relocated package replay and six app-owned surface-readback PNGs, exact model match; physical input unverified ([details](docs/packaging/WGPU-C77-OMARCHY-REPLAY.md)) |
 | Piston | Fresh `c2a4884` B / native automated full match and restart; shell replay incomplete ([details](docs/PISTON-MAC-CONTACT-TIMING-RECHECK.md)) | B / I | Fresh `38584cd` B, 7 frontend tests; relocated package replay and six app-owned PNGs, exact model match; physical input unverified ([details](docs/packaging/PISTON-C77-OMARCHY-REPLAY.md)) |
 | ggez | B / I; Mac surface fix verified | B / I on earlier snapshot | Fresh `24fbcd9` B, 2 frontend tests; relocated package replay and six app-owned PNGs, exact model match; physical input unverified ([details](docs/packaging/GGEZ-C77-OMARCHY-REPLAY.md)) |
-| nannou | B / I before pacing follow-up | B / I | Fresh `f40c9a5` B, 2 release tests; relocated package replay and six app-requested frame PNGs, exact model match; physical input unverified ([details](docs/packaging/NANNOU-C77-OMARCHY-REPLAY.md)) |
+| nannou | B / I before pacing follow-up | B / I | Fresh pause-label fix: 2 release tests, scripted frame inspection and exact model replay; physical input unverified ([details](docs/NANNOU-PAUSE-INDICATOR.md)) |
 | Fyrox | B / I | B / I | B / S + scripted/PNG samples passed; real input blocked |
 | Blue Engine | B / I | B / I | B / S + headless replay/PNG samples passed; window/input unverified |
 | raylib-rs | Fresh `99034e6` B / native automated full match and restart; shell replay incomplete ([details](docs/RAYLIB-MAC-CONTACT-TIMING-RECHECK.md)) | B / R; start input unsuccessful; LLVM build blocker resolved | Fresh `971319e` B, 3 frontend tests; relocated package replay and six app-owned PNGs, exact model match; physical input unverified ([details](docs/packaging/RAYLIB-C77-OMARCHY-REPLAY.md)) |
@@ -187,7 +187,7 @@ rendering evidence, **not** real keyboard/focus or smooth-motion validation.
 | Pixels | Passed | Six saved; paused source frame inspected | 900x500 CPU source buffer, not scaled GPU output |
 | SDL3 | Passed | Six saved; paused sample inspected | Renderer target before present |
 | Bevy | Passed | Six saved; pause/reset inspected | Framework screenshot completion awaited |
-| nannou | Passed | Six saved; pause/reset inspected | Framework window-frame export; existing UI has no pause label |
+| nannou | Passed | Six saved; pause/reset inspected | Framework window-frame export; pause label added in later follow-up |
 | ggez | Passed | Six saved; pause/reset inspected | Same app render texture presented and captured |
 | Miniquad | Passed | Six saved; paused sample inspected | Own OpenGL framebuffer; Metal capture unsupported |
 | raw wgpu | Passed | Six saved; paused sample inspected | Surface COPY_SRC readback; requires capability |

@@ -139,6 +139,12 @@ fn view(app: &App, m: &Model) {
         .x_y(0.0, 190.0)
         .font_size(32)
         .color(WHITE);
+    if m.game.state == State::Paused {
+        d.text("PAUSED  •  SPACE TO RESUME")
+            .x_y(0.0, -190.0)
+            .font_size(24)
+            .color(WHITE);
+    }
     if m.benchmarking && !m.benchmark_done.load(std::sync::atomic::Ordering::Relaxed) {
         let size = app.main_window().size_pixels();
         let mut sampler = m.benchmark.lock().expect("benchmark sampler");
