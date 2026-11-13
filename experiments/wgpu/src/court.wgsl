@@ -39,6 +39,21 @@ fn glyph(ch: u32) -> array<u32, 7> {
             if abs(p.x-x)<4. && abs(p.y-24.)<8. { c=vec3(1.); }
         }
     }
+    // Identify the two score groups in the court, including when the title is hidden.
+    for (var side=0u; side<2u; side++) {
+        let left = select(354., 510., side==1u);
+        if p.x >= left && p.x < left+36. && p.y >= 38. && p.y < 52. {
+            let x = u32((p.x-left)/2.);
+            let row = u32((p.y-38.)/2.);
+            let col = x % 6u;
+            var label = array<u32,3>(89,79,85);
+            if side == 1u { label = array<u32,3>(67,80,85); }
+            if col < 5u {
+                let bits = glyph(label[x/6u]);
+                if (bits[row] & (1u << (4u-col))) != 0u { c = vec3(0.7,0.8,0.9); }
+            }
+        }
+    }
     let code = u32(state.status.x);
     var chars = array<u32,8>(0,0,0,0,0,0,0,0);
     var count = 0u;
