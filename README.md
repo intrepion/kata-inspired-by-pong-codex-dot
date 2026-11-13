@@ -38,6 +38,8 @@ Windows bracket-lib release portable pilot: 11 tests passed and relocated script
 
 Windows ggez release portable pilot: four tests passed and relocated scripted telemetry matched all 13 reference records; 14 dependency notice flags and physical-input, accessibility, and clean-machine checks remain open. See [evidence](docs/packaging/GGEZ-HELD-WINDOWS-RELEASE-PILOT.md).
 
+Windows Nannou release portable pilot: five tests passed and relocated scripted telemetry matched all 13 reference records; 31 dependency notice flags and physical-input, accessibility, and clean-machine checks remain open. See [evidence](docs/packaging/NANNOU-HELD-WINDOWS-RELEASE-PILOT.md).
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
