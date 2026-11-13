@@ -13,21 +13,37 @@ class Game(seed: ULong=42uL) {
  fun step(elapsed: Float,input: Float) {
   if(state!=GameState.PLAYING || !elapsed.isFinite() || !input.isFinite()) return
   val dt=elapsed.coerceIn(0f,.033f)
-  player=(player+input.coerceIn(-1f,1f)*470f*dt).coerceIn(45f,455f)
+  val oldPlayer=player; val oldCpu=cpu; val playerSpeed=input.coerceIn(-1f,1f)*470f
+  player=(player+playerSpeed*dt).coerceIn(45f,455f)
   reaction-=dt
   if(reaction<=0f) { target=if(ball.vx>0f) (ball.y+(random()-.5f)*50f).coerceIn(45f,455f) else 250f; reaction=.3f }
   val speed=if(ball.vx>0f) 190f else 130f
   cpu=(cpu+(target-cpu).coerceIn(-speed*dt,speed*dt)).coerceIn(45f,455f)
   if(serve>0f) { serve-=dt; return }
-  val oldX=ball.x; ball.x+=ball.vx*dt; ball.y+=ball.vy*dt
+  val oldX=ball.x; val oldY=ball.y; val oldVy=ball.vy
+  ball.x+=ball.vx*dt; ball.y+=ball.vy*dt
   if(ball.y<8f) { ball.y=16f-ball.y; ball.vy=abs(ball.vy) }
   if(ball.y>492f) { ball.y=984f-ball.y; ball.vy=-abs(ball.vy) }
-  for((x,y,direction) in arrayOf(Triple(38f,player,1f),Triple(862f,cpu,-1f))) {
+  for((x,direction) in arrayOf(38f to 1f,862f to -1f)) {
    val face=x+direction*14f
-   if((if(direction==1f) oldX>=face && ball.x<=face else oldX<=face && ball.x>=face) && abs(ball.y-y)<=53f) {
-    val angle=((ball.y-y)/45f).coerceIn(-1f,1f)*1.05f
+   val crosses=if(direction==1f) oldX>=face && ball.x<=face else oldX<=face && ball.x>=face
+   if(!crosses || oldX==ball.x) continue
+   val fraction=(face-oldX)/(ball.x-oldX)
+   var hitY=oldY+oldVy*dt*fraction
+   if(hitY<8f) hitY=16f-hitY else if(hitY>492f) hitY=984f-hitY
+   val contactTime=dt*fraction
+   val paddleY=if(direction==1f) (oldPlayer+playerSpeed*contactTime).coerceIn(45f,455f)
+    else (oldCpu+(target-oldCpu).coerceIn(-speed*contactTime,speed*contactTime)).coerceIn(45f,455f)
+   if(abs(hitY-paddleY)<=53f) {
+    ball.y=hitY
+    val angle=((hitY-paddleY)/45f).coerceIn(-1f,1f)*1.05f
     val hitSpeed=(hypot(ball.vx,ball.vy)*1.055f).coerceAtMost(720f)
     ball.x=face; ball.vx=direction*hitSpeed*cos(angle); ball.vy=hitSpeed*sin(angle)
+    val remaining=dt-contactTime
+    ball.x+=ball.vx*remaining; ball.y+=ball.vy*remaining
+    if(ball.y<8f) { ball.y=16f-ball.y; ball.vy=abs(ball.vy) }
+    else if(ball.y>492f) { ball.y=984f-ball.y; ball.vy=-abs(ball.vy) }
+    break
    }
   }
   if(ball.x< -8f || ball.x>908f) { val scorer=if(ball.x<0f) 1 else 0; scores[scorer]++; if(scores[scorer]>=7) state=GameState.OVER else reset(if(scorer==0) -1f else 1f) }
