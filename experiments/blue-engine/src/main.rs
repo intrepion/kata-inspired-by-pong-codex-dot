@@ -71,6 +71,15 @@ fn court_message(game: &Game) -> Option<&'static str> {
         State::Over => Some("OVER"),
     }
 }
+fn zero_score_parts(score: u32) -> [(f32, f32, f32, f32); 4] {
+    let visible = if score == 0 { 1. } else { 0. };
+    [
+        (0., 0., 2. * visible, 18.),
+        (6., 0., 2. * visible, 18.),
+        (2., 0., 4. * visible, 2.),
+        (2., 16., 4. * visible, 2.),
+    ]
+}
 fn glyph(ch: u8) -> [u8; 7] {
     match ch {
         b'A'=>[14,17,17,31,17,17,17], b'C'=>[14,17,16,16,16,17,14],
@@ -182,6 +191,12 @@ fn main() -> Result<(), blue_engine::error::Error> {
         rect(&mut engine, &name, 449., i as f32 * 28., 2., 12., 0.);
     }
     for side in 0..2 {
+        for part in 0..4 {
+            let name = format!("score-zero-{side}-{part}");
+            square(&name, ObjectSettings::default(), &mut engine.renderer, &mut engine.objects)?;
+            engine.objects.get_mut(name.as_str()).unwrap().set_color(0.85, 1., 0.68, 1.);
+            rect(&mut engine, &name, 0., 0., 0., 0., 0.);
+        }
         for point in 0..WIN {
             let name = format!("score-{side}-{point}");
             square(
@@ -313,7 +328,11 @@ fn main() -> Result<(), blue_engine::error::Error> {
         rect(engine, "player", 32., game.player-PADDLE_H/2., PADDLE_W, PADDLE_H, 0.);
         rect(engine, "cpu", W-44., game.cpu-PADDLE_H/2., PADDLE_W, PADDLE_H, 0.);
         rect(engine, "ball", game.ball.x-BALL, game.ball.y-BALL, BALL*2., BALL*2., 0.);
-        for side in 0..2 { for point in 0..WIN {
+        for side in 0..2 {
+            for (part, (x, y, width, height)) in zero_score_parts(game.scores[side]).into_iter().enumerate() {
+                rect(engine, &format!("score-zero-{side}-{part}"), 330. + side as f32 * 170. + x, 20. + y, width, height, 0.);
+            }
+            for point in 0..WIN {
             let name = format!("score-{side}-{point}");
             let width = if point < game.scores[side] { 8. } else { 0. };
             rect(engine, &name, 330.+side as f32*170.+point as f32*12., 20., width, 18., 0.);
@@ -385,6 +404,13 @@ mod benchmark_tests {
 #[cfg(test)]
 mod input_tests {
     use super::*;
+    #[test]
+    fn zero_score_outline_hides_for_positive_scores() {
+        assert_eq!(zero_score_parts(0), [(0., 0., 2., 18.), (6., 0., 2., 18.), (2., 0., 4., 2.), (2., 16., 4., 2.)]);
+        for score in [1, 7] {
+            assert!(zero_score_parts(score).iter().all(|part| part.2 == 0.));
+        }
+    }
     #[test]
     fn focus_return_requires_release_of_held_actions() {
         for i in 0..5 {
