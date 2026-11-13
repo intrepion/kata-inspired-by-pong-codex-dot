@@ -102,7 +102,7 @@ Details: [baseline frontends](docs/desktop-comparison.md), [extra engines](exper
 | Vulkan via ash | B / blocked: missing Vulkan loader/MoltenVK | B / I (simple clear-attachment renderer only) | B / S + scripted/PNG samples passed; real input blocked |
 | Slint | B / I | B / I: start, scoring, pause/resume, reset | B / scripted component PNG samples passed; real input unverified |
 | GPUI | B / I: Enter start, held-W movement, scoring, Space pause | B / I; maximized rendering checked | B / native state-only replay passed; visual/input unverified |
-| GTK4 | Blocked: native dependencies missing / U | U / U | B / S + scripted Cairo PNG samples passed; real input unverified |
+| GTK4 | Blocked: native dependencies missing / U | U / U | Fresh `0870089` B, 1 frontend + 8 shared model tests; relocated package replay and six app-owned Cairo PNGs, exact model match; physical input unverified ([details](docs/packaging/GTK-C77-OMARCHY-REPLAY.md)) |
 | Ratatui | B / pseudo-terminal checks; enhanced-terminal interaction unverified | B / blocked: direct launch has no targetable window; Windows Terminal access blocked by product policy | Fresh `c77bf3a` release B, 8 tests; relocated package scripted cell replay matches revised model; physical terminal input unverified ([details](docs/packaging/RATATUI-C77-OMARCHY-REPLAY.md)) |
 
 Details: [low-level clients](experiments/LOW-LEVEL.md), [GUI toolkits](experiments/GUI-TOOLKITS.md), [Ratatui](experiments/ratatui/README.md). GPUI's initial default Mac check required the separate Metal Toolchain; the runtime-shader path and later native worker results are reflected above.
