@@ -737,3 +737,5 @@ Active restart now clears held movement in ggez, Miniquad and Piston as well. Th
 Fyrox, Nannou and raylib-rs now suppress held movement through active restart; [Omarchy adapter regressions](docs/packaging/RESTART-POLLING-FYROX-OMARCHY.md) describe the test scope and limits.
 
 Active-restart held movement is also fixed in ash, softbuffer, SDL3 and Blue Engine. The [Omarchy evidence](docs/packaging/RESTART-LOWLEVEL-BLUE-OMARCHY.md) records adapter tests and remaining runtime limits.
+
+[Omarchy Macroquad active-restart cross-check](docs/packaging/MACROQUAD-ACTIVE-RESTART-OMARCHY.md): five tests passed and a rebuilt debug scripted replay matched the retained telemetry; physical input and release qualification remain open.
