@@ -1,0 +1,7 @@
+# Pixels court labels and prompts: Windows check, 2026-11-13
+
+At checkpoint `abaa8200bd5aabffc8ea99ae03677affa04986d4`, Pixels adapter source Git blob `69b329ba056b454ba8f6acf52d90579ad03c4587` passed all 16 locked offline debug tests on Windows MSVC stable Rust 1.99.1. The framebuffer regression checks score labels and state-specific instruction glyphs; Cargo reported incremental hard-link failure and copied files instead.
+
+The locked offline debug build succeeded; executable SHA-256 was `af52959129051f7ba164e120adcc3eddd11737b353f19f8191dc472f08007629`. An app-owned scripted run exited 0 with empty stderr and all 13 parsed telemetry records matching `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`. Six captures were produced. The inspected tick 480 capture showed YOU/CPU score labels and the paused SPACE TO RESUME instruction; SHA-256 `89da7dd2132f39d19716c2e2360a9cd6c26de54c8a602b9584414aab6814b576`. Logs, captures and prior executable and test copies remain in sibling workspace directory `pixels-court-help-windows-20261113`.
+
+The replay does not show Ready or a winning state, so start and restart prompt presentation in a Windows app capture remains open. Native and physical input, accessibility, other window sizes, clean-machine installation, complete dependency and system-library review, and release qualification remain unverified; this is not license clearance.
