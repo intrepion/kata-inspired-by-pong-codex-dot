@@ -47,6 +47,21 @@ function createPointerButtons() {
         }
     };
 }
+// A pause ends all active movement sources; repeats and continuing drags cannot re-arm them.
+function createControls() {
+    const keys = new Set<string>(), buttons = createPointerButtons(), drags = new Set<number>();
+    return {
+        keyDown(key: string, repeat: boolean) { if (!repeat) keys.add(key.toLowerCase()); },
+        keyUp(key: string) { keys.delete(key.toLowerCase()); },
+        buttonDown(id: number, dir: -1 | 1) { buttons.press(id, dir); },
+        buttonUp(id: number) { buttons.release(id); },
+        dragDown(id: number) { drags.add(id); },
+        dragUp(id: number) { drags.delete(id); },
+        dragAllowed(id: number) { return drags.has(id); },
+        suspend() { keys.clear(); buttons.clear(); drags.clear(); },
+        axis() { return buttons.axis() + Number(keys.has('arrowdown') || keys.has('s')) - Number(keys.has('arrowup') || keys.has('w')); }
+    };
+}
 function createGame(random: () => number = Math.random): Game {
     const s: Game = { player: H / 2, cpu: H / 2, ball: { x: W / 2, y: H / 2, vx: 0, vy: 0 }, scores: [0, 0], state: 'ready', serve: 0, random, cpuTarget: H / 2, cpuReaction: 0, resetBall: () => { }, start: () => { }, step: () => { } };
     s.resetBall = (direction) => { s.ball = { x: W / 2, y: H / 2, vx: direction * 350, vy: (random() - .5) * 180 }; s.serve = .65; s.cpuTarget = H / 2; s.cpuReaction = .3; };
@@ -178,7 +193,7 @@ function createScriptedReplay(manifest: ScenarioManifest) {
 }
 
 if (typeof module !== 'undefined')
-    module.exports = { createPointerButtons, createGame, createFrameLoop, parseScenario, createScriptedReplay, W, H, PADDLE_H, BALL };
+    module.exports = { createControls, createPointerButtons, createGame, createFrameLoop, parseScenario, createScriptedReplay, W, H, PADDLE_H, BALL };
 if (typeof document !== 'undefined') {
     function element<T extends HTMLElement>(selector: string, kind: {
         new (): T;
@@ -191,13 +206,13 @@ if (typeof document !== 'undefined') {
     const canvas = element('#court', HTMLCanvasElement), context = canvas.getContext('2d');
     if (!context)
         throw new Error('Canvas 2D rendering is unavailable');
-    const ctx: CanvasRenderingContext2D = context, keys = new Set<string>();
+    const ctx: CanvasRenderingContext2D = context;
     let game = createGame(); const loop = createFrameLoop(game);
     const demoRequested = new URLSearchParams(location.search).has('scripted-test');
     let replay: ReturnType<typeof createScriptedReplay> | undefined;
     const captures: {tick:number;png:string}[] = []; let exported = false; let demoError: string | undefined;
     if (demoRequested) fetch('scenarios/smoke-v1.txt').then(r => { if(!r.ok)throw Error('Scenario manifest unavailable'); return r.text(); }).then(text => { replay=createScriptedReplay(parseScenario(text)); game=replay.game; }).catch(e=>{ console.error(e); demoError=String(e); });
-    const pointerButtons = createPointerButtons();
+    const controls = createControls();
     const overlay = element('#overlay', HTMLElement), message = element('#message', HTMLElement), hint = element('#hint', HTMLElement), start = element('#start', HTMLButtonElement), pause = element('#pause', HTMLButtonElement), status = element('#status', HTMLElement);
     function sync() { element('#you', HTMLElement).textContent = String(game.scores[0]); element('#cpu', HTMLElement).textContent = String(game.scores[1]); pause.disabled = demoRequested || game.state === 'ready' || game.state === 'over'; start.disabled=demoRequested; pause.textContent = game.state === 'paused' ? 'Resume' : 'Pause'; status.textContent = game.state === 'playing' ? (game.serve > 0 ? 'Next serve' : 'Rally in progress') : game.state === 'paused' ? 'Paused' : game.state === 'over' ? (game.scores[0] === WIN ? 'You won the match' : 'Computer wins the match') : 'Ready to play'; overlay.hidden = game.state === 'playing'; if (game.state === 'paused') {
         message.textContent = 'Take a breather.';
@@ -208,37 +223,42 @@ if (typeof document !== 'undefined') {
         hint.textContent = game.scores[0] === WIN ? 'Nice rally. Ready for another?' : 'The computer won this round. Run it back?';
         start.firstChild!.textContent = 'Play again ';
     } }
-    function toggle() { if(demoRequested)return; if (game.state === 'playing')
-        game.state = 'paused';
+    function toggle() { if(demoRequested)return; if (game.state === 'playing') {
+        controls.suspend(); game.state = 'paused';
+    }
     else if (game.state === 'paused')
         game.state = 'playing'; loop.reset(); sync(); }
     start.addEventListener('click', () => { if(demoRequested)return; if (game.state === 'paused')
         game.state = 'playing';
-    else
-        game.start(); loop.reset(); sync(); });
+    else {
+        controls.suspend(); game.start();
+    } loop.reset(); sync(); });
     pause.addEventListener('click', toggle);
     document.addEventListener('keydown', e => { if(demoRequested)return; if (['ArrowUp', 'ArrowDown', ' ', 'w', 's', 'W', 'S'].includes(e.key))
         e.preventDefault(); if (e.key === ' ' && !e.repeat && (game.state === 'playing' || game.state === 'paused'))
-        toggle(); keys.add(e.key.toLowerCase()); });
-    document.addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
-    window.addEventListener('blur', () => { keys.clear(); pointerButtons.clear(); if (game.state === 'playing')
+        toggle(); if (game.state === 'playing') controls.keyDown(e.key, e.repeat); });
+    document.addEventListener('keyup', e => controls.keyUp(e.key));
+    window.addEventListener('blur', () => { controls.suspend(); if (game.state === 'playing')
         toggle(); });
     document.addEventListener('visibilitychange', () => { if (document.hidden && game.state === 'playing')
         toggle(); });
     for (const [id, dir] of [['up', -1], ['down', 1]] as const) {
         const el = element('#' + id, HTMLButtonElement);
-        el.addEventListener('pointerdown', e => { if(demoRequested)return; e.preventDefault(); pointerButtons.press(e.pointerId, dir); el.setPointerCapture(e.pointerId); });
+        el.addEventListener('pointerdown', e => { if(demoRequested || game.state !== 'playing')return; e.preventDefault(); controls.buttonDown(e.pointerId, dir); el.setPointerCapture(e.pointerId); });
         for (const event of ['pointerup', 'pointercancel', 'lostpointercapture'] as const)
-            el.addEventListener(event, e => { pointerButtons.release(e.pointerId); });
+            el.addEventListener(event, e => { controls.buttonUp(e.pointerId); });
     }
-    canvas.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse')
-        canvas.setPointerCapture(e.pointerId); });
-    canvas.addEventListener('pointermove', e => { if(demoRequested)return; if (e.buttons && e.pointerType !== 'mouse' && game.state === 'playing') {
+    canvas.addEventListener('pointerdown', e => { if (!demoRequested && game.state === 'playing' && e.pointerType !== 'mouse') {
+        controls.dragDown(e.pointerId); canvas.setPointerCapture(e.pointerId);
+    } });
+    for (const event of ['pointerup', 'pointercancel', 'lostpointercapture'] as const)
+        canvas.addEventListener(event, e => controls.dragUp(e.pointerId));
+    canvas.addEventListener('pointermove', e => { if(demoRequested)return; if (e.buttons && e.pointerType !== 'mouse' && game.state === 'playing' && controls.dragAllowed(e.pointerId)) {
         const rect = canvas.getBoundingClientRect();
         game.player = clamp((e.clientY - rect.top) / rect.height * H, PADDLE_H / 2, H - PADDLE_H / 2);
     } });
     function draw() { ctx.fillStyle = '#153f37'; ctx.fillRect(0, 0, W, H); ctx.strokeStyle = '#a8e6bb30'; ctx.lineWidth = 2; ctx.setLineDash([12, 16]); ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke(); ctx.setLineDash([]); ctx.strokeStyle = '#a8e6bb25'; ctx.beginPath(); ctx.arc(W / 2, H / 2, 70, 0, Math.PI * 2); ctx.stroke(); ctx.fillStyle = '#d9ffae'; ctx.fillRect(32, game.player - PADDLE_H / 2, PADDLE_W, PADDLE_H); ctx.fillStyle = '#e3f3e7'; ctx.fillRect(W - 44, game.cpu - PADDLE_H / 2, PADDLE_W, PADDLE_H); ctx.beginPath(); ctx.arc(game.ball.x, game.ball.y, BALL, 0, Math.PI * 2); ctx.fill(); }
-    function frame(t: number) { if(demoRequested) replay?.frame(t); else loop.advance(t, pointerButtons.axis() + (keys.has('arrowdown') || keys.has('s') ? 1 : 0) - (keys.has('arrowup') || keys.has('w') ? 1 : 0)); draw(); sync(); if(demoError)status.textContent=demoError;
+    function frame(t: number) { if(demoRequested) replay?.frame(t); else loop.advance(t, controls.axis()); draw(); sync(); if(demoError)status.textContent=demoError;
         if(replay && replay.manifest.captures.includes(replay.tick) && !captures.some(c=>c.tick===replay!.tick)) captures.push({tick:replay.tick,png:canvas.toDataURL('image/png')});
         if(replay?.finished) {
             if(!exported) { exported=true; const evidence={kind:'original TS state and own Canvas2D; not Rust-identical or desktop QA',reports:replay.reports,actions:replay.actions,captures};

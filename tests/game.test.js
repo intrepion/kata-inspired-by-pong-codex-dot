@@ -74,3 +74,38 @@ test('opposing pointer buttons cancel and release independently', () => {
  input.release(2); assert.equal(input.axis(),-1); input.clear(); assert.equal(input.axis(),0);
  input.release(1); assert.equal(input.axis(),0);
 });
+
+test('pause clears keyboard, button and drag ownership until fresh input', () => {
+ const {createControls}=require('../game'); const input=createControls();
+ input.keyDown('w',false); input.buttonDown(11,1); input.dragDown(21);
+ assert.equal(input.axis(),0); assert.equal(input.dragAllowed(21),true);
+ input.suspend(); input.keyDown('w',true);
+ assert.equal(input.axis(),0); assert.equal(input.dragAllowed(21),false);
+ input.keyUp('w'); input.buttonUp(11); input.dragUp(21);
+ input.keyDown('w',false); input.buttonDown(12,1); input.dragDown(22);
+ assert.equal(input.axis(),0); assert.equal(input.dragAllowed(22),true);
+ input.buttonUp(12); assert.equal(input.axis(),-1);
+});
+
+test('browser handlers clear movement on pause and reject continuing touch drags', () => {
+ const vm=require('node:vm'),fs=require('node:fs'); let nextFrame, playerY;
+ class Element {
+  constructor(){this.listeners={};this.firstChild={textContent:''};this.textContent='';}
+  addEventListener(name,fn){(this.listeners[name]??=[]).push(fn);}
+  emit(name,event={}){for(const fn of this.listeners[name]??[])fn({preventDefault(){},...event});}
+  setPointerCapture(){} getBoundingClientRect(){return {top:0,height:500};}
+ }
+ class Button extends Element {}
+ class Canvas extends Element {getContext(){return {fillRect(x,y){if(x===32)playerY=y;},setLineDash(){},beginPath(){},moveTo(){},lineTo(){},stroke(){},arc(){},fill(){}};}}
+ const selectors=['court','overlay','message','hint','start','pause','status','you','cpu','up','down'];
+ const els=Object.fromEntries(selectors.map(k=>[k,k==='court'?new Canvas():['start','pause','up','down'].includes(k)?new Button():new Element()]));
+ const doc=new Element();doc.querySelector=s=>els[s.slice(1)];doc.hidden=false;
+ const win=new Element();
+ vm.runInNewContext(fs.readFileSync(require('node:path').join(__dirname,'../game.js'),'utf8'),{document:doc,window:win,HTMLElement:Element,HTMLButtonElement:Button,HTMLCanvasElement:Canvas,URLSearchParams,location:{search:''},requestAnimationFrame:fn=>{nextFrame=fn;},console});
+ const frame=t=>{const fn=nextFrame;fn(t);};
+ els.start.emit('click');frame(0);doc.emit('keydown',{key:'w',repeat:false});frame(20);const moved=playerY;
+ els.up.emit('pointerdown',{pointerId:3});els.pause.emit('click');els.start.emit('click');doc.emit('keydown',{key:'w',repeat:true});frame(40);frame(60);assert.equal(playerY,moved);
+ els.court.emit('pointerdown',{pointerType:'touch',pointerId:8});els.court.emit('pointermove',{pointerType:'touch',pointerId:8,buttons:1,clientY:350});frame(80);const dragged=playerY;
+ els.pause.emit('click');els.start.emit('click');els.court.emit('pointermove',{pointerType:'touch',pointerId:8,buttons:1,clientY:100});frame(100);assert.equal(playerY,dragged);
+ els.court.emit('pointerup',{pointerId:8});els.court.emit('pointerdown',{pointerType:'touch',pointerId:9});els.court.emit('pointermove',{pointerType:'touch',pointerId:9,buttons:1,clientY:100});frame(120);assert.notEqual(playerY,dragged);
+});
