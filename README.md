@@ -60,7 +60,9 @@ Windows bracket-lib notice review identified third-party source attributions in 
 
 Windows dependency audit found MPL-2.0 declarations in enabled ggez, Fyrox and native-web-demo dependency paths; [linkage and replacement review remains open](docs/packaging/WINDOWS-MPL-TREE-AUDIT.md).
 
-ggez uses a scoped dirs-sys patch removing option-ext; Windows release tests and scripted replay pass, while Unix validation and a complete dependency audit remain open. See [evidence](docs/packaging/GGEZ-WINDOWS-OPTION-EXT-PATCH.md).
+Omarchy ggez option-ext recheck: ten Unix parser tests, four adapter tests and model-matched replay pass; host runtime and full license review remain open. [Evidence](docs/packaging/GGEZ-OPTION-EXT-LINUX-RECHECK.md).
+
+ggez uses a scoped dirs-sys patch removing option-ext; Windows, macOS and Linux checks pass after correcting a Unix test-module collision; complete dependency review remains open. See [evidence](docs/packaging/GGEZ-WINDOWS-OPTION-EXT-PATCH.md).
 
 Fyrox Windows feature investigation: disabling defaults breaks the implementation import, while explicitly enabling it retains Symphonia; [replacement remains open](docs/packaging/FYROX-WINDOWS-MPL-FEASIBILITY.md).
 
@@ -87,6 +89,12 @@ Mac Ratatui target-filtered license metadata screen: no declared LGPL, GPL-3 or 
 Mac softbuffer target-filtered license metadata screen: no declared LGPL, GPL-3 or MPL in 59 resolved packages; system components and complete license review remain open. [Evidence](docs/packaging/SOFTBUFFER-MAC-LICENSE-SCREEN.md).
 
 Mac bracket-lib target-filtered license screen: no declared LGPL, GPL-3 or MPL in 84 resolved packages; native/system components and full source review remain open. [Evidence](docs/packaging/BRACKET-MAC-LICENSE-SCREEN.md).
+
+Mac Macroquad target graph: no restricted license declarations among 49 root-reachable packages; workspace-wide results and system-license limits are recorded separately. [Evidence](docs/packaging/MACROQUAD-MAC-LICENSE-SCREEN.md).
+
+Mac Slint audit: tested binary contains Slint core/backend symbols; GPL-3 is one of several declared alternatives, with royalty-free attribution terms requiring review. [Evidence](docs/packaging/SLINT-MAC-LICENSE-SCREEN.md). Mac Piston metadata screen found no restricted declarations in 216 packages; system and source review remain open. [Evidence](docs/packaging/PISTON-MAC-LICENSE-SCREEN.md).
+
+Mac ggez option-ext patch: Release tests and replay pass; a duplicate Unix-only test module was corrected and its isolated parser tests pass. [Evidence](docs/packaging/GGEZ-MAC-OPTION-EXT-RECHECK.md). Mac Nannou metadata screen found no restricted declarations in 435 packages; native/system review remains open. [Evidence](docs/packaging/NANNOU-MAC-LICENSE-SCREEN.md).
 
 Mac Fyrox Release license investigation: MPL-declared Symphonia code symbols are present in the tested executable; a second MPL-declared graph path lacks direct symbol confirmation. [Evidence](docs/packaging/FYROX-MAC-MPL-SCREEN.md).
 

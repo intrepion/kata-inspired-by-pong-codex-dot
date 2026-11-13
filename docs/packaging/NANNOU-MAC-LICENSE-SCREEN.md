@@ -1,0 +1,7 @@
+# Mac Nannou target-filtered license metadata screen
+
+On 2026-11-13, locked offline Cargo metadata for aarch64-apple-darwin was generated at checkpoint 5d6eea2095ca8252ed86ab4624da4882f34bc431. It reported 435 packages, including build dependencies and proc macros; every package had a declared license expression, and none contained LGPL, GPL-3 or MPL in a case-insensitive text screen. This is a manifest screen, not proof that all resolved code is linked or that source files and native libraries have been fully audited.
+
+The previously tested Mac held-pause Release binary was built from 986cbf89703320c54b53b669537f81feb348a78a, SHA-256 9393413e9c4c74c2102e141611413366780ed3af73d4abef80cfd1dedc9f908a. Git found no changes between that source and the screened checkpoint in the Nannou, core, scenario and benchmark crate paths or smoke scenario; other build inputs were not established identical. Metadata SHA-256 d2f17db270cd131bebf24dca56f59f77ccc5b353029cd5f871804484eecba40d, lockfile SHA-256 91432f25df84ca28c098e84bef6b01ea4cb3912cb27cedf8c1d2f157cf9f8bb6. Metadata is retained at /tmp/pong-nannou-mac-metadata-20261113-v1.json.
+
+The binary directly loads Apple frameworks and system libraries, including libiconv; see [system provenance](MAC-LIBICONV-LINK-OBSERVATION.md). Complete native and transitive dependencies, actual linked crate code, notices and release eligibility remain open. No removal or release was performed.

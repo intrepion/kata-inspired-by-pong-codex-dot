@@ -246,7 +246,7 @@ XDG_VIDEOS_DIR="$HOxyzME/Videos"
 }
 
 #[cfg(test)]
-mod tests {
+mod regression_tests {
     use super::*;
 
     #[test]
