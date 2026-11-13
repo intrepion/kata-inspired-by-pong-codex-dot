@@ -227,7 +227,7 @@ fn view(app: &App, m: &Model) {
         .x_y(m.game.ball.x - W / 2.0, H / 2.0 - m.game.ball.y)
         .radius(BALL)
         .color(WHITE);
-    d.text(&format!("{}    {}", m.game.scores[0], m.game.scores[1]))
+    d.text(&format!("YOU {} : {} CPU", m.game.scores[0], m.game.scores[1]))
         .x_y(0.0, 190.0)
         .font_size(32)
         .color(WHITE);
