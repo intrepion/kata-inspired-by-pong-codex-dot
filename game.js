@@ -246,7 +246,9 @@ if (typeof document !== 'undefined') {
         pause.disabled = demoRequested || game.state === 'ready' || game.state === 'over';
         start.disabled = demoRequested;
         pause.textContent = game.state === 'paused' ? 'Resume' : 'Pause';
-        status.textContent = game.state === 'playing' ? (game.serve > 0 ? 'Next serve' : 'Rally in progress') : game.state === 'paused' ? 'Paused' : game.state === 'over' ? (game.scores[0] === WIN ? 'You won the match' : 'Computer wins the match') : 'Ready to play';
+        const statusText = demoError ?? (game.state === 'playing' ? (game.serve > 0 ? 'Next serve' : 'Rally in progress') : game.state === 'paused' ? 'Paused' : game.state === 'over' ? (game.scores[0] === WIN ? 'You won the match' : 'Computer wins the match') : 'Ready to play');
+        if (status.textContent !== statusText)
+            status.textContent = statusText;
         overlay.hidden = game.state === 'playing';
         if (game.state === 'paused') {
             message.textContent = 'Take a breather.';
@@ -359,8 +361,6 @@ if (typeof document !== 'undefined') {
             loop.advance(t, controls.axis());
         draw();
         sync();
-        if (demoError)
-            status.textContent = demoError;
         if (replay && replay.manifest.captures.includes(replay.tick) && !captures.some(c => c.tick === replay.tick))
             captures.push({ tick: replay.tick, png: canvas.toDataURL('image/png') });
         if (replay?.finished) {

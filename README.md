@@ -38,6 +38,8 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
+Original browser live-status updates now occur only when text changes; mocked DOM regression passes, with real assistive-technology checks pending. [Evidence](docs/ORIGINAL-LIVE-STATUS-FIX.md).
+
 Original TypeScript collision timing fix: 23 model/handler tests pass; a separate before/after deterministic replay records expected trajectory changes. Real browser collision interaction remains pending. [Evidence](docs/ORIGINAL-COLLISION-TIMING-FIX.md).
 
 Benchmark runner no longer assumes supplied binaries are release builds; profile defaults to unverified and can be supplied explicitly. [Evidence](docs/benchmarks/PROFILE-PROVENANCE-FIX.md).
