@@ -799,3 +799,5 @@ raylib-rs and Nannou now suppress a held direction when focus loss is followed b
 SDL3 now resets its polling gate on focus loss; [Omarchy evidence](docs/packaging/SDL-FOCUS-RESUME-OMARCHY.md) covers the first-sample regression and a bounded review of other polling frontends.
 
 SDL3 now ignores queued pause/restart actions while unfocused; [Omarchy evidence](docs/packaging/SDL-UNFOCUSED-ACTIONS-OMARCHY.md) records the regression and its limits.
+
+Pixels, raw wgpu, ash, softbuffer and ggez now ignore live keydowns while unfocused; [Omarchy evidence](docs/packaging/WINDOWED-UNFOCUSED-ACTIONS-OMARCHY.md) records the regressions and runtime limits.

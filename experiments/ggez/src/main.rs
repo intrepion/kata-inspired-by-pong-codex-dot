@@ -62,7 +62,19 @@ fn handle_key_down(game: &mut Game, held: &mut [bool; 4], key: KeyCode, repeated
         *held = [false; 4];
     }
 }
+fn handle_focused_key_down(
+    game: &mut Game,
+    held: &mut [bool; 4],
+    focused: bool,
+    key: KeyCode,
+    repeated: bool,
+) {
+    if focused {
+        handle_key_down(game, held, key, repeated);
+    }
+}
 struct App {
+    focused: bool,
     benchmarking: bool,
     benchmark: Option<pong_benchmark::Frames>,
     scenario: pong_scenario::Scenario,
@@ -213,7 +225,7 @@ impl event::EventHandler for App {
             return Ok(());
         }
         if let ggez::winit::keyboard::PhysicalKey::Code(key) = input.event.physical_key {
-            handle_key_down(&mut self.game, &mut self.held, key, repeated);
+            handle_focused_key_down(&mut self.game, &mut self.held, self.focused, key, repeated);
         }
         Ok(())
     }
@@ -234,6 +246,7 @@ impl event::EventHandler for App {
         Ok(())
     }
     fn focus_event(&mut self, _: &mut Context, gained: bool) -> GameResult {
+        self.focused = gained;
         if self.demo.is_some() || self.benchmarking {
             return Ok(());
         }
@@ -248,6 +261,21 @@ impl event::EventHandler for App {
 #[cfg(test)]
 mod control_tests {
     use super::*;
+    #[test]
+    fn unfocused_key_actions_do_not_resume_or_restart() {
+        let mut game = Game::new(42);
+        game.start();
+        game.scores = [3, 2];
+        game.pause();
+        let mut held = [false; 4];
+        handle_focused_key_down(&mut game, &mut held, false, KeyCode::Space, false);
+        assert_eq!(game.state, State::Paused);
+        handle_focused_key_down(&mut game, &mut held, false, KeyCode::KeyR, false);
+        assert_eq!(game.state, State::Paused);
+        assert_eq!(game.scores, [3, 2]);
+        handle_focused_key_down(&mut game, &mut held, true, KeyCode::Space, false);
+        assert_eq!(game.state, State::Playing);
+    }
     #[test]
     fn status_names_winner_and_clears_after_restart() {
         let mut game = Game::new(42);
@@ -397,6 +425,7 @@ fn main() -> GameResult {
                 .resizable(true),
         )
         .build()?;
+    let focused = ctx.gfx.window().has_focus();
     let capture =
         graphics::ScreenImage::new_raw(&ctx, graphics::ImageFormat::Rgba8UnormSrgb, 1., 1., 1);
     let (width, height) = ctx.gfx.drawable_size();
@@ -404,6 +433,7 @@ fn main() -> GameResult {
         ctx,
         events,
         App {
+            focused,
             benchmarking,
             benchmark: benchmarking
                 .then(|| pong_benchmark::Frames::new(width as u32, height as u32)),

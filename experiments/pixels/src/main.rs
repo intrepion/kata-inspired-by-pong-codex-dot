@@ -66,7 +66,19 @@ fn handle_key(
     false
 }
 
+fn handle_focused_key(
+    game: &mut Game,
+    movement: &mut MovementInput,
+    focused: bool,
+    key: KeyCode,
+    pressed: bool,
+    repeat: bool,
+) -> bool {
+    focused && handle_key(game, movement, key, pressed, repeat)
+}
+
 struct App {
+    focused: bool,
     window: Option<Arc<Window>>,
     pixels: Option<Pixels<'static>>,
     game: Game,
@@ -103,16 +115,20 @@ impl ApplicationHandler for App {
         if self.benchmarking {
             self.benchmark = Some(pong_benchmark::Frames::new(s.width, s.height));
         }
+        self.focused = w.has_focus();
         self.window = Some(w);
         self.last = Instant::now();
     }
     fn window_event(&mut self, e: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
         match event {
             WindowEvent::CloseRequested => e.exit(),
-            WindowEvent::Focused(false) if self.demo.is_none() && !self.benchmarking => {
-                self.movement.clear();
-                self.game.pause();
-                self.acc = 0.0;
+            WindowEvent::Focused(focused) => {
+                self.focused = focused;
+                if !focused && self.demo.is_none() && !self.benchmarking {
+                    self.movement.clear();
+                    self.game.pause();
+                    self.acc = 0.0;
+                }
             }
             WindowEvent::Resized(s) => {
                 if s.width > 0 && s.height > 0 {
@@ -129,7 +145,14 @@ impl ApplicationHandler for App {
             {
                 let pressed = event.state == ElementState::Pressed;
                 if let PhysicalKey::Code(k) = event.physical_key {
-                    if handle_key(&mut self.game, &mut self.movement, k, pressed, event.repeat) {
+                    if handle_focused_key(
+                        &mut self.game,
+                        &mut self.movement,
+                        self.focused,
+                        k,
+                        pressed,
+                        event.repeat,
+                    ) {
                         e.exit();
                     }
                 }
@@ -236,6 +259,7 @@ fn main() {
     let e = EventLoop::new().unwrap();
     e.set_control_flow(ControlFlow::Poll);
     let mut a = App {
+        focused: false,
         window: None,
         pixels: None,
         game: Game::new(pong_scenario::SEED),
@@ -282,6 +306,21 @@ mod tests {
 #[cfg(test)]
 mod movement_tests {
     use super::*;
+    #[test]
+    fn unfocused_key_actions_do_not_resume_or_restart() {
+        let mut game = Game::new(42);
+        game.start();
+        game.scores = [3, 2];
+        game.pause();
+        let mut movement = MovementInput::default();
+        handle_focused_key(&mut game, &mut movement, false, KeyCode::Space, true, false);
+        assert_eq!(game.state, State::Paused);
+        handle_focused_key(&mut game, &mut movement, false, KeyCode::KeyR, true, false);
+        assert_eq!(game.state, State::Paused);
+        assert_eq!(game.scores, [3, 2]);
+        handle_focused_key(&mut game, &mut movement, true, KeyCode::Space, true, false);
+        assert_eq!(game.state, State::Playing);
+    }
     #[test]
     fn active_restart_clears_held_movement_until_fresh_press() {
         for restart in [KeyCode::Enter, KeyCode::KeyR] {

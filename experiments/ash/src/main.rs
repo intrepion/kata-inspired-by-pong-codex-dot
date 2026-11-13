@@ -10,6 +10,7 @@ use winit::{
 };
 #[derive(Default)]
 struct Frontend {
+    focused: bool,
     app: App,
     movement_held: [bool; 4],
     benchmarking: bool,
@@ -41,6 +42,15 @@ impl Frontend {
     fn clear_movement(&mut self) {
         self.movement_held = [false; 4];
         self.app.blur();
+    }
+    fn handle_focused_key(
+        &mut self,
+        focused: bool,
+        key: KeyCode,
+        pressed: bool,
+        repeat: bool,
+    ) -> bool {
+        focused && self.handle_key(key, pressed, repeat)
     }
     fn handle_key(&mut self, key: KeyCode, pressed: bool, repeat: bool) -> bool {
         if self.app.game.state == pong_low_level_common::State::Over
@@ -97,6 +107,7 @@ impl ApplicationHandler for Frontend {
                 return;
             }
         };
+        self.focused = w.has_focus();
         self.window = Some(w);
         self.last = Some(Instant::now());
     }
@@ -112,15 +123,18 @@ impl ApplicationHandler for Frontend {
                     }
                 }
             }
-            WindowEvent::Focused(false) if self.demo.is_none() && !self.benchmarking => {
-                self.clear_movement()
+            WindowEvent::Focused(focused) => {
+                self.focused = focused;
+                if !focused && self.demo.is_none() && !self.benchmarking {
+                    self.clear_movement();
+                }
             }
             WindowEvent::KeyboardInput { event, .. }
                 if self.demo.is_none() && !self.benchmarking =>
             {
                 let pressed = event.state == ElementState::Pressed;
                 if let PhysicalKey::Code(key) = event.physical_key {
-                    if self.handle_key(key, pressed, event.repeat) {
+                    if self.handle_focused_key(self.focused, key, pressed, event.repeat) {
                         el.exit();
                     }
                 }
@@ -260,6 +274,20 @@ mod benchmark_tests {
 #[cfg(test)]
 mod movement_tests {
     use super::*;
+    #[test]
+    fn unfocused_key_actions_do_not_resume_or_restart() {
+        let mut f = Frontend::default();
+        f.app.game.start();
+        f.app.game.scores = [3, 2];
+        f.clear_movement();
+        f.handle_focused_key(false, KeyCode::Space, true, false);
+        assert_eq!(f.app.game.state, pong_low_level_common::State::Paused);
+        f.handle_focused_key(false, KeyCode::KeyR, true, false);
+        assert_eq!(f.app.game.state, pong_low_level_common::State::Paused);
+        assert_eq!(f.app.game.scores, [3, 2]);
+        f.handle_focused_key(true, KeyCode::Space, true, false);
+        assert_eq!(f.app.game.state, pong_low_level_common::State::Playing);
+    }
     #[test]
     fn active_restart_suppresses_movement_until_fresh_press() {
         let mut f = Frontend::default();
