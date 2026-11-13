@@ -1,0 +1,9 @@
+# ggez held-fix Mac relocated package check
+
+On 2026-11-13, the existing macOS ARM64 Release pilot archive from the [held-input recheck](../GGEZ-PAUSE-HELD-INPUT-FIX.md) was extracted into a separate directory. Archive SHA-256: `a2f05739a4b35eb6798dd6292365254d939456161a41140b53900b31f8ffa4c3`. The extracted executable SHA-256 `2e7f53ae027e453fa7017872e3f8d984135a3143def554fe676eb6188c7932d0` matched its manifest and historical tested binary; its Info.plist passed `plutil -lint`.
+
+The extracted binary's bounded scripted run exited 0, produced 13 telemetry records matching the contact-timing model reference byte-for-byte, and exported six app-owned PNGs. The inspected tick-480 image shows the score, court, paddles, ball and pause prompt. This is scripted state/model and app-owned capture evidence, not physical input.
+
+Separately, supported desktop automation opened the extracted app, sent Return and observed play and scoring, then Space and observed the pause prompt. R was followed by active play at 0–1 when observed; the delay means a 0–0 reset was not captured. After the exit action, no `pong-ggez` process remained. These are sequential automated actions, not physical keyboard input, held-across-pause or a full-match qualification.
+
+The historical build source was `22a73fd259ade4921d5a64bc129d624f8dea0a00`. Its ggez frontend source, manifest and lockfile, shared core and scenario source, and smoke scenario have identical Git blobs at checkpoint `f1e6aa7b911f0bd46134534dc79f2a15b0fe92dd`; this is not a new build or a guarantee that every build input and dependency is unchanged. Extracted files and replay remain at `/tmp/pong-ggez-pause-relocated-20261113-v1`; earlier archives and artifacts were preserved. Signing, notarization, complete dependency notices, downloaded/quarantined behavior, clean-machine operation and distribution remain open.
