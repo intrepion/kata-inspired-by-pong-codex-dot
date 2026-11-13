@@ -133,17 +133,18 @@ async fn main() {
             movement.finish_frame(g.state);
         }
         clear_background(Color::from_hex(0x0c211e));
+        let ui_scale = (screen_height() / 240.).clamp(0., 1.);
         let scale = (screen_width() / W)
-            .min((screen_height() - 140.) / H)
-            .max(0.1);
+            .min((screen_height() - 140. * ui_scale) / H)
+            .max(0.);
         let ox = (screen_width() - W * scale) / 2.;
-        let oy = 95.;
-        draw_text("RALLYLIGHT / MACROQUAD", 20., 30., 24., WHITE);
+        let oy = 95. * ui_scale;
+        draw_text("RALLYLIGHT / MACROQUAD", 20. * ui_scale, 30. * ui_scale, 24. * ui_scale, WHITE);
         draw_text(
             format!("YOU {}    CPU {}", g.scores[0], g.scores[1]),
-            20.,
-            65.,
-            28.,
+            20. * ui_scale,
+            65. * ui_scale,
+            28. * ui_scale,
             Color::from_hex(0xd9ffae),
         );
         draw_rectangle(ox, oy, W * scale, H * scale, Color::from_hex(0x153f37));
@@ -186,8 +187,8 @@ async fn main() {
         }
         let controls = "W/S or arrows | Enter start | Space pause | R restart | Esc pause";
         let controls_width = measure_text(controls, None, 19, 1.0).width;
-        let controls_scale = ((screen_width() - 40.).max(0.) / controls_width).min(1.);
-        draw_text(controls, 20., screen_height() - 20., 19. * controls_scale, WHITE);
+        let controls_scale = ((screen_width() - 40. * ui_scale).max(0.) / controls_width).min(ui_scale);
+        draw_text(controls, 20. * ui_scale, screen_height() - 20. * ui_scale, 19. * controls_scale, WHITE);
         if let Some(demo) = &demo {
             draw_text(
                 format!(
