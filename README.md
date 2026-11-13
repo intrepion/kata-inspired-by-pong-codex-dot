@@ -46,6 +46,8 @@ Windows ggez release runs from a separate working directory; a task-local USERPR
 
 Windows ggez profile follow-up: a native known-folder probe recorded missing-path HRESULTs under the artificial USERPROFILE override; see [bounded diagnostics](docs/packaging/GGEZ-KNOWN-FOLDER-WINDOWS.md).
 
+Windows raylib held-pause debug pilot: relocated replay matched 13 records and carries a Windows-filtered notice inventory; the debug runtime warning and release build remain open. See [evidence](docs/packaging/RAYLIB-HELD-WINDOWS-DEBUG-NOTICE-PILOT.md).
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.

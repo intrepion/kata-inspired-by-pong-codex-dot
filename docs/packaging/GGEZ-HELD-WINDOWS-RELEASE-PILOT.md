@@ -9,3 +9,7 @@ The unsigned 3,716,260-byte local ZIP SHA-256 is `777c7d057696c49a1e7d26dacbe5d0
 The relocated executable exited 0 with empty stderr; all 13 scripted telemetry lines matched `../evidence/rust-core-contact-timing-model-20261112.jsonl` through finished tick 1440. Six app-owned PNGs were exported. The inspected tick-480 image shows the paused prompt, court, paddles and ball. The extracted package retained only its four staged files. Archive, extraction, raw logs and captures remain in task workspace `ggez-held-release-package-20261113`; metadata and incomplete notice bundle remain in `ggez-windows-held-notices-20261113`. Prior packages and binaries are preserved.
 
 This is same-host portable extraction and scripted rendering, not a desktop screenshot or actual OS-key delivery. Physical input, accessibility, full match, focus/resize, clean-machine installation, system dependencies, signing, notice completeness and release distribution remain open.
+
+## Notice label correction
+
+The retained incomplete local bundle was generated from Windows-filtered metadata but mistakenly has the builder's default Linux heading. Its recorded hash and missing-file results refer to that retained artifact; it was excluded from the pilot package. No historical artifact was replaced.
