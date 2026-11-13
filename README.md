@@ -168,6 +168,8 @@ Windows passed Fyrox's active-restart regression and scripted replay; [the repor
 
 Windows passed Nannou's focus/resume polling regression; [the report](docs/packaging/POLLING-FOCUS-RESUME-WINDOWS.md) records the remaining focus and raylib gaps.
 
+Windows passed SDL3's focus/resume regression and scripted replay; [the report](docs/packaging/SDL-FOCUS-RESUME-WINDOWS.md) retains the debug runtime-link warning and input limits.
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
