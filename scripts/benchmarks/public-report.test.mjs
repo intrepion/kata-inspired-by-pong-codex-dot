@@ -12,3 +12,8 @@ test('rejects runs falsely marked valid when execution or measurement is invalid
   const raw=fixture();mutate(raw);assert.throws(()=>publicReport(raw),/valid/i);
  }
 });
+
+test('unverified profile is preserved and provenance limitation is explicit',()=>{
+ const raw=fixture();raw.profile='unverified';const out=publicReport(raw);
+ assert.equal(out.profile,'unverified');assert.match(out.provenance_limit,/does not prove binary source/);
+});

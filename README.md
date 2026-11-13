@@ -38,6 +38,8 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
+Benchmark runner no longer assumes supplied binaries are release builds; profile defaults to unverified and can be supplied explicitly. [Evidence](docs/benchmarks/PROFILE-PROVENANCE-FIX.md).
+
 Benchmark publication now revalidates runs marked valid against execution and measurement rules; existing private data remains local. [Evidence](docs/benchmarks/PUBLIC-VALIDITY-GUARD.md).
 
 Linux portable packager now rejects mismatched or invalid ELF architecture before output creation; local packaging regressions pass. [Evidence](docs/packaging/LINUX-ELF-ARCH-GUARD.md).

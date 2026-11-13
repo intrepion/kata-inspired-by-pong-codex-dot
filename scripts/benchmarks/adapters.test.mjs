@@ -19,7 +19,7 @@ test('runner records selected adapter over three fixture processes, not a benchm
     const options=parseArguments([process.execPath,output,'fixture-only','synthetic runner test','--adapter','softbuffer']);
     runPilot(options,[binary]);
     const data=JSON.parse(readFileSync(output,'utf8'));
-    assert.equal(data.adapter,'softbuffer'); assert.equal(data.runs.length,3); assert.ok(data.runs.every(x=>x.valid)); assert.ok(data.runs.every(x=>x.reported_backend?.renderer === "fixture"));
+    assert.equal(data.adapter,'softbuffer'); assert.equal(data.profile,'unverified'); assert.equal(data.runs.length,3); assert.ok(data.runs.every(x=>x.valid)); assert.ok(data.runs.every(x=>x.reported_backend?.renderer === "fixture"));
     assert.throws(()=>runPilot(options,[binary]), /Refusing to overwrite/);
   } finally {rmSync(dir,{recursive:true,force:true});}
 });
@@ -132,4 +132,11 @@ test('sample validity requires statistics consistent with recorded intervals',()
   const sample={schema:1,metric:'frame_callback_interval_ms',warmup_seconds:5,nominal_measure_seconds:10,samples:2,resized:false,sampled_seconds:10,mean_ms:5000,p50_ms:5000,p95_ms:5000,p99_ms:5000,max_ms:5000,width:900,height:500,intervals_ms:[5000,5000]};
   assert.equal(validSample(sample),true);
   for(const change of [{intervals_ms:[1,1]},{sampled_seconds:11},{mean_ms:1},{p50_ms:1},{p95_ms:1},{p99_ms:1},{max_ms:1}]) assert.equal(validSample({...sample,...change}),false);
+});
+
+test('profile is explicit and missing profile is unverified',()=>{
+ assert.equal(parseArguments(base).profile,'unverified');
+ assert.equal(parseArguments([...base,'--profile','debug']).profile,'debug');
+ assert.equal(parseArguments([...base,'--adapter','fyrox','--profile','release']).profile,'release');
+ for(const a of [[...base,'--profile','fast'],[...base,'--profile'],[...base,'--profile','debug','--profile','release']]) assert.throws(()=>parseArguments(a));
 });
