@@ -152,6 +152,8 @@ Windows passed Nannou's winner-message model regression; [the report](docs/packa
 
 Windows passed the bracket-lib active-restart regression and scripted replay; [the report](docs/packaging/BRACKET-ACTIVE-RESTART-WINDOWS.md) records input limits.
 
+Windows passed the shared non-pointer activation model test and rebuilt three web consumers; [the report](docs/packaging/WEB-NONPOINTER-ACTIVATION-WINDOWS.md) records browser and accessibility limits.
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.

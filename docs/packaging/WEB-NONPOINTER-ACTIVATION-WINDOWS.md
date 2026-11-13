@@ -1,0 +1,7 @@
+# Windows web non-pointer activation recheck
+
+At checkpoint `8981a8df8881ad8de367938862efab07117746f9`, Windows MSVC stable Rust 1.99.1 passed all 19 locked offline shared web controller tests, including `non_pointer_button_activation_moves_once_only_while_playing_and_clamps`. The tested shared source blob is `0133f3b28c43430e321a502debf0edb0331dfe48`; Yew, Leptos and Dioxus source blobs match [the Omarchy report](WEB-NONPOINTER-ACTIVATION-OMARCHY.md).
+
+Locked offline debug WebAssembly builds succeeded for the three web consumers (Dioxus with `--no-default-features --features web`); wasm-bindgen 0.2.130 generated web bindings. Browser-ready `_bg.wasm` SHA-256 values are Yew `8e7f78bd1c451bf245f6cd105172f1035370e3d1ef25d38a97a154bc9f095408`, Leptos `6b01b1f358dda7f94abbde58a7882b16efcc9491c0ae3db452c2e1c8a2b5c46c` and Dioxus `2da750c24f13d77539ab853b4ba460ec1735efc9ece889db58098d2f3e770e8f`. Cargo fell back to copying incremental files where hard-linking failed. Prior raw WASM outputs were copied to sibling workspace directory `web-activation-windows-20261113/prior` before reusing the existing target; new bindings remain alongside them.
+
+These are model and build checks. No Windows browser, pointer-versus-non-pointer discrimination, assistive technology, physical input, Dioxus desktop or release qualification is claimed; the required computer-use guidance was unavailable in this environment.
