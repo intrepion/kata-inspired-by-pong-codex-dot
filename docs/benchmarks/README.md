@@ -82,6 +82,8 @@ Verification: three sampler unit tests, nine core tests and six scenario tests
 passed; Macroquad release build and Node syntax check passed. This does not
 replace visual gameplay testing, packaging or installation tests.
 
+A fresh Windows Blue Engine held-input **debug** callback pilot has three valid samples; [results and limitations](BLUE-ENGINE-WINDOWS-HELD-DEBUG-PILOT.md).
+
 ## Prepare a public measurement copy
 
 The runner's raw local output can contain host identity, filesystem paths, environment details and process diagnostics. Keep that original local. Use the explicit allowlist sanitizer before committing evidence:
