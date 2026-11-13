@@ -14,6 +14,8 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
+Windows Piston contact-timing follow-up: seven adapter/clock tests and a fresh scripted replay pass; the paused app-owned frame was inspected. Normal input remains unverified. [Evidence](docs/WINDOWS-PISTON-CONTACT-TIMING.md).
+
 Windows Macroquad contact-timing follow-up: fresh scripted telemetry matches the model reference and the paused app-owned frame was inspected; normal input remains unverified. [Evidence](docs/WINDOWS-MACROQUAD-CONTACT-TIMING.md). SDL3's ordinary debug runtime warning remains open; a cross-platform profile workaround was evaluated but not adopted. [Diagnosis](docs/WINDOWS-SDL3-CONTACT-TIMING.md).
 
 Windows SDL3 contact-timing follow-up: two adapter tests and a fresh scripted replay pass; the paused app-owned frame was inspected. An opt-in MSVC build path selects the matching runtime and links without the original debug `LNK4098` warning; native input remains unverified. [Evidence](docs/WINDOWS-SDL3-CONTACT-TIMING.md).
