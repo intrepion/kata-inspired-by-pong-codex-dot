@@ -1,0 +1,18 @@
+diff --git a/scenarios/smoke-v1.txt b/scenarios/smoke-v1.txt
+index 832f17a..0913d56 100644
+--- a/scenarios/smoke-v1.txt
++++ b/scenarios/smoke-v1.txt
+@@ -1,11 +1,11 @@
+ # Pong portable scenario. Ticks are zero-based; actions precede that tick's step.
+ schema 1
+-id smoke-v1
++id ready-fixture
+ seed 42
+ step_hz 120
+ end_tick 1440
+ report_every 120
+-event 0 start
++event 240 start
+ event 360 pause
+ event 480 toggle_pause
+ event 1200 start
