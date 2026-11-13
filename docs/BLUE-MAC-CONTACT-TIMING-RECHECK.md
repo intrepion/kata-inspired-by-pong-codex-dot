@@ -11,3 +11,7 @@ The previously interrupted process was absent from the desktop app inventory and
 ## Full-match desktop check
 
 On a separate run of the same packaged binary (SHA-256 above), supported desktop automation pressed Enter at 0–0, then left the player paddle unattended. The visible score progressed through 2–3 and 3–5 to **3–7, Over**. Pressing R then showed **0–0, Playing**. The test app was closed. This checks an automated native match and post-match restart; it is not physical input or a scripted model replay.
+
+## Relocated archive check
+
+The local pilot archive (`pong-blue-engine-macos-arm64-pilot.tar.gz`, SHA-256 `d8b6bb4db470ccc0417680ab9cae18cace4005be6a48cb6fde01417eda5f5928`) was extracted into `/tmp/pong-blue-relocated-20261113`. Its executable matched the binary SHA-256 above. Supported desktop app selection opened the extracted bundle, and the process list confirmed its executable path in that relocated directory. Automated Enter started play, held W moved the paddle upward, and Space showed Paused at 0–1. Command-Q exited the app. This checks local archive extraction and automated interaction on the build machine, not downloaded/quarantined Gatekeeper behavior, notarization, clean-machine installation, physical input or a scripted replay. The archive retains its incomplete-pilot notice.
