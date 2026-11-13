@@ -22,7 +22,7 @@ Windows Miniquad pause-fix follow-up: 10 action/model tests and fresh scripted r
 
 Miniquad keypad Enter now shares the existing start/restart action; Windows and Mac action-boundary tests pass; Mac automated `KP_Enter` starts and resets, but its delivered key code, physical delivery and the separate Windows Unknown-key issue remain open. [Evidence](docs/MINIQUAD-KEYPAD-ENTER.md).
 
-Shared GTK/Slint/GPUI explicit-pause fix: ten model tests and Omarchy compilation checks pass; native event delivery and rebuilt packages remain pending. [Evidence](docs/GUI-EXPLICIT-PAUSE-INPUT-FIX.md).
+Shared GTK/Slint/GPUI explicit-pause fix: ten model tests and Omarchy compilation checks pass; GTK has a [refreshed package replay](docs/packaging/GTK-GUI-PAUSE-OMARCHY-PILOT.md). Native event delivery and Slint/GPUI package rechecks remain pending. [Fix evidence](docs/GUI-EXPLICIT-PAUSE-INPUT-FIX.md).
 
 Omarchy Miniquad explicit-pause fix: ten adapter tests pass, including stale held input and repeat suppression; native input and other-platform/package rechecks remain pending. [Evidence](docs/MINIQUAD-PAUSE-HELD-INPUT-FIX.md).
 
@@ -158,7 +158,7 @@ Details: [baseline frontends](docs/desktop-comparison.md), [extra engines](exper
 | Vulkan via ash | B / blocked: missing Vulkan loader/MoltenVK | B / I (simple clear-attachment renderer only) | Fresh `0cd6a1c` B, 6 frontend tests; relocated package replay and six app-owned PNGs, exact model match; physical input unverified ([details](docs/packaging/ASH-C77-OMARCHY-REPLAY.md)) |
 | Slint | `9195b63` cached debug B / automated full match and reset; shell replay timed out ([details](docs/SLINT-MAC-CONTACT-TIMING-RECHECK.md)) | B / I: start, scoring, pause/resume, reset | Fresh `9023be9` B, 8 shared model tests; relocated package replay and six component PNGs, exact model match; physical input unverified ([details](docs/packaging/SLINT-C77-OMARCHY-REPLAY.md)) |
 | GPUI | B / I: Enter start, held-W movement, scoring, Space pause | B / I; maximized rendering checked | Fresh `134f985` B, 1 geometry + 8 shared model tests; relocated state-only replay matches model; visual/input unverified ([details](docs/packaging/GPUI-C77-OMARCHY-REPLAY.md)) |
-| GTK4 | Blocked: native dependencies missing / U | U / U | Fresh `0870089` B, 1 frontend + 8 shared model tests; relocated package replay and six app-owned Cairo PNGs, exact model match; physical input unverified ([details](docs/packaging/GTK-C77-OMARCHY-REPLAY.md)) |
+| GTK4 | Blocked: native dependencies missing / U | U / U | `59957bb` B, 1 frontend + 10 shared model tests; relocated replay and six app-owned Cairo PNGs match model; physical input unverified ([details](docs/packaging/GTK-GUI-PAUSE-OMARCHY-PILOT.md)) |
 | Ratatui | B / pseudo-terminal checks; enhanced-terminal interaction unverified | B / blocked: direct launch has no targetable window; Windows Terminal access blocked by product policy | Fresh `c77bf3a` release B, 8 tests; relocated package scripted cell replay matches revised model; physical terminal input unverified ([details](docs/packaging/RATATUI-C77-OMARCHY-REPLAY.md)) |
 
 Details: [low-level clients](experiments/LOW-LEVEL.md), [GUI toolkits](experiments/GUI-TOOLKITS.md), [Ratatui](experiments/ratatui/README.md). GPUI's initial default Mac check required the separate Metal Toolchain; the runtime-shader path and later native worker results are reflected above.
