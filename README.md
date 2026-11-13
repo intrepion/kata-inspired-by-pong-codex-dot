@@ -909,3 +909,5 @@ ggez also accepts keypad Enter for start, resume and match-end restart; [Mac tes
 Piston now accepts keypad Enter as its existing Return action; [Omarchy](docs/packaging/PISTON-KEYPAD-ENTER-OMARCHY.md) and [Windows](docs/packaging/PISTON-KEYPAD-ENTER-WINDOWS-20261113.md) adapter tests and replays record the remaining native-input gap.
 
 Nannou now accepts keypad Enter with an independent focus-return gate; [Mac checks](docs/packaging/NANNOU-KEYPAD-ENTER-MAC-20261113.md) record their input limitations.
+
+Blue Engine now accepts keypad Enter with an independent focus-return gate; [Mac checks](docs/packaging/BLUE-KEYPAD-ENTER-MAC-20261113.md) record the physical-input gap.
