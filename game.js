@@ -288,7 +288,8 @@ if (typeof document !== 'undefined') {
         loop.reset();
         sync();
     });
-    pause.addEventListener('click', () => { if (windowFocused && !document.hidden) toggle(); });
+    pause.addEventListener('click', () => { if (windowFocused && !document.hidden)
+        toggle(); });
     let windowFocused = true;
     document.addEventListener('keydown', e => {
         if (demoRequested || !windowFocused || document.hidden)
