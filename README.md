@@ -811,3 +811,5 @@ SDL3 now ignores queued pause/restart actions while unfocused; [Omarchy evidence
 Pixels, raw wgpu, ash, softbuffer and ggez now ignore live keydowns while unfocused; [Omarchy evidence](docs/packaging/WINDOWED-UNFOCUSED-ACTIONS-OMARCHY.md) records the regressions and runtime limits.
 
 Piston and Fyrox now ignore live keydowns after reported focus loss until focus returns; [Omarchy evidence](docs/packaging/PISTON-FYROX-UNFOCUSED-OMARCHY.md) documents tests and a Miniquad callback limitation.
+
+Miniquad gates reported focus loss on Linux while preserving its previous macOS and Windows callback behavior; [Omarchy evidence](docs/packaging/MINIQUAD-LINUX-FOCUS-OMARCHY.md) records callback limits and an incomplete-capture result.
