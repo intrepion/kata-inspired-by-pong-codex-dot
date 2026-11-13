@@ -877,3 +877,5 @@ Blue Engine now suppresses action keys held on the first focused sample until re
 Ratatui now ignores queued key actions between terminal focus loss and focus gain; [Omarchy enhanced and fallback PTY checks](docs/packaging/RATATUI-FOCUS-ACTIONS-PTY-OMARCHY.md) record the runtime evidence and limitations.
 
 The original browser game now ignores queued keydowns after window blur or while hidden; [Omarchy DOM and localhost Chrome checks](docs/packaging/ORIGINAL-WEB-FOCUS-ACTIONS-OMARCHY.md) record the remaining real-focus verification.
+
+Ratatui's Ctrl+C exit and terminal restoration sequences were checked in enhanced and fallback PTYs; [Omarchy evidence](docs/packaging/RATATUI-CTRL-C-PTY-OMARCHY.md) records the scope.
