@@ -1,0 +1,22 @@
+{
+  "scope": "Keyword screen of all-platform Rust COPYRIGHT-library.html; not a selected target or linked-binary inventory",
+  "copyright_library_sha256": "5647be074c8edf7339fd863055923a8fc80bc5610a8d4661ec3b767b9d392c27",
+  "matches": [
+    {
+      "entry": "fortanix-sgx-abi-0.6.1",
+      "declared_license": "MPL-2.0"
+    },
+    {
+      "entry": "r-efi-5.3.0",
+      "declared_license": "MIT OR Apache-2.0 OR LGPL-2.1-or-later"
+    },
+    {
+      "entry": "r-efi-6.0.0",
+      "declared_license": "MIT OR Apache-2.0 OR LGPL-2.1-or-later"
+    },
+    {
+      "entry": "r-efi-alloc-2.1.0",
+      "declared_license": "MIT OR Apache-2.0 OR LGPL-2.1-or-later"
+    }
+  ]
+}

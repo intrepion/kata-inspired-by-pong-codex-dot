@@ -1,5 +1,7 @@
 # Ratatui musl static provenance investigation
 
+**Follow-up:** the [distribution trace](RATATUI-MUSL-DISTRIBUTION-TRACE.md) verified installed target inputs against official tarballs and identified the Rust source LLVM submodule. Source-to-object and complete notice review remain open.
+
 2026-11-13, Omarchy ARM64. This investigates the [static musl experiment](RATATUI-MUSL-STATIC-OMARCHY.md), binary SHA-256 `e8fa5dea2c0a8724142dcb14ab639f67885507b10e5a59121234d7539bbdb1da`. It is evidence for further review, not policy clearance or a distribution approval. The linker-map rebuild matched that binary hash. Its map names 39 archives: 25 Cargo-target archives and 14 Rust-target-sysroot archives. These names are not necessarily every source component incorporated through LTO, generated code, native objects or compiler runtime.
 
 ## Cargo-built archives
