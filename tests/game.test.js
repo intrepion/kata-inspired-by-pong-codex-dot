@@ -105,8 +105,16 @@ test('browser handlers clear movement on pause and reject continuing touch drags
  vm.runInNewContext(fs.readFileSync(require('node:path').join(__dirname,'../game.js'),'utf8'),{document:doc,window:win,HTMLElement:Element,HTMLButtonElement:Button,HTMLCanvasElement:Canvas,URLSearchParams,location:{search:''},requestAnimationFrame:fn=>{nextFrame=fn;},console});
  const frame=t=>{const fn=nextFrame;fn(t);};
  const spaceOnStart=doc.emit('keydown',{key:' ',repeat:false,target:els.start});assert.equal(spaceOnStart.defaultPrevented,false);
+ doc.emit('keydown',{key:'w',repeat:false});
+ els.up.emit('pointerdown',{pointerId:101});
+ els.court.emit('pointerdown',{pointerType:'touch',pointerId:102});
+ els.start.emit('click'); frame(0); const readyStart=playerY;
+ doc.emit('keydown',{key:'w',repeat:true});
+ els.court.emit('pointermove',{pointerType:'touch',pointerId:102,buttons:1,clientY:450});
+ frame(20); assert.equal(playerY,readyStart,'Ready inputs and continuing drag must not arm');
+ doc.emit('keyup',{key:'w'}); els.up.emit('pointerup',{pointerId:101}); els.court.emit('pointerup',{pointerId:102});
  els.start.emit('click');frame(0);const statusWrites=els.status.textWrites;frame(0);assert.equal(els.status.textWrites,statusWrites,'unchanged live status must not be rewritten');doc.emit('keydown',{key:'w',repeat:false});frame(20);const moved=playerY;
- els.up.emit('pointerdown',{pointerId:3});const spaceOnPause=doc.emit('keydown',{key:' ',repeat:false,target:els.pause});assert.equal(spaceOnPause.defaultPrevented,false);assert.equal(els.pause.textContent,'Pause');els.pause.emit('click');els.start.emit('click');doc.emit('keydown',{key:'w',repeat:true});frame(40);frame(60);assert.equal(playerY,moved);
+ els.up.emit('pointerdown',{pointerId:3});const spaceOnPause=doc.emit('keydown',{key:' ',repeat:false,target:els.pause});assert.equal(spaceOnPause.defaultPrevented,false);assert.equal(els.pause.textContent,'Pause');els.pause.emit('click');doc.emit('keydown',{key:'s',repeat:false});els.down.emit('pointerdown',{pointerId:103});els.court.emit('pointerdown',{pointerType:'touch',pointerId:104});els.start.emit('click');doc.emit('keydown',{key:'w',repeat:true});doc.emit('keydown',{key:'s',repeat:true});els.court.emit('pointermove',{pointerType:'touch',pointerId:104,buttons:1,clientY:450});frame(40);frame(60);assert.equal(playerY,moved);doc.emit('keyup',{key:'s'});els.down.emit('pointerup',{pointerId:103});els.court.emit('pointerup',{pointerId:104});
  els.court.emit('pointerdown',{pointerType:'touch',pointerId:8});els.court.emit('pointerdown',{pointerType:'touch',pointerId:7});const beforeSecond=playerY;
  els.court.emit('pointermove',{pointerType:'touch',pointerId:7,buttons:1,clientY:100});frame(70);assert.equal(playerY,beforeSecond);els.court.emit('pointerup',{pointerId:7});
  els.court.emit('pointermove',{pointerType:'touch',pointerId:8,buttons:1,clientY:350});frame(80);const dragged=playerY;
