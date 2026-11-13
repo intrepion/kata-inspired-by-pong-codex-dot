@@ -900,6 +900,8 @@ Raw wgpu's court action prompts were rebuilt and captured on Omarchy; [evidence]
 
 Wgpu and Pixels now accept keypad Enter for start and restart; [Mac model and automated-window checks](docs/packaging/WINIT-KEYPAD-ENTER-MAC-20261113.md) describe the remaining physical-input gap.
 
+Raw wgpu also passed a [Windows keypad model and scripted replay check](docs/packaging/WGPU-KEYPAD-ENTER-WINDOWS-20261113.md); native keypad input and release qualification remain open.
+
 Pixels also passed a [Windows keypad model and scripted replay check](docs/packaging/PIXELS-KEYPAD-WINDOWS-20261113.md); native keypad input and release qualification remain open.
 
 A current Ratatui static-musl candidate passed relocated Omarchy PTY and replay checks; [evidence](docs/packaging/RATATUI-MUSL-CURRENT-OMARCHY.md) retains the unresolved static-component and license review.
