@@ -126,6 +126,8 @@ Mac Slint audit: tested binary contains Slint core/backend symbols; GPL-3 is one
 
 Mac ggez option-ext patch: Release tests and replay pass; a duplicate Unix-only test module was corrected and its isolated parser tests pass. [Evidence](docs/packaging/GGEZ-MAC-OPTION-EXT-RECHECK.md). Mac Nannou metadata screen found no restricted declarations in 435 packages; native/system review remains open. [Evidence](docs/packaging/NANNOU-MAC-LICENSE-SCREEN.md).
 
+Mac ggez asset audit: tested binaries embed Liberation Mono 1.04; exact font-license provenance and notice remain unresolved. [Evidence](docs/packaging/GGEZ-MAC-LIBERATION-FONT.md).
+
 Mac Fyrox Release license investigation: MPL-declared Symphonia code symbols are present in the tested executable; a second MPL-declared graph path lacks direct symbol confirmation. [Evidence](docs/packaging/FYROX-MAC-MPL-SCREEN.md).
 
 Mac Fyrox and Blue Engine held-pause follow-up: four tests each and sequential automated movement/pause/resume pass; native held-across-pause remains open. [Fyrox](docs/FYROX-HELD-PAUSE-FIX.md); [Blue Engine](docs/BLUE-HELD-PAUSE-FIX.md).
