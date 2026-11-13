@@ -63,7 +63,13 @@ fn movement_with_pause(
     movement.was_playing = playing;
     movement.axis(held, suppress)
 }
+fn live_input(game: &mut Game, movement: &mut MovementGate, focused: bool, held: [bool; 4], restart_pressed: bool, pause_pressed: bool, escape_pressed: bool) -> Option<(f32, bool)> {
+    if !focused { return None; }
+    if restart_pressed { restart(game, movement); }
+    Some((movement_with_pause(game, movement, held, pause_pressed), escape_pressed))
+}
 struct Model {
+    focused: bool,
     benchmarking: bool,
     benchmark_done: std::sync::atomic::AtomicBool,
     benchmark: std::sync::Mutex<Option<pong_benchmark::Frames>>,
@@ -85,9 +91,11 @@ fn model(app: &App) -> Model {
         .size(W as u32, H as u32)
         .title("Pong nannou")
         .view(view)
+        .focused(focused)
         .unfocused(unfocused)
         .build();
     Model {
+        focused: true,
         benchmarking,
         benchmark_done: std::sync::atomic::AtomicBool::new(false),
         benchmark: std::sync::Mutex::new(None),
@@ -105,11 +113,13 @@ fn lose_focus(game: &mut Game, movement: &mut MovementGate, accumulator: &mut f3
     *accumulator = 0.;
 }
 fn unfocused(_: &App, m: &mut Model) {
+    m.focused = false;
     if m.demo.is_some() || m.benchmarking {
         return;
     }
     lose_focus(&mut m.game, &mut m.movement, &mut m.accumulator);
 }
+fn focused(_: &App, m: &mut Model) { m.focused = true; }
 fn update(app: &App, m: &mut Model) {
     if let Some((path, since)) = &m.pending {
         let complete = std::fs::read(path)
@@ -149,23 +159,21 @@ fn update(app: &App, m: &mut Model) {
         return;
     }
     let k = app.keys();
-    if k.just_pressed(KeyCode::Enter) || k.just_pressed(KeyCode::KeyR) {
-        restart(&mut m.game, &mut m.movement);
-    }
-    if k.just_pressed(KeyCode::Escape) {
-        app.quit();
-    }
-    let axis = movement_with_pause(
+    let Some((axis, quit)) = live_input(
         &mut m.game,
         &mut m.movement,
+        m.focused,
         [
             k.pressed(KeyCode::ArrowUp),
             k.pressed(KeyCode::KeyW),
             k.pressed(KeyCode::ArrowDown),
             k.pressed(KeyCode::KeyS),
         ],
+        k.just_pressed(KeyCode::Enter) || k.just_pressed(KeyCode::KeyR),
         k.just_pressed(KeyCode::Space),
-    );
+        k.just_pressed(KeyCode::Escape),
+    ) else { m.accumulator = 0.; return; };
+    if quit { app.quit(); }
     m.accumulator += app.time_delta().min(0.1);
     while m.accumulator >= 1.0 / 120.0 {
         m.game.step(1.0 / 120.0, axis);
@@ -233,6 +241,18 @@ fn view(app: &App, m: &Model) {
 #[cfg(test)]
 mod movement_tests {
     use super::*;
+    #[test]
+    fn unfocused_poll_cannot_resume_restart_or_quit() {
+        let mut game = Game::new(42); game.start(); game.scores = [3, 2]; game.pause();
+        let mut gate = MovementGate::default();
+        for (restart, pause, escape) in [(true,false,false), (false,true,false), (false,false,true)] {
+            assert!(live_input(&mut game, &mut gate, false, [true,false,false,false], restart, pause, escape).is_none());
+            assert_eq!(game.state, State::Paused); assert_eq!(game.scores, [3,2]);
+        }
+        assert!(live_input(&mut game, &mut gate, true, [false;4], false, true, false).is_some());
+        assert_eq!(game.state, State::Playing);
+        assert!(live_input(&mut game, &mut gate, true, [false;4], false, false, true).unwrap().1);
+    }
     #[test]
     fn ready_prompt_clears_after_start_and_stays_hidden_on_pause_or_over() {
         let mut game = Game::new(42);
