@@ -35,6 +35,14 @@ fn winner_message(game: &Game) -> Option<&'static str> {
         "MATCH OVER - ENTER OR R TO RESTART"
     })
 }
+fn court_message(game: &Game) -> Option<&'static str> {
+    match game.state {
+        State::Ready => Some("READY - SPACE OR ENTER TO START"),
+        State::Paused => Some("PAUSED - SPACE TO RESUME"),
+        State::Over => winner_message(game),
+        State::Playing => None,
+    }
+}
 
 #[derive(Default)]
 struct MovementGate {
@@ -186,12 +194,18 @@ fn main() {
             (32.0 * s).max(10.0) as i32,
             Color::WHITE,
         );
-        if let Some(message) = winner_message(&game) {
+        if let Some(message) = court_message(&game) {
+            let font_size = (24.0 * s).max(1.0) as i32;
+            let width = d.measure_text(message, font_size);
+            let x = (ox + W * s / 2.0 - width as f32 / 2.0) as i32;
+            let y = (oy + 235.0 * s) as i32;
+            let padding = (8.0 * s).max(1.0) as i32;
+            d.draw_rectangle(x - padding, y - padding, width + 2 * padding, font_size + 2 * padding, Color::new(6, 10, 23, 255));
             d.draw_text(
                 message,
-                (ox + 230.0 * s) as i32,
-                (oy + 235.0 * s) as i32,
-                (24.0 * s).max(10.0) as i32,
+                x,
+                y,
+                font_size,
                 Color::WHITE,
             );
         }
@@ -250,6 +264,18 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn court_prompt_tracks_nonplaying_states_and_winner() {
+        let mut game = Game::new(42);
+        assert_eq!(court_message(&game), Some("READY - SPACE OR ENTER TO START"));
+        game.start(); assert_eq!(court_message(&game), None);
+        game.pause(); assert_eq!(court_message(&game), Some("PAUSED - SPACE TO RESUME"));
+        game.state = State::Over;
+        game.scores = [7, 2]; assert_eq!(court_message(&game), Some("YOU WIN - ENTER OR R TO RESTART"));
+        game.scores = [2, 7]; assert_eq!(court_message(&game), Some("CPU WINS - ENTER OR R TO RESTART"));
+        game.scores = [7, 7]; assert_eq!(court_message(&game), Some("MATCH OVER - ENTER OR R TO RESTART"));
+        game.start(); assert_eq!(court_message(&game), None);
+    }
     #[test]
     fn focus_loss_then_immediate_resume_suppresses_held_key() {
         let mut game = Game::new(42);
