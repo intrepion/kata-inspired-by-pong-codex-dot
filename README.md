@@ -60,7 +60,7 @@ Windows raylib held-pause debug pilot: relocated replay matched 13 records and c
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
-Mac Ratatui repeat-fix follow-up: ten tests and exact TestBackend replay with six cell exports pass; enhanced terminal and physical input remain open. [Evidence](docs/RATATUI-HELD-REPEAT-FIX.md).
+Mac Ratatui repeat-fix follow-up: ten debug tests, TestBackend replay and synthetic enhanced/fallback PTY checks pass; real-terminal and physical input remain open. [Model evidence](docs/RATATUI-HELD-REPEAT-FIX.md); [PTY checks](docs/packaging/RATATUI-PTY-MAC-HELD.md).
 
 Mac Fyrox and Blue Engine held-pause follow-up: four tests each and sequential automated movement/pause/resume pass; native held-across-pause remains open. [Fyrox](docs/FYROX-HELD-PAUSE-FIX.md); [Blue Engine](docs/BLUE-HELD-PAUSE-FIX.md).
 
@@ -77,6 +77,8 @@ Mac Nannou pause-fix follow-up: five release tests and sequential automated move
 Mac Godot pause-prompt fix: headless integration smoke passes and automated desktop pause/resume shows and clears the unobscured prompt. [Evidence](docs/GODOT-MAC-CONTACT-TIMING-ATTEMPT.md).
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
+
+Omarchy Dioxus local-libxdo release pilot: locked release build, 13 controller tests and relocated model-matched replay pass; native input and distribution remain open. [Evidence](docs/packaging/DIOXUS-RELEASE-XDO-OMARCHY.md).
 
 Omarchy Dioxus local-libxdo debug pilot: a package-local launcher runs model-matched replay without a pre-set library path; other dependencies, native input and distribution remain open. [Evidence](docs/packaging/DIOXUS-LOCAL-XDO-OMARCHY.md).
 
@@ -545,7 +547,7 @@ These are local archive extraction, relocated runtime and removal checks, **not 
 | Miniquad | [Local replay/capture pilot](docs/packaging/MINIQUAD-MAC-PILOT.md) | [Local ZIP/replay pilot](docs/packaging/MINIQUAD-WINDOWS-PILOT.md) | [Four-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH.md) |
 | pixels, raw wgpu | [Local replay/capture pilots](docs/packaging/MAC-PIXELS-WGPU-PILOT.md) | [Local ZIP/replay pilots](docs/packaging/WINDOWS-PORTABLE-BATCH.md) | [Four-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH.md) |
 | Piston, ggez | [Piston](docs/packaging/PISTON-HELD-MAC-RELOCATED.md) and [ggez](docs/packaging/GGEZ-HELD-MAC-RELOCATED.md) held-fix relocated checks; [earlier pilots](docs/packaging/MAC-PISTON-GGEZ-PILOT.md) | [Local ZIP/replay pilot](docs/packaging/WINDOWS-PORTABLE-BATCH2.md) | [Six-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH2.md) |
-| Fyrox | [Corrected HUD replay passed; full cleanup incomplete](docs/FYROX-HUD-SCALE-FIX.md) | [Local ZIP/replay; generated state preserved](docs/packaging/WINDOWS-PORTABLE-BATCH3.md) | [Corrected HUD replay passed; full cleanup incomplete](docs/FYROX-HUD-SCALE-FIX.md) |
+| Fyrox | [Held-pause relocated replay and desktop smoke](docs/packaging/FYROX-HELD-MAC-RELOCATED.md); [earlier corrected HUD check](docs/FYROX-HUD-SCALE-FIX.md) | [Local ZIP/replay; generated state preserved](docs/packaging/WINDOWS-PORTABLE-BATCH3.md) | [Corrected HUD replay passed; full cleanup incomplete](docs/FYROX-HUD-SCALE-FIX.md) |
 | Nannou, bracket-lib, Bevy | [Nannou](docs/packaging/NANNOU-HELD-MAC-RELOCATED.md) and [bracket-lib](docs/packaging/BRACKET-HELD-MAC-RELOCATED.md) held-fix relocated checks; [earlier pilots](docs/packaging/MAC-FOUR-ENGINE-PILOT.md) | [Local ZIP/replay pilots; Bevy DX12](docs/packaging/WINDOWS-PORTABLE-BATCH3.md) | [Six-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH2.md) |
 | Blue Engine, softbuffer | [Blue held-fix relocated replay and desktop smoke](docs/packaging/BLUE-HELD-MAC-RELOCATED.md); [softbuffer held-fix relocated check](docs/packaging/SOFTBUFFER-HELD-MAC-RELOCATED.md); [earlier pilot](docs/packaging/MAC-SOFTBUFFER-BLUE-PILOT.md) | [Blue state-only](docs/packaging/WINDOWS-PORTABLE-BATCH3.md); [softbuffer replay/capture](docs/packaging/WINDOWS-PORTABLE-BATCH.md) | [Final two local pilots](docs/packaging/LINUX-PORTABLE-BATCH3.md); Blue native captures unsupported |
 | Ratatui | [Local debug archive/cell replay](docs/packaging/RATATUI-MAC-DEBUG-PILOT.md) | [Local ZIP/cell replay only](docs/packaging/RATATUI-WINDOWS-PILOT.md) | [Terminal local pilot](docs/packaging/RATATUI-LINUX-PILOT.md); cells + bounded PTY, not screenshots |

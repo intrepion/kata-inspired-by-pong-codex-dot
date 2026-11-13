@@ -1,0 +1,10 @@
+# Ratatui synthetic PTY checks on Mac
+
+2026-11-13, macOS ARM64. The corrected debug executable extracted from the [local debug package](RATATUI-MAC-DEBUG-PILOT.md) was exercised in a 100×30 pseudo-terminal using the repository's `scripts/verify-ratatui-enhanced-pty.py` harness. Its source was retrieved from checkpoint `0685585d1077d051ab52249612653b0db6495b45`; the local copy used here has SHA-256 `23c7f668b691fd8ab2617f7c7f10e048e6b2bd0dfd07b2979d2e21fa77144a4f`.
+
+The executable SHA-256 is `97ca210aa2923ea22327d27686813b16f3f92a15d2c4e0ad7eec5816e417cdae`, built from source `e0cd5d23092d37df59bfa4ab352b5236f03d0f22`. The prior ten debug tests and TestBackend replay are documented in [the Mac recheck](../RATATUI-HELD-REPEAT-FIX.md), not rerun here. The Ratatui main source, manifest and lockfile, core and scenario library sources matched the checkpoint above; this does not claim a new build at that checkpoint.
+
+- In enhanced mode, synthetic protocol events exercised Ready → Playing → Paused → Playing. W moved the paddle from top row 14 to 10; repeat after pause/resume left it at 10; release and fresh press moved it to 5. Synthetic focus loss and a PTY resize paused play and cleared movement. Q exited 0 and slave terminal attributes matched their original state.
+- In fallback mode, W latched upward movement, X stopped it, S latched downward movement, and pause/resume cleared movement. Q exited 0 and terminal attributes were restored. Observed paddle top rows were 14, 10, 7, 7, 10 and 10 at the harness checkpoints.
+
+Raw PTY streams are retained locally at `/tmp/pong-ratatui-mac-enhanced-pty-20261113-v1.raw` (SHA-256 `d0407d475fe302e9d8e87ee7dfc54978ef8b9c3073901f9950404f614b93790c`) and `/tmp/pong-ratatui-mac-fallback-pty-20261113-v1.raw` (SHA-256 `bbbb106d3179600c9426182b3539d40f38e94a24c6e1b17ca81d74ae202a68ea`). The harness emulates capability replies and injects protocol bytes, using a limited cell parser; it is not a real terminal emulator, screenshot, or physical-keyboard check. Release-profile Mac package, actual terminal protocol behavior, signing, dependency notices and distribution remain open.

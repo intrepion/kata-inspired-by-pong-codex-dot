@@ -10,12 +10,14 @@ test('rejects unrecognized dependency before writing output',{skip:!usable},t=>{
  const dir=mkdtempSync(join(tmpdir(),'pong-xdo-test-'));t.after(()=>rmSync(dir,{recursive:true,force:true}));
  const bad=join(dir,'bad'),out=join(dir,'output');writeFileSync(bad,'not the verified archive');
  assert.throws(()=>packageDioxus('/bin/true',bad,out,source),/Unrecognized xdotool archive/);assert.equal(existsSync(out),false);
+ assert.throws(()=>packageDioxus('/bin/true',bad,out,source,'unknown'),/Profile must be/);assert.equal(existsSync(out),false);
 });
 test('verified dependency archive creates a manifest and launcher',{skip:!usable||!existsSync(dep)},t=>{
  const dir=mkdtempSync(join(tmpdir(),'pong-xdo-test-'));t.after(()=>rmSync(dir,{recursive:true,force:true}));const out=join(dir,'output');
- const result=packageDioxus('/bin/true',dep,out,source),stage=join(out,'pong-dioxus-local-xdo-linux-arm64');
+ const result=packageDioxus('/bin/true',dep,out,source,'release'),stage=join(out,'pong-dioxus-local-xdo-linux-arm64');
  assert.equal(spawnSync('sha256sum',['-c','SHA256SUMS'],{cwd:stage}).status,0);
  assert.equal(spawnSync(join(stage,'run-pong-dioxus'),[],{cwd:dir,env:{...process.env,LD_LIBRARY_PATH:''}}).status,0);
  assert.match(readFileSync(join(stage,'XDO-COPYRIGHT'),'utf8'),/Copyright/);
+ assert.match(readFileSync(join(stage,'README.txt'),'utf8'),/Linux release pilot/);
  assert.throws(()=>packageDioxus('/bin/true',dep,out,source),/already exists/);assert.ok(result.archive_sha256);
 });
