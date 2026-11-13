@@ -1,0 +1,18 @@
+# Omarchy runtime license-metadata inventory
+
+2026-11-13, Omarchy ARM64. Oliver requested avoiding LGPL where practical before desktop release decisions. This is a bounded inventory of existing local binaries and host package metadata, not a recommendation that a particular license applies to a particular file and not legal advice or release clearance. Nothing was published as a release.
+
+For eight previously tested binaries, `ldd` enumerated libraries resolved by this host's dynamic loader, including transitive dependencies. Each resolved path was mapped to its installed package with `pacman -Qoq`; package version and the package-level `Licenses` field came from `pacman -Q` and `pacman -Qi`. Dioxus used the [previously documented local libxdo path](DIOXUS-LOCAL-XDO-OMARCHY.md); it is not owned by an installed system package. The [sanitized inventory](omarchy-runtime-license-inventory-20261113.json) records the binary hashes, 54 package records whose metadata mentions GPL or LGPL, their version and full declared license field, and which library names were resolved for each binary. SHA-256 `9435ec2a297a71e6b1f92dc690f40d4f29aa85b6a63649de4a6413846e5707d1`.
+
+| Local binary | Examples of resolved host package metadata mentioning LGPL |
+| --- | --- |
+| GTK4 | `gtk4` 1:4.24.1-1 declares LGPL-2.1-or-later; `glib2` and `pango` also declare LGPL. |
+| Dioxus Desktop | `gtk3`, `glib2`, `pango` and `webkit2gtk-4.1` package metadata mention LGPL; the WebKit package lists multiple licenses. |
+| Fyrox | `alsa-lib` declares LGPL-2.1-or-later; the host `glibc` package lists GPL and LGPL. |
+| SDL3, ggez, Nannou, Blue Engine and Ratatui | The resolved host `glibc` package lists GPL and LGPL. This is not proof that other LGPL or GPL dependencies are absent. |
+
+The inventory also includes host package metadata mentioning GPL, such as `jbigkit` and `libcolord` in the GTK resolution, and `dbus` and `freetype2` with alternative license expressions. GCC runtime packages list the GCC exception in their package metadata. A package can contain multiple components or alternative licenses; its aggregate field cannot be assigned wholesale to each resolved shared object. These observations should guide component-level and distribution-specific review, not automatic exclusion or a claimed obligation. In particular, common host libraries may be used without being bundled, which is a different factual situation from shipping them; this record makes no legal determination about either case.
+
+A separate offline, locked GTK Cargo metadata scan filtered for `aarch64-unknown-linux-gnu` resolved 77 package nodes and found no declared GPL/LGPL expression among those Rust package records. That does **not** account for GTK's host libraries or prove their absence: the same GTK executable resolved `libgtk-4.so.1` from the host `gtk4` package. The GTK manifest and lockfile matched its tested build checkpoint `59957bbdd5f7dd9e61fa1367d522e809b557df62`; raw metadata and the sanitized Rust declaration list remain locally at `/home/intrepion/Documents/Codex/2026-11-12/task/pong-gtk-notice-evidence-20261113`.
+
+This is one host and one set of binaries. `ldd` does not inventory static code, runtime-loaded GPU/other modules, browser subprocess dependencies, other platforms or all bundled assets. Package license fields can be incomplete, stale or aggregate. The pinned `libxdo` library and copyright provenance are recorded separately; it was not treated as an installed-package license finding. Exact component licenses, alternatives, linked and bundled contents, notices, clean-machine behavior, signing and release review remain open. No binaries or user data were removed.
