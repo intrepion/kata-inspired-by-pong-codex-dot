@@ -839,3 +839,5 @@ Fyrox now names the winner in its in-window header; [Omarchy evidence](docs/pack
 GTK, Slint and GPUI now name the winner in their shared status; [Omarchy evidence](docs/packaging/GUI-WINNER-STATUS-OMARCHY.md) records model tests, consumer checks and a paused Slint snapshot.
 
 bracket-lib now names the winner in its in-window header; [Omarchy evidence](docs/packaging/BRACKET-WINNER-OMARCHY.md) records tests and a paused scripted capture.
+
+Ratatui now names the winner in its header; [Omarchy evidence](docs/packaging/RATATUI-WINNER-OMARCHY.md) records minimum-size TestBackend checks and a scripted cell export.

@@ -113,10 +113,18 @@ fn draw(f: &mut Frame, g: &Game, releases: bool) {
     } else {
         "LATCHED INPUT: ↑/W up · ↓/S down · X STOP · Space pause · R restart · Q quit"
     };
+    let status = match g.state {
+        State::Ready => "Ready",
+        State::Playing => "Playing",
+        State::Paused => "Paused",
+        State::Over if g.scores[0] > g.scores[1] => "YOU WIN",
+        State::Over if g.scores[1] > g.scores[0] => "CPU WINS",
+        State::Over => "Match over",
+    };
     f.render_widget(
         Paragraph::new(format!(
-            "PONG / RATATUI     YOU {} : {} CPU     {:?}\n{}",
-            g.scores[0], g.scores[1], g.state, help
+            "PONG / RATATUI     YOU {} : {} CPU     {}\n{}",
+            g.scores[0], g.scores[1], status, help
         )),
         Rect::new(a.x, a.y, a.width, 3),
     );
@@ -362,7 +370,12 @@ mod tests {
     }
     #[test]
     fn enhanced_repeat_cannot_restore_movement_after_pause() {
-        for (binding, axis) in [(KeyCode::Up, -1.), (KeyCode::Char('w'), -1.), (KeyCode::Down, 1.), (KeyCode::Char('s'), 1.)] {
+        for (binding, axis) in [
+            (KeyCode::Up, -1.),
+            (KeyCode::Char('w'), -1.),
+            (KeyCode::Down, 1.),
+            (KeyCode::Char('s'), 1.),
+        ] {
             let mut input = Input::default();
             input.key(key(binding, KeyEventKind::Press), true);
             input.clear();
@@ -414,6 +427,30 @@ mod tests {
 #[cfg(test)]
 mod scripted_tests {
     use super::*;
+    #[test]
+    fn match_winner_is_visible_at_minimum_terminal_width() {
+        for (scores, x, vx, expected) in [
+            ([6, 2], W + BALL - 1., 350., "YOU WIN"),
+            ([2, 6], -BALL + 1., -350., "CPU WINS"),
+        ] {
+            let mut game = Game::new(42);
+            game.start();
+            game.scores = scores;
+            game.serve = 0.;
+            game.ball.x = x;
+            game.ball.y = H / 2.;
+            game.ball.vx = vx;
+            game.ball.vy = 0.;
+            game.step(0.02, 0.);
+            assert_eq!(game.state, State::Over);
+            let mut term = Terminal::new(ratatui::backend::TestBackend::new(50, 18)).unwrap();
+            term.draw(|f| draw(f, &game, true)).unwrap();
+            assert!(cell_text(term.backend().buffer()).contains(expected));
+            game.start();
+            term.draw(|f| draw(f, &game, true)).unwrap();
+            assert!(!cell_text(term.backend().buffer()).contains(expected));
+        }
+    }
     #[test]
     fn exported_cells_preserve_rendered_symbols_and_styles() {
         let mut term = Terminal::new(ratatui::backend::TestBackend::new(100, 30)).unwrap();
