@@ -92,6 +92,8 @@ Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequent
 
 Dioxus local-libxdo launcher now rejects package paths containing loader separators; relocated release replay still passes. [Evidence](docs/packaging/DIOXUS-LIBRARY-PATH-SEPARATOR-FIX.md).
 
+Omarchy Ratatui overlapping-key PTY: synthetic opposing and alias key releases behave as expected; physical terminal input remains open. [Evidence](docs/packaging/RATATUI-OVERLAP-PTY-OMARCHY.md).
+
 Omarchy runtime license inventory: GTK, Dioxus and other sampled binaries resolve host packages whose metadata mentions LGPL/GPL; exact component and distribution review remains open. [Evidence](docs/packaging/OMARCHY-RUNTIME-LICENSE-INVENTORY.md).
 
 Omarchy Dioxus local-libxdo release pilot: locked release build, 13 controller tests and relocated model-matched replay pass; native input and distribution remain open. [Evidence](docs/packaging/DIOXUS-RELEASE-XDO-OMARCHY.md).
