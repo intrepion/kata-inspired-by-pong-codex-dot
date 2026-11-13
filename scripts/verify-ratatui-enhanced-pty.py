@@ -81,9 +81,13 @@ try:
   send(b' '); state('Paused'); paused=paddle()
   send(b' '); state('Playing'); pump(.2)
   assert paddle() == paused, (paused,paddle())
+  send(b'\x1b[O'); state('Paused')
+  send(b' '); state('Paused'); send(b'r'); state('Paused')
+  send(b'q'); state('Paused'); assert p.poll() is None, 'unfocused Q exited'
+  send(b'\x1b[I'); state('Paused'); send(b' '); state('Playing')
   send(b'q'); assert p.wait(timeout=2)==0
   assert termios.tcgetattr(s)==before, 'terminal attributes not restored'
-  print('PASS fallback: W latches up; X stops; S latches down; pause/resume clears movement; Q exits; termios restored')
+  print('PASS fallback: W latches up; X stops; S latches down; pause clears movement; focus loss ignores Space/R/Q until focus gain; Q exits; termios restored')
   print('player paddle top rows:',initial[0][0],moving[0][0],latched[0][0],stopped[0][0],down[0][0],paused[0][0])
  elif overlap:
   assert query and 'Hold' in ''.join(screen[1]), 'enhanced keyboard path unavailable'
@@ -128,6 +132,11 @@ try:
   # Inject the terminal focus-loss sequence while down is held.
   send(b'\x1b[115;1:1u',.17); before_focus=paddle()
   send(b'\x1b[O'); state('Paused'); focus_paused=paddle()
+  # Queued action bytes after focus loss must not resume, restart or quit.
+  send(b'\x1b[32;1:1u'); state('Paused')
+  send(b'\x1b[114;1:1u'); state('Paused')
+  send(b'\x1b[113;1:1u'); state('Paused'); assert p.poll() is None, 'unfocused Q exited'
+  send(b'\x1b[I'); state('Paused')
   send(b'\x1b[32;1:1u'); state('Playing'); pump(.2)
   assert paddle() == focus_paused, (focus_paused,paddle())
   # Re-arm movement before resize, then confirm it remains cleared on resume.
@@ -141,7 +150,7 @@ try:
   os.kill(p.pid,signal.SIGWINCH); pump(.3); state('Paused')
   send(b'\x1b[32;1:1u'); state('Playing'); resized=paddle(); pump(.2)
   assert paddle() == resized, (resized,paddle())
-  print('PASS synthetic focus loss and PTY resize paused play and cleared movement')
+  print('PASS synthetic focus loss ignored Space/R/Q until focus gain; PTY resize paused play and cleared movement')
   send(b'\x1b[113;1:1u'); assert p.wait(timeout=2)==0
   assert termios.tcgetattr(s)==before, 'terminal attributes not restored'
   print('PASS enhanced protocol; Ready/Paused presses and repeats ignored; ready -> playing -> paused -> playing; W press moved; held repeat after pause stayed stopped; fresh press moved; release stopped; Q exited; termios restored')

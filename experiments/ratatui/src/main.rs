@@ -251,6 +251,7 @@ fn main() -> io::Result<()> {
     term.hide_cursor()?;
     let mut g = Game::new(42);
     let mut input = Input::default();
+    let mut focused = true;
     let mut prev = Instant::now();
     let mut acc = 0.;
     let dt = 1. / 120.;
@@ -261,7 +262,7 @@ fn main() -> io::Result<()> {
                 break;
             }
             match event::read()? {
-                Event::Key(k) => {
+                Event::Key(k) if focused => {
                     if k.kind == KeyEventKind::Press {
                         match action_key(k.code) {
                             KeyCode::Esc | KeyCode::Char('q') => break 'game,
@@ -289,7 +290,14 @@ fn main() -> io::Result<()> {
                         input.key(k, releases);
                     }
                 }
-                Event::FocusLost | Event::Resize(_, _) => {
+                Event::FocusLost => {
+                    focused = false;
+                    g.pause();
+                    input.clear();
+                    acc = 0.;
+                }
+                Event::FocusGained => focused = true,
+                Event::Resize(_, _) => {
                     g.pause();
                     input.clear();
                     acc = 0.;

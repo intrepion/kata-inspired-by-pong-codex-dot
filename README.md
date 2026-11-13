@@ -873,3 +873,5 @@ Nannou now suppresses action keys held on the first focused sample until release
 The shared low-level renderer labels the player and CPU scores in court; [Windows SDL3 evidence](docs/packaging/LOWLEVEL-SCORE-LABELS-WINDOWS-20261113.md) records the test and capture limits.
 
 Blue Engine now suppresses action keys held on the first focused sample until release; [Omarchy evidence](docs/packaging/BLUE-FOCUS-HELD-ACTIONS-OMARCHY.md) records the test scope and first-sample tradeoff.
+
+Ratatui now ignores queued key actions between terminal focus loss and focus gain; [Omarchy enhanced and fallback PTY checks](docs/packaging/RATATUI-FOCUS-ACTIONS-PTY-OMARCHY.md) record the runtime evidence and limitations.
