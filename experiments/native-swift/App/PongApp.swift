@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 import PongCore
 @main struct PongApp: App { var body: some Scene { WindowGroup { PongView() } } }
 struct PongView: View {

@@ -22,7 +22,7 @@ Windows Leptos and Dioxus release WASM: localhost Chrome first-click Pause and i
 
 Windows-built Yew release static ZIP: extracted hashes, localhost Chrome Start/Pause/Resume and SVG icon fetch pass; dependency notices and distribution remain open. [Evidence](docs/packaging/YEW-FOCUS-WINDOWS-STATIC-PILOT.md).
 
-Swift iOS versioned Release simulator smoke and unsigned generic device build pass; device run, signing and distribution remain open. [Evidence](docs/SWIFT-HELD-TOUCH-PAUSE-FIX.md).
+Swift iOS versioned Release simulator smoke and unsigned generic device build pass; explicit Combine import clears its prior warning. Device run, signing and distribution remain open. [Evidence](docs/SWIFT-HELD-TOUCH-PAUSE-FIX.md).
 
 Windows Miniquad held-input release ZIP: ten tests, local extraction and model-matched relocated replay pass; actual key delivery and distribution remain open. [Evidence](docs/packaging/MINIQUAD-HELD-WINDOWS-RELEASE-PILOT.md).
 

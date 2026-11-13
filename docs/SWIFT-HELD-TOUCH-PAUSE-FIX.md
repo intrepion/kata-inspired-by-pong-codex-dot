@@ -41,3 +41,7 @@ On iPhone 16 Pro / iOS 18.4, the versioned project passed the existing `testStar
 ## Unsigned generic device build
 
 The versioned Swift project also passed `xcodebuild -jobs 1` for a generic iOS device in Release configuration with `CODE_SIGNING_ALLOWED=NO`. The resulting `Release-iphoneos/PongNativeSwift.app` declares `iPhoneOS`, short version `0.1.0`, build `1`, and contains an arm64 Mach-O executable with SHA-256 `d8d8987574140c91c332f100a130593fda5dd3365d3db35edeadef24874a2cb7`. `codesign -dv` reported the app is not signed. The existing SwiftUI/Combine warning appeared. This is an unsigned build-only check, not an archive, install, device run, signing or distribution qualification. No signing credentials were used and no device was modified.
+
+## Explicit Combine import
+
+`PongApp.swift` now imports Combine explicitly for `Timer.publish(...).autoconnect()`. An isolated unsigned Release generic iOS device build succeeded and its log contained no previous `Autoconnect`/Combine-not-imported warning. The arm64 executable SHA-256 was `3c29f105b3d439af2af331280d335ce056ced4ac154a4249bbdf484f0fe96ae1`, with version `0.1.0` and build `1`. The build still reported deprecated `onChange` usage, an interface-orientation warning, App Intents metadata extraction being skipped, and stale paths from the copied build cache. This is a build-only warning fix; the resulting device binary was not installed or run, and signing, icons, device behavior and distribution remain open. Prior artifacts were preserved. Build log: `/tmp/pong-swift-combine-device-build.log`.
