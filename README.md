@@ -899,3 +899,5 @@ Raw wgpu's Mac candidate also passed a bounded [automated movement and pause che
 Raw wgpu's court action prompts were rebuilt and captured on Omarchy; [evidence](docs/packaging/WGPU-ACTION-PROMPTS-OMARCHY.md) records the paused render and remaining checks.
 
 Wgpu and Pixels now accept keypad Enter for start and restart; [Mac model and automated-window checks](docs/packaging/WINIT-KEYPAD-ENTER-MAC-20261113.md) describe the remaining physical-input gap.
+
+Pixels also passed a [Windows keypad model and scripted replay check](docs/packaging/PIXELS-KEYPAD-WINDOWS-20261113.md); native keypad input and release qualification remain open.
