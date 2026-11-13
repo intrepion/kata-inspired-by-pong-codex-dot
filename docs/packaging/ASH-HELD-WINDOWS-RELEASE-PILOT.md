@@ -1,0 +1,11 @@
+# Vulkan/ash Windows held-input release portable pilot
+
+At checkpoint `9ee5688219443ab8c21e5b919a808ce8e03f8b3b`, including held-input pause fix `81a8667`, the ash adapter was built offline and locked for Windows MSVC release with Rust 1.99.1. All eight optimized action/model and renderer tests passed. Source blob `cdea89cffee622cda2a6b7b68c04fd11b8d12d6a`; executable SHA-256 `4c56481e25096043a80a6f65e23db206a1b84c0477562d1bb60c048c9d958b16`.
+
+A fresh Windows-filtered locked Cargo metadata inventory using the corrected notice scanner found 36 resolved packages and 69 conventional notice files, with no package flagged missing. The bundle SHA-256 was `53dd6b60bc9eaeb97dee46a97fd5ced3aa6c0bb27ca2a22d10ae6847218d5d71`; its index SHA-256 `53d14ff703fd084ec870384d7eac6f18a6152274af0a4b6aa237f43d8cf4ebcd`. This resolved graph can include build or optional packages; it is not exact binary attribution, complete notice review or legal clearance.
+
+The new unsigned 405,283-byte local ZIP SHA-256 is `7557ab9f806eb19dd150ff8dfa837c9431d77786185e913237e035fd353126c1`. It contains the executable, root license, notice text, index, incomplete-pilot note and SHA-256 manifest. Extraction to a separate path containing a space preserved all five payload hashes; manifest SHA-256 `593132ac87802f53d1a9ae35258bad3fa4b5b97b6e80016ff53755faeb243c06`. The index's notice-text digest matched.
+
+The relocated executable exited 0; all 13 scripted telemetry lines matched `../evidence/rust-core-contact-timing-model-20261112.jsonl` through finished tick 1440. Stderr reported Vulkan device `Intel(R) UHD Graphics 630`; no other stderr output occurred. Six app-owned PNGs were exported. The inspected tick-480 image shows the court, score, paddles, ball and pause marker. The extracted package retained only its six staged files. Archive, extraction, raw logs and captures remain in task workspace `ash-held-release-package-20261113`; notice metadata and bundle remain in `ash-windows-held-notices-20261113`. Prior packages and binaries are preserved.
+
+This is same-host portable extraction and scripted rendering, not a desktop screenshot or actual OS-key delivery. Physical input, accessibility, full match, focus/resize, clean-machine installation, Vulkan loader/driver dependencies, signing, notice completeness and release distribution remain open.

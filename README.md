@@ -32,6 +32,8 @@ Windows Softbuffer held-input release ZIP: six tests, local extraction and model
 
 Windows Piston held-input release ZIP: nine tests, local extraction and model-matched relocated replay pass; ten notice flags and native input remain open. [Evidence](docs/packaging/PISTON-HELD-WINDOWS-RELEASE-PILOT.md).
 
+Windows ash held-input release ZIP: eight tests, local extraction and model-matched relocated replay pass; native input and distribution remain open. [Evidence](docs/packaging/ASH-HELD-WINDOWS-RELEASE-PILOT.md).
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
