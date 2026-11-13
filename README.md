@@ -52,6 +52,8 @@ Notice builder now rejects malformed platform options instead of silently defaul
 
 Windows PE import inspection found a direct VCRUNTIME140.dll dependency in the ggez and Nannou release pilots and raylib debug pilot; [clean-machine runtime availability remains unverified](docs/packaging/WINDOWS-PE-IMPORTS-PILOTS.md).
 
+Windows dependency discovery found Slint GPL-or-alternative declarations and an SDL_mixer bundled LGPL notice requiring review; [scope and feature limits](docs/packaging/WINDOWS-COPYLEFT-DISCOVERY.md).
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
