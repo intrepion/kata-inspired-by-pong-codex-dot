@@ -16,6 +16,14 @@ use fyrox::{
     plugin::{error::GameResult, Plugin, PluginContext},
 };
 use pong_core::*;
+fn status_label(game: &Game) -> &'static str {
+    match game.state {
+        State::Ready => "Ready", State::Playing => "Playing", State::Paused => "Paused",
+        State::Over if game.scores[0] > game.scores[1] => "YOU WIN",
+        State::Over if game.scores[1] > game.scores[0] => "CPU WINS",
+        State::Over => "Match over",
+    }
+}
 #[derive(Visit, Reflect)]
 #[reflect(non_cloneable)]
 struct App {
@@ -350,6 +358,19 @@ mod input_tests {
         }
     }
     use super::*;
+    #[test]
+    fn status_names_winner_and_clears_on_restart() {
+        let mut game = Game::new(42);
+        assert_eq!(status_label(&game), "Ready");
+        game.start(); assert_eq!(status_label(&game), "Playing");
+        game.pause(); assert_eq!(status_label(&game), "Paused");
+        for (scores, x, vx, expected) in [([6, 2], W + BALL - 1., 350., "YOU WIN"), ([2, 6], -BALL + 1., -350., "CPU WINS")] {
+            game.start(); game.scores = scores; game.serve = 0.; game.ball.x = x; game.ball.y = H / 2.; game.ball.vx = vx; game.ball.vy = 0.;
+            game.step(0.02, 0.);
+            assert_eq!(status_label(&game), expected);
+            game.start(); assert_eq!(status_label(&game), "Playing");
+        }
+    }
     #[test]
     fn unfocused_key_actions_do_not_resume_or_restart() {
         let mut app = App::default(); app.game.start(); app.game.scores = [3, 2]; app.game.pause();

@@ -833,3 +833,5 @@ Pixels now draws the score inside the court, independent of the window title; [O
 Pixels now shows Ready, Paused and winner messages in the court; [Omarchy evidence](docs/packaging/PIXELS-COURT-STATES-OMARCHY.md) distinguishes the app replay from controlled framebuffer fixtures.
 
 Raw wgpu now shows Ready, Paused and winner messages inside the court; [Omarchy evidence](docs/packaging/WGPU-COURT-STATES-OMARCHY.md) records state mapping and a paused app capture.
+
+Fyrox now names the winner in its in-window header; [Omarchy evidence](docs/packaging/FYROX-WINNER-OMARCHY.md) records state tests and a paused scripted capture.
