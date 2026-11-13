@@ -125,3 +125,9 @@ test('malformed backend invalidates an otherwise complete sample',()=>{
     assert.ok(data.runs.every(r=>!r.valid && r.parse_errors.backend && r.sample.samples===2));
   } finally {rmSync(dir,{recursive:true,force:true});}
 });
+
+test('sample validity requires statistics consistent with recorded intervals',()=>{
+  const sample={schema:1,metric:'frame_callback_interval_ms',warmup_seconds:5,nominal_measure_seconds:10,samples:2,resized:false,sampled_seconds:10,mean_ms:5000,p50_ms:5000,p95_ms:5000,p99_ms:5000,max_ms:5000,width:900,height:500,intervals_ms:[5000,5000]};
+  assert.equal(validSample(sample),true);
+  for(const change of [{intervals_ms:[1,1]},{sampled_seconds:11},{mean_ms:1},{p50_ms:1},{p95_ms:1},{p99_ms:1},{max_ms:1}]) assert.equal(validSample({...sample,...change}),false);
+});

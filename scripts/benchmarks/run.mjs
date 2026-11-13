@@ -7,12 +7,20 @@ import {parseArguments} from './adapters.mjs';
 import {pathToFileURL} from 'node:url';
 export function validSample(s) {
   const timings=['mean_ms','p50_ms','p95_ms','p99_ms','max_ms'];
-  return s?.schema===1 && s.metric==='frame_callback_interval_ms' &&
+  const shape=s?.schema===1 && s.metric==='frame_callback_interval_ms' &&
     s.warmup_seconds===5 && s.nominal_measure_seconds===10 && s.resized===false &&
     Number.isInteger(s.samples) && s.samples>0 && Number.isFinite(s.sampled_seconds) && s.sampled_seconds>=9.5 &&
     Number.isInteger(s.width) && s.width>0 && Number.isInteger(s.height) && s.height>0 &&
     timings.every(k=>Number.isFinite(s[k]) && s[k]>=0) && Array.isArray(s.intervals_ms) &&
     s.intervals_ms.length===s.samples && s.intervals_ms.every(n=>Number.isFinite(n) && n>=0);
+  if(!shape) return false;
+  const sorted=[...s.intervals_ms].sort((a,b)=>a-b);
+  const sum=sorted.reduce((a,b)=>a+b,0);
+  const close=(a,b)=>Math.abs(a-b)<=1e-9*Math.max(1,Math.abs(a),Math.abs(b));
+  const percentile=p=>sorted[Math.ceil(sorted.length*p)-1];
+  return Number.isFinite(sum) && close(s.sampled_seconds,sum/1000) && close(s.mean_ms,sum/s.samples) &&
+    close(s.p50_ms,percentile(0.5)) && close(s.p95_ms,percentile(0.95)) &&
+    close(s.p99_ms,percentile(0.99)) && close(s.max_ms,sorted.at(-1));
 }
 export function runPilot(options, binaryArguments = ['--benchmark']) {
   const {binary, output, backend, notes, adapter, presentation, renderer, pacing} = options;

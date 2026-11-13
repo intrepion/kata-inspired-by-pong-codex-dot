@@ -7,3 +7,7 @@ The adapter and public-report suites passed 23 tests on Windows; one signal-term
 ## Malformed output retention
 
 A separate Windows fixture reproduced a parser exception before any run record was saved when the sample or backend line contained malformed JSON. The runner now records the parse error and malformed raw line in the private output, marks the run invalid, and continues the bounded run sequence for successful processes. A malformed backend also invalidates an otherwise complete sample. The publication allowlist excludes these raw lines and diagnostics. Adapter and public-report suites passed 26 tests; one Windows signal test was skipped. These fixtures are not measurements.
+
+## Timing consistency
+
+A Windows regression showed that a structurally complete sample could claim ten measured seconds even when its intervals summed to two milliseconds. The runner now compares sampled duration, mean, nearest-rank p50/p95/p99 and maximum with the recorded intervals, using a small relative floating-point tolerance. This validates internal consistency, not the origin or presentation of the measurements. The adapter and public-report suites passed 27 tests; one Windows signal test was skipped. A read-only scan accepted all 143 previously published valid samples. Fixtures are not benchmark measurements.
