@@ -1,0 +1,7 @@
+# Nannou prompt backing: Mac native visual check (2026-11-13)
+
+The Nannou frontend source is Git blob `84e6bd80c66800e72b973d63f74073e7f36b3ada` from `4473d98975`, SHA-256 `b13d20ced94e7568f43346ce4ce4134bd96da693d3276f77d410b13a6950a1aa`. This is a mixed-source local build: its core file is Git blob `c16ad997a0b32f6ed03b1a7b1ac0269ea507ab6f` (SHA-256 `68727b4c14adf6e956564db09587f0ff2e5608bf8978bc113433817a3e0902a9`), not the core blob at that checkpoint. Its scenario and Nannou lockfile match the corresponding blobs at `4473d98975`. Thus it is not a build of that complete checkpoint.
+
+The cached offline locked release build produced executable SHA-256 `1cf770f649282e213c02ae27151b74efb321487634f6c639aa22f3e2b859e88e`; all 13 Nannou release tests passed. In a native Mac window the Ready and Paused prompts were clear, with the net masked behind their backing; the prompt disappeared during play. Desktop automation sent Return and Space, then resumed. The unattended match reached 3–7, displaying “CPU WINS - ENTER TO RESTART”; automated Return followed by Space showed Paused at 0–0.
+
+This checks visual presentation in one native window, with automated keys and an unattended match. It does not verify physical input, a player win, resizing, full current-checkpoint integration, or release qualification. The app bundle and prior binary remain under `/tmp/pong-nannou-backing-native-mac-20261113-v1/`.
