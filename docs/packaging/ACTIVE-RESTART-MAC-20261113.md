@@ -13,3 +13,7 @@ Each suite includes its new active-restart held-movement regression. Pixels and 
 ## ggez, Miniquad and Piston follow-up
 
 The source at checkpoint `99c6a657fa5e7536fc18f9fe68fadab52c3c26c8` was fetched into the same isolated overlay. Offline locked release-profile macOS tests passed for ggez (7), Miniquad (13) and Piston (12), each including `active_restart_clears_held_movement`. Tested main.rs SHA-256 values: ggez `f056be1a49c5c83961b3f8b469ca9d5d49bbd3f1a2b26b3d7f8bb2680eb84305`; Miniquad `24a4463440a27f82bc8e304cfe226adc8997014a812e6e0cba36fff8999c236c`; Piston `f64b6d5d9fb7c749439b9c00fa9f3fe33e4acb7f559eb5f2d020266f65966c5c`. These are adapter/model tests using the existing isolated cached target; no rebuilt frontend replay, actual held keys or physical input is claimed.
+
+## Fyrox, Nannou and raylib follow-up
+
+The source from checkpoint `39d3037e0a662ee59a74dedd25d84548a9fdcbd6` was fetched into the same isolated Mac overlay. Offline locked release-profile tests passed for Fyrox (7), Nannou (10) and raylib-rs (10), including each `active_restart_blocks_held_direction_until_release` regression. Tested main.rs SHA-256 values: Fyrox `025f40d4cd6331a9a2db73705e7752ba6bd7ad5a7ebd8bfbddefa08fb268db05`, Nannou `f65cdf7482ac1118e3dc5e2d37cbc5937c755c09b0288fa7ce8265c9ee129268`, raylib-rs `6c951aee26cf134dc09ad3479524be3abe7173976404682ef66b7aa9dc00f16f`. These are adapter/model tests, not graphical replay, operating-system key delivery or physical input.
