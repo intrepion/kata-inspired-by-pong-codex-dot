@@ -54,7 +54,16 @@ const accesskitFiles=(rev,dual)=>[
   ['accesskit-LICENSE.chromium.txt','845022e0c1db1abb41a6ba4cd3c4b674ec290f3359d9d3c78ae558d4c0ed9308',`https://github.com/AccessKit/accesskit/blob/${rev}/LICENSE.chromium`],
  ]:[]),
 ];
+const lyonFiles=rev=>[
+ ['lyon-LICENSE-APACHE.txt','216486f29671a4262efe32af6d84a75bef398127f8c5f369b5c8305983887a06',`https://github.com/nical/lyon/blob/${rev}/LICENSE-APACHE`],
+ ['lyon-LICENSE-MIT.txt','80f275e90d799911ed3830a7f242a2ef5a4ade2092fe0aa07bfb2d2cf2f2b95e',`https://github.com/nical/lyon/blob/${rev}/LICENSE-MIT`],
+];
 const upstreamRules=Object.freeze({
+ 'lyon@1.0.19':{rev:'56219c95c658d4f39de7b190d98e57d5773ba241',path:'crates/lyon',sourceHash:'afbe4e0241db801f1e26409d49da6142156a6ac539523d79b6839a177cc2ab14',files:lyonFiles('56219c95c658d4f39de7b190d98e57d5773ba241')},
+ 'lyon_path@1.0.19':{rev:'56219c95c658d4f39de7b190d98e57d5773ba241',path:'crates/path',sourceHash:'82b7348e3343de1a6cddd4b0f1f4e96cfaa118d77146921e6d6589abd790d02e',files:lyonFiles('56219c95c658d4f39de7b190d98e57d5773ba241')},
+ 'lyon_algorithms@1.0.22':{rev:'db98d26a1a90076a7a894262dcb51117eef643c8',path:'crates/algorithms',sourceHash:'752ee316c0b45a3ccd0fd4d839ee01705b77d4a5ba229390e610513f798dd9c1',files:lyonFiles('db98d26a1a90076a7a894262dcb51117eef643c8')},
+ 'lyon_geom@1.0.20':{rev:'db98d26a1a90076a7a894262dcb51117eef643c8',path:'crates/geom',sourceHash:'864bb699e6c303724518c79d9054ac74b137a7dbf698b052662f802c6d9b83f5',files:lyonFiles('db98d26a1a90076a7a894262dcb51117eef643c8')},
+ 'lyon_tessellation@1.0.23':{rev:'db98d26a1a90076a7a894262dcb51117eef643c8',path:'crates/tessellation',sourceHash:'da60b61c97a54d2eff932d22f9d87e86a4e8e90ba82e12da72ad03127058bb8b',files:lyonFiles('db98d26a1a90076a7a894262dcb51117eef643c8')},
  'accesskit@0.24.1':{rev:'a55d3e1a18bb9ef0e4bccc9083fb13c3e0ad8969',path:'common',sourceHash:'da99bad8c05747eee4c1cee0850488c4e61170f7f55cbf6b39e79cd4e4a1acbf',files:accesskitFiles('a55d3e1a18bb9ef0e4bccc9083fb13c3e0ad8969',true)},
  'accesskit_consumer@0.35.0':{rev:'1bbcf100942bac96c2c3a4a91cb67b0b20201a24',path:'consumer',sourceHash:'f7c619c1c2e4add099d4dece693b36be535262a1f696a188e6040ad6877e34bf',additionalSources:[['src/iterators.rs','22233da2a6c999c355b74edddbf80fc98c6f32bd52f55de2bacd523f013824a7'],['src/node.rs','7ca5b53a821529e168af71f63d064ef20308a3634e019c8ce4f1c965c2b483cf']],files:accesskitFiles('1bbcf100942bac96c2c3a4a91cb67b0b20201a24',true)},
  'accesskit_windows@0.32.1':{rev:'1bbcf100942bac96c2c3a4a91cb67b0b20201a24',path:'platforms/windows',sourceHash:'8a6f20ed5354c9834d88a59091c764f65aa31359f81c57386fe06e9d806e9396',additionalSources:[['src/node.rs','e2e558a8f7ce54cd7d5b66e95cd65f42f7ee2533ece0b7796a999348f6640e49']],files:accesskitFiles('1bbcf100942bac96c2c3a4a91cb67b0b20201a24',true)},
