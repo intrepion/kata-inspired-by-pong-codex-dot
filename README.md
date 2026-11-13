@@ -16,6 +16,8 @@ Windows Blue Engine notice discovery: 202 resolved packages indexed; exact upstr
 
 Windows Ratatui enhanced-repeat release ZIP: local extraction and 13-checkpoint relocated TestBackend replay pass with a reused notice inventory; terminal and distribution checks remain open. [Evidence](docs/packaging/RATATUI-REPEAT-WINDOWS-RELEASE-PILOT.md).
 
+Windows Yew release WASM: 13 controller tests and localhost Chrome first-click Pause and in-page focus-loss checks pass; physical input and native-wrapper focus remain open. [Evidence](docs/WINDOWS-YEW-FOCUS-PAUSE-RECHECK.md).
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
