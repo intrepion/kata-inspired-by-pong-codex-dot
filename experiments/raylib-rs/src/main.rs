@@ -15,6 +15,7 @@ fn viewport(width: f32, height: f32) -> (f32, f32, f32) {
 fn status_position(ox: f32, oy: f32, scale: f32) -> (f32, f32) {
     (ox + 15. * scale, oy + (H + 8.) * scale)
 }
+fn escape_requests_exit(focused: bool, pressed: bool) -> bool { focused && pressed }
 fn benchmark_args(args: &[String]) -> bool {
     let enabled = args.iter().any(|a| a == "--benchmark");
     assert!(
@@ -96,6 +97,7 @@ fn main() {
         .resizable()
         .build();
     window.set_target_fps(120);
+    window.set_exit_key(None);
     let mut game = Game::new(pong_scenario::SEED);
     let mut movement = MovementGate::default();
     let mut accumulator = 0.0;
@@ -109,6 +111,7 @@ fn main() {
     });
     while !window.window_should_close() {
         let focused = window.is_window_focused();
+        if escape_requests_exit(focused, window.is_key_pressed(KeyboardKey::KEY_ESCAPE)) { break; }
         if !focused && demo.is_none() && !benchmarking {
             lose_focus(&mut game, &mut movement, &mut accumulator);
         }
@@ -264,6 +267,12 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn escape_only_exits_while_focused() {
+        assert!(!escape_requests_exit(false, true));
+        assert!(escape_requests_exit(true, true));
+        assert!(!escape_requests_exit(true, false));
+    }
     #[test]
     fn court_prompt_tracks_nonplaying_states_and_winner() {
         let mut game = Game::new(42);
