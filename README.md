@@ -152,6 +152,8 @@ Omarchy Miniquad winning-score fixture: real scoring reached both game-over stat
 
 Omarchy Miniquad winner overlay: an isolated forced-state visual fixture rendered both winner messages; real game-over progression and physical input remain open. [Evidence](docs/packaging/MINIQUAD-WINNER-FIXTURE-OMARCHY.md).
 
+Omarchy ggez input fix: movement presses in Ready, Paused or Over no longer carry into play; adapter regression and rebuilt scripted replay pass. Native input and cross-platform rechecks remain open. [Evidence](docs/packaging/GGEZ-NONPLAYING-PRESS-OMARCHY.md).
+
 Omarchy Ratatui Ctrl+C: synthetic enhanced and fallback PTY checks exited cleanly and restored terminal settings for both musl and GNU binaries. [Evidence](docs/packaging/RATATUI-CTRL-C-PTY-OMARCHY.md).
 
 Omarchy Ratatui musl empty-environment PTY: enhanced and fallback flows passed from a read-only installation with absent HOME/XDG paths; clean-machine and physical input remain open. [Evidence](docs/packaging/RATATUI-MUSL-EMPTY-ENV-OMARCHY.md).

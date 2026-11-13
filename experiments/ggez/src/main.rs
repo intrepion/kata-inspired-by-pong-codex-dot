@@ -25,7 +25,7 @@ fn handle_key_down(game: &mut Game, held: &mut [bool; 4], key: KeyCode, repeated
     .into_iter()
     .enumerate()
     {
-        if key == k && !repeated {
+        if key == k && !repeated && game.state == State::Playing {
             held[i] = true;
         }
     }
@@ -252,6 +252,29 @@ mod control_tests {
         game.scores = [2, 4];
         handle_key_down(&mut game, &mut held, KeyCode::KeyR, false);
         assert_eq!(game.scores, [0, 0]);
+    }
+    #[test]
+    fn presses_while_paused_do_not_rearm_movement_on_resume() {
+        for state in [State::Ready, State::Paused, State::Over] {
+            for key in [
+                KeyCode::KeyW,
+                KeyCode::ArrowUp,
+                KeyCode::KeyS,
+                KeyCode::ArrowDown,
+            ] {
+                let mut game = Game::new(42);
+                game.state = state;
+                let mut held = [false; 4];
+                handle_key_down(&mut game, &mut held, key, false);
+                handle_key_down(&mut game, &mut held, KeyCode::Enter, false);
+                assert_eq!(game.state, State::Playing);
+                assert_eq!(held, [false; 4], "{state:?} {key:?}");
+                handle_key_down(&mut game, &mut held, key, true);
+                assert_eq!(held, [false; 4], "repeat must not rearm {key:?}");
+                handle_key_down(&mut game, &mut held, key, false);
+                assert!(held.iter().any(|value| *value), "fresh press arms {key:?}");
+            }
+        }
     }
     #[test]
     fn explicit_pause_clears_movement_until_fresh_press() {
