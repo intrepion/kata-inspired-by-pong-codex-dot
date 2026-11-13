@@ -5,4 +5,4 @@ body{padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-rig
 button{min-height:48px;min-width:64px;user-select:none;-webkit-user-select:none}
 #up,#down{min-width:80px;min-height:64px;font-size:24px}
 @media(max-width:600px){h1{font-size:24px}nav{gap:8px}small{display:block}canvas{box-sizing:border-box}}
-@media(max-height:500px) and (orientation:landscape){h1,main>p:last-child{display:none}main{max-width:760px}canvas{max-height:65vh;width:auto;max-width:100%;margin:auto}nav{margin-top:8px;justify-content:center}#up,#down{min-height:48px}p{margin:6px 0}}
+@media(max-height:500px) and (orientation:landscape){h1,main>p:last-child{display:none}main{max-width:760px}canvas{max-height:40vh;width:auto;max-width:100%;margin:auto}nav{margin-top:8px;justify-content:center}#up,#down{min-height:48px}p{margin:6px 0}}
