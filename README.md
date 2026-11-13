@@ -889,3 +889,5 @@ The Ratatui small-terminal score-preservation fix also passed a fallback-key PTY
 Raylib now suppresses action keys held on the first focused sample until release; [Omarchy evidence](docs/packaging/RAYLIB-FOCUS-HELD-ACTIONS-OMARCHY.md) records the first-sample tradeoff and remaining native checks.
 
 The current original browser game received a bounded live Chrome W/S and Space check on Omarchy; [evidence](docs/packaging/ORIGINAL-KEYBOARD-CHROME-OMARCHY.md) distinguishes automated keys from physical input.
+
+The raylib focus-return action gate also passed [Mac release-profile polling tests](docs/packaging/RAYLIB-FOCUS-RETURN-MAC-20261113.md); native focus delivery remains unverified.
