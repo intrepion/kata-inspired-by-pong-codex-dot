@@ -933,3 +933,5 @@ Miniquad now backs its winner and restart text for legibility; [Mac](docs/packag
 Miniquad now shows a zero in an empty score group; [Windows scripted captures](docs/packaging/MINIQUAD-ZERO-SCORE-WINDOWS-20261113.md) show 0–0 and 0–1.
 
 Miniquad now labels its in-court score pips YOU and CPU; [Mac evidence](docs/packaging/MINIQUAD-SCORE-LABELS-MAC-20261113.md) records rendering and buffer checks.
+
+The raw wgpu zero-score marks were also checked in a [native Mac window](docs/packaging/WGPU-ZERO-SCORE-MAC-20261113.md); physical input and distribution qualification remain open.
