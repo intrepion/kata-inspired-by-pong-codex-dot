@@ -998,6 +998,7 @@ The [upstream font history](docs/packaging/NANNOU-NOTOSANS-PROVENANCE-WINDOWS-20
 The [Windows embedded LUT review](docs/packaging/NANNOU-LUT-NOTICES-WINDOWS-20261113.md) identifies three additional assets and a local Tony-notice candidate; AgX and Blender-derived LUT terms remain open.
 The [LUT provenance follow-up](docs/packaging/NANNOU-LUT-PROVENANCE-WINDOWS-20261113.md) traces the available primary sources and explains why a top-level Cargo feature switch does not remove these assets.
 An [isolated Windows no-LUT probe](docs/packaging/NANNOU-NO-LUT-PROBE-WINDOWS-20261113.md) passed adapter tests and a scripted capture comparison; it is not a qualified replacement or release.
+The [no-LUT asset comparison](docs/packaging/NANNOU-NO-LUT-ASSET-COMPARISON-WINDOWS-20261113.md) confirms that the candidate still embeds the disputed Noto font and retains `ruzstd` in its resolved graph.
 
 Piston Mac keypad cross-check: 17 release unit tests pass, but the locked macOS window path maps both Enter keys to the same logical Piston key; independent native delivery is not established. [Evidence and limits](docs/packaging/PISTON-KEYPAD-BACKEND-MAC-20261113.md).
 
