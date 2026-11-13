@@ -83,8 +83,8 @@ impl Pong {
                 {
                     self.suppressed.insert(key);
                 }
-                if self.game.state == State::Over
-                    && matches!(key, VirtualKeyCode::Space | VirtualKeyCode::R)
+                if key == VirtualKeyCode::R
+                    || (self.game.state == State::Over && key == VirtualKeyCode::Space)
                 {
                     for movement in [
                         VirtualKeyCode::W,
@@ -366,6 +366,22 @@ mod tests {
             scan_code: 0,
             pressed,
         }
+    }
+    #[test]
+    fn active_restart_suppresses_held_movement_until_release() {
+        let mut p = Pong::new();
+        p.game.start();
+        p.event(key(VirtualKeyCode::W, true));
+        p.event(key(VirtualKeyCode::R, true));
+        p.advance(0.1);
+        assert_eq!(p.game.player, H / 2.);
+        p.event(key(VirtualKeyCode::W, true));
+        p.advance(0.1);
+        assert_eq!(p.game.player, H / 2.);
+        p.event(key(VirtualKeyCode::W, false));
+        p.event(key(VirtualKeyCode::W, true));
+        p.advance(0.1);
+        assert!(p.game.player < H / 2.);
     }
     #[test]
     fn held_movement_does_not_carry_through_match_end_restart() {

@@ -745,3 +745,5 @@ Fyrox, Nannou and raylib-rs now suppress held movement through active restart; [
 Active-restart held movement is also fixed in ash, softbuffer, SDL3 and Blue Engine. The [Omarchy evidence](docs/packaging/RESTART-LOWLEVEL-BLUE-OMARCHY.md) records adapter tests and remaining runtime limits.
 
 [Omarchy Macroquad active-restart cross-check](docs/packaging/MACROQUAD-ACTIVE-RESTART-OMARCHY.md): five tests passed and a rebuilt debug scripted replay matched the retained telemetry; physical input and release qualification remain open.
+
+Bevy and bracket-lib now suppress held movement through active restart; see the [Omarchy adapter regressions](docs/packaging/RESTART-BEVY-BRACKET-OMARCHY.md) for verification limits.
