@@ -14,6 +14,8 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
+Windows Leptos native pause-fix follow-up: fresh native scripted state/SVG export matches the model; native input and the recurring WebView2 exit diagnostic remain open. [Evidence](docs/WINDOWS-LEPTOS-NATIVE-PAUSE-RECHECK.md).
+
 Windows Yew native pause-fix follow-up: two bridge tests and scripted state/SVG export pass; native input and WebView2 exit diagnostic remain open. [Evidence](docs/WINDOWS-YEW-NATIVE-PAUSE-RECHECK.md).
 
 Windows web pause follow-up: 12 controller tests pass; rebuilt Yew, Leptos and Dioxus show pause/resume and fresh pointer movement in localhost Chrome. Held-across-pause remains model-only. [Evidence](docs/WINDOWS-WEB-EXPLICIT-PAUSE-RECHECK.md).
