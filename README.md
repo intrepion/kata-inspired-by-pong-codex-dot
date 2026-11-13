@@ -1,5 +1,7 @@
 # Rallylight
 
+Macroquad's Ready and Paused messages were moved clear of the ball and checked in a Mac window; full gameplay remains open. [Evidence](docs/packaging/MACROQUAD-STATUS-VISUAL-MAC-20261113.md)
+
 Nannou's in-court Ready prompt was moved clear of the ball and checked in a Mac window; full gameplay remains open. [Evidence](docs/packaging/NANNOU-READY-MAC-20261113.md)
 
 Piston now draws Ready and Paused indicators in the court; Mac geometry tests and a cached release build pass, with rendered verification still open. [Evidence](docs/packaging/PISTON-STATE-MAC-20261113.md)
@@ -829,3 +831,5 @@ Miniquad gates reported focus loss on Linux while preserving its previous macOS 
 Pixels now draws the score inside the court, independent of the window title; [Omarchy evidence](docs/packaging/PIXELS-COURT-SCORE-OMARCHY.md) records the regression and scripted capture.
 
 Pixels now shows Ready, Paused and winner messages in the court; [Omarchy evidence](docs/packaging/PIXELS-COURT-STATES-OMARCHY.md) distinguishes the app replay from controlled framebuffer fixtures.
+
+Raw wgpu now shows Ready, Paused and winner messages inside the court; [Omarchy evidence](docs/packaging/WGPU-COURT-STATES-OMARCHY.md) records state mapping and a paused app capture.

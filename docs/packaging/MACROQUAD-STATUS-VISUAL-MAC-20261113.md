@@ -1,0 +1,7 @@
+# Macroquad status overlap: Mac visual check
+
+2026-11-13. In a separately named Mac pilot using executable SHA-256 `6c09ca62b792b7cafd13e970015d8a74cd736bf1b0f5d288fa0ce0cd1d4bf363`, desktop observation showed the centered ball overlapping the Ready prompt. The status text now uses measured centering, a court-colored backing, and a position below the initial ball. The backing also keeps text legible over court content while paused.
+
+On macOS ARM64, offline locked release-profile Macroquad tests passed 6/6 and a cached release build succeeded. Changed main.rs SHA-256 `83897caa5a9399c19f25c48863936dd745184be5f333d6f00d7072d40f998856`; corrected executable SHA-256 `60f43d038197ba9d10e8714f385f2d530862b19bdcef3d2c593461ebedc245b0`. In a second separately named Mac pilot, desktop observation showed Ready text clear of the centered ball at the observed window size. Automated Return started play and Space paused it; the Paused message was readable. The pilot was closed.
+
+This is native-window observation and automated input, not physical keys, full gameplay, other window sizes, winner-state rendering or release qualification. Pilot bundles remain under `/tmp/pong-macroquad-ready-visual-20261113-v1` and `/tmp/pong-macroquad-ready-fixed-visual-20261113-v1`; previous artifacts were retained. Source was fetched at `ce015a506bbaab4851fbaec995803f61ff01e612` and checked unchanged against `65baa119daabc10b870f36ca393de5911d39684c` before publication.

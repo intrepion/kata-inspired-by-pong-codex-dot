@@ -1,7 +1,17 @@
-use pong_core::Game;
+use pong_core::{Game, State};
 use std::sync::Arc;
 use wgpu::util::DeviceExt;
 use winit::window::Window;
+fn status_code(game: &Game) -> f32 {
+    match game.state {
+        State::Playing => 0.,
+        State::Ready => 1.,
+        State::Paused => 2.,
+        State::Over if game.scores[0] > game.scores[1] => 3.,
+        State::Over if game.scores[1] > game.scores[0] => 4.,
+        State::Over => 5.,
+    }
+}
 pub struct Renderer {
     surface: wgpu::Surface<'static>,
     device: wgpu::Device,
@@ -41,7 +51,7 @@ impl Renderer {
         surface.configure(&device, &config);
         let uniform = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("court state"),
-            contents: bytemuck::cast_slice(&[0.0f32; 8]),
+            contents: bytemuck::cast_slice(&[0.0f32; 12]),
             usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
         });
         let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -130,6 +140,10 @@ impl Renderer {
             self.config.height as f32,
             g.scores[0] as f32,
             g.scores[1] as f32,
+            status_code(g),
+            0.,
+            0.,
+            0.,
         ];
         self.queue
             .write_buffer(&self.uniform, 0, bytemuck::cast_slice(&data));
@@ -255,5 +269,29 @@ impl Renderer {
         }
         frame.present();
         Ok(true)
+    }
+}
+
+#[cfg(test)]
+mod state_tests {
+    use super::*;
+    use pong_core::State;
+    #[test]
+    fn status_code_distinguishes_states_and_winners() {
+        let mut game = Game::new(42);
+        assert_eq!(status_code(&game), 1.);
+        game.start();
+        assert_eq!(status_code(&game), 0.);
+        game.pause();
+        assert_eq!(status_code(&game), 2.);
+        game.state = State::Over;
+        game.scores = [7, 2];
+        assert_eq!(status_code(&game), 3.);
+        game.scores = [2, 7];
+        assert_eq!(status_code(&game), 4.);
+        game.scores = [7, 7];
+        assert_eq!(status_code(&game), 5.);
+        game.start();
+        assert_eq!(status_code(&game), 0.);
     }
 }
