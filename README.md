@@ -1,5 +1,7 @@
 # Rallylight
 
+Nannou now displays the match winner; Mac model tests and a cached release build pass, with rendered end-screen verification still open. [Evidence](docs/packaging/NANNOU-WINNER-MAC-20261113.md)
+
 Macroquad now names the winner at match end; Mac model tests and a cached release build pass, with rendered winner-screen verification still open. [Evidence](docs/packaging/MACROQUAD-WINNER-MAC-20261113.md)
 
 ggez now names the winner at match end; Mac model tests and a cached release build pass, with rendered winner-screen verification still open. [Evidence](docs/packaging/GGEZ-WINNER-MAC-20261113.md)
