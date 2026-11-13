@@ -1,0 +1,9 @@
+# Linux portable pilot ELF architecture guard
+
+The local Linux packager labels archives with `process.arch` but previously accepted an executable with a different ELF machine value, silently producing a misleading archive label. A fixture made by changing `/bin/true`'s ELF machine field reproduced that behavior: before the fix, packaging succeeded instead of rejecting it.
+
+Before creating output, the packager now requires a complete 20-byte ELF header, ELF64, little-endian, current ELF identification version and a machine value matching the local Node host (`x64` or `arm64`). Other host architectures, non-ELF inputs and mismatches fail closed. This is a local-host pilot restriction; cross-compiled packages must be produced on a matching supported host. A matching header alone does not prove a file is runnable, safe, Linux-compatible, built from the supplied revision, or compatible with another machine.
+
+On Omarchy ARM64 with Node `v26.12.1`, the initially failing mismatch test passed after the fix. Five portable-packager tests passed, including 22 adapter fixtures and rejection of truncated, non-ELF, wrong-class, wrong-endian and wrong-version inputs without creating output or changing the input. Ten Fyrox-state and ten notice-bundle tests also passed; two Windows-only junction tests were skipped. A real previously built Ratatui ELF was accepted and the new local archive checksum plus its four staged manifest entries verified. Archive SHA-256 `827461e7b57954460446cf3d20fa63f00d8693f4ba456698d9a0cbd19cb0f0c9`; binary SHA-256 `2e985f886e1480f7bf3bb3016ce10a1cf460ba30c1d36ea93db914d8d4684245`. The archive and stage remain under `/tmp/pong-ratatui-elf-check-package-20261113`; previous artifacts remain intact. This is not cross-platform, clean-machine, dependency-notice or distribution qualification.
+
+Tested source based on checkpoint `1334c849afb89fd6f50f9db505ff881ab75c8500`; packager Git blob `4510e6ce22431569aaf9466bd380dadfc6097362`.

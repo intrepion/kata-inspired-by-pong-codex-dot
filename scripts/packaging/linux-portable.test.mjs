@@ -25,3 +25,22 @@ test('optional notice bundle hash checked before output; texts and index package
  const out=join(root,'good'),r=packagePortable('miniquad','/bin/true',out,rev,{text,index}),unpack=join(root,'unpack');mkdirSync(unpack);assert.equal(spawnSync('tar',['-xzf',r.archive,'-C',unpack]).status,0);
  const stage=join(unpack,readdirSync(unpack)[0]);assert.equal(readdirSync(stage).length,7);assert.equal(readFileSync(join(stage,'THIRD-PARTY-NOTICES.txt'),'utf8'),text);assert.deepEqual(JSON.parse(readFileSync(join(stage,'NOTICE-INDEX.json'))),index);assert.equal(spawnSync('sha256sum',['-c','SHA256SUMS'],{cwd:stage}).status,0);
 });
+
+test('rejects an executable with a different ELF architecture before creating output',{skip:!linux},t=>{
+ const root=sandbox(t),binary=join(root,'wrong-architecture'),out=join(root,'output');
+ const bytes=readFileSync('/bin/true');assert.equal(bytes.subarray(0,4).toString('hex'),'7f454c46');
+ const hostMachine=bytes.readUInt16LE(18);bytes.writeUInt16LE(hostMachine===62?183:62,18);
+ writeFileSync(binary,bytes,{mode:0o755});
+ assert.throws(()=>packagePortable('ratatui',binary,out,rev),/architecture/i);
+ assert.equal(existsSync(out),false);
+});
+
+test('rejects truncated, non-ELF and wrong-format executables before output',{skip:!linux},t=>{
+ const root=sandbox(t),original=readFileSync('/bin/true'),out=join(root,'output');
+ for(const [name,bytes] of [['short',Buffer.from([0x7f,0x45,0x4c,0x46])],['script',Buffer.from('#!/bin/sh\nexit 0\n')],['class',Buffer.from(original)],['endian',Buffer.from(original)],['version',Buffer.from(original)]]){
+  if(name==='class')bytes[4]=1;if(name==='endian')bytes[5]=2;if(name==='version')bytes[6]=0;
+  const input=join(root,name);writeFileSync(input,bytes,{mode:0o755});
+  assert.throws(()=>packagePortable('ratatui',input,out,rev),/architecture/i,name);
+  assert.equal(existsSync(out),false);assert.deepEqual(readFileSync(input),bytes);
+ }
+});
