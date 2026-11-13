@@ -8,5 +8,6 @@ license = "MIT"
 pong-web-ui-common = { path = "../web-ui-common" }
 yew = { version = "0.21", features = ["csr"] }
 gloo-timers = "0.3"
-web-sys = { version = "0.3", features = ["KeyboardEvent"] }
+web-sys = { version = "0.3", features = ["KeyboardEvent", "FocusEvent", "Node"] }
+wasm-bindgen = "0.2"
 web-time = "1"

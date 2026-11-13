@@ -750,6 +750,7 @@ version = "0.1.0"
 dependencies = [
  "gloo-timers 0.3.0",
  "pong-web-ui-common",
+ "wasm-bindgen",
  "web-sys",
  "web-time",
  "yew",
