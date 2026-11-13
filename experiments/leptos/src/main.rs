@@ -1,11 +1,13 @@
 use leptos::prelude::*;
 use pong_web_ui_common::{Session, CSS};
+use wasm_bindgen::JsCast;
 fn main() {
     mount_to_body(App);
 }
 #[component]
 fn App() -> impl IntoView {
     let session = RwSignal::new(Session::default());
+    let game_root = NodeRef::<leptos::html::Main>::new();
     let mut last = web_time::Instant::now();
     let interval = gloo_timers::callback::Interval::new(16, move || {
         let now = web_time::Instant::now();
@@ -14,10 +16,15 @@ fn App() -> impl IntoView {
     });
     let interval = send_wrapper::SendWrapper::new(interval);
     on_cleanup(move || drop(interval));
-    view! {<style>{CSS}</style><main tabindex="0" autofocus=true
+    view! {<style>{CSS}</style><main node_ref=game_root tabindex="0" autofocus=true
     on:keydown=move |ev:web_sys::KeyboardEvent|{if pong_web_ui_common::handled_key(&ev.key()){ev.prevent_default();}session.update(|s|s.key(&ev.key(),true,ev.repeat()));}
     on:keyup=move |ev:web_sys::KeyboardEvent|session.update(|s|s.key(&ev.key(),false,false))
-    on:blur=move |_|session.update(|s|s.pause())>
+    on:focusout=move |ev:web_sys::FocusEvent| {
+        let next_inside = game_root.get_untracked()
+            .zip(ev.related_target().and_then(|target| target.dyn_into::<web_sys::Node>().ok()))
+            .is_some_and(|(root, next)| root.contains(Some(&next)));
+        session.update(|s|s.focus_left(next_inside));
+    }>
     <h1>"Pong • Leptos"</h1><p>"Rust shared simulation · Leptos CSR / WASM"</p>
     <div inner_html=move || session.with(|s|s.svg())></div>
     <button on:click=move |_|session.update(|s|s.start())>"Start / Restart"</button>
