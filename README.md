@@ -10,6 +10,8 @@ Windows Chrome narrow layout: focused movement buttons moved the paddle with Ent
 
 Windows original browser recheck: 24 JavaScript tests pass, collision math reviewed, and localhost Chrome scripted mode reaches its export link; blob download and physical input remain open. [Evidence](docs/WINDOWS-ORIGINAL-COLLISION-INPUT-RECHECK.md).
 
+Windows Blue Engine held-input release ZIP: local extraction, payload hashes and 13-checkpoint relocated replay pass; distribution and physical input remain open. [Evidence](docs/packaging/BLUE-HELD-WINDOWS-RELEASE-PILOT.md).
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
