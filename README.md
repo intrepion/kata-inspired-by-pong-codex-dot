@@ -88,7 +88,7 @@ Windows web pause follow-up: 12 controller tests pass; rebuilt Yew, Leptos and D
 
 Windows Tauri contact-timing follow-up: the missing Windows icon is supplied; fresh native tests and scripted Canvas replay pass, with WebView2 exit diagnostic noted. [Evidence](docs/WINDOWS-TAURI-CONTACT-TIMING.md).
 
-Windows Fyrox contact-timing follow-up: two frontend tests and scripted replay pass with all 13 model checkpoints matched; a paused app-owned frame was inspected. [Evidence](docs/WINDOWS-FYROX-CONTACT-TIMING.md).
+Windows Fyrox held-pause follow-up: four adapter/benchmark tests and a 13-checkpoint scripted replay pass; native input remains unverified. [Evidence](docs/WINDOWS-FYROX-CONTACT-TIMING.md).
 
 Windows Blue Engine contact-timing follow-up: two frontend tests and windowed/headless scripted replays pass; a headless frame was inspected, while native input remains open. [Evidence](docs/WINDOWS-BLUE-CONTACT-TIMING.md).
 
