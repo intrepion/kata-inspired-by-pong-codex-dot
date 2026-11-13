@@ -166,6 +166,8 @@ Windows passed the shared low-level winner model and ash/softbuffer suites; [the
 
 Windows passed Fyrox's active-restart regression and scripted replay; [the report](docs/packaging/FYROX-ACTIVE-RESTART-WINDOWS.md) records input and license limits.
 
+Windows passed Nannou's focus/resume polling regression; [the report](docs/packaging/POLLING-FOCUS-RESUME-WINDOWS.md) records the remaining focus and raylib gaps.
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
