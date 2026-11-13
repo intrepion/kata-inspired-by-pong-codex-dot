@@ -9,3 +9,9 @@ Direct shell launch with `--scripted-test --scripted-captures` failed before rep
 ## Full-match desktop check
 
 In a separate run of the same packaged binary (SHA-256 above), supported desktop automation pressed Enter and left the player paddle unattended. The visible score pips reached three for the player and seven for the CPU; the court remained static on a subsequent observation. Enter cleared the pips and ball motion resumed. The app was closed. The font-free court did not show an explicit game-over or winner label in the observed end state, a usability gap. This is automated native interaction, not physical input or a scripted replay.
+
+## Winner-label fix
+
+The Miniquad renderer now draws font-free `YOU WIN` or `CPU WINS` and `ENTER TO RESTART` when the shared game state is Over. Its streamed vertex and index buffers were enlarged for the extra glyph geometry. On Mac ARM64, an offline locked cached release build and all eight Miniquad release tests passed. The tested source was based on `61948a24c2ba99f12999bc7344c494b0d7c93d9c`, with Miniquad source blob `86bba1c9f9dd337fe68352dfe6d2c105642fcc6d`; executable SHA-256 `ae446059f349fa64ec2f5d70751a75f26192bc4aac78450b2fd6892126e54052`.
+
+In a supported desktop-automation match with the player paddle unattended, the CPU reached seven and the court visibly displayed `CPU WINS` and `ENTER TO RESTART`. Enter cleared the text and resumed play. The app exited. The unit test covers both winner branches and removal on restart; only the CPU-win branch was visually inspected. This is not physical-input, scripted-replay, Windows input, or release qualification. The earlier failed direct-shell replay remains historical.
