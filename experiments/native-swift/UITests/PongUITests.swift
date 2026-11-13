@@ -24,6 +24,30 @@ final class PongUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["0     :     0"].exists)
     }
 
+    func testPausedDragRequiresFreshGestureAfterResume() {
+        let app = XCUIApplication(); app.launch()
+        XCTAssertTrue(app.buttons["Start"].waitForExistence(timeout: 15))
+        app.buttons["Start"].tap()
+        let court = app.otherElements["pong-court"]
+        XCTAssertTrue(court.waitForExistence(timeout: 10))
+        func player() -> Float {
+            let value = court.value as? String ?? ""
+            return Float(value.split(separator: ";").first?.split(separator: "=").last ?? "") ?? -999
+        }
+        app.buttons["Pause"].tap()
+        XCTAssertTrue(app.staticTexts["Paused"].exists)
+        let before = player()
+        let center = court.coordinate(withNormalizedOffset: CGVector(dx: 0.3, dy: 0.5))
+        let bottom = court.coordinate(withNormalizedOffset: CGVector(dx: 0.3, dy: 0.97))
+        center.press(forDuration: 0.1, thenDragTo: bottom, withVelocity: .slow, thenHoldForDuration: 0.5)
+        XCTAssertEqual(player(), before, accuracy: 0.1, "Paused drag must not move the paddle")
+        app.buttons["Resume"].tap()
+        Thread.sleep(forTimeInterval: 1)
+        XCTAssertEqual(player(), before, accuracy: 0.1, "Released paused drag must not move on resume")
+        center.press(forDuration: 0.1, thenDragTo: bottom, withVelocity: .slow, thenHoldForDuration: 0.5)
+        XCTAssertGreaterThan(player(), before + 50, "A fresh drag must move after resume")
+    }
+
     func testTouchReleaseBackgroundAndFullMatch() {
         let app = XCUIApplication(); app.launch()
         XCTAssertTrue(app.buttons["Start"].waitForExistence(timeout:15))
