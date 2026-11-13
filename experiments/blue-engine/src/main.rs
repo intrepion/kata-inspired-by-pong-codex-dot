@@ -16,16 +16,16 @@ fn benchmark_args(args: &[String]) -> bool {
 struct MovementGate { suppressed: [bool; 4], was_playing: bool }
 #[cfg(any(feature = "windowed", test))]
 #[derive(Default)]
-struct ActionGate { suppressed: [bool; 4], resample: bool }
+struct ActionGate { suppressed: [bool; 5], resample: bool }
 #[cfg(any(feature = "windowed", test))]
 impl ActionGate {
     fn on_focus_loss(&mut self) { self.resample = true; }
-    fn sample(&mut self, held: [bool; 4], pressed: [bool; 4]) -> [bool; 4] {
+    fn sample(&mut self, held: [bool; 5], pressed: [bool; 5]) -> [bool; 5] {
         if self.resample {
-            for i in 0..4 { self.suppressed[i] = held[i] || pressed[i]; }
+            for i in 0..5 { self.suppressed[i] = held[i] || pressed[i]; }
             self.resample = false;
         }
-        for i in 0..4 { if !held[i] && !pressed[i] { self.suppressed[i] = false; } }
+        for i in 0..5 { if !held[i] && !pressed[i] { self.suppressed[i] = false; } }
         std::array::from_fn(|i| pressed[i] && !self.suppressed[i])
     }
 }
@@ -282,9 +282,9 @@ fn main() -> Result<(), blue_engine::error::Error> {
         } else {
             let input = &engine.simple_input;
             let was_playing = game.state == State::Playing;
-            let keys = [KeyCode::Enter, KeyCode::KeyR, KeyCode::Space, KeyCode::Escape];
+            let keys = [KeyCode::Enter, KeyCode::KeyR, KeyCode::Space, KeyCode::Escape, KeyCode::NumpadEnter];
             let actions = action_gate.sample(keys.map(|key| input.key_held(key)), keys.map(|key| input.key_pressed(key)));
-            if actions[0] {
+            if actions[0] || actions[4] {
                 if game.state == State::Paused { game.toggle_pause(); }
                 else if game.state != State::Playing { game.start(); }
             }
@@ -387,19 +387,29 @@ mod input_tests {
     use super::*;
     #[test]
     fn focus_return_requires_release_of_held_actions() {
-        for i in 0..4 {
+        for i in 0..5 {
             let mut gate = ActionGate::default(); gate.on_focus_loss();
-            let mut held = [false; 4]; held[i] = true;
-            assert_eq!(gate.sample(held, held), [false; 4]);
-            assert_eq!(gate.sample(held, held), [false; 4]);
-            gate.sample([false; 4], [false; 4]);
+            let mut held = [false; 5]; held[i] = true;
+            assert_eq!(gate.sample(held, held), [false; 5]);
+            assert_eq!(gate.sample(held, held), [false; 5]);
+            gate.sample([false; 5], [false; 5]);
             assert_eq!(gate.sample(held, held), held);
         }
         let mut gate = ActionGate::default(); gate.on_focus_loss();
-        gate.sample([false; 4], [false; 4]);
-        assert_eq!(gate.sample([true,false,false,false], [true,false,false,false]), [true,false,false,false]);
-        gate.on_focus_loss(); gate.sample([true,false,false,false], [true,false,false,false]);
-        assert_eq!(gate.sample([true,true,false,false], [false,true,false,false]), [false,true,false,false]);
+        gate.sample([false; 5], [false; 5]);
+        assert_eq!(gate.sample([true,false,false,false,false], [true,false,false,false,false]), [true,false,false,false,false]);
+        gate.on_focus_loss(); gate.sample([true,false,false,false,false], [true,false,false,false,false]);
+        assert_eq!(gate.sample([true,true,false,false,false], [false,true,false,false,false]), [false,true,false,false,false]);
+    }
+    #[test]
+    fn keypad_enter_is_independently_gated_on_focus_return() {
+        let mut gate = ActionGate::default();
+        gate.on_focus_loss();
+        gate.sample([true,false,false,false,false], [true,false,false,false,false]);
+        assert_eq!(gate.sample([true,false,false,false,true], [false,false,false,false,true]), [false,false,false,false,true]);
+        gate.on_focus_loss();
+        gate.sample([false,false,false,false,true], [false,false,false,false,true]);
+        assert_eq!(gate.sample([true,false,false,false,true], [true,false,false,false,false]), [true,false,false,false,false]);
     }
     #[test]
     fn status_names_winner_and_clears_after_restart() {

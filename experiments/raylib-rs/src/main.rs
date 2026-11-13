@@ -16,6 +16,7 @@ fn status_position(ox: f32, oy: f32, scale: f32) -> (f32, f32) {
     (ox + 15. * scale, oy + (H + 8.) * scale)
 }
 fn escape_requests_exit(focused: bool, pressed: bool) -> bool { focused && pressed }
+fn action_flags(pressed: [bool; 5]) -> (bool, bool, bool) { (pressed[0] || pressed[1] || pressed[2], pressed[3], pressed[4]) }
 fn benchmark_args(args: &[String]) -> bool {
     let enabled = args.iter().any(|a| a == "--benchmark");
     assert!(
@@ -51,15 +52,15 @@ struct MovementGate {
     was_playing: bool,
 }
 #[derive(Default)]
-struct ActionGate { suppressed: [bool; 4], resample: bool }
+struct ActionGate { suppressed: [bool; 5], resample: bool }
 impl ActionGate {
     fn on_focus_loss(&mut self) { self.resample = true; }
-    fn sample(&mut self, held: [bool; 4], pressed: [bool; 4]) -> [bool; 4] {
+    fn sample(&mut self, held: [bool; 5], pressed: [bool; 5]) -> [bool; 5] {
         if self.resample {
-            for i in 0..4 { self.suppressed[i] = held[i] || pressed[i]; }
+            for i in 0..5 { self.suppressed[i] = held[i] || pressed[i]; }
             self.resample = false;
         }
-        for i in 0..4 { if !held[i] && !pressed[i] { self.suppressed[i] = false; } }
+        for i in 0..5 { if !held[i] && !pressed[i] { self.suppressed[i] = false; } }
         std::array::from_fn(|i| pressed[i] && !self.suppressed[i])
     }
 }
@@ -131,10 +132,11 @@ fn main() {
             lose_focus(&mut game, &mut movement, &mut accumulator);
         }
         if focused && demo.is_none() && !benchmarking {
-            let keys = [KeyboardKey::KEY_ENTER, KeyboardKey::KEY_R, KeyboardKey::KEY_SPACE, KeyboardKey::KEY_ESCAPE];
+            let keys = [KeyboardKey::KEY_ENTER, KeyboardKey::KEY_KP_ENTER, KeyboardKey::KEY_R, KeyboardKey::KEY_SPACE, KeyboardKey::KEY_ESCAPE];
             let pressed = actions.sample(keys.map(|key| window.is_key_down(key)), keys.map(|key| window.is_key_pressed(key)));
-            if pressed[3] { break; }
-            if pressed[0] || pressed[1] {
+            let (restart_pressed, pause_pressed, quit_pressed) = action_flags(pressed);
+            if quit_pressed { break; }
+            if restart_pressed {
                 restart(&mut game, &mut movement);
             }
             let axis = movement_with_pause(
@@ -146,7 +148,7 @@ fn main() {
                     window.is_key_down(KeyboardKey::KEY_DOWN),
                     window.is_key_down(KeyboardKey::KEY_S),
                 ],
-                pressed[2],
+                pause_pressed,
             );
             accumulator += window.get_frame_time().min(0.1);
             while accumulator >= 1.0 / 120.0 {
@@ -284,20 +286,32 @@ fn main() {
 mod tests {
     use super::*;
     #[test]
+    fn keypad_enter_has_the_same_restart_action_as_enter() {
+        assert_eq!(action_flags([true,false,false,false,false]), (true,false,false));
+        assert_eq!(action_flags([false,true,false,false,false]), (true,false,false));
+        assert_eq!(action_flags([false,false,true,false,false]), (true,false,false));
+        assert_eq!(action_flags([false,false,false,true,false]), (false,true,false));
+        assert_eq!(action_flags([false,false,false,false,true]), (false,false,true));
+    }
+    #[test]
     fn focus_return_requires_release_of_held_actions() {
-        for i in 0..4 {
+        for i in 0..5 {
             let mut gate = ActionGate::default(); gate.on_focus_loss();
-            let mut held = [false; 4]; held[i] = true;
-            assert_eq!(gate.sample(held, held), [false; 4]);
-            assert_eq!(gate.sample(held, held), [false; 4]);
-            gate.sample([false; 4], [false; 4]);
+            let mut held = [false; 5]; held[i] = true;
+            assert_eq!(gate.sample(held, held), [false; 5]);
+            assert_eq!(gate.sample(held, held), [false; 5]);
+            gate.sample([false; 5], [false; 5]);
             assert_eq!(gate.sample(held, held), held);
         }
         let mut gate = ActionGate::default(); gate.on_focus_loss();
-        gate.sample([false; 4], [false; 4]);
-        assert_eq!(gate.sample([true,false,false,false], [true,false,false,false]), [true,false,false,false]);
-        gate.on_focus_loss(); gate.sample([true,false,false,false], [true,false,false,false]);
-        assert_eq!(gate.sample([true,true,false,false], [false,true,false,false]), [false,true,false,false]);
+        gate.sample([false; 5], [false; 5]);
+        assert_eq!(gate.sample([true,false,false,false,false], [true,false,false,false,false]), [true,false,false,false,false]);
+        gate.on_focus_loss(); gate.sample([true,false,false,false,false], [true,false,false,false,false]);
+        assert_eq!(gate.sample([true,true,false,false,false], [false,true,false,false,false]), [false,true,false,false,false]);
+        gate.on_focus_loss(); gate.sample([true,true,false,false,false], [true,true,false,false,false]);
+        assert_eq!(gate.sample([false,true,false,false,false], [false,true,false,false,false]), [false; 5]);
+        gate.sample([false; 5], [false; 5]);
+        assert_eq!(gate.sample([false,true,false,false,false], [false,true,false,false,false]), [false,true,false,false,false]);
     }
     #[test]
     fn escape_only_exits_while_focused() {

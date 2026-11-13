@@ -1,0 +1,9 @@
+# Raylib keypad Enter — Omarchy, 2026-11-13
+
+Raylib advertised Enter for restart but polled only `KEY_ENTER`, not its separate `KEY_KP_ENTER`. Both keys now map to the existing start/restart action. Keypad Enter also has its own focus-return suppression slot, so a held keypad key cannot be rearmed by releasing main Enter. Space pause, Escape and R keep their existing mappings. Unlike adapters where Enter resumes, raylib's existing Enter behavior starts a new match; keypad Enter deliberately matches that behavior.
+
+A synthetic action-mapping regression failed before the new binding and passed afterward. The focus-return gate regression now covers all five action keys and independently releases the two Enter bindings. All 17 offline locked debug tests passed. The debug executable SHA-256 is `d9984c08d75a38dd581214c098cc641b1090dbba07f582c1a23dac960a7480f6`; tested adapter blob `1af90de774ba30a3792a9e82805627accb69fe71` was based on checkpoint `610421c66d71f68c0745dbbb0321a6e1fc55c4b0`.
+
+With host-display access, the rebuilt app-owned scripted replay exited 0 with empty stderr and 13 JSON telemetry records extracted from informational stdout byte-matched `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`. Logs and the preserved previous executable remain under `../pong-raylib-keypad-20261113-a`. The `/tmp` filesystem was full; an initial attempted copy there was incomplete and was relocated without deletion to `../pong-raylib-keypad-20261113-a/incomplete-copy` (SHA-256 `7f0767aa2e2cffd5b191f1fdf37fab6f49722d27e8032941d35f80e3387069d7`). The successful full workspace copy was hash-checked against the original before rebuilding.
+
+These are synthetic action tests and scripted replay, not native keypad event mapping, desktop focus or physical input verification. Other platforms, installation, notices and release qualification remain open; existing license restrictions and prior artifacts are preserved.
