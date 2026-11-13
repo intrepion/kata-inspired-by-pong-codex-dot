@@ -40,9 +40,13 @@ test('audited upstream notices enforce revision, source and notice hashes and co
 
 test('upstream rules require exact registry package and version',t=>{
  const{root,pkg}=fixture(t),registry='registry+https://github.com/rust-lang/crates.io-index';
- for(const[name,version]of [['alloc-stdlib','0.3.0'],['dlopen2','0.8.2'],['dlopen2_derive','0.4.3'],['libappindicator-sys','0.9.0']]){
+ for(const[name,version]of [['alloc-stdlib','0.3.0'],['dlopen2','0.8.2'],['dlopen2_derive','0.4.3'],['libappindicator-sys','0.9.0'],['selectors','0.38.0']]){
   assert.throws(()=>buildNoticeBundle(meta(pkg,{name,version,source:registry}),root),/ENOENT/);
   assert.deepEqual(buildNoticeBundle(meta(pkg,{name,version,source:'git+https://example.invalid/repo'}),root).index.missing_notice_files,[name+'@'+version]);
   assert.deepEqual(buildNoticeBundle(meta(pkg,{name,version:'999.0.0',source:registry}),root).index.missing_notice_files,[name+'@999.0.0']);
  }
+});
+
+test('audited source override is contained and hash checked',async t=>{
+ const {auditedUpstreamNotices}=await import('./notice-bundle.mjs');const{root,pkg}=fixture(t),n=join(root,'notices');mkdirSync(n);const hash=s=>createHash('sha256').update(s).digest('hex');writeFileSync(join(pkg,'.cargo_vcs_info.json'),JSON.stringify({git:{sha1:'r'},path_in_vcs:'p'}));writeFileSync(join(pkg,'lib.rs'),'source');writeFileSync(join(n,'LICENSE'),'notice');const rule={rev:'r',path:'p',sourcePath:'lib.rs',sourceHash:hash('source'),files:[['LICENSE',hash('notice'),'url']]};assert.equal(auditedUpstreamNotices(pkg,n,rule)[0].text,'notice');assert.throws(()=>auditedUpstreamNotices(pkg,n,{...rule,sourcePath:'../LICENSE'}),/escapes/);
 });
