@@ -172,13 +172,17 @@ async fn main() {
             WHITE,
         );
         if let Some(message) = status_message(&g) {
-            draw_text(
-                message,
-                ox + 220. * scale,
-                oy + 250. * scale,
-                28. * scale,
-                WHITE,
+            let width = measure_text(message, None, 28, 1.0).width;
+            let x = ox + (W - width) * scale / 2.;
+            let y = oy + 330. * scale;
+            draw_rectangle(
+                x - 12. * scale,
+                y - 32. * scale,
+                (width + 24.) * scale,
+                40. * scale,
+                Color::from_hex(0x153f37),
             );
+            draw_text(message, x, y, 28. * scale, WHITE);
         }
         draw_text(
             "W/S or arrows | Enter start | Space pause | R restart | Esc pause",
