@@ -36,10 +36,10 @@ const W = 900, H = 500, PADDLE_H = 90, PADDLE_W = 12, BALL = 8, WIN = 7;
 const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
 // Captured pointers retain independent button ownership until released/cancelled.
 function createPointerButtons() {
-    const held = new Map<number, -1 | 1>();
+    const held = new Map<number | string, -1 | 1>();
     return {
-        press(id: number, dir: -1 | 1) { held.set(id, dir); },
-        release(id: number) { held.delete(id); },
+        press(id: number | string, dir: -1 | 1) { held.set(id, dir); },
+        release(id: number | string) { held.delete(id); },
         clear() { held.clear(); },
         axis() {
             const directions = [...held.values()];
@@ -53,8 +53,8 @@ function createControls() {
     return {
         keyDown(key: string, repeat: boolean) { if (!repeat) keys.add(key.toLowerCase()); },
         keyUp(key: string) { keys.delete(key.toLowerCase()); },
-        buttonDown(id: number, dir: -1 | 1) { buttons.press(id, dir); },
-        buttonUp(id: number) { buttons.release(id); },
+        buttonDown(id: number | string, dir: -1 | 1) { buttons.press(id, dir); },
+        buttonUp(id: number | string) { buttons.release(id); },
         dragDown(id: number) { drags.add(id); },
         dragUp(id: number) { drags.delete(id); },
         dragAllowed(id: number) { return drags.has(id); },
@@ -245,6 +245,15 @@ if (typeof document !== 'undefined') {
     for (const [id, dir] of [['up', -1], ['down', 1]] as const) {
         const el = element('#' + id, HTMLButtonElement);
         el.addEventListener('pointerdown', e => { if(demoRequested || game.state !== 'playing')return; e.preventDefault(); controls.buttonDown(e.pointerId, dir); el.setPointerCapture(e.pointerId); });
+        // Space/Enter hold a focused movement button without triggering global pause.
+        el.addEventListener('keydown', e => { if (e.key !== ' ' && e.key !== 'Enter') return;
+            e.preventDefault(); e.stopPropagation();
+            if (!demoRequested && game.state === 'playing' && !e.repeat) controls.buttonDown(`key:${id}:${e.key}`, dir);
+        });
+        el.addEventListener('keyup', e => { if (e.key !== ' ' && e.key !== 'Enter') return;
+            e.preventDefault(); e.stopPropagation(); controls.buttonUp(`key:${id}:${e.key}`);
+        });
+        el.addEventListener('blur', () => { controls.buttonUp(`key:${id}: `); controls.buttonUp(`key:${id}:Enter`); });
         for (const event of ['pointerup', 'pointercancel', 'lostpointercapture'] as const)
             el.addEventListener(event, e => { controls.buttonUp(e.pointerId); });
     }

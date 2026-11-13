@@ -36,11 +36,13 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
+Original browser movement-button keyboard fix: Space/Enter hold and release are covered by mocked handlers; browser and assistive-technology checks remain pending. [Evidence](docs/ORIGINAL-MOVEMENT-BUTTON-KEYS.md).
+
 Original browser keyboard follow-up: focused Start/Pause buttons activate with Space in Windows localhost Chrome; mocked-handler tests also cover the in-game shortcut. Physical input remains open. [Evidence](docs/ORIGINAL-BUTTON-SPACE-FIX.md).
 
 Original browser pause-input fix: 19 JavaScript model and mocked-handler tests pass; Windows localhost Chrome start, pause, resume and W movement smoke pass. Held-through-pause and physical touch remain open. [Evidence](docs/ORIGINAL-PAUSE-INPUT-FIX.md).
 
-Held-input audit follow-up: Swift retained-touch movement was reproduced at model level and guarded; 14 Swift tests and an iOS Simulator build pass, while overlapping simulator touches remain unverified. Android remains a separate source-review concern. [Coverage](docs/HELD-INPUT-COVERAGE-20261113.md); [Swift fix and limits](docs/SWIFT-HELD-TOUCH-PAUSE-FIX.md).
+Held-input audit follow-up: Swift retained-touch movement was reproduced at model level and guarded; 14 Swift tests, an iOS Simulator build and existing pause/touch-release UI tests pass; overlapping simulator touches remain unverified. Android remains a separate source-review concern. [Coverage](docs/HELD-INPUT-COVERAGE-20261113.md); [Swift fix and limits](docs/SWIFT-HELD-TOUCH-PAUSE-FIX.md).
 
 Omarchy Ratatui enhanced-key repeat fix: ten release tests and model-matched terminal-cell replay pass; actual terminal input remains open. [Evidence](docs/RATATUI-HELD-REPEAT-FIX.md).
 

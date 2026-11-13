@@ -284,6 +284,23 @@ if (typeof document !== 'undefined') {
         const el = element('#' + id, HTMLButtonElement);
         el.addEventListener('pointerdown', e => { if (demoRequested || game.state !== 'playing')
             return; e.preventDefault(); controls.buttonDown(e.pointerId, dir); el.setPointerCapture(e.pointerId); });
+        // Space/Enter hold a focused movement button without triggering global pause.
+        el.addEventListener('keydown', e => {
+            if (e.key !== ' ' && e.key !== 'Enter')
+                return;
+            e.preventDefault();
+            e.stopPropagation();
+            if (!demoRequested && game.state === 'playing' && !e.repeat)
+                controls.buttonDown(`key:${id}:${e.key}`, dir);
+        });
+        el.addEventListener('keyup', e => {
+            if (e.key !== ' ' && e.key !== 'Enter')
+                return;
+            e.preventDefault();
+            e.stopPropagation();
+            controls.buttonUp(`key:${id}:${e.key}`);
+        });
+        el.addEventListener('blur', () => { controls.buttonUp(`key:${id}: `); controls.buttonUp(`key:${id}:Enter`); });
         for (const event of ['pointerup', 'pointercancel', 'lostpointercapture'])
             el.addEventListener(event, e => { controls.buttonUp(e.pointerId); });
     }
