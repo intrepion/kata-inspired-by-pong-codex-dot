@@ -11,3 +11,5 @@ The Nannou camera's normal non-HDR render path can still select in-shader tone m
 ## Windows desktop action smoke
 
 The same debug executable SHA-256 `30e7cd074dea624ebbacfccdfe8477f38f7ab2ef298e38e34aa6f74dc3be3c48` was launched through File Explorer. A desktop screenshot showed the Ready court and start prompt. Supported desktop automation sent Space three times; the window title reported Ready → Playing → Paused → Playing. Escape then closed the window, as confirmed by the window inventory. These are automated native-window actions, not physical-key, paddle-movement, held-key, accessibility or full-match verification. No screenshot was retained, and the release and license limitations above remain open.
+
+In a separate launch, five short automation-generated W taps did not produce visible left-paddle displacement in the before/after sampled screenshots. Since brief synthetic taps may fall between input polls, this is inconclusive and does not establish a game defect or functioning movement. Escape closed the window; no physical key input was tested and the screenshots were not retained.
