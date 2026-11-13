@@ -14,6 +14,8 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
+Windows GPUI contact-timing follow-up: the geometry and shared model tests pass, and a fresh scripted state replay matches all 13 reference checkpoints; native input and visual checks remain open. [Evidence](docs/WINDOWS-GPUI-CONTACT-TIMING.md).
+
 Windows Bevy contact-timing follow-up: a fresh DX12 scripted replay matches all 13 model checkpoints; native and physical input remain open. [Evidence](docs/WINDOWS-BEVY-CONTACT-TIMING.md).
 
 Windows raw WASM contact-timing follow-up: a fresh release WASM build and two ABI tests pass; localhost Chrome normal start/pause/resume was checked. [Scope](docs/WINDOWS-RAW-WASM-CONTACT-TIMING.md).
