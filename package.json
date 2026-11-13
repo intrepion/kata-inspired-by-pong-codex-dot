@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "tsc --project tsconfig.json",
-    "test": "npm run build && node --test tests/game.test.js",
+    "test": "npm run build && node --test tests/game.test.js tests/cpu-contact-target.test.js",
     "serve": "node scripts/serve.cjs"
   },
   "devDependencies": {
