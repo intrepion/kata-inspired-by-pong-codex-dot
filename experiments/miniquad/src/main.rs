@@ -186,6 +186,7 @@ fn glyph(c: char) -> [u8; 7] {
         'C' => [15, 16, 16, 16, 16, 16, 15],
         'E' => [31, 16, 16, 30, 16, 16, 31],
         'I' => [31, 4, 4, 4, 4, 4, 31],
+        'M' => [17, 27, 21, 21, 17, 17, 17],
         'N' => [17, 25, 25, 21, 19, 19, 17],
         'O' => [14, 17, 17, 17, 17, 17, 14],
         'P' => [30, 17, 17, 30, 16, 16, 16],
@@ -232,6 +233,7 @@ fn game_over_vertices(game: &Game, v: &mut Vec<Vertex>) {
 fn state_vertices(game: &Game, v: &mut Vec<Vertex>) {
     match game.state {
         State::Ready => {
+            rect(v, W / 2., H / 2. - 65., 240., 82., [0.025, 0.04, 0.09]);
             // A play triangle made from horizontal bars, above the centered ball.
             for (i, width) in [8., 16., 24., 16., 8.].into_iter().enumerate() {
                 rect(
@@ -243,10 +245,13 @@ fn state_vertices(game: &Game, v: &mut Vec<Vertex>) {
                     [1., 1., 1.],
                 );
             }
+            status_text(v, "ENTER TO START", H / 2. - 40., 2.);
         }
         State::Paused => {
+            rect(v, W / 2., H / 2. - 65., 240., 82., [0.025, 0.04, 0.09]);
             rect(v, W / 2. - 14., H / 2. - 70., 8., 40., [1., 1., 1.]);
             rect(v, W / 2. + 14., H / 2. - 70., 8., 40., [1., 1., 1.]);
+            status_text(v, "SPACE TO RESUME", H / 2. - 40., 2.);
         }
         State::Over => game_over_vertices(game, v),
         State::Playing => {}
@@ -480,7 +485,7 @@ mod tests {
         assert!(vertices.is_empty());
         game.pause();
         state_vertices(&game, &mut vertices);
-        assert_eq!(vertices.len(), 12);
+        assert!(vertices.len() > 18);
         assert_ne!(ready, vertices.len());
     }
     #[test]
