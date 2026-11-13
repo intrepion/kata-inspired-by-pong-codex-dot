@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 """Exercise a Ratatui binary with synthetic terminal input in a PTY.
 
-Usage: python3 scripts/verify-ratatui-enhanced-pty.py BINARY RAW_OUTPUT [--fallback|--overlap]
+Usage: python3 scripts/verify-ratatui-enhanced-pty.py BINARY RAW_OUTPUT [--fallback|--overlap|--ctrl-c|--fallback-ctrl-c]
 RAW_OUTPUT must not exist. This is not a real-terminal or physical-input test.
 """
 import sys
 import os,pty,fcntl,termios,struct,subprocess,select,time,codecs,re,signal
-if len(sys.argv) not in (3, 4) or (len(sys.argv) == 4 and sys.argv[3] not in ('--fallback', '--overlap')):
+if len(sys.argv) not in (3, 4) or (len(sys.argv) == 4 and sys.argv[3] not in ('--fallback', '--overlap', '--ctrl-c', '--fallback-ctrl-c')):
  raise SystemExit(__doc__)
 binary, raw_output = sys.argv[1:3]
-fallback = len(sys.argv) == 4 and sys.argv[3] == '--fallback'
+fallback = len(sys.argv) == 4 and sys.argv[3] in ('--fallback', '--fallback-ctrl-c')
 overlap = len(sys.argv) == 4 and sys.argv[3] == '--overlap'
+ctrl_c = len(sys.argv) == 4 and sys.argv[3] in ('--ctrl-c', '--fallback-ctrl-c')
 if os.path.exists(raw_output):
  raise SystemExit('Refusing to overwrite raw output: ' + raw_output)
 m,s=pty.openpty(); fcntl.ioctl(s,termios.TIOCSWINSZ,struct.pack('HHHH',30,100,0,0)); before=termios.tcgetattr(s)
@@ -68,7 +69,16 @@ def state(expected):
 def send(seq,secs=.14): os.write(m,seq); pump(secs)
 try:
  pump(.5)
- if fallback:
+ if ctrl_c:
+  assert query, 'terminal capability negotiation did not complete'
+  state('Ready')
+  send(b' ' if fallback else b'\x1b[32;1:1u'); state('Playing')
+  send(b'\x03' if fallback else b'\x1b[99;5:1u')
+  assert p.wait(timeout=2)==0, 'Ctrl+C did not exit cleanly'
+  assert termios.tcgetattr(s)==before, 'terminal attributes not restored'
+  assert b'\x1b[?1049l' in log and b'\x1b[?25h' in log, 'screen or cursor restoration sequence missing'
+  print('PASS ' + ('fallback' if fallback else 'enhanced') + ' Ctrl+C exits, restores terminal attributes and emits screen/cursor restoration')
+ elif fallback:
   assert query and 'LATCHED INPUT' in ''.join(screen[1]), 'fallback keyboard path unavailable'
   state('Ready'); initial=paddle()
   send(b' '); state('Playing')
