@@ -22,7 +22,7 @@ Windows Leptos and Dioxus release WASM: localhost Chrome first-click Pause and i
 
 Windows-built Yew release static ZIP: extracted hashes and relocated localhost Chrome Start/Pause/Resume pass; dependency notices and distribution remain open. [Evidence](docs/packaging/YEW-FOCUS-WINDOWS-STATIC-PILOT.md).
 
-Swift iOS Release simulator bundle inspection found missing version metadata and ad-hoc signing; device distribution remains open. [Evidence](docs/SWIFT-HELD-TOUCH-PAUSE-FIX.md).
+Swift iOS simulator bundle now has explicit version metadata; ad-hoc signing and device distribution remain open. [Evidence](docs/SWIFT-HELD-TOUCH-PAUSE-FIX.md).
 
 ## Current activity (last reported)
 
