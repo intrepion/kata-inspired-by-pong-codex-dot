@@ -80,6 +80,8 @@ Windows softbuffer link-map screen mapped 17 Cargo archives and verified seven R
 
 A minimal Windows Wry/Tao fixture compiles with no restricted Cargo license expressions, but it does not implement or qualify the Tauri desktop security and behavior. See [feasibility](docs/packaging/WRY-TAO-WINDOWS-FEASIBILITY.md).
 
+Wry/Tao no-IPC boundary model passes Windows API tests; origin, CSP and actual WebView enforcement remain unresolved. See [security investigation](docs/packaging/WRY-TAO-SECURITY-BOUNDARY-INVESTIGATION.md).
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
