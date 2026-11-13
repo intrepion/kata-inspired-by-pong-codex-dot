@@ -62,7 +62,11 @@ impl Input {
         };
         if let Some(binding) = binding {
             if releases {
-                self.held[binding] = down;
+                match key.kind {
+                    KeyEventKind::Press => self.held[binding] = true,
+                    KeyEventKind::Release => self.held[binding] = false,
+                    KeyEventKind::Repeat => {} // A repeat cannot re-arm a cleared binding.
+                }
             } else if down {
                 self.latched = if binding < 2 { -1. } else { 1. };
             }
@@ -355,6 +359,32 @@ mod tests {
         assert_eq!(i.axis(false), -1.);
         i.key(key(KeyCode::Char('x'), KeyEventKind::Press), false);
         assert_eq!(i.axis(false), 0.);
+    }
+    #[test]
+    fn enhanced_repeat_cannot_restore_movement_after_pause() {
+        for (binding, axis) in [(KeyCode::Up, -1.), (KeyCode::Char('w'), -1.), (KeyCode::Down, 1.), (KeyCode::Char('s'), 1.)] {
+            let mut input = Input::default();
+            input.key(key(binding, KeyEventKind::Press), true);
+            input.clear();
+            input.key(key(binding, KeyEventKind::Repeat), true);
+            assert_eq!(input.axis(true), 0.);
+            input.key(key(binding, KeyEventKind::Release), true);
+            input.key(key(binding, KeyEventKind::Press), true);
+            assert_eq!(input.axis(true), axis);
+        }
+    }
+    #[test]
+    fn enhanced_repeat_does_not_rearm_after_reset_and_aliases_are_independent() {
+        let mut input = Input::default();
+        input.key(key(KeyCode::Char('w'), KeyEventKind::Press), true);
+        input.clear();
+        input.key(key(KeyCode::Char('W'), KeyEventKind::Repeat), true);
+        input.key(key(KeyCode::Down, KeyEventKind::Press), true);
+        assert_eq!(input.axis(true), 1.);
+        input.key(key(KeyCode::Down, KeyEventKind::Repeat), true);
+        assert_eq!(input.axis(true), 1.);
+        input.key(key(KeyCode::Down, KeyEventKind::Release), true);
+        assert_eq!(input.axis(true), 0.);
     }
     #[test]
     fn clear_prevents_stuck_key() {

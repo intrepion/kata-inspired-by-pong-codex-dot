@@ -28,6 +28,8 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
+Omarchy Ratatui enhanced-key repeat fix: ten release tests and model-matched terminal-cell replay pass; actual terminal input remains open. [Evidence](docs/RATATUI-HELD-REPEAT-FIX.md).
+
 Omarchy Blue Engine held-pause fix: four release tests and model-matched windowed replay pass; native input remains open. [Evidence](docs/BLUE-HELD-PAUSE-FIX.md).
 
 Omarchy Fyrox held-pause fix: four release tests and a model-matched scripted replay pass; physical input remains open. [Evidence](docs/FYROX-HELD-PAUSE-FIX.md).
