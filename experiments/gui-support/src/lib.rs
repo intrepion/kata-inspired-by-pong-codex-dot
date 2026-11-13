@@ -117,15 +117,51 @@ impl Model {
         }
     }
     pub fn status(&self) -> String {
+        let state = match self.game.state {
+            State::Ready => "Ready",
+            State::Playing => "Playing",
+            State::Paused => "Paused",
+            State::Over if self.game.scores[0] > self.game.scores[1] => "YOU WIN",
+            State::Over if self.game.scores[1] > self.game.scores[0] => "CPU WINS",
+            State::Over => "Match over",
+        };
         format!(
-            "YOU {} : {} CPU   |   {:?}",
-            self.game.scores[0], self.game.scores[1], self.game.state
+            "YOU {} : {} CPU   |   {}",
+            self.game.scores[0], self.game.scores[1], state
         )
     }
 }
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn status_names_winner_and_clears_after_restart() {
+        let mut model = Model::default();
+        assert!(model.status().contains("Ready"));
+        model.game.start();
+        assert!(model.status().contains("Playing"));
+        model.game.pause();
+        assert!(model.status().contains("Paused"));
+        for (scores, x, vx, expected) in [
+            ([6, 2], W + BALL - 1., 350., "YOU WIN"),
+            ([2, 6], -BALL + 1., -350., "CPU WINS"),
+        ] {
+            model.game.start();
+            model.game.scores = scores;
+            model.game.serve = 0.;
+            model.game.ball.x = x;
+            model.game.ball.y = H / 2.;
+            model.game.ball.vx = vx;
+            model.game.ball.vy = 0.;
+            model.game.step(0.02, 0.);
+            assert!(model.status().contains(expected));
+            model.game.start();
+            assert!(model.status().contains("Playing"));
+        }
+        model.game.state = State::Over;
+        model.game.scores = [7, 7];
+        assert!(model.status().contains("Match over"));
+    }
     #[test]
     fn restarting_during_play_requires_fresh_movement_press() {
         let mut model = Model::default();

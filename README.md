@@ -833,3 +833,5 @@ Pixels now shows Ready, Paused and winner messages in the court; [Omarchy eviden
 Raw wgpu now shows Ready, Paused and winner messages inside the court; [Omarchy evidence](docs/packaging/WGPU-COURT-STATES-OMARCHY.md) records state mapping and a paused app capture.
 
 Fyrox now names the winner in its in-window header; [Omarchy evidence](docs/packaging/FYROX-WINNER-OMARCHY.md) records state tests and a paused scripted capture.
+
+GTK, Slint and GPUI now name the winner in their shared status; [Omarchy evidence](docs/packaging/GUI-WINNER-STATUS-OMARCHY.md) records model tests, consumer checks and a paused Slint snapshot.
