@@ -1,5 +1,7 @@
 # Rallylight
 
+Mac cross-check: polling and four-engine non-playing-input regression suites, shared GUI/web controllers, and Godot headless injected-input smoke pass; physical input and rebuilt client replay remain open. [Evidence](docs/packaging/NONPLAYING-INPUT-MAC-20261113.md)
+
 Fira Mono is being evaluated as a ggez font replacement; an isolated Mac pilot covers ASCII and bounded automated interaction, with release and broader layout checks outstanding. [Evidence](docs/packaging/GGEZ-MAC-FIRA-PILOT-20261113.md)
 
 An original real-time paddle game inspired by Pong. Return the ball, steer shots with your paddle, and beat the computer to seven points. The computer has a short reaction delay and a limited paddle speed, so well-placed shots can get past it. This independent kata is not affiliated with or endorsed by Atari.
@@ -175,6 +177,8 @@ Dioxus local-libxdo launcher now rejects package paths containing loader separat
 Omarchy Miniquad winning-score fixture: real scoring reached both game-over states and scripted restart cleared them from controlled near-winning positions. [Evidence](docs/packaging/MINIQUAD-SCORING-FIXTURE-OMARCHY.md).
 
 Omarchy Miniquad winner overlay: an isolated forced-state visual fixture rendered both winner messages; real game-over progression and physical input remain open. [Evidence](docs/packaging/MINIQUAD-WINNER-FIXTURE-OMARCHY.md).
+
+Omarchy GUI match-end input: shared GTK/Slint/GPUI model suppresses movement held through game over; model tests and rebuilt scripted replays pass. [Evidence](docs/packaging/GUI-GAMEOVER-HELD-INPUT-OMARCHY.md).
 
 Omarchy original/mobile input review: original browser Ready/Paused regressions pass; native mobile suppression paths reviewed, with new Kotlin test awaiting an Android toolchain. [Evidence](docs/packaging/ORIGINAL-MOBILE-NONPLAYING-OMARCHY.md).
 

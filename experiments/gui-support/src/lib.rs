@@ -32,10 +32,25 @@ impl Model {
     pub fn advance(&mut self, dt: f32) {
         self.accumulator += dt.clamp(0., 0.1);
         while self.accumulator >= 1. / 120. {
+            let was_playing = self.game.state == State::Playing;
             self.game
                 .step(1. / 120., self.down as i32 as f32 - self.up as i32 as f32);
             self.accumulator -= 1. / 120.;
+            if was_playing && self.game.state == State::Over {
+                self.suppress_movement();
+                break;
+            }
         }
+    }
+    fn suppress_movement(&mut self) {
+        for key in ["w", "up", "s", "down"] {
+            if self.held.contains(key) {
+                self.suppressed.insert(key.to_owned());
+            }
+        }
+        self.up = false;
+        self.down = false;
+        self.accumulator = 0.;
     }
     pub fn blur(&mut self) {
         self.up = false;
@@ -89,14 +104,7 @@ impl Model {
             }
             "space" if pressed => {
                 if self.game.state == State::Playing {
-                    for key in ["w", "up", "s", "down"] {
-                        if self.held.contains(key) {
-                            self.suppressed.insert(key.to_owned());
-                        }
-                    }
-                    self.up = false;
-                    self.down = false;
-                    self.accumulator = 0.;
+                    self.suppress_movement();
                 }
                 self.game.toggle_pause();
             }
@@ -140,6 +148,39 @@ mod tests {
 #[cfg(test)]
 mod repeat_tests {
     use super::*;
+    #[test]
+    fn movement_held_through_match_end_cannot_move_after_restart() {
+        for key in ["w", "Up", "s", "Down"] {
+            for restart in ["Enter", "r"] {
+                for (scores, x, vx) in [([6, 2], W + BALL - 1., 350.), ([2, 6], -BALL + 1., -350.)]
+                {
+                    let mut m = Model::default();
+                    m.game.start();
+                    m.game.scores = scores;
+                    m.game.serve = 0.;
+                    m.game.ball = Ball {
+                        x,
+                        y: H / 2.,
+                        vx,
+                        vy: 0.,
+                    };
+                    m.key(key, true);
+                    m.advance(0.02);
+                    assert_eq!(m.game.state, State::Over);
+                    m.key(restart, true);
+                    assert_eq!(m.game.state, State::Playing);
+                    m.key(key, true); // toolkit repeat without a repeat flag
+                    m.advance(0.02);
+                    assert_eq!(m.game.player, H / 2., "{key} after {restart}");
+                    m.key(key, false);
+                    m.key(key, true);
+                    m.advance(0.02);
+                    assert_ne!(m.game.player, H / 2., "fresh {key} after {restart}");
+                }
+            }
+        }
+    }
+
     #[test]
     fn nonplaying_movement_presses_wait_for_release_and_fresh_press() {
         for state in [State::Ready, State::Paused, State::Over] {
