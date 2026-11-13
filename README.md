@@ -34,7 +34,7 @@ Mac Miniquad pause follow-up: ten release tests pass; sequential desktop start/m
 
 Windows bracket-lib held-input pause follow-up: 11 action/model tests and fresh scripted replay pass; native held-key input remains open. [Evidence](docs/WINDOWS-BRACKET-HELD-PAUSE-RECHECK.md).
 
-Windows Godot pause-prompt qualification is blocked by missing checked engine and cached Rust dependency prerequisites; no runtime pass is claimed. [Details](docs/WINDOWS-GODOT-PAUSE-ATTEMPT.md).
+Windows Godot headless integration and synthetic held-input checks pass with a fresh isolated build; graphical, native input and packaging checks remain open. [Details](docs/WINDOWS-GODOT-PAUSE-ATTEMPT.md).
 
 Windows raylib/SDL3 held-input pause follow-up: five and four model tests plus fresh scripted replays pass; native input and ordinary debug runtime warnings remain open. [Evidence](docs/WINDOWS-RAYLIB-SDL3-HELD-PAUSE-RECHECK.md).
 
