@@ -64,6 +64,8 @@ ggez uses a scoped dirs-sys patch removing option-ext; Windows release tests and
 
 Fyrox Windows feature investigation: disabling defaults breaks the implementation import, while explicitly enabling it retains Symphonia; [replacement remains open](docs/packaging/FYROX-WINDOWS-MPL-FEASIBILITY.md).
 
+Windows softbuffer runtime snapshot observed 31 System32 modules, including VCRUNTIME140; [system-license and clean-machine review remain open](docs/packaging/SOFTBUFFER-WINDOWS-LOADED-MODULES.md).
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.

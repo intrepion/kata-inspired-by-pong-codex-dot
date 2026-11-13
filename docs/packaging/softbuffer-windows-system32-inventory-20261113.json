@@ -1,0 +1,250 @@
+[
+  {
+    "name": "ADVAPI32.dll",
+    "observed_version": "10.0.26100.3624 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.3624 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "apphelp.dll",
+    "observed_version": "10.0.26100.9549 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.9549 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "bcryptprimitives.dll",
+    "observed_version": "10.0.26100.9974 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.9974 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "combase.dll",
+    "observed_version": "10.0.26100.7705 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.7705 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "dataexchange.dll",
+    "observed_version": "10.0.26100.9818 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.9818 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "dwmapi.dll",
+    "observed_version": "10.0.26100.1 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.1 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "explorerframe.dll",
+    "observed_version": "10.0.26100.8972 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.8972 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "GDI32.dll",
+    "observed_version": "10.0.26100.8328 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.8328 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "gdi32full.dll",
+    "observed_version": "10.0.26100.9974 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.9974 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "imm32.dll",
+    "observed_version": "10.0.26100.9818 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.9818 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "kernel.appcore.dll",
+    "observed_version": "10.0.26100.9818 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.9818 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "KERNEL32.DLL",
+    "observed_version": "10.0.26100.9974 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.9974 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "KERNELBASE.dll",
+    "observed_version": "10.0.26100.9974 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.9974 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "MSCTF.dll",
+    "observed_version": "10.0.26100.1 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.1 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "msvcp_win.dll",
+    "observed_version": "10.0.26100.9711 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.9711 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "msvcrt.dll",
+    "observed_version": "7.0.26100.9711 (WinBuild.160101.0800)",
+    "current_version": "7.0.26100.9711 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "ntdll.dll",
+    "observed_version": "10.0.26100.9974 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.9974 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "ole32.dll",
+    "observed_version": "10.0.26100.6725 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.6725 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "powrprof.dll",
+    "observed_version": "10.0.26100.8117 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.8117 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "RPCRT4.dll",
+    "observed_version": "10.0.26100.1 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.1 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "sechost.dll",
+    "observed_version": "10.0.26100.1 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.1 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "SHCORE.dll",
+    "observed_version": "10.0.26100.8117 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.8117 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "shell32.dll",
+    "observed_version": "10.0.26100.9549 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.9549 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "SHLWAPI.dll",
+    "observed_version": "10.0.26100.8117 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.8117 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "twinapi.appcore.dll",
+    "observed_version": "10.0.26100.1 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.1 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "ucrtbase.dll",
+    "observed_version": "10.0.26100.9711 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.9711 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "UMPDC.dll",
+    "observed_version": "10.0.26100.9818 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.9818 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "user32.dll",
+    "observed_version": "10.0.26100.8117 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.8117 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "uxtheme.dll",
+    "observed_version": "10.0.26100.7019 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.7019 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  },
+  {
+    "name": "VCRUNTIME140.dll",
+    "observed_version": "14.50.35719.0",
+    "current_version": "14.50.35719.0",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Visual Studio®",
+    "version_matches": true
+  },
+  {
+    "name": "win32u.dll",
+    "observed_version": "10.0.26100.9974 (WinBuild.160101.0800)",
+    "current_version": "10.0.26100.9974 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "product": "Microsoft® Windows® Operating System",
+    "version_matches": true
+  }
+]
