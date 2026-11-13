@@ -25,6 +25,7 @@ struct Pong {
     scenario: pong_scenario::Scenario,
     game: Game,
     keys: HashSet<VirtualKeyCode>,
+    suppressed: HashSet<VirtualKeyCode>,
     focused: bool,
     accumulator: f32,
     demo: Option<pong_scenario::Demo>,
@@ -39,6 +40,7 @@ impl Pong {
             scenario: pong_scenario::Scenario::default(),
             game: Game::new(pong_scenario::SEED),
             keys: HashSet::new(),
+            suppressed: HashSet::new(),
             focused: true,
             accumulator: 0.,
             demo: None,
@@ -51,17 +53,20 @@ impl Pong {
             BEvent::Focused { focused } => {
                 self.focused = focused;
                 self.keys.clear();
+                self.suppressed.clear();
                 self.game.pause();
                 self.accumulator = 0.;
             }
             BEvent::Resized { .. } => {
                 self.game.pause();
                 self.keys.clear();
+                self.suppressed.clear();
                 self.accumulator = 0.;
             }
             BEvent::KeyboardInput { key, pressed, .. } => {
                 if !pressed {
                     self.keys.remove(&key);
+                    self.suppressed.remove(&key);
                     return false;
                 }
                 if !self.focused || !self.keys.insert(key) {
@@ -73,7 +78,20 @@ impl Pong {
                         if matches!(self.game.state, State::Ready | State::Over) {
                             self.game.start()
                         } else {
-                            self.game.toggle_pause()
+                            let was_playing = self.game.state == State::Playing;
+                            self.game.toggle_pause();
+                            if was_playing && self.game.state == State::Paused {
+                                for key in [
+                                    VirtualKeyCode::W,
+                                    VirtualKeyCode::Up,
+                                    VirtualKeyCode::S,
+                                    VirtualKeyCode::Down,
+                                ] {
+                                    if self.keys.contains(&key) {
+                                        self.suppressed.insert(key);
+                                    }
+                                }
+                            }
                         }
                         self.accumulator = 0.;
                     }
@@ -97,9 +115,9 @@ impl Pong {
             return;
         }
         self.accumulator += seconds.clamp(0., 0.1);
-        let up = self.keys.contains(&VirtualKeyCode::W) || self.keys.contains(&VirtualKeyCode::Up);
-        let down =
-            self.keys.contains(&VirtualKeyCode::S) || self.keys.contains(&VirtualKeyCode::Down);
+        let active = |key| self.keys.contains(&key) && !self.suppressed.contains(&key);
+        let up = active(VirtualKeyCode::W) || active(VirtualKeyCode::Up);
+        let down = active(VirtualKeyCode::S) || active(VirtualKeyCode::Down);
         while self.accumulator >= 1. / 120. {
             self.game
                 .step(1. / 120., down as u8 as f32 - up as u8 as f32);
@@ -323,6 +341,58 @@ mod tests {
             scan_code: 0,
             pressed,
         }
+    }
+    #[test]
+    fn explicit_pause_blocks_held_movement_until_release() {
+        for keycode in [
+            VirtualKeyCode::W,
+            VirtualKeyCode::Up,
+            VirtualKeyCode::S,
+            VirtualKeyCode::Down,
+        ] {
+            let mut p = Pong::new();
+            p.event(key(VirtualKeyCode::Space, true));
+            p.event(key(VirtualKeyCode::Space, false));
+            p.event(key(keycode, true));
+            p.advance(0.05);
+            assert_ne!(p.game.player, 250.);
+            p.event(key(VirtualKeyCode::Space, true));
+            assert_eq!(p.game.state, State::Paused);
+            p.event(key(VirtualKeyCode::Space, true));
+            assert_eq!(p.game.state, State::Paused);
+            p.event(key(VirtualKeyCode::Space, false));
+            p.event(key(VirtualKeyCode::Space, true));
+            assert_eq!(p.game.state, State::Playing);
+            p.event(key(keycode, true));
+            let stopped = p.game.player;
+            p.advance(0.05);
+            assert_eq!(p.game.player, stopped, "repeat restored movement");
+            p.event(key(keycode, false));
+            p.event(key(keycode, true));
+            p.advance(0.05);
+            assert_ne!(p.game.player, stopped, "fresh press did not move");
+        }
+    }
+    #[test]
+    fn pause_suppression_is_per_binding_and_focus_clears_it() {
+        let mut p = Pong::new();
+        p.game.start();
+        p.event(key(VirtualKeyCode::W, true));
+        p.event(key(VirtualKeyCode::Up, true));
+        p.event(key(VirtualKeyCode::Space, true));
+        p.event(key(VirtualKeyCode::Space, false));
+        p.event(key(VirtualKeyCode::Space, true));
+        p.event(key(VirtualKeyCode::W, false));
+        p.event(key(VirtualKeyCode::W, true));
+        let before = p.game.player;
+        p.advance(0.05);
+        assert!(p.game.player < before);
+        p.event(key(VirtualKeyCode::W, false));
+        let stopped = p.game.player;
+        p.advance(0.05);
+        assert_eq!(p.game.player, stopped);
+        p.event(BEvent::Focused { focused: false });
+        assert!(p.suppressed.is_empty());
     }
     #[test]
     fn held_release_and_pause() {
