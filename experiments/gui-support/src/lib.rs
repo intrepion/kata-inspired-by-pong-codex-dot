@@ -64,6 +64,9 @@ impl Model {
             if !self.held.insert(key.to_owned()) {
                 return;
             }
+            if self.game.state != State::Playing && matches!(key, "w" | "up" | "s" | "down") {
+                self.suppressed.insert(key.to_owned());
+            }
         } else {
             self.held.remove(key);
             self.suppressed.remove(key);
@@ -137,6 +140,25 @@ mod tests {
 #[cfg(test)]
 mod repeat_tests {
     use super::*;
+    #[test]
+    fn nonplaying_movement_presses_wait_for_release_and_fresh_press() {
+        for state in [State::Ready, State::Paused, State::Over] {
+            for key in ["w", "Up", "s", "Down"] {
+                let mut m = Model::default();
+                m.game.state = state;
+                m.key(key, true);
+                m.key("Enter", true);
+                assert_eq!(m.game.state, State::Playing);
+                assert!(!m.up && !m.down, "{state:?} {key}");
+                m.key(key, true);
+                assert!(!m.up && !m.down, "repeat must stay suppressed");
+                m.key(key, false);
+                m.key(key, true);
+                assert!(m.up || m.down, "fresh press must work");
+            }
+        }
+    }
+
     #[test]
     fn held_pause_does_not_toggle_repeatedly() {
         let mut m = Model::default();
@@ -236,6 +258,7 @@ mod alias_tests {
     #[test]
     fn releasing_one_down_binding_keeps_other_held_binding_active() {
         let mut model = Model::default();
+        model.game.start();
         model.key("S", true);
         model.key("down", true);
         model.key("down", false);
