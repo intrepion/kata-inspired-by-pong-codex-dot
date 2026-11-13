@@ -922,6 +922,8 @@ Blue Engine now labels its in-court scores YOU and CPU; [Windows headless captur
 
 Blue Engine now shows in-court start, resume and restart hints; [Windows headless evidence](docs/packaging/BLUE-COURT-HINTS-WINDOWS-20261113.md) records the tested paused and playing states.
 
+A [bounded Windows callback benchmark](docs/benchmarks/BLUE-HINTS-WINDOWS-BOUNDED-20261113.md) compares Blue Engine builds before and after score labels and hints; its noisy sample and a baseline access violation need follow-up.
+
 Raylib now accepts keypad Enter for its existing restart action, with independent focus-return suppression; [Omarchy tests and replay](docs/packaging/RAYLIB-KEYPAD-ENTER-OMARCHY.md) record the native-input gap.
 
 Fyrox now accepts keypad Enter; [Mac tests and automated-window evidence](docs/packaging/FYROX-KEYPAD-ENTER-MAC-20261113.md) and [Omarchy adapter tests](docs/packaging/FYROX-KEYPAD-ENTER-OMARCHY.md) retain the physical-input and license limitations.
