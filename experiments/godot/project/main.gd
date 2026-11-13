@@ -4,6 +4,20 @@ var state: Dictionary
 var font: Font
 var axis := 0.0
 var capture_pending := false
+const MOVEMENT_KEYS := [KEY_W, KEY_UP, KEY_S, KEY_DOWN]
+var suppressed_keys := {}
+
+func suppress_held_movement() -> void:
+    for code in MOVEMENT_KEYS:
+        if Input.is_physical_key_pressed(code): suppressed_keys[code] = true
+
+func movement_axis() -> float:
+    var active := {}
+    for code in MOVEMENT_KEYS:
+        var held := Input.is_physical_key_pressed(code)
+        if not held: suppressed_keys.erase(code)
+        active[code] = held and not suppressed_keys.has(code)
+    return float(active[KEY_S] or active[KEY_DOWN]) - float(active[KEY_W] or active[KEY_UP])
 
 func _ready() -> void:
     simulation = PongSimulation.new()
@@ -11,7 +25,9 @@ func _ready() -> void:
     font = ThemeDB.fallback_font
     state = simulation.snapshot()
     get_window().focus_exited.connect(func():
-        if not simulation.scripted_enabled(): simulation.pause()
+        if not simulation.scripted_enabled():
+            suppress_held_movement()
+            simulation.pause()
     )
 
 func _physics_process(delta: float) -> void:
@@ -46,14 +62,18 @@ func _physics_process(delta: float) -> void:
             if simulation.scripted_finished(): get_tree().quit()
         return
 
-    axis = float(Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN)) - float(Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP))
+    axis = movement_axis()
     simulation.advance(delta, axis)
     state = simulation.snapshot()
     queue_redraw()
 
 func _unhandled_input(event: InputEvent) -> void:
     if simulation.scripted_enabled(): return
+    if event is InputEventKey and not event.pressed:
+        suppressed_keys.erase(event.physical_keycode)
     if event is InputEventKey and event.pressed and not event.echo:
+        if event.physical_keycode in [KEY_SPACE, KEY_ENTER, KEY_P] and simulation.snapshot().state == "Playing":
+            suppress_held_movement()
         match event.physical_keycode:
             KEY_SPACE, KEY_ENTER:
                 if state.state == "Ready" or state.state == "Over": simulation.start()
