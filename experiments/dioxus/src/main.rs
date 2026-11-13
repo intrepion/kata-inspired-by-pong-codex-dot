@@ -34,10 +34,21 @@ fn App() -> Element {
     });
     let svg = session.read().svg();
     rsx! {style { "{CSS}" }
-    main { tabindex: "0", autofocus: true,
+    main { id: "pong-dioxus-root", tabindex: "0", autofocus: true,
     onkeydown: move |event: KeyboardEvent| {if pong_web_ui_common::handled_key(&event.key().to_string()){event.prevent_default();}session.write().key(&event.key().to_string(),true,event.is_auto_repeating());},
     onkeyup: move |event: KeyboardEvent| {session.write().key(&event.key().to_string(),false,false);},
-    onblur: move |_| session.write().pause(),
+    onfocusout: move |_| {
+        // FocusData has no related target on desktop. Check after the browser's
+        // focus transition so moving to an internal button does not pause.
+        spawn(async move {
+            let next_inside = document::eval(r#"
+                await new Promise(resolve => setTimeout(resolve, 0));
+                const root = document.getElementById('pong-dioxus-root');
+                return Boolean(root && document.hasFocus() && root.contains(document.activeElement));
+            "#).join::<bool>().await.unwrap_or(false);
+            session.write().focus_left(next_inside);
+        });
+    },
     h1 {"Pong • Dioxus"} p {"Rust shared simulation · Dioxus native desktop / WASM web"}
     div { dangerous_inner_html: svg }
     button {onclick:move |_| session.write().start(),"Start / Restart"}
