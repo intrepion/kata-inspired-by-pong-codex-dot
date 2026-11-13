@@ -107,7 +107,9 @@ test('browser handlers clear movement on pause and reject continuing touch drags
  const spaceOnStart=doc.emit('keydown',{key:' ',repeat:false,target:els.start});assert.equal(spaceOnStart.defaultPrevented,false);
  els.start.emit('click');frame(0);const statusWrites=els.status.textWrites;frame(0);assert.equal(els.status.textWrites,statusWrites,'unchanged live status must not be rewritten');doc.emit('keydown',{key:'w',repeat:false});frame(20);const moved=playerY;
  els.up.emit('pointerdown',{pointerId:3});const spaceOnPause=doc.emit('keydown',{key:' ',repeat:false,target:els.pause});assert.equal(spaceOnPause.defaultPrevented,false);assert.equal(els.pause.textContent,'Pause');els.pause.emit('click');els.start.emit('click');doc.emit('keydown',{key:'w',repeat:true});frame(40);frame(60);assert.equal(playerY,moved);
- els.court.emit('pointerdown',{pointerType:'touch',pointerId:8});els.court.emit('pointermove',{pointerType:'touch',pointerId:8,buttons:1,clientY:350});frame(80);const dragged=playerY;
+ els.court.emit('pointerdown',{pointerType:'touch',pointerId:8});els.court.emit('pointerdown',{pointerType:'touch',pointerId:7});const beforeSecond=playerY;
+ els.court.emit('pointermove',{pointerType:'touch',pointerId:7,buttons:1,clientY:100});frame(70);assert.equal(playerY,beforeSecond);els.court.emit('pointerup',{pointerId:7});
+ els.court.emit('pointermove',{pointerType:'touch',pointerId:8,buttons:1,clientY:350});frame(80);const dragged=playerY;
  els.pause.emit('click');els.start.emit('click');els.court.emit('pointermove',{pointerType:'touch',pointerId:8,buttons:1,clientY:100});frame(100);assert.equal(playerY,dragged);
  els.court.emit('pointerup',{pointerId:8});els.court.emit('pointerdown',{pointerType:'touch',pointerId:9});els.court.emit('pointermove',{pointerType:'touch',pointerId:9,buttons:1,clientY:100});frame(120);assert.notEqual(playerY,dragged);
  const beforePauseWrites=els.status.textWrites;const shortcut=doc.emit('keydown',{key:' ',repeat:false,target:els.court});assert.equal(shortcut.defaultPrevented,true);assert.equal(els.status.textContent,'Paused');assert.equal(els.status.textWrites,beforePauseWrites+1);
@@ -161,4 +163,13 @@ test('independent original collision handles tangent contact and a stationary ba
   const g=createGame(()=>.5);g.start();g.serve=0;g.cpuReaction=1;g.ball={x,y:303,vx,vy:0};g.step(1/120,0);assert.equal(Math.sign(g.ball.vx),-Math.sign(vx));
   g.ball={x:face,y:250,vx:0,vy:0};g.step(1/120,0);assert.equal(g.ball.vx,0);assert.equal(g.ball.x,face);
  }
+});
+
+test('canvas drag remains owned by first pointer until release or cancellation',()=>{
+ const {createControls}=require('../game'),input=createControls();
+ input.dragDown(10);input.dragDown(20);assert.equal(input.dragAllowed(10),true);assert.equal(input.dragAllowed(20),false);
+ input.dragUp(20);assert.equal(input.dragAllowed(10),true);
+ input.dragDown(20);input.dragUp(10);assert.equal(input.dragAllowed(20),false);
+ input.dragDown(30);assert.equal(input.dragAllowed(30),true);input.suspend();assert.equal(input.dragAllowed(30),false);
+ input.dragDown(40);assert.equal(input.dragAllowed(40),true);input.dragUp(30);assert.equal(input.dragAllowed(40),true);
 });

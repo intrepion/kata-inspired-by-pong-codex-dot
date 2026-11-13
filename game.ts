@@ -49,16 +49,17 @@ function createPointerButtons() {
 }
 // A pause ends all active movement sources; repeats and continuing drags cannot re-arm them.
 function createControls() {
-    const keys = new Set<string>(), buttons = createPointerButtons(), drags = new Set<number>();
+    const keys = new Set<string>(), buttons = createPointerButtons();
+    let dragOwner: number | null = null;
     return {
         keyDown(key: string, repeat: boolean) { if (!repeat) keys.add(key.toLowerCase()); },
         keyUp(key: string) { keys.delete(key.toLowerCase()); },
         buttonDown(id: number | string, dir: -1 | 1) { buttons.press(id, dir); },
         buttonUp(id: number | string) { buttons.release(id); },
-        dragDown(id: number) { drags.add(id); },
-        dragUp(id: number) { drags.delete(id); },
-        dragAllowed(id: number) { return drags.has(id); },
-        suspend() { keys.clear(); buttons.clear(); drags.clear(); },
+        dragDown(id: number) { if (dragOwner === null) dragOwner = id; return dragOwner === id; },
+        dragUp(id: number) { if (dragOwner === id) dragOwner = null; },
+        dragAllowed(id: number) { return dragOwner === id; },
+        suspend() { keys.clear(); buttons.clear(); dragOwner = null; },
         axis() { return buttons.axis() + Number(keys.has('arrowdown') || keys.has('s')) - Number(keys.has('arrowup') || keys.has('w')); }
     };
 }
@@ -276,7 +277,7 @@ if (typeof document !== 'undefined') {
             el.addEventListener(event, e => { controls.buttonUp(e.pointerId); });
     }
     canvas.addEventListener('pointerdown', e => { if (!demoRequested && game.state === 'playing' && e.pointerType !== 'mouse') {
-        controls.dragDown(e.pointerId); canvas.setPointerCapture(e.pointerId);
+        if (controls.dragDown(e.pointerId)) canvas.setPointerCapture(e.pointerId);
     } });
     for (const event of ['pointerup', 'pointercancel', 'lostpointercapture'] as const)
         canvas.addEventListener(event, e => controls.dragUp(e.pointerId));
