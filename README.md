@@ -14,6 +14,8 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
+Windows SDL3 contact-timing follow-up: two adapter tests and a fresh scripted replay pass; the paused app-owned frame was inspected. The debug link emitted an `LNK4098` warning and native input remains unverified. [Evidence](docs/WINDOWS-SDL3-CONTACT-TIMING.md).
+
 Windows Miniquad contact-timing follow-up: seven adapter/model tests and a fresh scripted replay pass; the paused app-owned frame was inspected. The prior supported-key delivery limitation remains unresolved. [Evidence](docs/WINDOWS-MINIQUAD-CONTACT-TIMING.md).
 
 Windows Pixels contact-timing follow-up: fresh scripted telemetry matches the model reference and six app-owned source frames were inspected. Native interaction remains unverified after an approval timeout. [Evidence](docs/WINDOWS-PIXELS-CONTACT-TIMING.md).
