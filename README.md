@@ -40,6 +40,8 @@ Windows ggez release portable pilot: four tests passed and relocated scripted te
 
 Windows Nannou release portable pilot: five tests passed and relocated scripted telemetry matched all 13 reference records; 31 dependency notice flags and physical-input, accessibility, and clean-machine checks remain open. See [evidence](docs/packaging/NANNOU-HELD-WINDOWS-RELEASE-PILOT.md).
 
+Windows Fyrox debug replay from a dedicated writable directory matched all 13 reference records and created its registry there; generated state was preserved. See [evidence](docs/packaging/FYROX-DEDICATED-CWD-WINDOWS.md).
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
