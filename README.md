@@ -70,7 +70,7 @@ Each desktop cell is **build / runtime evidence**:
 | --- | --- | --- | --- |
 | Original TypeScript + Canvas browser | Updated UI not rechecked on Mac | Strict TS build + 15 tests pass; localhost normal start/pause/resume and 390×844 layout inspected at `31478c6` | Updated UI not rechecked on Omarchy |
 | Rust WASM + Canvas browser | B / I | B / I; normal start/pause/resume rechecked at `31478c6`, 7 scenario/WASM tests pass | B / localhost serves; UI blocked |
-| Macroquad | Fresh `7495366` B / bounded native automated full match; shell replay blocked ([details](docs/MACROQUAD-MAC-CONTACT-TIMING-RECHECK.md)) | B / R; keyboard play unverified | B / S + scripted replay and app-frame PNGs inspected; real input blocked |
+| Macroquad | Fresh `7495366` B / bounded native automated full match; shell replay blocked ([details](docs/MACROQUAD-MAC-CONTACT-TIMING-RECHECK.md)) | B / R; keyboard play unverified | Fresh `617160c` B; relocated package replay and six app-owned PNGs, exact model match; physical input unverified ([details](docs/packaging/MACROQUAD-C77-OMARCHY-REPLAY.md)) |
 | Bevy | B / I; Mesh2d rechecked at `55d0975` | B / I + scripted captures **with DX12**; default Vulkan **F** ([details](docs/WINDOWS-BEVY-DIAGNOSIS.md)) | B / S + scripted/PNG sample passed; real input blocked |
 | Tauri + Rust WASM | B / I | B / I | B / native scripted Canvas PNG samples passed; real input unverified |
 | Miniquad | B / I | Fresh MSVC B + 1 test; scripted/six PNG reported passed; native Return/Space still no start | Fresh `4f4da1d` B, 7 tests; relocated package replay and six app-owned PNGs, exact model match; physical input unverified ([details](docs/packaging/MINIQUAD-C77-OMARCHY-REPLAY.md)) |
