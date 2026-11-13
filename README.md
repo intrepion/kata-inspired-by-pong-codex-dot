@@ -924,6 +924,8 @@ Blue Engine now shows in-court start, resume and restart hints; [Windows headles
 
 Blue Engine now updates hint geometry only on state changes; [Windows tests, captures and bounded timings](docs/benchmarks/BLUE-HINT-STATE-CACHE-WINDOWS-20261113.md) record the scope and limits.
 
+A [Windows headless pause-transition trace](docs/packaging/BLUE-PAUSE-TRANSITION-HEADLESS-WINDOWS-20261113.md) records callback-state and image ordering; native presentation remains unverified.
+
 Blue Engine now draws the ball in front of the net at a distinct depth; [Windows headless overlap checks](docs/packaging/BLUE-BALL-NET-DEPTH-WINDOWS-20261113.md) record the observed variability and fix limits.
 
 An isolated [Windows Blue Engine winning-point fixture](docs/packaging/BLUE-WINNING-FIXTURE-WINDOWS-20261113.md) captured both winner screens and a scripted restart.

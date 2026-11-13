@@ -1,0 +1,35 @@
+diff --git a/experiments/blue-engine/src/main.rs b/experiments/blue-engine/src/main.rs
+index e0ffafe..17d4892 100644
+--- a/experiments/blue-engine/src/main.rs
++++ b/experiments/blue-engine/src/main.rs
+@@ -295,6 +295,10 @@ fn main() -> Result<(), blue_engine::error::Error> {
+ 
+     let mut previous = Instant::now();
+     let mut previous_hint_state = None;
++    #[cfg(feature = "capture-headless")]
++    let trace_dir = std::path::PathBuf::from(std::env::var("BLUE_TRACE_DIR").expect("fixture trace directory"));
++    #[cfg(feature = "capture-headless")]
++    let mut trace_count = 0u32;
+     #[cfg(feature = "windowed")]
+     let mut accumulator = 0.;
+     #[cfg(feature = "windowed")]
+@@ -317,6 +321,19 @@ fn main() -> Result<(), blue_engine::error::Error> {
+         let dt = now.duration_since(previous).as_secs_f32().min(0.1);
+         previous = now;
+         #[cfg(feature = "capture-headless")]
++        if demo.as_ref().is_some_and(|d| d.tick() >= 350) && trace_count < 16 {
++            let tick = demo.as_ref().unwrap().tick();
++            let rgba = &engine.renderer.headless_texture_data;
++            let (width, height) = (engine.renderer.config.width, engine.renderer.config.height);
++            use blue_engine::wgpu::TextureFormat;
++            let bgra = matches!(engine.renderer.config.format, TextureFormat::Bgra8Unorm | TextureFormat::Bgra8UnormSrgb);
++            let rgb: Vec<u32> = rgba.as_chunks::<4>().0.iter().map(|p| { let (r,b) = if bgra {(p[2],p[0])} else {(p[0],p[2])}; (u32::from(r)<<16)|(u32::from(p[1])<<8)|u32::from(b) }).collect();
++            let path = trace_dir.join(format!("frame-{trace_count:02}-tick-{tick:04}.png"));
++            pong_scenario::Demo::save_rgb(&path, &rgb, width, height);
++            println!("TRACE_FRAME index={trace_count} tick={tick} prior_state={:?}", game.state);
++            trace_count += 1;
++        }
++        #[cfg(feature = "capture-headless")]
+         if let Some((path, remaining)) = &mut pending {
+             if *remaining > 0 { *remaining -= 1; return; }
+             let rgba = &engine.renderer.headless_texture_data;
