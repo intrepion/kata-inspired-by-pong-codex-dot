@@ -1,0 +1,7 @@
+# Low-level restart hint: Windows check, 2026-11-13
+
+At checkpoint `8c7752a06eb808209295c9f9958a63dfe56e1983`, shared renderer source Git blob `5c3d07376e7089a0cd84a6cb5ce9836a94f07c1e` passed seven locked offline release unit tests and four integration tests on Windows MSVC stable Rust 1.99.1. The unit regression checks match-end restart-hint pixels and their absence during play. Softbuffer adapter source blob `c46cb48675475fb145752446e58a740e8d78b3b0` passed all 10 locked offline release tests.
+
+A locked offline Softbuffer release build succeeded; executable SHA-256 was `fc1cbeb94cd4e558d08e6837e769efbf5f09ff12ac0d916e3e95a8d9d73f050a`. Its app-owned scripted run exited 0 with empty stderr and all 13 parsed telemetry records matching `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`. Six captures were generated. The inspected tick 480 capture showed the paused court, score and resume prompt; SHA-256 `fdede478ed6af22eb32a50139a82abf6c097306a6d12089f503ae818fd8baa31`. Logs, captures and copies of prior executable and test binaries remain in sibling workspace directory `softbuffer-restart-hint-windows-20261113`.
+
+The standard replay does not reach game over, so the new hint has renderer-test evidence on Windows but no Windows app-owned match-end capture or native interaction check. SDL3 and ash were not rebuilt in this check. Physical and accessibility input, clean-machine installation, dependency notice and system-library review, and release qualification remain open; this is not license clearance.

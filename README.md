@@ -918,4 +918,4 @@ Raylib now accepts keypad Enter for its existing restart action, with independen
 
 Fyrox now accepts keypad Enter; [Mac tests and automated-window evidence](docs/packaging/FYROX-KEYPAD-ENTER-MAC-20261113.md) and [Omarchy adapter tests](docs/packaging/FYROX-KEYPAD-ENTER-OMARCHY.md) retain the physical-input and license limitations.
 
-The shared low-level court now shows an R-to-restart instruction after a match; [Mac Softbuffer evidence](docs/packaging/LOWLEVEL-RESTART-HINT-MAC-20261113.md) records the native check and remaining gaps.
+The shared low-level court now shows an R-to-restart instruction after a match; [Mac Softbuffer evidence](docs/packaging/LOWLEVEL-RESTART-HINT-MAC-20261113.md) and [Windows renderer and replay checks](docs/packaging/LOWLEVEL-RESTART-HINT-WINDOWS-20261113.md) record the remaining gaps.
