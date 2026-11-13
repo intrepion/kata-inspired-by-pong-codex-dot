@@ -849,3 +849,5 @@ Blue Engine's Ready, pause and result messages now also appear in the court; Oma
 Piston now backs its state indicators to keep the net and ball from obscuring them. [Omarchy test and paused-capture evidence](docs/packaging/PISTON-INDICATOR-BACKING-OMARCHY.md) records the remaining native and winner-screen checks.
 
 Godot now identifies the winner in its match-over prompt. [Omarchy status tests and synthetic scene captures](docs/GODOT-WINNER-OMARCHY-20261113.md) record the verification and its limits.
+
+Nannou's in-court prompts now have a backing to separate them from the ball and net. [Omarchy replay and paused-capture evidence](docs/packaging/NANNOU-PROMPT-BACKING-OMARCHY.md) records the scope and remaining checks.

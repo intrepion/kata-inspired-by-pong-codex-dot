@@ -203,15 +203,18 @@ fn view(app: &App, m: &Model) {
         .font_size(32)
         .color(WHITE);
     if let Some(message) = ready_message(&m.game) {
+        d.rect().x_y(0.0, -90.0).w_h(560.0, 42.0).color(Srgba::new(0.025, 0.04, 0.09, 1.0));
         d.text(message).x_y(0.0, -90.0).font_size(28).color(WHITE);
     }
     if m.game.state == State::Paused {
+        d.rect().x_y(0.0, -190.0).w_h(560.0, 42.0).color(Srgba::new(0.025, 0.04, 0.09, 1.0));
         d.text("PAUSED  •  SPACE TO RESUME")
             .x_y(0.0, -190.0)
             .font_size(24)
             .color(WHITE);
     }
     if let Some(message) = winner_message(&m.game) {
+        d.rect().x_y(0.0, 0.0).w_h(560.0, 42.0).color(Srgba::new(0.025, 0.04, 0.09, 1.0));
         d.text(message).x_y(0.0, 0.0).font_size(28).color(WHITE);
     }
     if m.benchmarking && !m.benchmark_done.load(std::sync::atomic::Ordering::Relaxed) {
