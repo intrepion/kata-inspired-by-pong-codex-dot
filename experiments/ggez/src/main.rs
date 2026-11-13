@@ -15,6 +15,16 @@ fn benchmark_args(args: &[String]) -> bool {
     );
     enabled
 }
+fn status_message(game: &Game) -> Option<&'static str> {
+    match game.state {
+        State::Ready => Some("Ready - Enter to play"),
+        State::Playing => None,
+        State::Paused => Some("Paused - Enter to play"),
+        State::Over if game.scores[0] > game.scores[1] => Some("YOU WIN - Enter to restart"),
+        State::Over if game.scores[1] > game.scores[0] => Some("CPU WINS - Enter to restart"),
+        State::Over => Some("Match over - Enter to restart"),
+    }
+}
 fn handle_key_down(game: &mut Game, held: &mut [bool; 4], key: KeyCode, repeated: bool) {
     for (i, k) in [
         KeyCode::KeyW,
@@ -169,9 +179,9 @@ impl event::EventHandler for App {
                 .dest([ox, oy + (H + 15.) * s])
                 .scale([s, s]),
         );
-        if self.game.state != State::Playing {
+        if let Some(message) = status_message(&self.game) {
             c.draw(
-                &Text::new(format!("{:?} - Enter to play", self.game.state)),
+                &Text::new(message),
                 DrawParam::default()
                     .dest([ox + 300. * s, oy + 220. * s])
                     .scale([s, s]),
@@ -238,6 +248,32 @@ impl event::EventHandler for App {
 #[cfg(test)]
 mod control_tests {
     use super::*;
+    #[test]
+    fn status_names_winner_and_clears_after_restart() {
+        let mut game = Game::new(42);
+        assert_eq!(status_message(&game), Some("Ready - Enter to play"));
+        game.start();
+        assert_eq!(status_message(&game), None);
+        game.pause();
+        assert_eq!(status_message(&game), Some("Paused - Enter to play"));
+        for (scores, x, vx, message) in [
+            ([6, 3], W + BALL - 1., 350., "YOU WIN - Enter to restart"),
+            ([2, 6], -BALL + 1., -350., "CPU WINS - Enter to restart"),
+        ] {
+            game.start();
+            game.scores = scores;
+            game.serve = 0.;
+            game.ball.x = x;
+            game.ball.y = H / 2.;
+            game.ball.vx = vx;
+            game.ball.vy = 0.;
+            game.step(0.02, 0.);
+            assert_eq!(game.state, State::Over);
+            assert_eq!(status_message(&game), Some(message));
+            game.start();
+            assert_eq!(status_message(&game), None);
+        }
+    }
     #[test]
     fn active_restart_clears_held_movement() {
         let mut g = Game::new(42);
