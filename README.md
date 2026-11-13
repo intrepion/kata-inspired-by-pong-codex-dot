@@ -6,6 +6,8 @@ Android held-touch pause and restart fixes: 16 model/unit tests pass and a debug
 
 Windows Blue held-pause recheck: four tests and a 13-checkpoint model-matched scripted run pass; native input remains open. [Evidence](docs/WINDOWS-BLUE-CONTACT-TIMING.md).
 
+Windows Chrome narrow layout: focused movement buttons moved the paddle with Enter and Space; physical and assistive input remain open. [Evidence](docs/ORIGINAL-MOVEMENT-BUTTON-KEYS.md).
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
