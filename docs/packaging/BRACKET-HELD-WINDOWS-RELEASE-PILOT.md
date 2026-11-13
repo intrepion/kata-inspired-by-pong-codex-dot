@@ -12,4 +12,4 @@ This is same-host portable extraction and scripted rendering, not a desktop scre
 
 ## Notice label correction
 
-The retained incomplete local bundle was generated from Windows-filtered metadata but mistakenly has the builder's default Linux heading. Its recorded hash and missing-file results refer to that retained artifact; it was excluded from the pilot package. No historical artifact was replaced.
+A prior correction here incorrectly said the retained incomplete bundle had a Linux heading. Reinspection confirmed its heading is Windows and its SHA-256 is the originally recorded 332b66b00a1e7165aa51bb6dc369da5142cdda5a041fec59c6ccae36ac552e87. It remains excluded from the pilot package because seven notice flags were unresolved; no historical artifact was replaced.

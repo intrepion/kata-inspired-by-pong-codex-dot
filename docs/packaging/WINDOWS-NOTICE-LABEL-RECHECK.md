@@ -1,0 +1,7 @@
+# Windows notice-heading recheck
+
+On 2026-11-13, retained `NOTICES*.txt` outputs in task workspace directories named `*windows*notices*` were inspected by first line. The previously reported ggez and Nannou incomplete local bundles have Linux headings despite Windows-filtered metadata. The initial raylib scan output also has a Linux heading, while its separately regenerated Windows-labeled bundle was the one packaged. The incomplete ggez and Nannou bundles and initial raylib output were excluded from their pilot packages and remain unchanged.
+
+A previous follow-up incorrectly included bracket-lib among the mislabeled bundles. Its retained `bracket-windows-held-notices-20261113/NOTICES.txt` begins `Pong Windows dependency notice preparation` and SHA-256 remains `332b66b00a1e7165aa51bb6dc369da5142cdda5a041fec59c6ccae36ac552e87`, matching the original report. It was excluded from its pilot because of seven unresolved notice flags, not its heading. The bracket report and notice-options report now correct the erroneous statement.
+
+Other inspected local notice outputs for ash, Blue Engine, Miniquad, Piston, SDL3 and softbuffer had Windows headings. This is a check of retained filenames and headers in this workspace, not an exhaustive audit of every historical archive or the validity of metadata, text, attribution or license obligations. No files were deleted or regenerated and no release qualification is implied.
