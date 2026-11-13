@@ -8,7 +8,7 @@ Windows Blue held-pause recheck: four tests and a 13-checkpoint model-matched sc
 
 Windows Chrome narrow layout: focused movement buttons moved the paddle with Enter and Space; physical and assistive input remain open. [Evidence](docs/ORIGINAL-MOVEMENT-BUTTON-KEYS.md).
 
-Windows original browser recheck: 24 JavaScript tests pass, collision math reviewed, and localhost Chrome start/pause/resume smoke passes; physical multi-touch and screen-reader behavior remain open. [Evidence](docs/WINDOWS-ORIGINAL-COLLISION-INPUT-RECHECK.md).
+Windows original browser recheck: 24 JavaScript tests pass, collision math reviewed, and localhost Chrome scripted mode reaches its export link; blob download and physical input remain open. [Evidence](docs/WINDOWS-ORIGINAL-COLLISION-INPUT-RECHECK.md).
 
 ## Current activity (last reported)
 
