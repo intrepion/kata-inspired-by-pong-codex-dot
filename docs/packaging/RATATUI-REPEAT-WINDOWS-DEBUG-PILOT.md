@@ -1,0 +1,11 @@
+# Ratatui Windows enhanced-repeat portable pilot
+
+At checkpoint `721fb6c62f2a5ee778987a8871d308b4079e99de`, the previously tested Windows MSVC debug executable from source checkpoint `632425e6788a4083c5d399eed062a4f4d7e8a9ee` was packaged without rebuilding. It includes enhanced-repeat fix `10b0aba`, had ten passing tests, and has SHA-256 `d28983ba22e04a6912db026d7ab28bcd80f4cab8e8801692e0a70c889c087f8f`. The Ratatui and shared core/scenario trees were unchanged between the source and package checkouts. [Build and test evidence](../WINDOWS-RATATUI-CONTACT-TIMING.md).
+
+A new offline locked `x86_64-pc-windows-msvc` Cargo metadata scan produced 63 resolved packages and 115 conventional notice files with no flagged missing package. The notice text SHA-256 `115470a57bd719dcdccfd53815c8c43180ea3b459f2094c7c015c8f9257aad0d` matches the prior discovery; the fresh index SHA-256 is `a6d4a707228b3feea39616caec38a03367f4a555d26158f3fe68bd47f966dd19`. The graph can include build or optional packages and is not exact binary attribution.
+
+A fresh local unsigned 472,004-byte ZIP has SHA-256 `1688a4e8404e52180967dcd28530d64cf2372c00562f7c452e7f8b78d97abbc6`. It contains the executable, project license, notice text, index, incomplete-pilot note and SHA-256 manifest. Extraction into a separate path with a space preserved all five payload hashes; the index's notice-text hash also matched. Manifest SHA-256: `9b9400bb2408f26d5cd5dcf9fc8b14f857f00a573b445193353eaa860046df0f`.
+
+The relocated executable exited 0 with empty stderr; its 13 TestBackend scripted telemetry lines matched the current model reference through finished tick 1440. It exported six app-owned text/JSON cell pairs; tick 480 shows 0:1 and Paused. The extracted package still contained only its six staged files. Archive, staging, extraction, metadata, raw logs and cell exports remain in task workspace `ratatui-repeat-package-20261113`; previous packages and binaries are preserved.
+
+This is same-host archive extraction and model-driven cell rendering, not a terminal screenshot, actual terminal protocol, native or physical keyboard input, accessibility check, clean-machine installation, upgrade or uninstall. Discovered files do not establish notice completeness or legal clearance; system libraries, license choices, signing and release qualification remain open.

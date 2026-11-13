@@ -14,6 +14,8 @@ Windows Blue Engine held-input release ZIP: local extraction, payload hashes and
 
 Windows Blue Engine notice discovery: 202 resolved packages indexed; exact upstream mappings addressed two flags, with 12 still open and legal review incomplete. [Evidence](docs/packaging/BLUE-WINDOWS-NOTICE-DISCOVERY.md).
 
+Windows Ratatui enhanced-repeat debug ZIP: notice inventory, local extraction and 13-checkpoint relocated TestBackend replay pass; terminal and release checks remain open. [Evidence](docs/packaging/RATATUI-REPEAT-WINDOWS-DEBUG-PILOT.md).
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
