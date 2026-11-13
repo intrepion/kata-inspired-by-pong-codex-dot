@@ -974,3 +974,6 @@ Raylib macOS narrow-window follow-up: the clipped control footer was split and m
 Nannou macOS: in-court scores identify YOU and CPU; a release-build Ready screen and 16 existing unit tests were checked. [Evidence and limits](docs/packaging/NANNOU-SCORE-LABELS-MAC-20261113.md).
 
 Nannou Windows: [release tests and a scripted nonzero-score capture](docs/packaging/NANNOU-SCORE-LABELS-WINDOWS-20261113.md) check the same labels.
+
+
+Nannou macOS: the Ready court now includes a controls hint and hides it during play; [bounded visual and automated Start evidence](docs/packaging/NANNOU-READY-CONTROLS-MAC-20261113.md). Fullscreen remains unverified.

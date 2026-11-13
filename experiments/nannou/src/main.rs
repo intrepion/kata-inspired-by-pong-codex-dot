@@ -246,6 +246,12 @@ fn view(app: &App, m: &Model) {
         d.rect().x_y(0.0, 0.0).w_h(560.0, 42.0).color(Srgba::new(0.025, 0.04, 0.09, 1.0));
         d.text(message).x_y(0.0, 0.0).font_size(28).color(WHITE);
     }
+    if m.game.state == State::Ready {
+        d.text("W/S OR ARROWS MOVE  |  SPACE PAUSE  |  ENTER/R RESTART  |  ESC EXIT")
+            .x_y(0.0, -235.0)
+            .font_size(15)
+            .color(Srgba::new(0.65, 0.69, 0.75, 1.0));
+    }
     if m.benchmarking && !m.benchmark_done.load(std::sync::atomic::Ordering::Relaxed) {
         let size = app.main_window().size_pixels();
         let mut sampler = m.benchmark.lock().expect("benchmark sampler");
