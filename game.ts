@@ -49,16 +49,17 @@ function createPointerButtons() {
 }
 // A pause ends all active movement sources; repeats and continuing drags cannot re-arm them.
 function createControls() {
-    const keys = new Set<string>(), buttons = createPointerButtons(), drags = new Set<number>();
+    const keys = new Set<string>(), buttons = createPointerButtons();
+    let dragOwner: number | null = null;
     return {
         keyDown(key: string, repeat: boolean) { if (!repeat) keys.add(key.toLowerCase()); },
         keyUp(key: string) { keys.delete(key.toLowerCase()); },
         buttonDown(id: number | string, dir: -1 | 1) { buttons.press(id, dir); },
         buttonUp(id: number | string) { buttons.release(id); },
-        dragDown(id: number) { drags.add(id); },
-        dragUp(id: number) { drags.delete(id); },
-        dragAllowed(id: number) { return drags.has(id); },
-        suspend() { keys.clear(); buttons.clear(); drags.clear(); },
+        dragDown(id: number) { if (dragOwner === null) dragOwner = id; return dragOwner === id; },
+        dragUp(id: number) { if (dragOwner === id) dragOwner = null; },
+        dragAllowed(id: number) { return dragOwner === id; },
+        suspend() { keys.clear(); buttons.clear(); dragOwner = null; },
         axis() { return buttons.axis() + Number(keys.has('arrowdown') || keys.has('s')) - Number(keys.has('arrowup') || keys.has('w')); }
     };
 }
@@ -70,7 +71,8 @@ function createGame(random: () => number = Math.random): Game {
         if (s.state !== 'playing' || !Number.isFinite(dt) || !Number.isFinite(input))
             return;
         dt = clamp(dt, 0, .033);
-        s.player = clamp(s.player + clamp(input, -1, 1) * 470 * dt, PADDLE_H / 2, H - PADDLE_H / 2);
+        const oldPlayer = s.player, oldCpu = s.cpu, playerSpeed = clamp(input, -1, 1) * 470;
+        s.player = clamp(oldPlayer + playerSpeed * dt, PADDLE_H / 2, H - PADDLE_H / 2);
         const b = s.ball; // The opponent reacts periodically to the ball's current position, with a small aiming error.
         s.cpuReaction -= dt;
         if (s.cpuReaction <= 0) {
@@ -83,7 +85,7 @@ function createGame(random: () => number = Math.random): Game {
             s.serve -= dt;
             return;
         }
-        const oldX = b.x;
+        const oldX = b.x, oldY = b.y, oldVy = b.vy;
         b.x += b.vx * dt;
         b.y += b.vy * dt;
         if (b.y < BALL) {
@@ -94,14 +96,27 @@ function createGame(random: () => number = Math.random): Game {
             b.y = 2 * (H - BALL) - b.y;
             b.vy = -Math.abs(b.vy);
         }
-        for (const [x, y, dir] of [[38, s.player, 1], [W - 38, s.cpu, -1]]) {
+        for (const [x, dir] of [[38, 1], [W - 38, -1]]) {
             const face = x + dir * (PADDLE_W / 2 + BALL);
-            if ((dir === 1 ? oldX >= face && b.x <= face : oldX <= face && b.x >= face) && Math.abs(b.y - y) <= PADDLE_H / 2 + BALL) {
-                const angle = clamp((b.y - y) / (PADDLE_H / 2), -1, 1) * 1.05;
+            const crosses = dir === 1 ? oldX >= face && b.x <= face : oldX <= face && b.x >= face;
+            if (!crosses || oldX === b.x) continue;
+            const fraction = (face - oldX) / (b.x - oldX), contactTime = dt * fraction;
+            let hitY = oldY + oldVy * contactTime;
+            if (hitY < BALL) hitY = 2 * BALL - hitY;
+            else if (hitY > H - BALL) hitY = 2 * (H - BALL) - hitY;
+            const paddleY = dir === 1
+                ? clamp(oldPlayer + playerSpeed * contactTime, PADDLE_H / 2, H - PADDLE_H / 2)
+                : clamp(oldCpu + clamp(s.cpuTarget - oldCpu, -cpuSpeed * contactTime, cpuSpeed * contactTime), PADDLE_H / 2, H - PADDLE_H / 2);
+            if (Math.abs(hitY - paddleY) <= PADDLE_H / 2 + BALL) {
+                const angle = clamp((hitY - paddleY) / (PADDLE_H / 2), -1, 1) * 1.05;
                 const speed = Math.min(720, Math.hypot(b.vx, b.vy) * 1.055);
-                b.x = face;
-                b.vx = dir * speed * Math.cos(angle);
-                b.vy = speed * Math.sin(angle);
+                b.x = face; b.y = hitY;
+                b.vx = dir * speed * Math.cos(angle); b.vy = speed * Math.sin(angle);
+                const remaining = dt - contactTime;
+                b.x += b.vx * remaining; b.y += b.vy * remaining;
+                if (b.y < BALL) { b.y = 2 * BALL - b.y; b.vy = Math.abs(b.vy); }
+                else if (b.y > H - BALL) { b.y = 2 * (H - BALL) - b.y; b.vy = -Math.abs(b.vy); }
+                break;
             }
         }
         if (b.x < -BALL || b.x > W + BALL) {
@@ -214,7 +229,7 @@ if (typeof document !== 'undefined') {
     if (demoRequested) fetch('scenarios/smoke-v1.txt').then(r => { if(!r.ok)throw Error('Scenario manifest unavailable'); return r.text(); }).then(text => { replay=createScriptedReplay(parseScenario(text)); game=replay.game; }).catch(e=>{ console.error(e); demoError=String(e); });
     const controls = createControls();
     const overlay = element('#overlay', HTMLElement), message = element('#message', HTMLElement), hint = element('#hint', HTMLElement), start = element('#start', HTMLButtonElement), pause = element('#pause', HTMLButtonElement), status = element('#status', HTMLElement);
-    function sync() { element('#you', HTMLElement).textContent = String(game.scores[0]); element('#cpu', HTMLElement).textContent = String(game.scores[1]); pause.disabled = demoRequested || game.state === 'ready' || game.state === 'over'; start.disabled=demoRequested; pause.textContent = game.state === 'paused' ? 'Resume' : 'Pause'; status.textContent = game.state === 'playing' ? (game.serve > 0 ? 'Next serve' : 'Rally in progress') : game.state === 'paused' ? 'Paused' : game.state === 'over' ? (game.scores[0] === WIN ? 'You won the match' : 'Computer wins the match') : 'Ready to play'; overlay.hidden = game.state === 'playing'; if (game.state === 'paused') {
+    function sync() { element('#you', HTMLElement).textContent = String(game.scores[0]); element('#cpu', HTMLElement).textContent = String(game.scores[1]); pause.disabled = demoRequested || game.state === 'ready' || game.state === 'over'; start.disabled=demoRequested; pause.textContent = game.state === 'paused' ? 'Resume' : 'Pause'; const statusText = demoError ?? (game.state === 'playing' ? (game.serve > 0 ? 'Next serve' : 'Rally in progress') : game.state === 'paused' ? 'Paused' : game.state === 'over' ? (game.scores[0] === WIN ? 'You won the match' : 'Computer wins the match') : 'Ready to play'); if (status.textContent !== statusText) status.textContent = statusText; overlay.hidden = game.state === 'playing'; if (game.state === 'paused') {
         message.textContent = 'Take a breather.';
         hint.textContent = 'Your match is waiting for you.';
         start.firstChild!.textContent = 'Resume match ';
@@ -262,7 +277,7 @@ if (typeof document !== 'undefined') {
             el.addEventListener(event, e => { controls.buttonUp(e.pointerId); });
     }
     canvas.addEventListener('pointerdown', e => { if (!demoRequested && game.state === 'playing' && e.pointerType !== 'mouse') {
-        controls.dragDown(e.pointerId); canvas.setPointerCapture(e.pointerId);
+        if (controls.dragDown(e.pointerId)) canvas.setPointerCapture(e.pointerId);
     } });
     for (const event of ['pointerup', 'pointercancel', 'lostpointercapture'] as const)
         canvas.addEventListener(event, e => controls.dragUp(e.pointerId));
@@ -271,7 +286,7 @@ if (typeof document !== 'undefined') {
         game.player = clamp((e.clientY - rect.top) / rect.height * H, PADDLE_H / 2, H - PADDLE_H / 2);
     } });
     function draw() { ctx.fillStyle = '#153f37'; ctx.fillRect(0, 0, W, H); ctx.strokeStyle = '#a8e6bb30'; ctx.lineWidth = 2; ctx.setLineDash([12, 16]); ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke(); ctx.setLineDash([]); ctx.strokeStyle = '#a8e6bb25'; ctx.beginPath(); ctx.arc(W / 2, H / 2, 70, 0, Math.PI * 2); ctx.stroke(); ctx.fillStyle = '#d9ffae'; ctx.fillRect(32, game.player - PADDLE_H / 2, PADDLE_W, PADDLE_H); ctx.fillStyle = '#e3f3e7'; ctx.fillRect(W - 44, game.cpu - PADDLE_H / 2, PADDLE_W, PADDLE_H); ctx.beginPath(); ctx.arc(game.ball.x, game.ball.y, BALL, 0, Math.PI * 2); ctx.fill(); }
-    function frame(t: number) { if(demoRequested) replay?.frame(t); else loop.advance(t, controls.axis()); draw(); sync(); if(demoError)status.textContent=demoError;
+    function frame(t: number) { if(demoRequested) replay?.frame(t); else loop.advance(t, controls.axis()); draw(); sync();
         if(replay && replay.manifest.captures.includes(replay.tick) && !captures.some(c=>c.tick===replay!.tick)) captures.push({tick:replay.tick,png:canvas.toDataURL('image/png')});
         if(replay?.finished) {
             if(!exported) { exported=true; const evidence={kind:'original TS state and own Canvas2D; not Rust-identical or desktop QA',reports:replay.reports,actions:replay.actions,captures};

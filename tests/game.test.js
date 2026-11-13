@@ -1,6 +1,6 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { createGame, H, PADDLE_H } = require('../game');
+const { createGame, H, PADDLE_H, BALL } = require('../game');
 test('start, movement and bounds', () => { const g = createGame(() => .2); g.start(); assert.equal(g.state, 'playing'); for (let i = 0; i < 100; i++)
     g.step(.033, -1); assert.equal(g.player, PADDLE_H / 2); });
 test('paddle reflects ball and steers angle', () => { const g = createGame(() => .2); g.start(); g.serve = 0; g.player = H / 2; g.ball = { x: 60, y: H / 2 + 25, vx: -350, vy: 0 }; g.step(.033); assert.ok(g.ball.vx > 0); assert.ok(g.ball.vy > 0); });
@@ -90,7 +90,8 @@ test('pause clears keyboard, button and drag ownership until fresh input', () =>
 test('browser handlers clear movement on pause and reject continuing touch drags', () => {
  const vm=require('node:vm'),fs=require('node:fs'); let nextFrame, playerY;
  class Element {
-  constructor(){this.listeners={};this.firstChild={textContent:''};this.textContent='';}
+  constructor(){this.listeners={};this.firstChild={textContent:''};this.textWrites=0;this._text='';}
+  get textContent(){return this._text;} set textContent(value){this.textWrites++;this._text=value;}
   addEventListener(name,fn){(this.listeners[name]??=[]).push(fn);}
   emit(name,event={}){const e={defaultPrevented:false,propagationStopped:false,preventDefault(){this.defaultPrevented=true;},stopPropagation(){this.propagationStopped=true;},...event};for(const fn of this.listeners[name]??[])fn(e);return e;}
   setPointerCapture(){} getBoundingClientRect(){return {top:0,height:500};}
@@ -104,13 +105,15 @@ test('browser handlers clear movement on pause and reject continuing touch drags
  vm.runInNewContext(fs.readFileSync(require('node:path').join(__dirname,'../game.js'),'utf8'),{document:doc,window:win,HTMLElement:Element,HTMLButtonElement:Button,HTMLCanvasElement:Canvas,URLSearchParams,location:{search:''},requestAnimationFrame:fn=>{nextFrame=fn;},console});
  const frame=t=>{const fn=nextFrame;fn(t);};
  const spaceOnStart=doc.emit('keydown',{key:' ',repeat:false,target:els.start});assert.equal(spaceOnStart.defaultPrevented,false);
- els.start.emit('click');frame(0);doc.emit('keydown',{key:'w',repeat:false});frame(20);const moved=playerY;
+ els.start.emit('click');frame(0);const statusWrites=els.status.textWrites;frame(0);assert.equal(els.status.textWrites,statusWrites,'unchanged live status must not be rewritten');doc.emit('keydown',{key:'w',repeat:false});frame(20);const moved=playerY;
  els.up.emit('pointerdown',{pointerId:3});const spaceOnPause=doc.emit('keydown',{key:' ',repeat:false,target:els.pause});assert.equal(spaceOnPause.defaultPrevented,false);assert.equal(els.pause.textContent,'Pause');els.pause.emit('click');els.start.emit('click');doc.emit('keydown',{key:'w',repeat:true});frame(40);frame(60);assert.equal(playerY,moved);
- els.court.emit('pointerdown',{pointerType:'touch',pointerId:8});els.court.emit('pointermove',{pointerType:'touch',pointerId:8,buttons:1,clientY:350});frame(80);const dragged=playerY;
+ els.court.emit('pointerdown',{pointerType:'touch',pointerId:8});els.court.emit('pointerdown',{pointerType:'touch',pointerId:7});const beforeSecond=playerY;
+ els.court.emit('pointermove',{pointerType:'touch',pointerId:7,buttons:1,clientY:100});frame(70);assert.equal(playerY,beforeSecond);els.court.emit('pointerup',{pointerId:7});
+ els.court.emit('pointermove',{pointerType:'touch',pointerId:8,buttons:1,clientY:350});frame(80);const dragged=playerY;
  els.pause.emit('click');els.start.emit('click');els.court.emit('pointermove',{pointerType:'touch',pointerId:8,buttons:1,clientY:100});frame(100);assert.equal(playerY,dragged);
  els.court.emit('pointerup',{pointerId:8});els.court.emit('pointerdown',{pointerType:'touch',pointerId:9});els.court.emit('pointermove',{pointerType:'touch',pointerId:9,buttons:1,clientY:100});frame(120);assert.notEqual(playerY,dragged);
- const shortcut=doc.emit('keydown',{key:' ',repeat:false,target:els.court});assert.equal(shortcut.defaultPrevented,true);assert.equal(els.status.textContent,'Paused');
- doc.emit('keydown',{key:' ',repeat:true,target:els.court});assert.equal(els.status.textContent,'Paused');
+ const beforePauseWrites=els.status.textWrites;const shortcut=doc.emit('keydown',{key:' ',repeat:false,target:els.court});assert.equal(shortcut.defaultPrevented,true);assert.equal(els.status.textContent,'Paused');assert.equal(els.status.textWrites,beforePauseWrites+1);
+ frame(130);doc.emit('keydown',{key:' ',repeat:true,target:els.court});assert.equal(els.status.textContent,'Paused');assert.equal(els.status.textWrites,beforePauseWrites+1);
  els.start.emit('click');frame(140);const yBeforeButton=playerY;
  const buttonKey=els.up.emit('keydown',{key:' ',repeat:false,target:els.up});
  assert.equal(buttonKey.defaultPrevented,true);assert.equal(buttonKey.propagationStopped,true);
@@ -126,4 +129,47 @@ test('browser handlers clear movement on pause and reject continuing touch drags
  const afterClick=playerY;els.up.emit('click',{detail:1});frame(380);assert.equal(playerY,afterClick);
  for(let i=0;i<100;i++)els.down.emit('click',{detail:0});frame(390);assert.equal(playerY,410);
  els.pause.emit('click');els.up.emit('click',{detail:0});frame(400);assert.equal(playerY,410);
+});
+
+test('independent original collision uses crossing height on both sides',()=>{
+ for(const [x,vx] of [[60,-350],[840,350]])for(const [y,vy,bounce] of [[180,600,false],[215,-600,true]]){
+  const g=createGame(()=>.5);g.start();g.serve=0;g.cpuReaction=1;g.ball={x,y,vx,vy};g.step(.033,0);
+  assert.equal(Math.sign(g.ball.vx)!==Math.sign(vx),bounce,`x=${x}, y=${y}, vy=${vy}`);
+ }
+});
+test('independent original collision uses moving paddle at contact and keeps remaining travel',()=>{
+ for(const side of ['player','cpu']){
+  const g=createGame(()=>.5);g.start();g.serve=0;g.cpuReaction=1;g.cpuTarget=455;
+  g.ball={x:side==='player'?54:846,y:side==='player'?306.3:304.3,vx:side==='player'?-350:350,vy:0};
+  g.step(1/120,side==='player'?1:0);assert.equal(Math.sign(g.ball.vx),side==='player'?-1:1,`${side} was not at the face in time`);
+ }
+ for(const [x,vx,face] of [[54,-350,52],[846,350,848]]){
+  const g=createGame(()=>.5);g.start();g.serve=0;g.cpuReaction=1;g.ball={x,y:250,vx,vy:0};g.step(1/120,0);
+  assert.ok(vx<0?g.ball.x>face:g.ball.x<face,'ball travels after contact');
+ }
+});
+test('independent original collision handles wall reflection before and after contact',()=>{
+ for(const [x,vx] of [[60,-350],[840,350]])for(const [y,vy,paddle] of [[10,-600,45],[490,600,455]]){
+  const g=createGame(()=>.5);g.start();g.serve=0;g.player=paddle;g.cpu=paddle;g.cpuTarget=paddle;g.cpuReaction=1;g.ball={x,y,vx,vy};g.step(.033,0);
+  assert.equal(Math.sign(g.ball.vx),-Math.sign(vx));assert.ok(g.ball.y>=BALL && g.ball.y<=H-BALL);
+ }
+ for(const [x,vx] of [[54,-350],[846,350]])for(const [y,paddle,sign] of [[8.3,45,1],[491.7,455,-1]]){
+  const g=createGame(()=>.5);g.start();g.serve=0;g.player=paddle;g.cpu=paddle;g.cpuTarget=paddle;g.cpuReaction=1;g.ball={x,y,vx,vy:0};g.step(1/120,0);
+  assert.equal(Math.sign(g.ball.vx),-Math.sign(vx));assert.equal(Math.sign(g.ball.vy),sign);assert.ok(g.ball.y>=BALL && g.ball.y<=H-BALL);
+ }
+});
+test('independent original collision handles tangent contact and a stationary ball at the face',()=>{
+ for(const [x,vx,face] of [[54,-350,52],[846,350,848]]){
+  const g=createGame(()=>.5);g.start();g.serve=0;g.cpuReaction=1;g.ball={x,y:303,vx,vy:0};g.step(1/120,0);assert.equal(Math.sign(g.ball.vx),-Math.sign(vx));
+  g.ball={x:face,y:250,vx:0,vy:0};g.step(1/120,0);assert.equal(g.ball.vx,0);assert.equal(g.ball.x,face);
+ }
+});
+
+test('canvas drag remains owned by first pointer until release or cancellation',()=>{
+ const {createControls}=require('../game'),input=createControls();
+ input.dragDown(10);input.dragDown(20);assert.equal(input.dragAllowed(10),true);assert.equal(input.dragAllowed(20),false);
+ input.dragUp(20);assert.equal(input.dragAllowed(10),true);
+ input.dragDown(20);input.dragUp(10);assert.equal(input.dragAllowed(20),false);
+ input.dragDown(30);assert.equal(input.dragAllowed(30),true);input.suspend();assert.equal(input.dragAllowed(30),false);
+ input.dragDown(40);assert.equal(input.dragAllowed(40),true);input.dragUp(30);assert.equal(input.dragAllowed(40),true);
 });

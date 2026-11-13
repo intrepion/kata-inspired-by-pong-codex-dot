@@ -23,12 +23,13 @@ export function validSample(s) {
     close(s.p99_ms,percentile(0.99)) && close(s.max_ms,sorted.at(-1));
 }
 export function runPilot(options, binaryArguments = ['--benchmark']) {
-  const {binary, output, backend, notes, adapter, presentation, renderer, pacing} = options;
+  const {binary, output, backend, notes, adapter, presentation, renderer, pacing, profile = 'unverified'} = options;
+  if(!['release','debug','unverified'].includes(profile)) throw Error('Unsupported benchmark profile');
   if (existsSync(output)) throw Error('Refusing to overwrite results');
   const command = (exe,args) => { const r=spawnSync(exe,args,{encoding:'utf8',timeout:5000}); return r.status===0?r.stdout.trim():null; };
   const result = {schema:1, started_utc:new Date().toISOString(), protocol:'pong-frame-callback-v1', adapter, presentation, renderer, pacing, backend, notes,
     git_revision:command('git',['rev-parse','HEAD']), working_tree:command('git',['status','--porcelain']), rustc:command('rustc',['-Vv']),
-    profile:'release', binary_sha256:createHash('sha256').update(readFileSync(binary)).digest('hex'),
+    profile, provenance_limit:'Profile is caller supplied or unverified; checkout revision does not prove binary source.', binary_sha256:createHash('sha256').update(readFileSync(binary)).digest('hex'),
     host:{hostname:os.hostname(),os:os.type(),release:os.release(),architecture:os.arch(),cpu:os.cpus()[0]?.model,cpu_count:os.cpus().length,memory_bytes:os.totalmem()},
     environment:{DISPLAY:process.env.DISPLAY??null,WAYLAND_DISPLAY:process.env.WAYLAND_DISPLAY??null},
     unmeasured:['GPU time','displayed FPS','CPU utilization','peak memory','startup latency','power','thermal state'],runs:[]};

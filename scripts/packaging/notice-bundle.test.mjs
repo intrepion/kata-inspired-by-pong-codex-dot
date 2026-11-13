@@ -3,7 +3,7 @@ import{mkdtempSync,mkdirSync,writeFileSync,rmSync,symlinkSync}from'node:fs';
 import{tmpdir}from'node:os';import{join}from'node:path';import{createHash}from'node:crypto';
 import{buildNoticeBundle}from'./notice-bundle.mjs';
 function fixture(t){const root=mkdtempSync(join(tmpdir(),'pong-notice-unit-'));t.after(()=>rmSync(root,{recursive:true,force:true}));writeFileSync(join(root,'LICENSE'),'MIT root\n');const pkg=join(root,'crate');mkdirSync(pkg);writeFileSync(join(pkg,'Cargo.toml'),'');return{root,pkg};}
-function meta(pkg,extra={}){return{packages:[{id:'x',name:'fixture',version:'1.0.0',source:'registry+fixture',license:'MIT',manifest_path:join(pkg,'Cargo.toml'),...extra}],resolve:{nodes:[{id:'x'}]}};}
+function meta(pkg,extra={}){return{packages:[{id:'x',name:'fixture',version:'1.0.0',source:'registry+fixture',license:'MIT',manifest_path:join(pkg,'Cargo.toml'),...extra}],resolve:{nodes:[{id:'x',deps:[],dependencies:[]}]}};}
 test('preserves exact texts, nested notices and hashes without host paths',t=>{const{root,pkg}=fixture(t);writeFileSync(join(pkg,'LICENSE'),'MIT text\r\n');mkdirSync(join(pkg,'vendor'));writeFileSync(join(pkg,'vendor','NOTICE'),'Attribution\n');const b=buildNoticeBundle(meta(pkg),root);assert.equal(b.index.packages[0].notices.length,2);assert.equal(b.index.packages[0].notices[0].sha256,createHash('sha256').update('MIT text\r\n').digest('hex'));assert(b.text.includes('MIT text\r\n'));assert(!JSON.stringify(b).includes(root));assert.equal(b.index.bundle_sha256,createHash('sha256').update(b.text).digest('hex'));});
 test('first-party fallback is constrained; missing external notices remain explicit',t=>{const{root,pkg}=fixture(t);assert.deepEqual(buildNoticeBundle(meta(pkg),root).index.missing_notice_files,['fixture@1.0.0']);const b=buildNoticeBundle(meta(pkg,{name:'pong-fixture',source:null}),root);assert.equal(b.index.packages[0].root_mit_fallback,true);assert.equal(b.index.packages[0].notices[0].source,'LICENSE');assert.throws(()=>buildNoticeBundle(meta(pkg,{license_file:'../LICENSE'}),root),/escapes/);});
 test('symlink notice sources rejected', {skip:process.platform==='win32'},t=>{const{root,pkg}=fixture(t);symlinkSync(join(root,'LICENSE'),join(pkg,'LICENSE'));assert.throws(()=>buildNoticeBundle(meta(pkg),root),/Symlink/);});
@@ -49,4 +49,18 @@ test('upstream rules require exact registry package and version',t=>{
 
 test('audited source override is contained and hash checked',async t=>{
  const {auditedUpstreamNotices}=await import('./notice-bundle.mjs');const{root,pkg}=fixture(t),n=join(root,'notices');mkdirSync(n);const hash=s=>createHash('sha256').update(s).digest('hex');writeFileSync(join(pkg,'.cargo_vcs_info.json'),JSON.stringify({git:{sha1:'r'},path_in_vcs:'p'}));writeFileSync(join(pkg,'lib.rs'),'source');writeFileSync(join(n,'LICENSE'),'notice');const rule={rev:'r',path:'p',sourcePath:'lib.rs',sourceHash:hash('source'),files:[['LICENSE',hash('notice'),'url']]};assert.equal(auditedUpstreamNotices(pkg,n,rule)[0].text,'notice');assert.throws(()=>auditedUpstreamNotices(pkg,n,{...rule,sourcePath:'../LICENSE'}),/escapes/);
+});
+
+test('resolved graph must have exactly one package per node',t=>{
+ const {root,pkg}=fixture(t);writeFileSync(join(pkg,'LICENSE'),'MIT text');
+ for(const mutate of [m=>m.resolve.nodes.push({id:'missing'}),m=>m.resolve.nodes.push({id:'x'}),m=>m.resolve.nodes=[],m=>m.resolve.nodes.push({id:''}),m=>m.packages.push({...m.packages[0]})]){
+  const input=meta(pkg);mutate(input);assert.throws(()=>buildNoticeBundle(input,root),/graph|package.*id/i);
+ }
+});
+
+test('resolved dependency references must point to represented nodes',t=>{
+ const {root,pkg}=fixture(t);writeFileSync(join(pkg,'LICENSE'),'MIT text');
+ for(const mutate of [m=>m.resolve.nodes[0].deps.push({pkg:'missing'}),m=>m.resolve.nodes[0].dependencies.push('missing'),m=>delete m.resolve.nodes[0].deps,m=>m.resolve.nodes[0].deps.push({}),m=>m.resolve.nodes[0].deps.push({pkg:'x'}),m=>m.resolve.root='missing']){
+  const input=meta(pkg);mutate(input);assert.throws(()=>buildNoticeBundle(input,root),/graph/i);
+ }
 });

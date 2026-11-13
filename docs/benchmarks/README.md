@@ -11,7 +11,7 @@ Build once, outside the timed run:
 ```sh
 cargo test -p pong-benchmark -p pong-core -p pong-scenario
 cargo build --release -p pong-macroquad
-node scripts/benchmarks/run.mjs ./target/release/pong-macroquad NEW-results.json 'actual graphics backend' 'hardware, power/window settings, background activity and limitations'
+node scripts/benchmarks/run.mjs ./target/release/pong-macroquad NEW-results.json 'actual graphics backend' 'hardware, power/window settings, background activity and limitations' --profile release
 ```
 
 On Windows use the `.exe` binary path. The shared runner needs Node and uses only
@@ -33,9 +33,7 @@ run this. Do not pass scripted-test/capture flags with `--benchmark`.
 - Requested window is 1000×680, high-DPI enabled. Actual dimensions are recorded;
   any resize during measurement marks the run invalid. Match actual dimensions across comparisons.
 - Nearest-rank p50/p95/p99 and raw intervals retained. No FPS or GPU-time claim.
-- Binary SHA-256, source revision, compiler/profile, machine/OS, command backend
-  description, load averages and failures are saved. Caller must accurately supply
-  backend/driver and environmental notes; unknowns remain unknown.
+- Binary SHA-256, checkout revision and compiler observed at run time, caller-supplied profile, machine/OS, backend description, load averages and failures are saved. The checkout revision and compiler do not establish how the binary was built. Profile defaults to `unverified`; use `--profile release` or `--profile debug` only when independently known. The runner does not verify the supplied profile. Caller must accurately supply backend/driver and environmental notes; unknowns remain unknown.
 - A quiet period from other test/build workers is required for comparison. Load
   averages alone do not prove idleness. Three runs establish harness repeatability,
   not statistical confidence or a cross-engine ranking.

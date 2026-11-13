@@ -1,5 +1,5 @@
 // Local portable lifecycle pilots only: no system installation or driver bundling.
-import {copyFileSync,chmodSync,existsSync,mkdirSync,readFileSync,realpathSync,statSync,writeFileSync} from 'node:fs';
+import {copyFileSync,chmodSync,closeSync,existsSync,mkdirSync,openSync,readFileSync,readSync,realpathSync,statSync,writeFileSync} from 'node:fs';
 import {dirname,join,resolve} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
@@ -7,6 +7,16 @@ import {spawnSync} from 'node:child_process';
 const adapters=Object.freeze({'dioxus-desktop':'pong-dioxus','leptos-tauri':'pong-leptos-desktop','yew-tauri':'pong-yew-desktop',tauri:'pong-tauri',miniquad:'pong-miniquad',pixels:'pong-pixels',wgpu:'pong-wgpu',raylib:'pong-raylib-rs',piston:'pong-piston',ggez:'pong-ggez',nannou:'pong-nannou','bracket-lib':'pong-bracket-lib',fyrox:'pong-fyrox',bevy:'pong-bevy','blue-engine':'pong-blue-engine',softbuffer:'pong-softbuffer',ash:'pong-ash',sdl3:'pong-sdl3',ratatui:'pong-ratatui',gtk:'pong-gtk',slint:'pong-slint',gpui:'pong-gpui'});
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
 const digest=p=>createHash('sha256').update(readFileSync(p)).digest('hex');
+// The archive is labeled with the host architecture; do not silently mislabel
+// a cross-compiled, malformed, or non-ELF file as a local Linux pilot.
+function verifyElfArchitecture(binary){
+  const machine={x64:62,arm64:183}[process.arch];
+  if(machine===undefined)throw Error('Unsupported Linux pilot architecture');
+  const header=Buffer.alloc(20),fd=openSync(binary,'r');let count;
+  try{count=readSync(fd,header,0,header.length,0);}finally{closeSync(fd);}
+  if(count<header.length||!header.subarray(0,4).equals(Buffer.from([0x7f,0x45,0x4c,0x46]))||header[4]!==2||header[5]!==1||header[6]!==1||header.readUInt16LE(18)!==machine)
+    throw Error('Executable ELF architecture does not match this Linux pilot');
+}
 export function packagePortable(adapter,input,output,source,notices=null) {
   if(process.platform!=='linux') throw Error('Linux only');
   if(!Object.hasOwn(adapters,adapter)) throw Error('Unsupported adapter');
@@ -16,6 +26,7 @@ export function packagePortable(adapter,input,output,source,notices=null) {
   }
   const binary=realpathSync(input), info=statSync(binary), out=resolve(output);
   if(!info.isFile() || !(info.mode&0o111)) throw Error('Executable regular file required');
+  verifyElfArchitecture(binary);
   if(existsSync(out)) throw Error('Output already exists');
   const name=`${adapters[adapter]}-linux-${process.arch}`;
   mkdirSync(out); // No recursive overwrite of existing content.

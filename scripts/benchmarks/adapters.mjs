@@ -24,8 +24,15 @@ export function parseArguments(args) {
     adapter = positional[index + 1];
     positional.splice(index, 2);
   }
+  const profileIndex=positional.indexOf('--profile');
+  let profile='unverified';
+  if(profileIndex>=0) {
+    profile=positional[profileIndex+1];
+    positional.splice(profileIndex,2);
+    if(!['debug','release'].includes(profile)) throw Error('Unsupported benchmark profile');
+  }
   if(!Object.hasOwn(adapters, adapter)) throw Error('Unsupported benchmark adapter');
-  if(positional.length !== 4 || positional.some(x=>!x || x.startsWith('--'))) throw Error('usage: run.mjs BINARY NEW.json BACKEND NOTES [--adapter macroquad|softbuffer|sdl3|raylib|pixels|miniquad|piston|ggez|nannou|wgpu|bracket-lib|bevy|blue-engine|fyrox|ash]');
+  if(positional.length !== 4 || positional.some(x=>!x || x.startsWith('--'))) throw Error('usage: run.mjs BINARY NEW.json BACKEND NOTES [--adapter macroquad|softbuffer|sdl3|raylib|pixels|miniquad|piston|ggez|nannou|wgpu|bracket-lib|bevy|blue-engine|fyrox|ash] [--profile release|debug]');
   const [binary, output, backend, notes] = positional;
-  return {binary, output, backend, notes, adapter, ...adapters[adapter]};
+  return {binary, output, backend, notes, adapter, profile, ...adapters[adapter]};
 }

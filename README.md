@@ -38,6 +38,20 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
+Dependency notice preparation now rejects inconsistent resolved Cargo graphs before indexing; this is not legal clearance. [Evidence](docs/packaging/NOTICE-GRAPH-INTEGRITY.md).
+
+Original browser canvas drag now retains first-pointer ownership; mocked multi-pointer tests pass, with physical multi-touch pending. [Evidence](docs/ORIGINAL-CANVAS-POINTER-OWNER.md).
+
+Original browser live-status updates now occur only when text changes; mocked DOM regression passes, with real assistive-technology checks pending. [Evidence](docs/ORIGINAL-LIVE-STATUS-FIX.md).
+
+Original TypeScript collision timing fix: 23 model/handler tests pass; a separate before/after deterministic replay records expected trajectory changes. Real browser collision interaction remains pending. [Evidence](docs/ORIGINAL-COLLISION-TIMING-FIX.md).
+
+Benchmark runner no longer assumes supplied binaries are release builds; profile defaults to unverified and can be supplied explicitly. [Evidence](docs/benchmarks/PROFILE-PROVENANCE-FIX.md).
+
+Benchmark publication now revalidates runs marked valid against execution and measurement rules; existing private data remains local. [Evidence](docs/benchmarks/PUBLIC-VALIDITY-GUARD.md).
+
+Linux portable packager now rejects mismatched or invalid ELF architecture before output creation; local packaging regressions pass. [Evidence](docs/packaging/LINUX-ELF-ARCH-GUARD.md).
+
 Original browser movement buttons now respond to zero-detail synthesized clicks in mocked tests; browser/assistive-technology validation remains pending. [Evidence](docs/ORIGINAL-MOVEMENT-BUTTON-CLICK.md).
 
 Original browser movement-button keyboard fix: Space/Enter hold and release are covered by mocked handlers; browser and assistive-technology checks remain pending. [Evidence](docs/ORIGINAL-MOVEMENT-BUTTON-KEYS.md).
@@ -46,7 +60,7 @@ Original browser keyboard follow-up: focused Start/Pause buttons activate with S
 
 Original browser pause-input fix: 19 JavaScript model and mocked-handler tests pass; Windows localhost Chrome start, pause, resume and W movement smoke pass. Held-through-pause and physical touch remain open. [Evidence](docs/ORIGINAL-PAUSE-INPUT-FIX.md).
 
-Held-input audit follow-up: Swift retained-touch movement was reproduced at model level and guarded; 14 Swift tests, an iOS Simulator build and paused-drag/fresh-gesture UI checks pass; overlapping simulator touches remain unverified. Android remains a separate source-review concern. [Coverage](docs/HELD-INPUT-COVERAGE-20261113.md); [Swift fix and limits](docs/SWIFT-HELD-TOUCH-PAUSE-FIX.md).
+Held-input audit follow-up: Swift retained-touch movement was reproduced at model level and guarded; 14 Swift tests in debug and release, iOS Simulator debug/release builds, Release start/pause/resume UI smoke and debug paused-drag/fresh-gesture checks pass; overlapping simulator touches remain unverified. Android remains a separate source-review concern. [Coverage](docs/HELD-INPUT-COVERAGE-20261113.md); [Swift fix and limits](docs/SWIFT-HELD-TOUCH-PAUSE-FIX.md).
 
 Omarchy Ratatui enhanced-key repeat fix: ten release tests and model-matched terminal-cell replay pass; actual terminal input remains open. [Evidence](docs/RATATUI-HELD-REPEAT-FIX.md).
 
