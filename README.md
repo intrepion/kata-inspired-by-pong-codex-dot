@@ -34,6 +34,8 @@ Windows Piston held-input release ZIP: nine tests, local extraction and model-ma
 
 Windows ash held-input release ZIP: eight tests, local extraction and model-matched relocated replay pass; native input and distribution remain open. [Evidence](docs/packaging/ASH-HELD-WINDOWS-RELEASE-PILOT.md).
 
+Windows bracket-lib release portable pilot: 11 tests passed and relocated scripted telemetry matched all 13 reference records; seven dependency notice flags and physical-input, accessibility, and clean-machine checks remain open. See [evidence](docs/packaging/BRACKET-HELD-WINDOWS-RELEASE-PILOT.md).
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
