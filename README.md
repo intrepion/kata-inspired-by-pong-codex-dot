@@ -891,3 +891,5 @@ Raylib now suppresses action keys held on the first focused sample until release
 The current original browser game received a bounded live Chrome W/S and Space check on Omarchy; [evidence](docs/packaging/ORIGINAL-KEYBOARD-CHROME-OMARCHY.md) distinguishes automated keys from physical input.
 
 The raylib focus-return action gate also passed [Mac release-profile polling tests](docs/packaging/RAYLIB-FOCUS-RETURN-MAC-20261113.md); native focus delivery remains unverified.
+
+The original browser game completed a live automated computer-win match and restart on Omarchy Chrome; [evidence](docs/packaging/ORIGINAL-COMPUTER-WIN-CHROME-OMARCHY.md) records the bounded scope.
