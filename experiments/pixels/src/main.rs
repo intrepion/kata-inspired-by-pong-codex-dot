@@ -37,7 +37,7 @@ fn handle_key(
     pressed: bool,
     repeat: bool,
 ) -> bool {
-    if !pressed || !repeat {
+    if !pressed || (!repeat && game.state == State::Playing) {
         movement.key(key, pressed);
     }
     match key {
@@ -275,6 +275,31 @@ mod tests {
 #[cfg(test)]
 mod movement_tests {
     use super::*;
+    #[test]
+    fn nonplaying_presses_do_not_rearm_after_start() {
+        for state in [State::Ready, State::Paused, State::Over] {
+            for key in [
+                KeyCode::KeyW,
+                KeyCode::ArrowUp,
+                KeyCode::KeyS,
+                KeyCode::ArrowDown,
+            ] {
+                let mut game = Game::new(42);
+                game.state = state;
+                let mut movement = MovementInput::default();
+                handle_key(&mut game, &mut movement, key, true, false);
+                handle_key(&mut game, &mut movement, KeyCode::Enter, true, false);
+                assert_eq!(game.state, State::Playing);
+                assert_eq!(movement.axis(), 0., "{state:?} {key:?}");
+                handle_key(&mut game, &mut movement, key, true, true);
+                assert_eq!(movement.axis(), 0.);
+                handle_key(&mut game, &mut movement, key, false, false);
+                handle_key(&mut game, &mut movement, key, true, false);
+                assert_ne!(movement.axis(), 0.);
+            }
+        }
+    }
+
     #[test]
     fn explicit_pause_clears_movement_until_fresh_press() {
         for key in [

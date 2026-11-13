@@ -45,7 +45,9 @@ impl Frontend {
     fn handle_key(&mut self, key: KeyCode, pressed: bool, repeat: bool) -> bool {
         match key {
             key @ (KeyCode::KeyW | KeyCode::ArrowUp | KeyCode::KeyS | KeyCode::ArrowDown) => {
-                if !pressed || !repeat {
+                if !pressed
+                    || (!repeat && self.app.game.state == pong_low_level_common::State::Playing)
+                {
                     self.movement_key(key, pressed);
                 }
             }
@@ -248,6 +250,31 @@ mod benchmark_tests {
 #[cfg(test)]
 mod movement_tests {
     use super::*;
+    #[test]
+    fn nonplaying_presses_do_not_rearm_after_start() {
+        use pong_low_level_common::State;
+        for state in [State::Ready, State::Paused, State::Over] {
+            for key in [
+                KeyCode::KeyW,
+                KeyCode::ArrowUp,
+                KeyCode::KeyS,
+                KeyCode::ArrowDown,
+            ] {
+                let mut f = Frontend::default();
+                f.app.game.state = state;
+                f.handle_key(key, true, false);
+                f.handle_key(KeyCode::Space, true, false);
+                assert_eq!(f.app.game.state, State::Playing);
+                assert!(!f.app.up && !f.app.down, "{state:?} {key:?}");
+                f.handle_key(key, true, true);
+                assert!(!f.app.up && !f.app.down);
+                f.handle_key(key, false, false);
+                f.handle_key(key, true, false);
+                assert!(f.app.up || f.app.down);
+            }
+        }
+    }
+
     #[test]
     fn explicit_pause_clears_movement_until_fresh_press() {
         for key in [

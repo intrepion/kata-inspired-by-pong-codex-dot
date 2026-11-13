@@ -25,7 +25,7 @@ fn key_press(
         return false;
     }
     for (i, k) in [Key::W, Key::Up, Key::S, Key::Down].into_iter().enumerate() {
-        if key == k {
+        if key == k && game.state == State::Playing {
             held[i] = true;
         }
     }
@@ -60,6 +60,27 @@ fn key_release(held: &mut [bool; 4], pressed: &mut std::collections::HashSet<Key
 #[cfg(test)]
 mod control_tests {
     use super::*;
+    #[test]
+    fn nonplaying_presses_do_not_rearm_after_start() {
+        for state in [State::Ready, State::Paused, State::Over] {
+            for key in [Key::W, Key::Up, Key::S, Key::Down] {
+                let mut game = Game::new(42);
+                game.state = state;
+                let mut held = [false; 4];
+                let mut pressed = std::collections::HashSet::new();
+                key_press(&mut game, &mut held, &mut pressed, key);
+                key_press(&mut game, &mut held, &mut pressed, Key::Return);
+                assert_eq!(game.state, State::Playing);
+                assert_eq!(held, [false; 4], "{state:?} {key:?}");
+                key_press(&mut game, &mut held, &mut pressed, key);
+                assert_eq!(held, [false; 4]);
+                key_release(&mut held, &mut pressed, key);
+                key_press(&mut game, &mut held, &mut pressed, key);
+                assert!(held.iter().any(|v| *v));
+            }
+        }
+    }
+
     #[test]
     fn actions_and_aliases_preserve_independent_key_behavior() {
         let mut game = Game::new(42);

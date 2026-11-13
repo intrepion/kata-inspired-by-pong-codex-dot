@@ -53,7 +53,7 @@ fn handle_key_down(
     key: KeyCode,
     repeat: bool,
 ) -> bool {
-    if !repeat {
+    if !repeat && game.state == State::Playing {
         movement.key(key, true);
     }
     let previous = game.state;
@@ -449,6 +449,26 @@ mod movement_tests {
 #[cfg(test)]
 mod control_tests {
     use super::*;
+    #[test]
+    fn nonplaying_presses_do_not_rearm_after_start() {
+        for state in [State::Ready, State::Paused, State::Over] {
+            for key in [KeyCode::W, KeyCode::Up, KeyCode::S, KeyCode::Down] {
+                let mut game = Game::new(42);
+                game.state = state;
+                let mut movement = MovementInput::default();
+                handle_key_down(&mut game, &mut movement, key, false);
+                handle_key_down(&mut game, &mut movement, KeyCode::Enter, false);
+                assert_eq!(game.state, State::Playing);
+                assert_eq!(movement.axis(), 0., "{state:?} {key:?}");
+                handle_key_down(&mut game, &mut movement, key, true);
+                assert_eq!(movement.axis(), 0.);
+                movement.key(key, false);
+                handle_key_down(&mut game, &mut movement, key, false);
+                assert_ne!(movement.axis(), 0.);
+            }
+        }
+    }
+
     #[test]
     fn keypad_enter_starts_and_restarts_without_repeat() {
         let mut game = Game::new(42);

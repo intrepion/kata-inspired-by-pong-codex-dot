@@ -130,6 +130,8 @@ Mac Slint audit: tested binary contains Slint core/backend symbols; GPL-3 is one
 
 Mac ggez option-ext patch: Release tests and replay pass; a duplicate Unix-only test module was corrected and its isolated parser tests pass. [Evidence](docs/packaging/GGEZ-MAC-OPTION-EXT-RECHECK.md). Mac Nannou metadata screen found no restricted declarations in 435 packages; native/system review remains open. [Evidence](docs/packaging/NANNOU-MAC-LICENSE-SCREEN.md).
 
+Mac ggez non-playing movement fix: five Release tests and 13-record model-matched scripted replay pass; real key delivery remains open. [Evidence](docs/packaging/GGEZ-MAC-NONPLAYING-RECHECK.md).
+
 Mac ggez asset audit: tested binaries embed Liberation Mono 1.04; exact font-license provenance and notice remain unresolved. [Evidence](docs/packaging/GGEZ-MAC-LIBERATION-FONT.md).
 
 Mac Fyrox Release license investigation: MPL-declared Symphonia code symbols are present in the tested executable; a second MPL-declared graph path lacks direct symbol confirmation. [Evidence](docs/packaging/FYROX-MAC-MPL-SCREEN.md).
@@ -157,6 +159,8 @@ Dioxus local-libxdo launcher now rejects package paths containing loader separat
 Omarchy Miniquad winning-score fixture: real scoring reached both game-over states and scripted restart cleared them from controlled near-winning positions. [Evidence](docs/packaging/MINIQUAD-SCORING-FIXTURE-OMARCHY.md).
 
 Omarchy Miniquad winner overlay: an isolated forced-state visual fixture rendered both winner messages; real game-over progression and physical input remain open. [Evidence](docs/packaging/MINIQUAD-WINNER-FIXTURE-OMARCHY.md).
+
+Omarchy native input: Miniquad, Pixels, wgpu, Piston, ash and softbuffer now ignore movement presses outside play; adapter tests and release builds pass. Polling adapters and native input need follow-up. [Evidence](docs/packaging/NATIVE-NONPLAYING-INPUT-OMARCHY.md).
 
 Omarchy ggez input fix: movement presses in Ready, Paused or Over no longer carry into play; adapter regression and rebuilt scripted replay pass. Native input and cross-platform rechecks remain open. [Evidence](docs/packaging/GGEZ-NONPLAYING-PRESS-OMARCHY.md).
 
