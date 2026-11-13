@@ -48,6 +48,8 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
+Omarchy Ratatui release pilot now includes a resolved-graph notice discovery bundle; relocated replay and six manifest entries verify, with notice review and clean-machine installation pending. [Evidence](docs/packaging/RATATUI-RELEASE-NOTICE-OMARCHY.md).
+
 Omarchy tab-loss check was inconclusive because the automation reported both pages visible; no unverified focus-listener changes were adopted. [Details](docs/WEB-TAB-FOCUS-ATTEMPT.md).
 
 Dioxus focus/pause fix: a fresh localhost Chrome build reproduced and corrected the first-click failure; desktop scripted replay passes, with native interaction pending. [Evidence](docs/DIOXUS-INTERNAL-FOCUS-PAUSE-FIX.md).
