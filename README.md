@@ -76,6 +76,12 @@ The testing matrices below record **verified results**, separately from work in 
 
 Mac Ratatui repeat-fix follow-up: ten debug tests, TestBackend replay and synthetic enhanced/fallback PTY checks pass; real-terminal and physical input remain open. [Model evidence](docs/RATATUI-HELD-REPEAT-FIX.md); [PTY checks](docs/packaging/RATATUI-PTY-MAC-HELD.md).
 
+Mac Ratatui target-filtered license metadata screen: no declared LGPL, GPL-3 or MPL in 68 resolved packages; linked-system provenance and full license review remain open. [Evidence](docs/packaging/RATATUI-MAC-LICENSE-SCREEN.md).
+
+Mac softbuffer target-filtered license metadata screen: no declared LGPL, GPL-3 or MPL in 59 resolved packages; system components and complete license review remain open. [Evidence](docs/packaging/SOFTBUFFER-MAC-LICENSE-SCREEN.md).
+
+Mac Fyrox Release license investigation: MPL-declared Symphonia code symbols are present in the tested executable; a second MPL-declared graph path lacks direct symbol confirmation. [Evidence](docs/packaging/FYROX-MAC-MPL-SCREEN.md).
+
 Mac Fyrox and Blue Engine held-pause follow-up: four tests each and sequential automated movement/pause/resume pass; native held-across-pause remains open. [Fyrox](docs/FYROX-HELD-PAUSE-FIX.md); [Blue Engine](docs/BLUE-HELD-PAUSE-FIX.md).
 
 Mac Godot held-pause follow-up: integration and synthetic held-input smoke pass; sequential automated native pause/resume and fresh movement pass. [Evidence](docs/GODOT-HELD-PAUSE-FIX.md).
@@ -95,6 +101,8 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
 Dioxus local-libxdo launcher now rejects package paths containing loader separators; relocated release replay still passes. [Evidence](docs/packaging/DIOXUS-LIBRARY-PATH-SEPARATOR-FIX.md).
+
+Omarchy Ratatui static musl experiment: approved official target installed; release build, 10 tests, model replay and synthetic PTY checks pass, with static-component licensing still under review. [Evidence](docs/packaging/RATATUI-MUSL-STATIC-OMARCHY.md).
 
 Omarchy Ratatui musl feasibility: target-specific metadata is available, but the installed toolchain lacks ARM64 musl core; no musl executable or release is claimed. [Evidence](docs/packaging/RATATUI-MUSL-FEASIBILITY-OMARCHY.md).
 
