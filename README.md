@@ -128,6 +128,8 @@ Mac Slint audit: tested binary contains Slint core/backend symbols; GPL-3 is one
 
 Mac ggez option-ext patch: Release tests and replay pass; a duplicate Unix-only test module was corrected and its isolated parser tests pass. [Evidence](docs/packaging/GGEZ-MAC-OPTION-EXT-RECHECK.md). Mac Nannou metadata screen found no restricted declarations in 435 packages; native/system review remains open. [Evidence](docs/packaging/NANNOU-MAC-LICENSE-SCREEN.md).
 
+Mac ggez asset audit: tested binaries embed Liberation Mono 1.04; exact font-license provenance and notice remain unresolved. [Evidence](docs/packaging/GGEZ-MAC-LIBERATION-FONT.md).
+
 Mac Fyrox Release license investigation: MPL-declared Symphonia code symbols are present in the tested executable; a second MPL-declared graph path lacks direct symbol confirmation. [Evidence](docs/packaging/FYROX-MAC-MPL-SCREEN.md).
 
 Mac Fyrox and Blue Engine held-pause follow-up: four tests each and sequential automated movement/pause/resume pass; native held-across-pause remains open. [Fyrox](docs/FYROX-HELD-PAUSE-FIX.md); [Blue Engine](docs/BLUE-HELD-PAUSE-FIX.md).
@@ -153,6 +155,8 @@ Dioxus local-libxdo launcher now rejects package paths containing loader separat
 Omarchy Miniquad winning-score fixture: real scoring reached both game-over states and scripted restart cleared them from controlled near-winning positions. [Evidence](docs/packaging/MINIQUAD-SCORING-FIXTURE-OMARCHY.md).
 
 Omarchy Miniquad winner overlay: an isolated forced-state visual fixture rendered both winner messages; real game-over progression and physical input remain open. [Evidence](docs/packaging/MINIQUAD-WINNER-FIXTURE-OMARCHY.md).
+
+Omarchy ggez input fix: movement presses in Ready, Paused or Over no longer carry into play; adapter regression and rebuilt scripted replay pass. Native input and cross-platform rechecks remain open. [Evidence](docs/packaging/GGEZ-NONPLAYING-PRESS-OMARCHY.md).
 
 Omarchy Ratatui Ctrl+C: synthetic enhanced and fallback PTY checks exited cleanly and restored terminal settings for both musl and GNU binaries. [Evidence](docs/packaging/RATATUI-CTRL-C-PTY-OMARCHY.md).
 
