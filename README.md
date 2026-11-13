@@ -851,3 +851,5 @@ Piston now backs its state indicators to keep the net and ball from obscuring th
 Godot now identifies the winner in its match-over prompt. [Omarchy status tests and synthetic scene captures](docs/GODOT-WINNER-OMARCHY-20261113.md) record the verification and its limits.
 
 Nannou's in-court prompts now have a backing to separate them from the ball and net. [Omarchy replay and paused-capture evidence](docs/packaging/NANNOU-PROMPT-BACKING-OMARCHY.md) records the scope and remaining checks.
+
+Raw wgpu's window title now labels the scores and winner; [Omarchy evidence](docs/packaging/WGPU-WINNER-TITLE-OMARCHY.md) records adapter tests and replay limits.

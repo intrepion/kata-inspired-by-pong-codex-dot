@@ -9,6 +9,15 @@ use winit::{
     keyboard::{KeyCode, PhysicalKey},
     window::{Window, WindowId},
 };
+fn window_title(game: &Game) -> String {
+    let status = match game.state {
+        State::Ready => "Ready", State::Playing => "Playing", State::Paused => "Paused",
+        State::Over if game.scores[0] > game.scores[1] => "YOU WIN",
+        State::Over if game.scores[1] > game.scores[0] => "CPU WINS",
+        State::Over => "Match over",
+    };
+    format!("Pong raw wgpu | YOU {} : {} CPU | {} | Arrows/W/S • Enter restart • Space pause", game.scores[0], game.scores[1], status)
+}
 fn benchmark_args(args: &[String]) -> bool {
     let enabled = args.iter().any(|a| a == "--benchmark");
     assert!(
@@ -203,10 +212,7 @@ impl ApplicationHandler for App {
                     e.exit();
                 }
                 if let Some(w) = &self.window {
-                    w.set_title(&format!(
-                        "Pong raw wgpu | {} : {} | {:?} | Arrows/W/S • Enter restart • Space pause",
-                        self.game.scores[0], self.game.scores[1], self.game.state
-                    ));
+                    w.set_title(&window_title(&self.game));
                 }
             }
             _ => {}
@@ -260,6 +266,23 @@ mod benchmark_tests {
 #[cfg(test)]
 mod movement_tests {
     use super::*;
+    #[test]
+    fn title_identifies_winner_and_resets() {
+        use pong_core::BALL;
+        let mut game = Game::new(42);
+        assert!(window_title(&game).contains("YOU 0 : 0 CPU | Ready"));
+        game.start(); assert!(window_title(&game).contains("Playing"));
+        game.pause(); assert!(window_title(&game).contains("Paused"));
+        for (scores, x, vx, expected) in [([6, 2], W + BALL - 1., 350., "YOU 7 : 2 CPU | YOU WIN"), ([2, 6], -BALL + 1., -350., "YOU 2 : 7 CPU | CPU WINS")] {
+            game.start(); game.scores = scores; game.serve = 0.;
+            game.ball.x = x; game.ball.y = H / 2.; game.ball.vx = vx; game.ball.vy = 0.;
+            game.step(0.02, 0.);
+            assert!(window_title(&game).contains(expected));
+            game.start(); assert!(window_title(&game).contains("YOU 0 : 0 CPU | Playing"));
+        }
+        game.state = State::Over; game.scores = [7, 7];
+        assert!(window_title(&game).contains("Match over"));
+    }
     #[test]
     fn unfocused_key_actions_do_not_resume_or_restart() {
         let mut game = Game::new(42);
