@@ -182,6 +182,8 @@ Windows passed five unfocused-action suites and an ash scripted replay; [the rep
 
 Windows passed Piston and Fyrox unfocused-action tests and a Piston replay; [the report](docs/packaging/PISTON-FYROX-UNFOCUSED-WINDOWS.md) records focus limits.
 
+Windows passed Piston's Ready/Paused geometry tests and inspected a paused capture; [the report](docs/packaging/PISTON-STATE-WINDOWS-20261113.md) records limits.
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
