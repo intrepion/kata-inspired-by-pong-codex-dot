@@ -221,6 +221,8 @@ fn status_text(v: &mut Vec<Vertex>, text: &str, y: f32, scale: f32) {
 }
 fn game_over_vertices(game: &Game, v: &mut Vec<Vertex>) {
     if game.state == State::Over {
+        // Cover the court behind both lines before drawing the winner and hint.
+        rect(v, W / 2., H / 2. - 6., 220., 84., [0.025, 0.04, 0.09]);
         let winner = if game.scores[0] > game.scores[1] {
             "YOU WIN"
         } else {
@@ -461,6 +463,10 @@ mod tests {
         game.state = State::Over;
         game.scores = [7, 2];
         game_over_vertices(&game, &mut vertices);
+        assert_eq!(vertices[0].color, [0.025, 0.04, 0.09]);
+        assert_eq!(vertices[5].color, [0.025, 0.04, 0.09]);
+        assert_eq!(vertices[6].color, [1., 1., 1.]);
+        assert!((vertices[0].pos[0] - ((W / 2. - 110.) / W * 2. - 1.)).abs() < 1e-6);
         let player_count = vertices.len();
         assert!(player_count > 0 && player_count < 4096);
         vertices.clear();
