@@ -40,6 +40,8 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
+Leptos focus/pause fix: older localhost build reproduced the first-click failure; shared tests and raw WASM build pass, with rebuilt browser/wrapper interaction pending. Dioxus remains under investigation. [Evidence](docs/LEPTOS-DIOXUS-FOCUS-PAUSE.md).
+
 Yew focus/pause fix: an older localhost build reproduced a first-click pause failure; 13 controller tests and updated WASM compilation pass, with rebuilt browser/wrapper interaction pending. [Evidence](docs/YEW-INTERNAL-FOCUS-PAUSE-FIX.md).
 
 Dependency notice preparation now rejects inconsistent resolved Cargo graphs before indexing; this is not legal clearance. [Evidence](docs/packaging/NOTICE-GRAPH-INTEGRITY.md).

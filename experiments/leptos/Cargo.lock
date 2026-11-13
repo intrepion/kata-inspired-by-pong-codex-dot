@@ -1019,6 +1019,7 @@ dependencies = [
  "leptos",
  "pong-web-ui-common",
  "send_wrapper",
+ "wasm-bindgen",
  "web-sys",
  "web-time",
 ]

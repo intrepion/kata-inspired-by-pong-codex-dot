@@ -8,6 +8,7 @@ license = "MIT"
 pong-web-ui-common = { path = "../web-ui-common" }
 leptos = { version = "0.8", features = ["csr"] }
 gloo-timers = "0.3"
-web-sys = { version = "0.3", features = ["KeyboardEvent", "PointerEvent"] }
+web-sys = { version = "0.3", features = ["KeyboardEvent", "PointerEvent", "FocusEvent", "Node"] }
+wasm-bindgen = "0.2"
 web-time = "1"
 send_wrapper = "0.6"
