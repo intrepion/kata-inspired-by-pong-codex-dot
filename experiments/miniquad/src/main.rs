@@ -202,6 +202,9 @@ fn glyph(c: char) -> [u8; 7] {
 }
 fn status_text(v: &mut Vec<Vertex>, text: &str, y: f32, scale: f32) {
     let x = W / 2. - (text.len() as f32 * 6. - 1.) * scale / 2.;
+    text_at(v, text, x, y, scale);
+}
+fn text_at(v: &mut Vec<Vertex>, text: &str, x: f32, y: f32, scale: f32) {
     for (i, c) in text.chars().enumerate() {
         for (row, bits) in glyph(c).iter().enumerate() {
             for col in 0..5 {
@@ -218,6 +221,10 @@ fn status_text(v: &mut Vec<Vertex>, text: &str, y: f32, scale: f32) {
             }
         }
     }
+}
+fn score_label_vertices(v: &mut Vec<Vertex>) {
+    text_at(v, "YOU", 354., 42., 2.);
+    text_at(v, "CPU", 510., 42., 2.);
 }
 fn game_over_vertices(game: &Game, v: &mut Vec<Vertex>) {
     if game.state == State::Over {
@@ -310,6 +317,7 @@ impl EventHandler for App {
                 );
             }
         }
+        score_label_vertices(&mut v);
         state_vertices(&self.game, &mut v);
         self.ctx
             .buffer_update(self.bindings.vertex_buffers[0], BufferSource::slice(&v));
@@ -477,6 +485,24 @@ mod tests {
         game.start();
         game_over_vertices(&game, &mut vertices);
         assert!(vertices.is_empty());
+    }
+    #[test]
+    fn score_labels_and_full_winner_court_fit_vertex_buffer() {
+        let mut vertices = Vec::new();
+        score_label_vertices(&mut vertices);
+        assert!(!vertices.is_empty());
+        assert!(vertices.iter().any(|v| v.pos[0] < 0.));
+        assert!(vertices.iter().any(|v| v.pos[0] > 0.));
+        // Court contains 20 net dashes, two paddles, ball, and at most 14 score pips.
+        let scene_vertices = (20 + 2 + 1 + 14) * 6;
+        let mut game = Game::new(42);
+        game.state = State::Over;
+        for scores in [[7, 2], [2, 7]] {
+            game.scores = scores;
+            let mut state = Vec::new();
+            state_vertices(&game, &mut state);
+            assert!(scene_vertices + vertices.len() + state.len() < 4096);
+        }
     }
     #[test]
     fn ready_and_paused_indicators_are_distinct_and_absent_during_play() {
