@@ -1,5 +1,7 @@
 # Ratatui musl runtime feasibility on Omarchy
 
+**Historical:** Oliver subsequently approved the official target installation; the later [static musl experiment](RATATUI-MUSL-STATIC-OMARCHY.md) supersedes the toolchain blocker below.
+
 2026-11-13, Omarchy ARM64. This is an investigation using existing local tools, not a new release, a completed musl build or legal clearance. No packages or toolchains were installed. The terminal implementation was chosen because it does not require a graphics or audio stack for its normal runtime; terminal emulator and OS behavior remain external.
 
 The previously tested [Ratatui release binary](RATATUI-RELEASE-NOTICE-OMARCHY.md), SHA-256 `2e985f886e1480f7bf3bb3016ce10a1cf460ba30c1d36ea93db914d8d4684245`, is **not musl**: `readelf` reports interpreter `/lib/ld-linux-aarch64.so.1` and `DT_NEEDED` entries `libgcc_s.so.1`, `libm.so.6` and `libc.so.6`. On this host `ldd` resolves the latter two from glibc and the first from libgcc. Installed package metadata lists glibc as `GPL-2.0-or-later LGPL-2.1-or-later` and libgcc as `GPL-3.0-or-later WITH GCC-exception-3.1 GFDL-1.3-or-later`. These are aggregate package fields, not a component-level legal conclusion. `/usr/lib/libc.a` is owned by the host glibc package and is not a musl substitute. The [broader host inventory](OMARCHY-RUNTIME-LICENSE-INVENTORY.md) records its limitations.
