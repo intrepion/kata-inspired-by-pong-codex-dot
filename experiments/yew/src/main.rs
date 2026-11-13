@@ -59,7 +59,7 @@ fn app() -> Html {
             s.borrow_mut().movement_button(direction, e.pointer_id(), pressed)
         })
     };
-    html! {<><style>{CSS}</style><main ref={game_root} tabindex="0" autofocus=true onkeydown={down} onkeyup={up} onblur={blur}>
+    html! {<><style>{CSS}</style><main ref={game_root} tabindex="0" autofocus=true onkeydown={down} onkeyup={up} onfocusout={blur}>
     <h1>{"Pong • Yew"}</h1><p>{"Rust shared simulation · Yew / WASM"}</p>
     {Html::from_html_unchecked(AttrValue::from((*frame).clone()))}
     <button onclick={start}>{"Start / Restart"}</button><button onclick={pause}>{"Pause / Resume"}</button>
