@@ -916,7 +916,7 @@ Nannou now accepts keypad Enter with an independent focus-return gate; [Mac](doc
 
 Blue Engine now accepts keypad Enter with an independent focus-return gate; [Mac](docs/packaging/BLUE-KEYPAD-ENTER-MAC-20261113.md) and [Windows](docs/packaging/BLUE-KEYPAD-ENTER-WINDOWS-20261113.md) checks record the physical-input gap.
 
-Blue Engine now prepares an outline for zero scores; [Windows geometry and replay checks](docs/packaging/BLUE-ZERO-SCORE-WINDOWS-20261113.md) leave actual rendering unverified.
+Blue Engine now displays an outline for zero scores; [Windows geometry and replay checks](docs/packaging/BLUE-ZERO-SCORE-WINDOWS-20261113.md) and [headless captures](docs/packaging/BLUE-ZERO-HEADLESS-WINDOWS-20261113.md) record the tested scope.
 
 Raylib now accepts keypad Enter for its existing restart action, with independent focus-return suppression; [Omarchy tests and replay](docs/packaging/RAYLIB-KEYPAD-ENTER-OMARCHY.md) record the native-input gap.
 
