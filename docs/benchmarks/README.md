@@ -82,7 +82,7 @@ Verification: three sampler unit tests, nine core tests and six scenario tests
 passed; Macroquad release build and Node syntax check passed. This does not
 replace visual gameplay testing, packaging or installation tests.
 
-A fresh Windows Blue Engine held-input **debug** callback pilot has three valid samples; [results and limitations](BLUE-ENGINE-WINDOWS-HELD-DEBUG-PILOT.md).
+Windows Blue Engine held-input callback pilots have three valid runs each: [release](BLUE-ENGINE-WINDOWS-HELD-RELEASE-PILOT.md) and [debug](BLUE-ENGINE-WINDOWS-HELD-DEBUG-PILOT.md). They are not controlled comparisons.
 
 ## Prepare a public measurement copy
 
