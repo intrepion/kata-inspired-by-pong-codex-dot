@@ -913,3 +913,5 @@ Nannou now accepts keypad Enter with an independent focus-return gate; [Mac](doc
 Blue Engine now accepts keypad Enter with an independent focus-return gate; [Mac](docs/packaging/BLUE-KEYPAD-ENTER-MAC-20261113.md) and [Windows](docs/packaging/BLUE-KEYPAD-ENTER-WINDOWS-20261113.md) checks record the physical-input gap.
 
 Raylib now accepts keypad Enter for its existing restart action, with independent focus-return suppression; [Omarchy tests and replay](docs/packaging/RAYLIB-KEYPAD-ENTER-OMARCHY.md) record the native-input gap.
+
+Fyrox now accepts keypad Enter; [Mac tests and automated-window evidence](docs/packaging/FYROX-KEYPAD-ENTER-MAC-20261113.md) and [Omarchy adapter tests](docs/packaging/FYROX-KEYPAD-ENTER-OMARCHY.md) retain the physical-input and license limitations.

@@ -100,13 +100,13 @@ impl App {
             }
         }
         if down && !repeat {
-            if key == KeyCode::KeyR || (self.game.state == State::Over && key == KeyCode::Enter) {
+            if key == KeyCode::KeyR || (self.game.state == State::Over && matches!(key, KeyCode::Enter | KeyCode::NumpadEnter)) {
                 self.suppressed = self.held;
             }
             if matches!(key, KeyCode::Space | KeyCode::Escape) && self.game.state == State::Playing {
                 self.suppressed = self.held;
             }
-            if key == KeyCode::Enter {
+            if matches!(key, KeyCode::Enter | KeyCode::NumpadEnter) {
                 if self.game.state == State::Paused { self.game.toggle_pause(); }
                 else if self.game.state != State::Playing { self.game.start(); }
             } else if key == KeyCode::KeyR { self.game.start(); }
@@ -344,6 +344,22 @@ mod input_tests {
         assert_eq!(app.game.state, State::Playing);
     }
     #[test]
+    fn keypad_enter_starts_resumes_and_ignores_unfocused_and_repeat() {
+        let mut app = App::default();
+        app.focused_key_input(false, KeyCode::NumpadEnter, true, false);
+        app.key_input(KeyCode::NumpadEnter, true, true);
+        app.key_input(KeyCode::NumpadEnter, false, false);
+        assert_eq!(app.game.state, State::Ready);
+        app.key_input(KeyCode::NumpadEnter, true, false);
+        assert_eq!(app.game.state, State::Playing);
+        app.game.scores = [2, 4];
+        app.key_input(KeyCode::NumpadEnter, true, false);
+        assert_eq!(app.game.scores, [2, 4]);
+        app.game.pause();
+        app.key_input(KeyCode::NumpadEnter, true, false);
+        assert_eq!(app.game.state, State::Playing);
+    }
+    #[test]
     fn active_restart_blocks_held_direction_until_release() {
         let mut app = App::default(); app.game.start();
         app.key_input(KeyCode::KeyW, true, false);
@@ -359,7 +375,7 @@ mod input_tests {
     #[test]
     fn held_movement_does_not_carry_through_match_end_restart() {
         for key in [KeyCode::KeyW, KeyCode::ArrowUp, KeyCode::KeyS, KeyCode::ArrowDown] {
-            for restart in [KeyCode::Enter, KeyCode::KeyR] {
+            for restart in [KeyCode::Enter, KeyCode::NumpadEnter, KeyCode::KeyR] {
                 let mut app=App::default();app.game.start();app.key_input(key,true,false);
                 app.game.scores=[6,2];app.game.serve=0.;app.game.ball=Ball{x:W+BALL-1.,y:H/2.,vx:350.,vy:0.};
                 app.game.step(0.02,0.);assert_eq!(app.game.state,State::Over);
