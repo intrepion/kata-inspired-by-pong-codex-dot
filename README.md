@@ -853,3 +853,5 @@ Godot now identifies the winner in its match-over prompt. [Omarchy status tests 
 Nannou's in-court prompts now have a backing to separate them from the ball and net. [Omarchy replay and paused-capture evidence](docs/packaging/NANNOU-PROMPT-BACKING-OMARCHY.md) records the scope and remaining checks.
 
 Raw wgpu's window title now labels the scores and winner; [Omarchy evidence](docs/packaging/WGPU-WINNER-TITLE-OMARCHY.md) records adapter tests and replay limits.
+
+Raylib now displays Ready and Paused instructions in the court, with centered backed winner text. [Omarchy evidence](docs/packaging/RAYLIB-COURT-STATES-OMARCHY.md) records the tests and paused capture.
