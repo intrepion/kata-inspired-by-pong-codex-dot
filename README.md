@@ -22,7 +22,7 @@ Windows Leptos and Dioxus release WASM: localhost Chrome first-click Pause and i
 
 Windows-built Yew release static ZIP: extracted hashes, localhost Chrome Start/Pause/Resume and SVG icon fetch pass; dependency notices and distribution remain open. [Evidence](docs/packaging/YEW-FOCUS-WINDOWS-STATIC-PILOT.md).
 
-Swift iOS simulator bundle now has explicit version metadata; ad-hoc signing and device distribution remain open. [Evidence](docs/SWIFT-HELD-TOUCH-PAUSE-FIX.md).
+Swift iOS versioned Release simulator smoke and unsigned generic device build pass; explicit Combine import clears its prior warning. Device run, signing and distribution remain open. [Evidence](docs/SWIFT-HELD-TOUCH-PAUSE-FIX.md).
 
 Windows Miniquad held-input release ZIP: ten tests, local extraction and model-matched relocated replay pass; actual key delivery and distribution remain open. [Evidence](docs/packaging/MINIQUAD-HELD-WINDOWS-RELEASE-PILOT.md).
 
@@ -57,6 +57,10 @@ Mac Nannou pause-fix follow-up: five release tests and sequential automated move
 Mac Godot pause-prompt fix: headless integration smoke passes and automated desktop pause/resume shows and clears the unobscured prompt. [Evidence](docs/GODOT-MAC-CONTACT-TIMING-ATTEMPT.md).
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
+
+Omarchy raylib held-pause release pilot: notice-bearing archive checks and relocated scripted replay pass; physical input and full notice review remain open. [Evidence](docs/packaging/RAYLIB-HELD-NOTICE-OMARCHY.md).
+
+Omarchy SDL3 held-pause release pilot: relocated archive checks and model-matched replay pass; physical input and dependency notices remain open. [Evidence](docs/packaging/SDL3-HELD-OMARCHY-RELEASE-PILOT.md).
 
 Omarchy Miniquad winner-fix release pilot: notice-bearing archive checks and relocated scripted replay pass; notice review, winner visuals and physical input remain open. [Evidence](docs/packaging/MINIQUAD-WINNER-NOTICE-OMARCHY.md).
 
