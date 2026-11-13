@@ -104,6 +104,8 @@ Mac softbuffer target-filtered license metadata screen: no declared LGPL, GPL-3 
 
 Mac bracket-lib target-filtered license screen: no declared LGPL, GPL-3 or MPL in 84 resolved packages; native/system components and full source review remain open. [Evidence](docs/packaging/BRACKET-MAC-LICENSE-SCREEN.md).
 
+Mac Bevy audit: the original pilot lacks the embedded Fira Mono notice; a separate local candidate includes the pinned notice and passes extracted hash checks. [Evidence](docs/packaging/BEVY-MAC-FONT-LICENSE.md).
+
 Mac Blue Engine target metadata screen: no restricted declarations in 199 packages; system and source-level license review remain open. [Evidence](docs/packaging/BLUE-MAC-LICENSE-SCREEN.md).
 
 Mac SDL3 native audit: HIDAPI-named code is present; its source offers BSD-style and original alternatives to GPLv3, subject to full notice review. [Evidence](docs/packaging/SDL3-MAC-HIDAPI-LICENSE.md).
@@ -142,7 +144,11 @@ Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequent
 
 Dioxus local-libxdo launcher now rejects package paths containing loader separators; relocated release replay still passes. [Evidence](docs/packaging/DIOXUS-LIBRARY-PATH-SEPARATOR-FIX.md).
 
+Omarchy Miniquad winning-score fixture: real scoring reached both game-over states and scripted restart cleared them from controlled near-winning positions. [Evidence](docs/packaging/MINIQUAD-SCORING-FIXTURE-OMARCHY.md).
+
 Omarchy Miniquad winner overlay: an isolated forced-state visual fixture rendered both winner messages; real game-over progression and physical input remain open. [Evidence](docs/packaging/MINIQUAD-WINNER-FIXTURE-OMARCHY.md).
+
+Omarchy Ratatui Ctrl+C: synthetic enhanced and fallback PTY checks exited cleanly and restored terminal settings for both musl and GNU binaries. [Evidence](docs/packaging/RATATUI-CTRL-C-PTY-OMARCHY.md).
 
 Omarchy Ratatui musl empty-environment PTY: enhanced and fallback flows passed from a read-only installation with absent HOME/XDG paths; clean-machine and physical input remain open. [Evidence](docs/packaging/RATATUI-MUSL-EMPTY-ENV-OMARCHY.md).
 
