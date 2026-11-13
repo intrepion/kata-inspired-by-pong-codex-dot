@@ -58,7 +58,7 @@ Windows ggez profile follow-up: a native known-folder probe recorded missing-pat
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
-Mac Ratatui repeat-fix follow-up: ten tests and exact TestBackend replay with six cell exports pass; enhanced terminal and physical input remain open. [Evidence](docs/RATATUI-HELD-REPEAT-FIX.md).
+Mac Ratatui repeat-fix follow-up: ten debug tests, TestBackend replay and synthetic enhanced/fallback PTY checks pass; real-terminal and physical input remain open. [Model evidence](docs/RATATUI-HELD-REPEAT-FIX.md); [PTY checks](docs/packaging/RATATUI-PTY-MAC-HELD.md).
 
 Mac Fyrox and Blue Engine held-pause follow-up: four tests each and sequential automated movement/pause/resume pass; native held-across-pause remains open. [Fyrox](docs/FYROX-HELD-PAUSE-FIX.md); [Blue Engine](docs/BLUE-HELD-PAUSE-FIX.md).
 
