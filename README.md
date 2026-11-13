@@ -60,7 +60,9 @@ Windows bracket-lib notice review identified third-party source attributions in 
 
 Windows dependency audit found MPL-2.0 declarations in enabled ggez, Fyrox and native-web-demo dependency paths; [linkage and replacement review remains open](docs/packaging/WINDOWS-MPL-TREE-AUDIT.md).
 
-ggez uses a scoped dirs-sys patch removing option-ext; Windows release tests and scripted replay pass, while Unix validation and a complete dependency audit remain open. See [evidence](docs/packaging/GGEZ-WINDOWS-OPTION-EXT-PATCH.md).
+Omarchy ggez option-ext recheck: ten Unix parser tests, four adapter tests and model-matched replay pass; host runtime and full license review remain open. [Evidence](docs/packaging/GGEZ-OPTION-EXT-LINUX-RECHECK.md).
+
+ggez uses a scoped dirs-sys patch removing option-ext; Windows, macOS and Linux checks pass after correcting a Unix test-module collision; complete dependency review remains open. See [evidence](docs/packaging/GGEZ-WINDOWS-OPTION-EXT-PATCH.md).
 
 Fyrox Windows feature investigation: disabling defaults breaks the implementation import, while explicitly enabling it retains Symphonia; [replacement remains open](docs/packaging/FYROX-WINDOWS-MPL-FEASIBILITY.md).
 
