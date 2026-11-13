@@ -59,4 +59,22 @@ class TouchInputTest {
         input.move(8, 450f)
         assertNull(input.targetY)
     }
+    @Test fun heldGestureDoesNotMoveAfterRestart() {
+        val game = Game()
+        val input = TouchInput()
+        game.start()
+        input.down(7, 400f)
+        input.start(game)
+        input.move(7, 450f)
+        val before = game.player
+        val axis = input.targetY?.let { ((it - game.player) / 20f).coerceIn(-1f, 1f) } ?: 0f
+        game.step(0.016f, axis)
+        assertEquals(before, game.player, 0f)
+        input.up(7)
+        input.move(7, 300f)
+        assertNull(input.targetY)
+        input.down(8, 400f)
+        game.step(0.016f, ((input.targetY!! - game.player) / 20f).coerceIn(-1f, 1f))
+        assertTrue(game.player > before)
+    }
 }

@@ -13,7 +13,7 @@ class MainActivity: Activity() {
   val scripted=intent.getBooleanExtra("pong_scripted",false) && (applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE)!=0
   field=PongView(this,scripted)
   val buttons=LinearLayout(this).apply { gravity=Gravity.CENTER }
-  val start=Button(this).apply { text="Start / Restart"; setOnClickListener { field.game.start() } }
+  val start=Button(this).apply { text="Start / Restart"; setOnClickListener { field.touch.start(field.game) } }
   val pause=Button(this).apply { text="Pause / Resume"; setOnClickListener { field.touch.togglePause(field.game) } }
   start.isEnabled=!scripted; pause.isEnabled=!scripted
   buttons.addView(start); buttons.addView(pause)
