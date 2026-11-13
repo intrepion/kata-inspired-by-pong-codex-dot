@@ -1,0 +1,9 @@
+# Windows Bevy scripted replay crash investigation
+
+At checkpoint `32f7ece6761750350c29b2d34feb25cb7dd7f629`, the preserved debug executable from `e1cb757ec08a67571bafc1194dcdce6c73cc4ba1`, SHA-256 `ae3d7a6bdf5a6c0e6fb57085da6d17c69d2055fc7461194d42ef5ac5987adb9d`, was run repeatedly with `--scripted-test`. No source or binary was changed. All successful runs produced 13 JSON records matching `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`.
+
+With default environment in the checkout working directory, four runs selected Intel UHD Graphics 630 Vulkan: three exited `0xC0000005` before telemetry and one exited 0 with matching records. In an isolated working directory, three default Vulkan runs had one matching success, one `0xC0000374` exit and one `0xC0000005` exit, both before telemetry. All these runs logged the missing Epic Online Services overlay Vulkan-layer JSON manifest. Thus the issue is intermittent, not explained solely by working directory, and the warning also occurs in a successful run.
+
+Changing only process-local `WGPU_BACKEND=dx12` in the checkout working directory yielded three exit-0 runs with all 13 records matching. Logs identified the same Intel GPU with DirectX 12 driver `31.0.101.2145`. This small sample narrows investigation to Vulkan or its environment but does not prove a driver, overlay, or application root cause, nor establish DirectX 12 as universally reliable. A debugger was not found in the available command paths. No production fallback or source change was made. Raw logs remain in sibling workspace directory `bevy-crash-diagnostic-windows-20261113` and may contain local machine paths; prior evidence remains intact.
+
+These are scripted replay runs, not physical input, a clean-machine test, a general graphics compatibility conclusion or release qualification. A captured native crash stack and cross-machine reproduction would be needed to localize the access violation.
