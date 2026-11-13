@@ -7,3 +7,9 @@ The browser now clears keyboard, button-pointer and active canvas-drag sources w
 On Omarchy, offline pinned TypeScript build and all 19 Node tests passed. The added tests cover independent keyboard/button/drag ownership and use a mocked DOM to exercise actual browser event handlers across pause/resume, a continuing drag and a fresh drag. This is controller and simulated-handler evidence, not browser, native or physical touch verification. A real browser recheck must use a localhost server, never a file URL; multi-touch, focus/visibility delivery and other platforms remain pending.
 
 Tested tree based on `f2fa58ff5a178451786b3120880db00eef5d0f1e`; `game.ts` Git blob `a9b4835d2555fca8cd44b8c5c853f3b4f0865873`, generated `game.js` Git blob `ca32cd7b030c2463027fa7b3d913486520ac8728`. Node `v26.12.1`; pinned TypeScript `5.9.3` was installed from a copied local npm cache. No prior builds or artifacts were deleted.
+
+## Windows Chrome recheck
+
+At checkpoint `cf1eabc80c69f0efadf14f3c70b53a7d937eec97`, the source and generated JavaScript blobs remained `a9b4835d2555fca8cd44b8c5c853f3b4f0865873` and `ca32cd7b030c2463027fa7b3d913486520ac8728`. Node v24.20.0 ran all 19 checked-in JavaScript tests successfully; this invocation did not rebuild TypeScript. Chrome loaded the game from the repository's localhost-only server on `127.0.0.1:4199`; supported browser controls started, paused and resumed the match, and a W key press visibly moved the paddle. The initial sandboxed server could not be reached by Chrome; the approved local-network server worked.
+
+This is a bounded automated browser smoke check, not verification of a key held continuously through pause and resume. The existing mocked-handler tests cover that input state and continuing touch drags. Real multi-touch, physical input, focus/visibility behavior, and the browser held-through-pause interaction remain open.
