@@ -113,7 +113,11 @@ impl App {
                 }
             }
         }
-        if matches!(self.game.state, State::Ready | State::Paused) {
+        if self.game.state == State::Ready {
+            for (i, width) in [8., 16., 24., 32., 24., 16., 8.].into_iter().enumerate() {
+                rect(430., 222. + i as f32 * 8., width, 8., [255, 180, 80]);
+            }
+        } else if self.game.state == State::Paused {
             rect(420., 225., 12., 50., [255, 180, 80]);
             rect(468., 225., 12., 50., [255, 180, 80]);
         }
@@ -173,6 +177,27 @@ pub fn raster(app: &App, pixels: &mut [u32], width: u32, height: u32) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn ready_play_indicator_differs_from_paused_bars() {
+        let mut app = App::default();
+        let ready = app.rectangles();
+        assert!(ready
+            .iter()
+            .any(|r| r.x == 430. && r.y == 246. && r.w == 32. && r.h == 8.));
+        assert!(!ready
+            .iter()
+            .any(|r| r.x == 420. && r.y == 225. && r.w == 12. && r.h == 50.));
+        app.action();
+        app.action();
+        assert_eq!(app.game.state, State::Paused);
+        let paused = app.rectangles();
+        assert!(paused
+            .iter()
+            .any(|r| r.x == 420. && r.y == 225. && r.w == 12. && r.h == 50.));
+        assert!(!paused
+            .iter()
+            .any(|r| r.x == 430. && r.y == 246. && r.w == 32. && r.h == 8.));
+    }
     #[test]
     fn winner_title_and_score_marker_follow_winning_point() {
         for (scores, x, vx, text, marker_x, other_x) in [
