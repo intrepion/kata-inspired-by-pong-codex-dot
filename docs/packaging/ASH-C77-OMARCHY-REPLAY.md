@@ -1,0 +1,7 @@
+# Vulkan via ash contact-timing replay on Omarchy
+
+2026-11-13, Omarchy ARM64; source `0cd6a1ccedd0476649a87a1dd00d033913deeacb` includes contact-timing physics `c77bf3a`. A fresh offline locked release build and all six ash frontend tests passed. The local Linux portable pilot archive was extracted into a separate directory; its archive digest and all four extracted manifest entries verified. Archive size: 1,647,182 bytes; archive SHA-256: `65dddea80e349c6c5a4e1664a10a4d67653e7028d2f765154b70c9adb0045471`; binary SHA-256: `65ca2f752f0392f15e5cf7cc404a5cf456b76729290901e04c44f5048bbacea5`.
+
+With approved host-display access, the relocated binary completed `--scripted-test --scripted-captures` with exit 0. Its 13 telemetry records exactly match the revised contact-timing model reference through finished tick 1440. Six app-owned acquired-swapchain-image PNGs were produced; tick 600 was inspected and showed score, court, paddles and ball. These are image readbacks before presentation, not desktop/compositor screenshots. Archive, extraction, captures and telemetry remain under distinct `/tmp/pong-ash-c77-*` paths; historical artifacts were preserved.
+
+This is a local package extraction and scripted rendering/replay check on the available Vulkan device. Physical input, focus/resize, full-match interaction, clean-machine installation, complete dependency notices and public distribution remain unverified.
