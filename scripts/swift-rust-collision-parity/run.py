@@ -2,6 +2,7 @@
 """Compare bounded Swift/Rust collision steps using a new output directory."""
 import itertools
 import pathlib
+import random
 import subprocess
 import sys
 
@@ -20,6 +21,22 @@ for side,dt,y,vy,paddle,axis in itertools.product([0,1],[1/120,0.033],[8.3,10,45
     x=(54 if dt<0.01 else 60) if side==0 else (846 if dt<0.01 else 840)
     vx=-350 if side==0 else 350
     rows.append((x,y,vx,vy,paddle,paddle,dt,axis))
+rng = random.Random(90210)
+for _ in range(10000):
+    side = rng.randrange(2)
+    dt = rng.choice([1/120, 0.016, 0.033])
+    speed = rng.uniform(120, 720)
+    vx = -speed if side == 0 else speed
+    face = 52 if side == 0 else 848
+    contact_time = rng.uniform(0.001, 0.999) * dt
+    x = face - vx * contact_time
+    player, cpu = rng.uniform(45, 455), rng.uniform(45, 455)
+    paddle = player if side == 0 else cpu
+    offset = rng.choice([-1, 1]) * rng.uniform(35, 70)
+    y = max(8, min(492, paddle + offset))
+    vy = rng.uniform(-720, 720)
+    axis = rng.choice([-1, 0, 1])
+    rows.append((x,y,vx,vy,player,cpu,dt,axis))
 text=''.join(','.join(map(str,row))+'\n' for row in rows)
 (out/'cases.csv').write_text(text)
 outputs=[]
