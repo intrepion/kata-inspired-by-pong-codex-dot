@@ -134,6 +134,8 @@ Mac ggez option-ext patch: Release tests and replay pass; a duplicate Unix-only 
 
 Mac ggez non-playing movement fix: five Release tests and 13-record model-matched scripted replay pass; real key delivery remains open. [Evidence](docs/packaging/GGEZ-MAC-NONPLAYING-RECHECK.md).
 
+Mac non-playing input recheck: six adapter Release suites pass; five rebuilt native replays match the model. Ash runtime and real input remain open. [Evidence](docs/packaging/NATIVE-NONPLAYING-MAC-RECHECK.md).
+
 Mac ggez asset audit: tested binaries embed Liberation Mono 1.04; exact font-license provenance and notice remain unresolved. [Evidence](docs/packaging/GGEZ-MAC-LIBERATION-FONT.md).
 
 Mac Fyrox Release license investigation: MPL-declared Symphonia code symbols are present in the tested executable; a second MPL-declared graph path lacks direct symbol confirmation. [Evidence](docs/packaging/FYROX-MAC-MPL-SCREEN.md).
