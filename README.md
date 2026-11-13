@@ -36,6 +36,8 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
+Original browser keyboard follow-up: focused Start/Pause buttons retain native Space activation in mocked-handler tests; in-game Space still pauses. Real browser keyboard recheck remains pending. [Evidence](docs/ORIGINAL-BUTTON-SPACE-FIX.md).
+
 Original browser pause-input fix: 19 TypeScript/model and mocked-handler tests pass for clearing held controls and continuing drags; real browser and physical touch rechecks remain pending. [Evidence](docs/ORIGINAL-PAUSE-INPUT-FIX.md).
 
 Held-input audit follow-up: Swift retained-touch movement was reproduced at model level and guarded; 14 Swift tests and an iOS Simulator build pass, while overlapping simulator touches remain unverified. Android remains a separate source-review concern. [Coverage](docs/HELD-INPUT-COVERAGE-20261113.md); [Swift fix and limits](docs/SWIFT-HELD-TOUCH-PAUSE-FIX.md).
