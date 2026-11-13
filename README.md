@@ -76,6 +76,8 @@ Mac Ratatui repeat-fix follow-up: ten debug tests, TestBackend replay and synthe
 
 Mac Ratatui target-filtered license metadata screen: no declared LGPL, GPL-3 or MPL in 68 resolved packages; linked-system provenance and full license review remain open. [Evidence](docs/packaging/RATATUI-MAC-LICENSE-SCREEN.md).
 
+Mac softbuffer target-filtered license metadata screen: no declared LGPL, GPL-3 or MPL in 59 resolved packages; system components and complete license review remain open. [Evidence](docs/packaging/SOFTBUFFER-MAC-LICENSE-SCREEN.md).
+
 Mac Fyrox and Blue Engine held-pause follow-up: four tests each and sequential automated movement/pause/resume pass; native held-across-pause remains open. [Fyrox](docs/FYROX-HELD-PAUSE-FIX.md); [Blue Engine](docs/BLUE-HELD-PAUSE-FIX.md).
 
 Mac Godot held-pause follow-up: integration and synthetic held-input smoke pass; sequential automated native pause/resume and fresh movement pass. [Evidence](docs/GODOT-HELD-PAUSE-FIX.md).
