@@ -939,3 +939,5 @@ The updated Miniquad binary also passed a [Windows local portable pilot](docs/pa
 Miniquad now labels its in-court score pips YOU and CPU; [Mac evidence](docs/packaging/MINIQUAD-SCORE-LABELS-MAC-20261113.md) records rendering and buffer checks.
 
 The raw wgpu zero-score marks were also checked in a [native Mac window](docs/packaging/WGPU-ZERO-SCORE-MAC-20261113.md); physical input and distribution qualification remain open.
+
+Miniquad zero-score marks also passed a [Mac native-window cross-check](docs/packaging/MINIQUAD-ZERO-SCORE-MAC-20261113.md), with physical input and release qualification still open.
