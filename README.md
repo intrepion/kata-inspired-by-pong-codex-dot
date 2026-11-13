@@ -1,5 +1,7 @@
 # Rallylight
 
+Piston now names the winner in its window title; Mac model tests and a cached release build pass, with end-screen visibility still open. [Evidence](docs/packaging/PISTON-WINNER-MAC-20261113.md)
+
 raylib-rs now displays the match winner; Mac model tests and a cached release build pass, with rendered end-screen verification still open. [Evidence](docs/packaging/RAYLIB-WINNER-MAC-20261113.md)
 
 Nannou now displays the match winner; Mac model tests and a cached release build pass, with rendered end-screen verification still open. [Evidence](docs/packaging/NANNOU-WINNER-MAC-20261113.md)

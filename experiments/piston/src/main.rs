@@ -13,6 +13,15 @@ fn benchmark_args(args: &[String]) -> bool {
     );
     enabled
 }
+fn window_title(game: &Game) -> String {
+    let status: String = match game.state {
+        State::Over if game.scores[0] > game.scores[1] => "YOU WIN - Enter to restart".into(),
+        State::Over if game.scores[1] > game.scores[0] => "CPU WINS - Enter to restart".into(),
+        State::Over => "MATCH OVER - Enter to restart".into(),
+        state => format!("{state:?}"),
+    };
+    format!("Pong Piston | {status} | YOU {} : {} CPU | Enter: play | W/S/arrows | Space: pause | R: restart", game.scores[0], game.scores[1])
+}
 
 // Returns whether the event resets the fixed-step clock.
 fn key_press(
@@ -65,6 +74,29 @@ fn key_release(held: &mut [bool; 4], pressed: &mut std::collections::HashSet<Key
 #[cfg(test)]
 mod control_tests {
     use super::*;
+    #[test]
+    fn title_names_winner_after_scoring_and_clears_on_restart() {
+        let mut game = Game::new(42);
+        assert!(window_title(&game).contains("Ready"));
+        for (scores, x, vx, message) in [
+            ([6, 3], W + BALL - 1., 350., "YOU WIN - Enter to restart"),
+            ([2, 6], -BALL + 1., -350., "CPU WINS - Enter to restart"),
+        ] {
+            game.start();
+            game.scores = scores;
+            game.serve = 0.;
+            game.ball.x = x;
+            game.ball.y = H / 2.;
+            game.ball.vx = vx;
+            game.ball.vy = 0.;
+            game.step(0.02, 0.);
+            assert_eq!(game.state, State::Over);
+            assert!(window_title(&game).contains(message));
+            game.start();
+            assert!(!window_title(&game).contains(message));
+            assert!(window_title(&game).contains("Playing"));
+        }
+    }
     #[test]
     fn active_restart_clears_held_movement() {
         let mut g = Game::new(42);
@@ -242,7 +274,7 @@ fn main() {
             }
         }
         if e.render_args().is_some() {
-            let title = format!("Pong Piston | YOU {} : {} CPU | {:?} | Enter: play | W/S/arrows | Space: pause | R: restart",game.scores[0],game.scores[1],game.state);
+            let title = window_title(&game);
             if title != last_title {
                 window.set_title(title.clone());
                 last_title = title;
