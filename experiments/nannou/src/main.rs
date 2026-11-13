@@ -9,6 +9,18 @@ fn benchmark_args(args: &[String]) -> bool {
     );
     enabled
 }
+fn winner_message(game: &Game) -> Option<&'static str> {
+    if game.state != State::Over {
+        return None;
+    }
+    Some(if game.scores[0] > game.scores[1] {
+        "YOU WIN - ENTER TO RESTART"
+    } else if game.scores[1] > game.scores[0] {
+        "CPU WINS - ENTER TO RESTART"
+    } else {
+        "MATCH OVER - ENTER TO RESTART"
+    })
+}
 #[derive(Default)]
 struct MovementGate {
     suppressed: [bool; 4],
@@ -189,6 +201,9 @@ fn view(app: &App, m: &Model) {
             .font_size(24)
             .color(WHITE);
     }
+    if let Some(message) = winner_message(&m.game) {
+        d.text(message).x_y(0.0, 0.0).font_size(28).color(WHITE);
+    }
     if m.benchmarking && !m.benchmark_done.load(std::sync::atomic::Ordering::Relaxed) {
         let size = app.main_window().size_pixels();
         let mut sampler = m.benchmark.lock().expect("benchmark sampler");
@@ -205,6 +220,28 @@ fn view(app: &App, m: &Model) {
 #[cfg(test)]
 mod movement_tests {
     use super::*;
+    #[test]
+    fn winner_message_tracks_winning_point_and_restart() {
+        let mut game = Game::new(42);
+        assert_eq!(winner_message(&game), None);
+        for (scores, x, vx, message) in [
+            ([6, 3], W + BALL - 1., 350., "YOU WIN - ENTER TO RESTART"),
+            ([2, 6], -BALL + 1., -350., "CPU WINS - ENTER TO RESTART"),
+        ] {
+            game.start();
+            game.scores = scores;
+            game.serve = 0.;
+            game.ball.x = x;
+            game.ball.y = H / 2.;
+            game.ball.vx = vx;
+            game.ball.vy = 0.;
+            game.step(0.02, 0.);
+            assert_eq!(game.state, State::Over);
+            assert_eq!(winner_message(&game), Some(message));
+            game.start();
+            assert_eq!(winner_message(&game), None);
+        }
+    }
     #[test]
     fn active_restart_blocks_held_direction_until_release() {
         let mut game = Game::new(42);
