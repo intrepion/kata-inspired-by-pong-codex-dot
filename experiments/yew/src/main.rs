@@ -84,12 +84,20 @@ fn app() -> Html {
         let s = session.clone();
         Callback::from(move |_: FocusEvent| s.borrow_mut().movement_button_blur(direction))
     };
+    let activate = |direction: pong_web_ui_common::Direction| {
+        let s = session.clone();
+        Callback::from(move |e: MouseEvent| {
+            if e.detail() == 0 {
+                s.borrow_mut().movement_button_activate(direction);
+            }
+        })
+    };
     html! {<><style>{CSS}</style><main ref={game_root} tabindex="0" autofocus=true onkeydown={down} onkeyup={up} onfocusout={blur}>
     <h1>{"Pong • Yew"}</h1><p>{"Rust shared simulation · Yew / WASM"}</p>
     {Html::from_html_unchecked(AttrValue::from((*frame).clone()))}
     <button onkeydown={preserve_activation.clone()} onclick={start}>{"Start / Restart"}</button><button onkeydown={preserve_activation.clone()} onclick={pause}>{"Pause / Resume"}</button>
-    <button onkeydown={button_key(pong_web_ui_common::Direction::Up,true)} onkeyup={button_key(pong_web_ui_common::Direction::Up,false)} onblur={button_blur(pong_web_ui_common::Direction::Up)} onpointerdown={touch(pong_web_ui_common::Direction::Up,true)} onpointerup={touch(pong_web_ui_common::Direction::Up,false)} onpointerleave={touch(pong_web_ui_common::Direction::Up,false)} onpointercancel={touch(pong_web_ui_common::Direction::Up,false)}>{"▲ Hold"}</button>
-    <button onkeydown={button_key(pong_web_ui_common::Direction::Down,true)} onkeyup={button_key(pong_web_ui_common::Direction::Down,false)} onblur={button_blur(pong_web_ui_common::Direction::Down)} onpointerdown={touch(pong_web_ui_common::Direction::Down,true)} onpointerup={touch(pong_web_ui_common::Direction::Down,false)} onpointerleave={touch(pong_web_ui_common::Direction::Down,false)} onpointercancel={touch(pong_web_ui_common::Direction::Down,false)}>{"▼ Hold"}</button>
+    <button onkeydown={button_key(pong_web_ui_common::Direction::Up,true)} onkeyup={button_key(pong_web_ui_common::Direction::Up,false)} onblur={button_blur(pong_web_ui_common::Direction::Up)} onclick={activate(pong_web_ui_common::Direction::Up)} onpointerdown={touch(pong_web_ui_common::Direction::Up,true)} onpointerup={touch(pong_web_ui_common::Direction::Up,false)} onpointerleave={touch(pong_web_ui_common::Direction::Up,false)} onpointercancel={touch(pong_web_ui_common::Direction::Up,false)}>{"▲ Hold"}</button>
+    <button onkeydown={button_key(pong_web_ui_common::Direction::Down,true)} onkeyup={button_key(pong_web_ui_common::Direction::Down,false)} onblur={button_blur(pong_web_ui_common::Direction::Down)} onclick={activate(pong_web_ui_common::Direction::Down)} onpointerdown={touch(pong_web_ui_common::Direction::Down,true)} onpointerup={touch(pong_web_ui_common::Direction::Down,false)} onpointerleave={touch(pong_web_ui_common::Direction::Down,false)} onpointercancel={touch(pong_web_ui_common::Direction::Down,false)}>{"▼ Hold"}</button>
     <p>{"W/S or ↑/↓ move · Enter restarts · Space pauses · Hold Space or Enter on movement buttons. Click the court to focus."}</p>
     <a onkeydown={preserve_activation} href="https://intrepion.github.io/">{"Back to Kata Arcade"}</a>
     </main></>}

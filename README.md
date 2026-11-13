@@ -759,3 +759,7 @@ Active-restart held movement is also fixed in ash, softbuffer, SDL3 and Blue Eng
 [Omarchy Macroquad active-restart cross-check](docs/packaging/MACROQUAD-ACTIVE-RESTART-OMARCHY.md): five tests passed and a rebuilt debug scripted replay matched the retained telemetry; physical input and release qualification remain open.
 
 Bevy and bracket-lib now suppress held movement through active restart; see the [Omarchy adapter regressions](docs/packaging/RESTART-BEVY-BRACKET-OMARCHY.md) for verification limits.
+
+Yew, Leptos and Dioxus web now provide a bounded movement step for non-pointer button activation. [Omarchy evidence](docs/packaging/WEB-NONPOINTER-ACTIVATION-OMARCHY.md) records model and browser hold checks; assistive-technology activation and Dioxus desktop remain open.
+
+[Omarchy ggez winner cross-check](docs/packaging/GGEZ-WINNER-OMARCHY-20261113.md): eight tests passed, and a rebuilt debug replay matched retained telemetry; the scripted capture showed the pause overlay but did not reach a winner screen.
