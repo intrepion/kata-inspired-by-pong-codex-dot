@@ -150,11 +150,11 @@ Details: [low-level clients](experiments/LOW-LEVEL.md), [GUI toolkits](experimen
 | Dioxus browser | B / I | B / I, keyboard + pointer, CPU win, restart, narrow viewport | U / U |
 | Yew native Tauri wrapper | Fresh `b92b7df` B + state/SVG replay + bounded I; provenance/evidence published `18bc91c` | B / I | Fresh `6b9cf38` B, 2 bridge tests; revised-physics scripted SVG-source replay matches model; visual/input unverified ([evidence](docs/OMARCHY-YEW-CONTACT-TIMING.md)) |
 | Leptos native Tauri wrapper | Fresh `b92b7df` B + state/SVG replay + bounded I; provenance/evidence published `18bc91c` | B / I | Fresh `ebb5238` B; revised-physics scripted SVG-source replay matches model; visual/input unverified ([evidence](docs/OMARCHY-LEPTOS-CONTACT-TIMING.md)) |
-| Dioxus native desktop | Fresh `4088089` B / I + native replay; held controls/release, full match and restart passed | B / I; maximized layout checked | Fresh `48fffc8` B, 11 shared tests; revised-physics scripted SVG-source replay matches model; visual/input unverified ([evidence](docs/OMARCHY-DIOXUS-CONTACT-TIMING.md)) |
+| Dioxus native desktop | Fresh `4088089` B / I + native replay; held controls/release, full match and restart passed | B / I; maximized layout checked | `173c0ef` debug B, 12 shared tests; relocated scripted SVG replay matches model; input/visual unverified ([evidence](docs/packaging/DIOXUS-PAUSE-OMARCHY-PILOT.md)) |
 
 [Commands and detailed web-framework results](docs/web-framework-comparison.md). Browser checks use a localhost HTTP server, never file URLs. Narrow browser layout is not a physical touchscreen or mobile-package test.
 
-Omarchy explicit-pause follow-up: shared Rust web-controller model now clears held keyboard and pointer input on the Pause button or Space/Escape; 12 tests and adapter compilation pass. Browser/native interaction and rebuilt packages remain pending. [Evidence](docs/WEB-EXPLICIT-PAUSE-INPUT-FIX.md).
+Omarchy explicit-pause follow-up: shared Rust web-controller model now clears held keyboard and pointer input on the Pause button or Space/Escape; 12 tests and adapter compilation pass. Browser/native interaction and other wrapper package rebuilds remain pending; Dioxus Desktop has a [debug package replay](docs/packaging/DIOXUS-PAUSE-OMARCHY-PILOT.md). [Fix evidence](docs/WEB-EXPLICIT-PAUSE-INPUT-FIX.md).
 
 Historical pointer ownership follow-up: shared Rust controller model tests pass (11), including independent same-button pointer release, unrelated release, opposing pointers, and pause clearing; Yew, Leptos, and Dioxus web adapters pass `cargo check` for `wasm32-unknown-unknown`; Dioxus desktop also passes `cargo check`. These are model and compilation checks, not browser or physical touch interaction. Strict Clippy remains blocked by existing replay-code and test-module lint warnings.
 
@@ -355,6 +355,7 @@ These are local archive extraction, relocated runtime and removal checks, **not 
 | Tauri + Rust WASM | Not recorded | Not recorded | [Local archive/relocated replay pilot](docs/packaging/TAURI-LINUX-PILOT.md); WebKitGTK required, notices pending |
 | Yew native Tauri wrapper | Not recorded | Not recorded | [Local debug archive/relocated replay pilot](docs/packaging/YEW-TAURI-LINUX-PILOT.md); WebKitGTK required, notices pending |
 | Leptos native Tauri wrapper | Not recorded | Not recorded | [Local debug archive/relocated replay pilot](docs/packaging/LEPTOS-TAURI-LINUX-PILOT.md); WebKitGTK required, notices pending |
+| Dioxus Desktop | Not recorded | Not recorded | [Local debug archive/relocated replay](docs/packaging/DIOXUS-PAUSE-OMARCHY-PILOT.md); WebKitGTK and libxdo required, notices pending |
 | Other adapters | Not recorded | Not recorded | Not recorded |
 
 Evidence and limitations: [packaging index](docs/packaging/README.md), [Mac Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md), [Windows Macroquad](docs/packaging/MACROQUAD-WINDOWS-PILOT.md), [Mac SDL3](docs/packaging/SDL3-MAC-PILOT.md), [Mac raylib](docs/packaging/RAYLIB-MAC-PILOT.md), [Linux ash](docs/packaging/ASH-LINUX-PILOT.md).
