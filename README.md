@@ -40,6 +40,8 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
+Yew focus/pause fix: an older localhost build reproduced a first-click pause failure; 13 controller tests and updated WASM compilation pass, with rebuilt browser/wrapper interaction pending. [Evidence](docs/YEW-INTERNAL-FOCUS-PAUSE-FIX.md).
+
 Dependency notice preparation now rejects inconsistent resolved Cargo graphs before indexing; this is not legal clearance. [Evidence](docs/packaging/NOTICE-GRAPH-INTEGRITY.md).
 
 Original browser canvas drag now retains first-pointer ownership; mocked multi-pointer tests pass, with physical multi-touch pending. [Evidence](docs/ORIGINAL-CANVAS-POINTER-OWNER.md).
@@ -278,7 +280,7 @@ Historical pointer ownership follow-up: shared Rust controller model tests pass 
 | --- | --- | --- | --- | --- |
 | Native Kotlin | Windows / Android 15 API35 emulator | Debug APK + 11 unit tests pass (latest replay candidate) | Installed; touch paddle movement, ball motion, pause/resume/restart checked | Full match, physical device, store packaging |
 | Native Swift | Mac / iPhone16 Pro iOS18.4 simulator (latest) | `038f85e` Debug/Release builds + 11 core tests + 2 UI tests pass | DEBUG app replay 1440 ticks / 13 states / 6 app-owned PNGs; normal touch/release, Home pause/resume, full match and restart passed (`18bc91c`) | Physical device, store packaging |
-| Tauri + Rust WASM iOS | Mac / iPhone16 iOS18.4 simulator | Development build passes via CLI coordinator + xcodebuild | Device Hub visual start, held Up/Down touch, scoring, pause/restart pass | White strip absent in updated portrait simulator shell; [diagnostic](docs/TAURI-IOS-SAFE-AREA-20261113.md). Landscape controls clipped; full match/physical device/standalone release unverified |
+| Tauri + Rust WASM iOS | Mac / iPhone16 iOS18.4 simulator | Development build passes via CLI coordinator + xcodebuild | Device Hub visual start, held Up/Down touch, scoring, pause/restart pass | White strip absent in updated portrait simulator shell; landscape controls fit and Start reached Playing on one simulator; [background](docs/TAURI-IOS-SAFE-AREA-20261113.md), [landscape](docs/TAURI-IOS-LANDSCAPE-20261113.md). Pause/input and release qualification remain open |
 | Tauri + Rust WASM Android | Windows / Android emulator | Build/install pass | Start, scoring and pause verified | Sustained touch, full match, physical device and release packaging |
 | Yew/Leptos Tauri mobile; Dioxus mobile | iOS / Android | U | U | Mobile setup, packaging and interaction qualification |
 | Godot Rust mobile/web exports | iOS / Android / web | U | U | Export pipeline/templates; mobile touch controls not implemented |

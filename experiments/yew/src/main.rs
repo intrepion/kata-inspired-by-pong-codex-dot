@@ -1,8 +1,10 @@
 use pong_web_ui_common::{Session, CSS};
 use yew::prelude::*;
+use wasm_bindgen::JsCast;
 #[function_component(App)]
 fn app() -> Html {
     let session = use_mut_ref(Session::default);
+    let game_root = use_node_ref();
     let frame = use_state(|| Session::default().svg());
     {
         let session = session.clone();
@@ -34,7 +36,13 @@ fn app() -> Html {
     };
     let blur = {
         let s = session.clone();
-        Callback::from(move |_| s.borrow_mut().pause())
+        let root = game_root.clone();
+        Callback::from(move |e: FocusEvent| {
+            let next_inside = root.cast::<web_sys::Node>()
+                .zip(e.related_target().and_then(|target| target.dyn_into::<web_sys::Node>().ok()))
+                .is_some_and(|(root, next)| root.contains(Some(&next)));
+            s.borrow_mut().focus_left(next_inside);
+        })
     };
     let start = {
         let s = session.clone();
@@ -51,7 +59,7 @@ fn app() -> Html {
             s.borrow_mut().movement_button(direction, e.pointer_id(), pressed)
         })
     };
-    html! {<><style>{CSS}</style><main tabindex="0" autofocus=true onkeydown={down} onkeyup={up} onblur={blur}>
+    html! {<><style>{CSS}</style><main ref={game_root} tabindex="0" autofocus=true onkeydown={down} onkeyup={up} onblur={blur}>
     <h1>{"Pong • Yew"}</h1><p>{"Rust shared simulation · Yew / WASM"}</p>
     {Html::from_html_unchecked(AttrValue::from((*frame).clone()))}
     <button onclick={start}>{"Start / Restart"}</button><button onclick={pause}>{"Pause / Resume"}</button>

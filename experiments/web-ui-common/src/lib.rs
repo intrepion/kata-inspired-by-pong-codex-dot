@@ -92,6 +92,10 @@ impl Session {
         self.game.start();
         self.accumulator = 0.0;
     }
+    /// Ignore focus transitions within the game controls; pause when focus leaves them.
+    pub fn focus_left(&mut self, next_inside: bool) {
+        if !next_inside { self.pause(); }
+    }
     pub fn pause(&mut self) {
         if self.demo.is_some() {
             return;
@@ -435,4 +439,29 @@ fn download(name: &str, mime: &str, text: &str) -> String {
         .map(|b| format!("%{b:02X}"))
         .collect();
     format!("<p><a download=\"{name}\" href=\"data:{mime};charset=utf-8,{encoded}\">Download {name}</a></p>")
+}
+
+#[cfg(test)]
+mod focus_tests {
+    use super::*;
+    #[test]
+    fn focusing_an_internal_button_does_not_cancel_its_pause_click() {
+        let mut session = Session::default();
+        session.start();
+        session.focus_left(true);
+        session.toggle_pause();
+        assert_eq!(session.game.state, State::Paused);
+        session.toggle_pause();
+        assert_eq!(session.game.state, State::Playing);
+        session.key("w", true, false);
+        session.focus_left(true);
+        session.tick(0.05);
+        assert!(session.game.player < 250.0, "internal focus preserves held movement");
+        session.focus_left(false);
+        assert_eq!(session.game.state, State::Paused);
+        session.toggle_pause();
+        let stopped = session.game.player;
+        session.tick(0.05);
+        assert_eq!(session.game.player, stopped, "external focus loss clears held movement");
+    }
 }

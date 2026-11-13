@@ -1,0 +1,7 @@
+# Tauri iOS landscape layout follow-up
+
+On 2026-11-13, the iPhone 16 Pro / iOS 18.4 simulator ran the debug shell described in [the background investigation](TAURI-IOS-SAFE-AREA-20261113.md), serving the web frontend and WASM built from source `2c414fb68f47b777c961bc1b79eb990148cfa309` via localhost. The original 65vh landscape court pushed the controls partly below the visible screen. Reducing the landscape court maximum height to 40vh kept the court, all four buttons, instructions and home indicator visible in Device Hub. The tested stylesheet SHA-256 was `f386d6d594ea82076d0946136c94fdaa3ddee07352c7a1f5337485b2ec17786f`. The landscape media query does not apply in portrait.
+
+A Device Hub click on Start reached Playing and CPU scoring in landscape. A later click on Pause did not visibly pause in this run; the cause and event delivery were not established. Earlier portrait clicks also did not visibly start, so portrait input remains unresolved rather than a confirmed application defect. The earlier load initially displayed Loading despite HTTP 200s, then reached Ready after a delay. Separately, `node --test tests/wasm.test.mjs` passed two ABI/determinism tests; those model tests do not establish native input delivery.
+
+This is one simulator and viewport, not physical touch, accessibility, full-match or release qualification. Other landscape sizes, portrait input and pause/resume require further checking.
