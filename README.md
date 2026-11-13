@@ -16,6 +16,8 @@ The testing matrices below record **verified results**, separately from work in 
 
 Windows Pixels contact-timing follow-up: fresh scripted telemetry matches the model reference and six app-owned source frames were inspected. Native interaction remains unverified after an approval timeout. [Evidence](docs/WINDOWS-PIXELS-CONTACT-TIMING.md).
 
+Windows raw wgpu contact-timing follow-up: fresh scripted telemetry matches the model reference and the paused app-owned frame was inspected; normal input remains unverified. [Evidence](docs/WINDOWS-WGPU-CONTACT-TIMING.md).
+
 Windows Softbuffer contact-timing follow-up: fresh native scripted telemetry matches the revised model reference; normal start, score, pause, restart and exit were observed. [Evidence and limits](docs/WINDOWS-SOFTBUFFER-CONTACT-TIMING.md).
 
 Windows contact-timing follow-up at `c77bf3a`: 19 core, 8 scenario and 1 WASM model tests pass; rebuilt Yew passed a bounded localhost mouse smoke check. [Scope](docs/RUST-PADDLE-FACE-COLLISION.md).
