@@ -184,13 +184,10 @@ async fn main() {
             );
             draw_text(message, x, y, 28. * scale, WHITE);
         }
-        draw_text(
-            "W/S or arrows | Enter start | Space pause | R restart | Esc pause",
-            20.,
-            screen_height() - 20.,
-            19.,
-            WHITE,
-        );
+        let controls = "W/S or arrows | Enter start | Space pause | R restart | Esc pause";
+        let controls_width = measure_text(controls, None, 19, 1.0).width;
+        let controls_scale = ((screen_width() - 40.).max(0.) / controls_width).min(1.);
+        draw_text(controls, 20., screen_height() - 20., 19. * controls_scale, WHITE);
         if let Some(demo) = &demo {
             draw_text(
                 format!(
