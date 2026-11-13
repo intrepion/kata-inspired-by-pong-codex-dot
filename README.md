@@ -969,3 +969,6 @@ Raylib macOS: the score line identifies YOU and CPU; a release-build Ready scree
 
 
 Raylib macOS narrow-window follow-up: the clipped control footer was split and measured; a resized Ready screen showed both lines without clipping at the tested size. [Evidence and limits](docs/packaging/RAYLIB-NARROW-FOOTER-MAC-20261113.md).
+
+
+Nannou macOS: in-court scores identify YOU and CPU; a release-build Ready screen and 16 existing unit tests were checked. [Evidence and limits](docs/packaging/NANNOU-SCORE-LABELS-MAC-20261113.md).
