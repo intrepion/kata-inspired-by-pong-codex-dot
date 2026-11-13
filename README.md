@@ -28,6 +28,8 @@ Mac Slint shared pause follow-up: ten controller tests and sequential automated 
 
 Mac Miniquad pause follow-up: ten release tests pass; sequential desktop start/move/pause/resume/fresh movement checked. Held-across-pause native delivery remains open. [Evidence](docs/MINIQUAD-PAUSE-HELD-INPUT-FIX.md).
 
+Windows Godot pause-prompt qualification is blocked by missing checked engine and cached Rust dependency prerequisites; no runtime pass is claimed. [Details](docs/WINDOWS-GODOT-PAUSE-ATTEMPT.md).
+
 Windows raylib/SDL3 held-input pause follow-up: five and four model tests plus fresh scripted replays pass; native input and ordinary debug runtime warnings remain open. [Evidence](docs/WINDOWS-RAYLIB-SDL3-HELD-PAUSE-RECHECK.md).
 
 Windows Nannou held-input pause follow-up: five polled-input tests and a fresh scripted replay pass; native held-key input remains open. [Evidence](docs/WINDOWS-NANNOU-HELD-PAUSE-RECHECK.md).

@@ -1,0 +1,5 @@
+# Windows Godot pause-prompt qualification attempt
+
+On 2026-11-13, checkpoint `41a8b33df8edd348d3a17b5eee6de3753037fef4` includes the Godot pause-prompt change recorded in the [Mac recheck](GODOT-MAC-CONTACT-TIMING-ATTEMPT.md). On this Windows host, `godot` and `godot4` were absent from the command path; a search of the task workspace, Downloads, Desktop and top-level Program Files Godot-named directories found no engine executable. This is a bounded availability check, not a claim about every location on the machine.
+
+A locked offline Windows MSVC `cargo test` attempt for the GDExtension stopped before compilation because the pinned `godot` crate was absent from the local Cargo cache. No dependencies or tools were installed and no prior artifacts were changed. Consequently there is no fresh Windows extension build, Godot runtime, pause-prompt visual, scripted replay or input pass. A compatible Godot 4.5 engine and the locked Rust dependency set are needed before retrying; native and physical input, packaging and release qualification also remain open.
