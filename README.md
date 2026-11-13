@@ -901,3 +901,5 @@ Raw wgpu's court action prompts were rebuilt and captured on Omarchy; [evidence]
 Wgpu and Pixels now accept keypad Enter for start and restart; [Mac model and automated-window checks](docs/packaging/WINIT-KEYPAD-ENTER-MAC-20261113.md) describe the remaining physical-input gap.
 
 A current Ratatui static-musl candidate passed relocated Omarchy PTY and replay checks; [evidence](docs/packaging/RATATUI-MUSL-CURRENT-OMARCHY.md) retains the unresolved static-component and license review.
+
+ggez also accepts keypad Enter for start, resume and match-end restart; [Mac tests and automated-window evidence](docs/packaging/GGEZ-KEYPAD-ENTER-MAC-20261113.md) record the physical-input gap.
