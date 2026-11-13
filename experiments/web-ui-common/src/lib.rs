@@ -67,7 +67,7 @@ impl Session {
             "ArrowDown" => self.held[2] = pressed,
             "s" | "S" => self.held[3] = pressed,
             "Enter" if pressed && !repeat => self.start(),
-            " " | "Escape" if pressed && !repeat => self.game.toggle_pause(),
+            " " | "Escape" if pressed && !repeat => self.toggle_pause(),
             _ => {}
         }
     }
@@ -102,7 +102,12 @@ impl Session {
         self.accumulator = 0.0;
     }
     pub fn toggle_pause(&mut self) {
-        if self.demo.is_none() {
+        if self.demo.is_some() {
+            return;
+        }
+        if self.game.state == State::Playing {
+            self.pause();
+        } else {
             self.game.toggle_pause();
         }
     }
@@ -346,6 +351,49 @@ mod tests {
         let stopped = s.game.player;
         s.tick(0.05);
         assert_eq!(s.game.player, stopped);
+    }
+    #[test]
+    fn explicit_pause_clears_held_keyboard_and_pointer_inputs() {
+        for pause_key in [None, Some(" "), Some("Escape")] {
+            for pointer in [false, true] {
+                let mut s = Session::default();
+                s.start();
+                if pointer {
+                    s.movement_button(Direction::Down, 17, true);
+                } else {
+                    s.key("ArrowDown", true, false);
+                }
+                s.tick(0.05);
+                assert!(s.game.player > 250.);
+                if let Some(key) = pause_key {
+                    s.key(key, true, false);
+                } else {
+                    s.toggle_pause();
+                }
+                assert_eq!(s.game.state, State::Paused);
+                if let Some(key) = pause_key {
+                    s.key(key, true, false);
+                } else {
+                    s.toggle_pause();
+                }
+                let stopped = s.game.player;
+                s.tick(0.05);
+                assert_eq!(
+                    s.game.player, stopped,
+                    "input persisted through explicit pause"
+                );
+                if pointer {
+                    s.movement_button(Direction::Down, 18, true);
+                } else {
+                    s.key("ArrowDown", true, false);
+                }
+                s.tick(0.05);
+                assert!(
+                    s.game.player > stopped,
+                    "fresh input did not move after resume"
+                );
+            }
+        }
     }
     #[test]
     fn repeats_do_not_restart() {
