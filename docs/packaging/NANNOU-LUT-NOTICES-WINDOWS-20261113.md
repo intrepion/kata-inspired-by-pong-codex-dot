@@ -1,5 +1,7 @@
 # Windows Nannou embedded lookup tables
 
+See the [provenance follow-up](NANNOU-LUT-PROVENANCE-WINDOWS-20261113.md) for the source history, unresolved license evidence and feature path.
+
 The historical [Windows pilot](NANNOU-HELD-WINDOWS-RELEASE-PILOT.md) executable SHA-256 `4b590de541004ee31f7989be554c64a5685ec26c67abbdd1368b8485fbd24624` contains complete cached `bevy_core_pipeline@0.19.1` LUT byte sequences:
 
 | File | Bytes | Executable offset | SHA-256 |

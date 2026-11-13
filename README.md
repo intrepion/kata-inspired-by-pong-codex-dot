@@ -996,6 +996,7 @@ The [Windows Nannou font check](docs/packaging/NANNOU-NOTOSANS-WINDOWS-PILOT-202
 The [font license discrepancy follow-up](docs/packaging/NANNOU-NOTOSANS-LICENSE-DISCREPANCY-WINDOWS-20261113.md) found Apache terms in that font's own metadata alongside the crate's OFL notice; applicable terms remain unresolved.
 The [upstream font history](docs/packaging/NANNOU-NOTOSANS-PROVENANCE-WINDOWS-20261113.md) identifies an exact 2014 Noto blob and distinguishes later, different font bytes; license review remains open.
 The [Windows embedded LUT review](docs/packaging/NANNOU-LUT-NOTICES-WINDOWS-20261113.md) identifies three additional assets and a local Tony-notice candidate; AgX and Blender-derived LUT terms remain open.
+The [LUT provenance follow-up](docs/packaging/NANNOU-LUT-PROVENANCE-WINDOWS-20261113.md) traces the available primary sources and explains why a top-level Cargo feature switch does not remove these assets.
 
 Piston Mac keypad cross-check: 17 release unit tests pass, but the locked macOS window path maps both Enter keys to the same logical Piston key; independent native delivery is not established. [Evidence and limits](docs/packaging/PISTON-KEYPAD-BACKEND-MAC-20261113.md).
 
