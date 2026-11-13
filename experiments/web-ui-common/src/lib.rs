@@ -19,6 +19,7 @@ pub struct Session {
     pub game: Game,
     held: [bool; 4], // Arrow and W/S keyboard bindings have independent identities.
     pointers: [HashSet<i32>; 2],
+    button_keys: [[bool; 2]; 2],
     accumulator: f64,
     demo: Option<Replay>,
 }
@@ -47,6 +48,7 @@ impl Default for Session {
             game: Game::new(42),
             held: [false; 4],
             pointers: Default::default(),
+            button_keys: [[false; 2]; 2],
             accumulator: 0.0,
             demo: None,
         };
@@ -95,12 +97,41 @@ impl Session {
             }
         }
     }
+    /// Keyboard activation of a focused movement button has its own ownership.
+    pub fn movement_button_key(
+        &mut self,
+        direction: Direction,
+        key: &str,
+        pressed: bool,
+        repeat: bool,
+    ) {
+        let index = match key {
+            "Enter" => 0,
+            " " => 1,
+            _ => return,
+        };
+        let direction = match direction {
+            Direction::Up => 0,
+            Direction::Down => 1,
+        };
+        if self.demo.is_none() && (!pressed || (!repeat && self.game.state == State::Playing)) {
+            self.button_keys[direction][index] = pressed;
+        }
+    }
+    pub fn movement_button_blur(&mut self, direction: Direction) {
+        let direction = match direction {
+            Direction::Up => 0,
+            Direction::Down => 1,
+        };
+        self.button_keys[direction] = [false; 2];
+    }
     pub fn start(&mut self) {
         if self.demo.is_some() {
             return;
         }
         if self.game.state == State::Over {
             self.held = [false; 4];
+            self.button_keys = [[false; 2]; 2];
             self.pointers.iter_mut().for_each(HashSet::clear);
         }
         self.game.start();
@@ -118,6 +149,7 @@ impl Session {
         }
         self.game.pause();
         self.held = [false; 4];
+        self.button_keys = [[false; 2]; 2];
         self.pointers.iter_mut().for_each(HashSet::clear);
         self.accumulator = 0.0;
     }
@@ -178,8 +210,15 @@ impl Session {
         while self.accumulator >= 1.0 / 120.0 {
             self.game.step(
                 1.0 / 120.0,
-                (self.held[2] || self.held[3] || !self.pointers[1].is_empty()) as u8 as f32
-                    - (self.held[0] || self.held[1] || !self.pointers[0].is_empty()) as u8 as f32,
+                (self.held[2]
+                    || self.held[3]
+                    || !self.pointers[1].is_empty()
+                    || self.button_keys[1].iter().any(|v| *v)) as u8 as f32
+                    - (self.held[0]
+                        || self.held[1]
+                        || !self.pointers[0].is_empty()
+                        || self.button_keys[0].iter().any(|v| *v)) as u8
+                        as f32,
             );
             self.accumulator -= 1.0 / 120.0;
         }
@@ -244,6 +283,33 @@ pub const CSS:&str="body{margin:0;background:#080f19;color:#eef6ff;font:16px sys
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn movement_button_keys_are_independent_and_clear_on_blur_pause_and_restart() {
+        let mut s = Session::default();
+        s.start();
+        let initial = s.game.player;
+        s.movement_button_key(Direction::Up, " ", true, false);
+        s.tick(0.1);
+        assert!(s.game.player < initial);
+        s.movement_button_key(Direction::Up, "Enter", true, false);
+        s.movement_button(Direction::Up, 42, true);
+        s.movement_button_key(Direction::Up, " ", false, false);
+        assert_eq!(s.button_keys[0], [true, false]);
+        s.movement_button_blur(Direction::Up);
+        assert_eq!(s.button_keys[0], [false, false]);
+        assert!(s.pointers[0].contains(&42));
+        s.movement_button_key(Direction::Down, " ", true, false);
+        s.pause();
+        assert_eq!(s.button_keys, [[false; 2]; 2]);
+        assert!(s.pointers.iter().all(HashSet::is_empty));
+        s.toggle_pause();
+        s.movement_button_key(Direction::Down, " ", true, true);
+        assert_eq!(s.button_keys, [[false; 2]; 2]);
+        s.movement_button_key(Direction::Down, " ", true, false);
+        s.game.state = State::Over;
+        s.start();
+        assert_eq!(s.button_keys, [[false; 2]; 2]);
+    }
     #[test]
     fn native_activation_is_limited_to_enter_and_space() {
         assert!(native_activation_key("Enter"));

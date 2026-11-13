@@ -711,3 +711,5 @@ These are local archive extraction, relocated runtime and removal checks, **not 
 | Other adapters | Not recorded | Not recorded | Not recorded |
 
 Evidence and limitations: [packaging index](docs/packaging/README.md), [Mac Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md), [Windows Macroquad](docs/packaging/MACROQUAD-WINDOWS-PILOT.md), [Mac SDL3](docs/packaging/SDL3-MAC-PILOT.md), [Mac raylib](docs/packaging/RAYLIB-MAC-PILOT.md), [Linux ash](docs/packaging/ASH-LINUX-PILOT.md).
+
+Yew, Leptos and Dioxus movement buttons now support holding Space or Enter when focused. Omarchy shared-model tests and bounded localhost browser checks are recorded in [the keyboard hold evidence](docs/packaging/WEB-BUTTON-KEYBOARD-HOLD-OMARCHY.md); physical input and desktop wrapper qualification remain open.
