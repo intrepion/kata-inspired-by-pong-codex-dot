@@ -277,7 +277,7 @@ if (typeof document !== 'undefined') {
         sync();
     }
     start.addEventListener('click', () => {
-        if (demoRequested)
+        if (demoRequested || !windowFocused || document.hidden)
             return;
         if (game.state === 'paused')
             game.state = 'playing';
@@ -288,7 +288,7 @@ if (typeof document !== 'undefined') {
         loop.reset();
         sync();
     });
-    pause.addEventListener('click', toggle);
+    pause.addEventListener('click', () => { if (windowFocused && !document.hidden) toggle(); });
     let windowFocused = true;
     document.addEventListener('keydown', e => {
         if (demoRequested || !windowFocused || document.hidden)

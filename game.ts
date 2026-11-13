@@ -243,12 +243,12 @@ if (typeof document !== 'undefined') {
     }
     else if (game.state === 'paused')
         game.state = 'playing'; loop.reset(); sync(); }
-    start.addEventListener('click', () => { if(demoRequested)return; if (game.state === 'paused')
+    start.addEventListener('click', () => { if(demoRequested || !windowFocused || document.hidden)return; if (game.state === 'paused')
         game.state = 'playing';
     else {
         controls.suspend(); game.start();
     } loop.reset(); sync(); });
-    pause.addEventListener('click', toggle);
+    pause.addEventListener('click', () => { if (windowFocused && !document.hidden) toggle(); });
     let windowFocused = true;
     document.addEventListener('keydown', e => { if(demoRequested || !windowFocused || document.hidden)return; if (e.key === ' ' && (e.target === start || e.target === pause)) return; if (['ArrowUp', 'ArrowDown', ' ', 'w', 's', 'W', 'S'].includes(e.key))
         e.preventDefault(); if (e.key === ' ' && !e.repeat && (game.state === 'playing' || game.state === 'paused'))
