@@ -92,7 +92,7 @@ test('browser handlers clear movement on pause and reject continuing touch drags
  class Element {
   constructor(){this.listeners={};this.firstChild={textContent:''};this.textContent='';}
   addEventListener(name,fn){(this.listeners[name]??=[]).push(fn);}
-  emit(name,event={}){const e={defaultPrevented:false,preventDefault(){this.defaultPrevented=true;},...event};for(const fn of this.listeners[name]??[])fn(e);return e;}
+  emit(name,event={}){const e={defaultPrevented:false,propagationStopped:false,preventDefault(){this.defaultPrevented=true;},stopPropagation(){this.propagationStopped=true;},...event};for(const fn of this.listeners[name]??[])fn(e);return e;}
   setPointerCapture(){} getBoundingClientRect(){return {top:0,height:500};}
  }
  class Button extends Element {}
@@ -111,4 +111,15 @@ test('browser handlers clear movement on pause and reject continuing touch drags
  els.court.emit('pointerup',{pointerId:8});els.court.emit('pointerdown',{pointerType:'touch',pointerId:9});els.court.emit('pointermove',{pointerType:'touch',pointerId:9,buttons:1,clientY:100});frame(120);assert.notEqual(playerY,dragged);
  const shortcut=doc.emit('keydown',{key:' ',repeat:false,target:els.court});assert.equal(shortcut.defaultPrevented,true);assert.equal(els.status.textContent,'Paused');
  doc.emit('keydown',{key:' ',repeat:true,target:els.court});assert.equal(els.status.textContent,'Paused');
+ els.start.emit('click');frame(140);const yBeforeButton=playerY;
+ const buttonKey=els.up.emit('keydown',{key:' ',repeat:false,target:els.up});
+ assert.equal(buttonKey.defaultPrevented,true);assert.equal(buttonKey.propagationStopped,true);
+ frame(160);frame(180);assert.ok(playerY < yBeforeButton);const yReleased=playerY;
+ els.up.emit('keyup',{key:' ',target:els.up});frame(200);assert.equal(playerY,yReleased);
+ els.down.emit('keydown',{key:'Enter',repeat:false,target:els.down});frame(220);assert.ok(playerY>yReleased);
+ els.up.emit('keydown',{key:' ',repeat:false,target:els.up});frame(240);const yCancelled=playerY;
+ els.down.emit('keyup',{key:'Enter',target:els.down});frame(260);assert.ok(playerY<yCancelled);
+ els.pause.emit('click');els.start.emit('click');els.up.emit('keydown',{key:' ',repeat:true,target:els.up});frame(280);const yAfterPause=playerY;frame(300);assert.equal(playerY,yAfterPause);
+ els.up.emit('keyup',{key:' ',target:els.up});els.up.emit('keydown',{key:' ',repeat:false,target:els.up});frame(320);assert.ok(playerY<yAfterPause);
+ els.up.emit('blur');const yBlur=playerY;frame(340);assert.equal(playerY,yBlur);
 });
