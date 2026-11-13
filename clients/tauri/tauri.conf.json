@@ -13,6 +13,7 @@
       "title": "Pong comparison — Tauri",
       "width": 1000,
       "height": 700,
+      "backgroundColor": "#0c211e",
       "minWidth": 480,
       "minHeight": 360,
       "resizable": true
