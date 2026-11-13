@@ -73,3 +73,12 @@ test('notice-named source and metadata files are not treated as notice texts',t=
  writeFileSync(join(pkg,'LICENSE-MIT'),'actual notice');
  assert.equal(buildNoticeBundle(meta(pkg),root).index.packages[0].notices.length,1);
 });
+
+test('rejects malformed platform options instead of silently defaulting',t=>{
+ const{root,pkg}=fixture(t);writeFileSync(join(pkg,'LICENSE'),'MIT text');
+ for(const options of ['Windows',null,[],{platfrom:'Windows'},{platform:undefined}]){
+  assert.throws(()=>buildNoticeBundle(meta(pkg),root,options),/options|platform/i);
+ }
+ assert(buildNoticeBundle(meta(pkg),root,{platform:'Windows'}).text.startsWith('Pong Windows dependency notice preparation\n'));
+ assert(buildNoticeBundle(meta(pkg),root).text.startsWith('Pong Linux dependency notice preparation\n'));
+});

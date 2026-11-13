@@ -65,7 +65,9 @@ export function auditedUpstreamNotices(packageRoot,noticeRoot,rule) {
   return {...f,source:url};
  });
 }
-export function buildNoticeBundle(metadata,repoRoot,{platform='Linux'}={}) {
+export function buildNoticeBundle(metadata,repoRoot,options={}) {
+ if(options===null||typeof options!=='object'||Array.isArray(options)||Object.keys(options).some(k=>k!=='platform')) throw Error('Invalid notice bundle options');
+ const platform=Object.hasOwn(options,'platform')?options.platform:'Linux';
  if(!['Linux','Windows','macOS'].includes(platform)) throw Error('Unsupported platform label');
  if(!Array.isArray(metadata.packages)||!Array.isArray(metadata.resolve?.nodes)) throw Error('Resolved Cargo metadata required');
  const nodeIds=metadata.resolve.nodes.map(node=>node?.id),packageIds=metadata.packages.map(pkg=>pkg?.id);
