@@ -244,6 +244,31 @@ fn draw(frame: &mut [u8], g: &Game) {
             [6, 10, 23, 255]
         });
     }
+    // Draw scores in the court so they remain visible without a window title.
+    const DIGITS: [u8; 10] = [0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f];
+    const SEGMENTS: [(usize, usize, usize, usize); 7] = [
+        (0, 0, 22, 4),
+        (18, 0, 4, 20),
+        (18, 18, 4, 20),
+        (0, 34, 22, 4),
+        (0, 18, 4, 20),
+        (0, 0, 4, 20),
+        (0, 17, 22, 4),
+    ];
+    for (origin_x, score) in [(350usize, g.scores[0]), (528, g.scores[1])] {
+        let bits = DIGITS[score.min(9) as usize];
+        for (index, &(dx, dy, width, height)) in SEGMENTS.iter().enumerate() {
+            if bits & (1 << index) == 0 {
+                continue;
+            }
+            for y in (25 + dy)..(25 + dy + height) {
+                for x in (origin_x + dx)..(origin_x + dx + width) {
+                    let offset = (y * W as usize + x) * 4;
+                    frame[offset..offset + 4].copy_from_slice(&[220, 230, 245, 255]);
+                }
+            }
+        }
+    }
 }
 fn benchmark_args(args: &[String]) -> bool {
     let enabled = args.iter().any(|a| a == "--benchmark");
@@ -277,6 +302,18 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn court_displays_current_scores_without_window_title() {
+        let mut game = Game::new(42);
+        game.scores = [0, 1];
+        let mut frame = vec![0; W as usize * H as usize * 4];
+        draw(&mut frame, &game);
+        let pixel =
+            |x: usize, y: usize| &frame[(y * W as usize + x) * 4..(y * W as usize + x) * 4 + 4];
+        assert_eq!(pixel(355, 25), &[220, 230, 245, 255]);
+        assert_eq!(pixel(547, 30), &[220, 230, 245, 255]);
+        assert_eq!(pixel(533, 25), &[6, 10, 23, 255]);
+    }
     #[test]
     fn benchmark_is_opt_in() {
         assert!(!benchmark_args(&[]));
