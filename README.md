@@ -982,6 +982,8 @@ Nannou macOS: the Ready court now includes a controls hint and hides it during p
 
 Nannou Windows: an [isolated delayed-start fixture](docs/packaging/NANNOU-READY-CONTROLS-WINDOWS-20261113.md) captured the Ready controls and their absence during play.
 
+The unmodified Nannou release also passed a [Windows local portable pilot](docs/packaging/NANNOU-READY-WINDOWS-RELEASE-PILOT-20261113.md); dependency notices and release qualification remain incomplete.
+
 Piston Mac keypad cross-check: 17 release unit tests pass, but the locked macOS window path maps both Enter keys to the same logical Piston key; independent native delivery is not established. [Evidence and limits](docs/packaging/PISTON-KEYPAD-BACKEND-MAC-20261113.md).
 
 Piston Windows: a [locked backend source review](docs/packaging/PISTON-KEYPAD-BACKEND-WINDOWS-20261113.md) identifies the corresponding logical-key conflation risk; physical behavior remains unverified.
