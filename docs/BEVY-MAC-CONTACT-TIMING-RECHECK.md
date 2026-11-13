@@ -7,3 +7,7 @@ Direct-shell `--scripted-test` exited 101 before gameplay: Bevy reported it coul
 ## Full-match desktop check
 
 In a separate run of the same packaged binary (SHA-256 above), supported desktop automation pressed Enter and left the player paddle unattended. The displayed score progressed to **1–7** with “Computer wins – Enter to play again.” Enter started a new game; the next observed frame showed **0–1** in active play. The app was closed. This is an automated native interaction, not physical input or a scripted model replay.
+
+## Relocated archive check
+
+The local pilot archive (`pong-bevy-macos-arm64-pilot.tar.gz`, SHA-256 `3c64c69cee6d00260ed5565520b05f57833db0f26f3956237575f49a22b1f107`) was extracted to a separate `/tmp/pong-bevy-relocated-20261113` directory. The extracted executable matched the binary SHA-256 above. Supported desktop app selection opened the extracted app; the process list confirmed its executable path in the relocated directory. The ready court rendered, automated Enter started play, held W moved the paddle upward, and Space showed Paused. Command-Q exited the app. This checks a local archive and automated desktop interaction on the build machine. It does not establish downloaded/quarantined Gatekeeper behavior, notarization, clean-machine installation, physical input, or a scripted replay. The archive's pilot notice explicitly identifies the distribution limitations.
