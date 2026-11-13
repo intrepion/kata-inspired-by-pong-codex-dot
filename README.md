@@ -48,7 +48,7 @@ Original browser keyboard follow-up: focused Start/Pause buttons activate with S
 
 Original browser pause-input fix: 19 JavaScript model and mocked-handler tests pass; Windows localhost Chrome start, pause, resume and W movement smoke pass. Held-through-pause and physical touch remain open. [Evidence](docs/ORIGINAL-PAUSE-INPUT-FIX.md).
 
-Held-input audit follow-up: Swift retained-touch movement was reproduced at model level and guarded; 14 Swift tests, an iOS Simulator build and paused-drag/fresh-gesture UI checks pass; overlapping simulator touches remain unverified. Android remains a separate source-review concern. [Coverage](docs/HELD-INPUT-COVERAGE-20261113.md); [Swift fix and limits](docs/SWIFT-HELD-TOUCH-PAUSE-FIX.md).
+Held-input audit follow-up: Swift retained-touch movement was reproduced at model level and guarded; 14 Swift tests in debug and release, iOS Simulator debug/release builds and paused-drag/fresh-gesture UI checks pass; overlapping simulator touches remain unverified. Android remains a separate source-review concern. [Coverage](docs/HELD-INPUT-COVERAGE-20261113.md); [Swift fix and limits](docs/SWIFT-HELD-TOUCH-PAUSE-FIX.md).
 
 Omarchy Ratatui enhanced-key repeat fix: ten release tests and model-matched terminal-cell replay pass; actual terminal input remains open. [Evidence](docs/RATATUI-HELD-REPEAT-FIX.md).
 

@@ -17,3 +17,7 @@ On the booted iPhone 16 Pro simulator, the existing `testStartPauseResumeRestart
 ## Paused-drag simulator test
 
 A new `testPausedDragRequiresFreshGestureAfterResume` ran on the iPhone 16 Pro simulator against the same Swift fix. It paused the game, dragged and released on the court, confirmed the paddle stayed fixed, resumed and confirmed it remained fixed, then confirmed a fresh drag moved the paddle. The test passed in 36.170 seconds; result bundle `/tmp/pong-swift-paused-drag-ui.xcresult` and log `/tmp/pong-swift-paused-drag-ui.log` are retained. The simulator was shut down without erasing data. This is a sequential simulator gesture test; a court touch held while another touch activates Pause/Resume and physical-device input remain unverified.
+
+## Release configuration check
+
+The isolated project with the same SwiftUI and touch-model blobs above built successfully for generic iOS Simulator in Release configuration, using a separate copy-on-write derived-data directory. The universal simulator executable SHA-256 is `059d0e26765a43ac973c6e878edb42aac727778542f9dada19643380de07afd7`. Separately, `swift test -c release` passed all 14 package tests on macOS ARM64, including the three touch-state regressions. Build and test logs remain under `/tmp/pong-swift-held-release-*`. This is optimized build/model evidence; the Release app was not launched, and physical-device, overlapping-touch, signing and distribution qualification remain open.
