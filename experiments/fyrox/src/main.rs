@@ -115,16 +115,6 @@ impl App {
         }
     }
 }
-fn status_label(game: &Game) -> &'static str {
-    match game.state {
-        State::Ready => "Ready",
-        State::Playing => "Playing",
-        State::Paused => "Paused",
-        State::Over if game.scores[0] > game.scores[1] => "YOU WIN",
-        State::Over if game.scores[1] > game.scores[0] => "CPU WINS",
-        State::Over => "Match over",
-    }
-}
 impl Plugin for App {
     fn init(&mut self, _: Option<&str>, context: PluginContext) -> GameResult {
         if context.user_interfaces.iter().next().is_none() {
@@ -329,34 +319,6 @@ mod benchmark_tests {
 
 #[cfg(test)]
 mod input_tests {
-    #[test]
-    fn status_identifies_both_winners_and_clears_on_restart() {
-        use super::*;
-        let mut game = Game::new(42);
-        assert_eq!(status_label(&game), "Ready");
-        game.start();
-        game.pause();
-        assert_eq!(status_label(&game), "Paused");
-        game.state = State::Over;
-        assert_eq!(status_label(&game), "Match over");
-        for (scores, x, vx, expected) in [
-            ([6, 3], W + BALL - 1., 350., "YOU WIN"),
-            ([2, 6], -BALL + 1., -350., "CPU WINS"),
-        ] {
-            game.start();
-            game.scores = scores;
-            game.serve = 0.;
-            game.ball.x = x;
-            game.ball.y = H / 2.;
-            game.ball.vx = vx;
-            game.ball.vy = 0.;
-            game.step(0.02, 0.);
-            assert_eq!(game.state, State::Over);
-            assert_eq!(status_label(&game), expected);
-            game.start();
-            assert_eq!(status_label(&game), "Playing");
-        }
-    }
     use super::*;
     #[test]
     fn status_names_winner_and_clears_on_restart() {
