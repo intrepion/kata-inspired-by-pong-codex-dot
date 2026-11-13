@@ -143,10 +143,14 @@ impl App {
         let instruction = match self.game.state {
             State::Ready => Some("SPACE TO START"),
             State::Paused => Some("SPACE TO RESUME"),
+            State::Over => Some("R TO RESTART"),
             _ => None,
         };
         if let Some(message) = instruction {
             let left = (W - message.len() as f32 * 18.) / 2.;
+            if self.game.state == State::Over {
+                rect(left - 8., 282., message.len() as f32 * 18. + 16., 38., BACKGROUND);
+            }
             for (i, ch) in message.bytes().enumerate() {
                 for (y, row) in result_glyph(ch).iter().enumerate() {
                     for col in 0..5 {
@@ -216,11 +220,23 @@ mod tests {
     use super::*;
     #[test]
     fn instruction_glyphs_exist() {
-        for ch in b"SPACE TO STARTSPACE TO RESUME" {
+        for ch in b"SPACE TO STARTSPACE TO RESUMER TO RESTART" {
             if *ch != b' ' {
                 assert!(result_glyph(*ch).iter().any(|row| *row != 0), "missing glyph: {}", *ch as char);
             }
         }
+    }
+    #[test]
+    fn restart_hint_is_visible_only_at_match_end() {
+        let mut app = App::default();
+        app.game.start();
+        assert!(!app.rectangles().iter().any(|r| r.y == 282. && r.color == BACKGROUND));
+        app.game.state = State::Over;
+        let rects = app.rectangles();
+        assert!(rects.iter().any(|r| r.y == 282. && r.color == BACKGROUND));
+        assert!(rects.iter().any(|r| r.y >= 290. && r.y < 311. && r.color == [255, 180, 80]));
+        app.game.start();
+        assert!(!app.rectangles().iter().any(|r| r.y == 282. && r.color == BACKGROUND));
     }
     #[test]    fn ready_play_indicator_differs_from_paused_bars() {
         let mut app = App::default();
