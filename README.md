@@ -14,6 +14,8 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
+Windows nannou contact-timing follow-up: two adapter tests and a fresh scripted replay pass; the tick 480 app-owned frame was inspected. A missing Vulkan overlay-layer manifest was logged, and native input remains unverified. [Evidence](docs/WINDOWS-NANNOU-CONTACT-TIMING.md).
+
 Windows Vulkan/ash contact-timing follow-up: six adapter/model tests and a fresh scripted replay pass; a separate native start/pause/restart/exit smoke check passed. Sustained and physical input remain unverified. [Evidence](docs/WINDOWS-ASH-CONTACT-TIMING.md).
 
 Windows bracket-lib contact-timing follow-up: nine adapter/model tests and a fresh scripted replay pass; the paused app-owned frame was inspected. Normal input remains unverified. [Evidence](docs/WINDOWS-BRACKET-CONTACT-TIMING.md). Raylib's debug runtime mismatch was independently confirmed; an explicit matching-runtime probe passed, but ordinary Cargo remains unresolved. [Diagnosis](docs/WINDOWS-RAYLIB-CONTACT-TIMING.md).
