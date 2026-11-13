@@ -33,7 +33,7 @@ impl MovementInput {
 // A true return requests quit; it does not reinterpret unmapped engine keys.
 fn control_key(game: &mut Game, key: KeyCode, repeat: bool) -> bool {
     match key {
-        KeyCode::Enter | KeyCode::R if !repeat => game.start(),
+        KeyCode::Enter | KeyCode::KpEnter | KeyCode::R if !repeat => game.start(),
         KeyCode::Space if !repeat => {
             if game.state == State::Ready {
                 game.start();
@@ -433,6 +433,17 @@ mod movement_tests {
 #[cfg(test)]
 mod control_tests {
     use super::*;
+    #[test]
+    fn keypad_enter_starts_and_restarts_without_repeat() {
+        let mut game = Game::new(42);
+        control_key(&mut game, KeyCode::KpEnter, false);
+        assert_eq!(game.state, State::Playing);
+        game.scores = [2, 3];
+        control_key(&mut game, KeyCode::KpEnter, true);
+        assert_eq!(game.scores, [2, 3]);
+        control_key(&mut game, KeyCode::KpEnter, false);
+        assert_eq!(game.scores, [0, 0]);
+    }
     #[test]
     fn mapped_start_pause_resume_and_restart_work() {
         for key in [KeyCode::Enter, KeyCode::R, KeyCode::Space] {
