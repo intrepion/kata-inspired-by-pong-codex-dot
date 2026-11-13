@@ -490,3 +490,7 @@ mod tests {
         assert_eq!(g.ball.x, x);
     }
 }
+
+#[cfg(test)]
+#[path = "cpu_contact_tests.rs"]
+mod cpu_contact_tests;
