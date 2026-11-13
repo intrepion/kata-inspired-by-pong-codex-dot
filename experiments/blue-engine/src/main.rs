@@ -106,6 +106,19 @@ fn glyph_runs(bits: u8) -> [Option<(usize, usize)>; 3] {
     }
     runs
 }
+fn score_label_parts() -> Vec<(f32, f32, f32, f32)> {
+    let mut parts = Vec::new();
+    for (left, text) in [(330., b"YOU"), (500., b"CPU")] {
+        for (ch, character) in text.iter().enumerate() {
+            for (row, bits) in glyph(*character).iter().enumerate() {
+                for (start, len) in glyph_runs(*bits).into_iter().flatten() {
+                    parts.push((left + (ch * 6 + start) as f32 * 2., 45. + row as f32 * 2., len as f32 * 2., 2.));
+                }
+            }
+        }
+    }
+    parts
+}
 fn rect(engine: &mut Engine, name: &str, x: f32, y: f32, width: f32, height: f32, z: f32) {
     if let Some(object) = engine.objects.get_mut(name) {
         // Hide zero-sized score markers without creating a singular inverse matrix.
@@ -212,6 +225,13 @@ fn main() -> Result<(), blue_engine::error::Error> {
                 .set_color(0.85, 1., 0.68, 1.);
             rect(&mut engine, &name, 0., 0., 0., 0., 0.);
         }
+    }
+    // Score ownership is static; create the label runs once, not every frame.
+    for (i, (x, y, width, height)) in score_label_parts().into_iter().enumerate() {
+        let name = format!("score-label-{i}");
+        square(&name, ObjectSettings::default(), &mut engine.renderer, &mut engine.objects)?;
+        engine.objects.get_mut(name.as_str()).unwrap().set_color(0.85, 1., 0.68, 1.);
+        rect(&mut engine, &name, x, y, width, height, 0.);
     }
     square("status-panel", ObjectSettings::default(), &mut engine.renderer, &mut engine.objects)?;
     engine.objects.get_mut("status-panel").unwrap().set_color(0.047, 0.129, 0.118, 1.);
@@ -404,6 +424,13 @@ mod benchmark_tests {
 #[cfg(test)]
 mod input_tests {
     use super::*;
+    #[test]
+    fn score_labels_cover_both_sides_below_the_pips() {
+        let parts = score_label_parts();
+        assert!(parts.iter().any(|(x, _, _, _)| *x < W / 2.));
+        assert!(parts.iter().any(|(x, _, _, _)| *x > W / 2.));
+        assert!(parts.iter().all(|(x, y, width, height)| *x >= 330. && *x + *width <= 536. && *y >= 45. && *y + *height <= 59.));
+    }
     #[test]
     fn zero_score_outline_hides_for_positive_scores() {
         assert_eq!(zero_score_parts(0), [(0., 0., 2., 18.), (6., 0., 2., 18.), (2., 0., 4., 2.), (2., 16., 4., 2.)]);
