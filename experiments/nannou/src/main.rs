@@ -96,12 +96,16 @@ fn model(app: &App) -> Model {
         accumulator: 0.0,
     }
 }
+fn lose_focus(game: &mut Game, movement: &mut MovementGate, accumulator: &mut f32) {
+    movement.was_playing = false;
+    game.pause();
+    *accumulator = 0.;
+}
 fn unfocused(_: &App, m: &mut Model) {
     if m.demo.is_some() || m.benchmarking {
         return;
     }
-    m.game.pause();
-    m.accumulator = 0.0;
+    lose_focus(&mut m.game, &mut m.movement, &mut m.accumulator);
 }
 fn update(app: &App, m: &mut Model) {
     if let Some((path, since)) = &m.pending {
@@ -220,6 +224,24 @@ fn view(app: &App, m: &Model) {
 #[cfg(test)]
 mod movement_tests {
     use super::*;
+    #[test]
+    fn focus_loss_then_immediate_resume_suppresses_held_key() {
+        let mut game = Game::new(42);
+        game.start();
+        let mut gate = MovementGate::default();
+        movement_with_pause(&mut game, &mut gate, [false; 4], false);
+        let held = [true, false, false, false];
+        assert_eq!(movement_with_pause(&mut game, &mut gate, held, false), -1.);
+        let mut accumulator = 0.05;
+        lose_focus(&mut game, &mut gate, &mut accumulator);
+        assert_eq!(game.state, State::Paused);
+        assert_eq!(accumulator, 0.);
+        assert_eq!(movement_with_pause(&mut game, &mut gate, held, true), 0.);
+        assert_eq!(game.state, State::Playing);
+        assert_eq!(movement_with_pause(&mut game, &mut gate, held, false), 0.);
+        movement_with_pause(&mut game, &mut gate, [false; 4], false);
+        assert_eq!(movement_with_pause(&mut game, &mut gate, held, false), -1.);
+    }
     #[test]
     fn winner_message_tracks_winning_point_and_restart() {
         let mut game = Game::new(42);

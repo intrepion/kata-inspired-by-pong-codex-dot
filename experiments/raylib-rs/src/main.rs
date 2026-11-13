@@ -75,6 +75,11 @@ fn movement_with_pause(
     movement.was_playing = playing;
     movement.axis(held, suppress)
 }
+fn lose_focus(game: &mut Game, movement: &mut MovementGate, accumulator: &mut f32) {
+    movement.was_playing = false;
+    game.pause();
+    *accumulator = 0.;
+}
 fn main() {
     let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     let (mut window, thread) = raylib::init()
@@ -97,8 +102,7 @@ fn main() {
     while !window.window_should_close() {
         let focused = window.is_window_focused();
         if !focused && demo.is_none() && !benchmarking {
-            game.pause();
-            accumulator = 0.0;
+            lose_focus(&mut game, &mut movement, &mut accumulator);
         }
         if focused && demo.is_none() && !benchmarking {
             if window.is_key_pressed(KeyboardKey::KEY_ENTER)
@@ -246,6 +250,24 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn focus_loss_then_immediate_resume_suppresses_held_key() {
+        let mut game = Game::new(42);
+        game.start();
+        let mut gate = MovementGate::default();
+        movement_with_pause(&mut game, &mut gate, [false; 4], false);
+        let held = [true, false, false, false];
+        assert_eq!(movement_with_pause(&mut game, &mut gate, held, false), -1.);
+        let mut accumulator = 0.05;
+        lose_focus(&mut game, &mut gate, &mut accumulator);
+        assert_eq!(game.state, State::Paused);
+        assert_eq!(accumulator, 0.);
+        assert_eq!(movement_with_pause(&mut game, &mut gate, held, true), 0.);
+        assert_eq!(game.state, State::Playing);
+        assert_eq!(movement_with_pause(&mut game, &mut gate, held, false), 0.);
+        movement_with_pause(&mut game, &mut gate, [false; 4], false);
+        assert_eq!(movement_with_pause(&mut game, &mut gate, held, false), -1.);
+    }
     #[test]
     fn status_is_outside_court_and_inside_window() {
         for (width, height) in [(900., 500.), (1800., 1000.), (900., 700.)] {
