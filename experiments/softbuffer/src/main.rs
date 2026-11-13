@@ -38,6 +38,13 @@ impl Frontend {
         self.app.blur();
     }
     fn handle_key(&mut self, key: KeyCode, pressed: bool, repeat: bool) -> bool {
+        if self.app.game.state == pong_low_level_common::State::Over
+            && pressed
+            && !repeat
+            && matches!(key, KeyCode::Space | KeyCode::KeyR)
+        {
+            self.clear_movement();
+        }
         match key {
             key @ (KeyCode::KeyW | KeyCode::ArrowUp | KeyCode::KeyS | KeyCode::ArrowDown) => {
                 if !pressed
@@ -210,6 +217,39 @@ mod tests {
 #[cfg(test)]
 mod movement_tests {
     use super::*;
+    #[test]
+    fn held_movement_does_not_carry_through_match_end_restart() {
+        use pong_low_level_common::{State, BALL, H, W};
+        for key in [
+            KeyCode::KeyW,
+            KeyCode::ArrowUp,
+            KeyCode::KeyS,
+            KeyCode::ArrowDown,
+        ] {
+            for restart in [KeyCode::Space, KeyCode::KeyR] {
+                let mut f = Frontend::default();
+                f.app.game.start();
+                f.handle_key(key, true, false);
+                f.app.game.scores = [6, 2];
+                f.app.game.serve = 0.;
+                f.app.game.ball.x = W + BALL - 1.;
+                f.app.game.ball.y = H / 2.;
+                f.app.game.ball.vx = 350.;
+                f.app.game.ball.vy = 0.;
+                f.app.game.step(0.02, 0.);
+                assert_eq!(f.app.game.state, State::Over);
+                f.handle_key(restart, true, false);
+                assert_eq!(f.app.game.state, State::Playing);
+                assert!(!f.app.up && !f.app.down, "{key:?} {restart:?}");
+                f.handle_key(key, true, true);
+                assert!(!f.app.up && !f.app.down);
+                f.handle_key(key, false, false);
+                f.handle_key(key, true, false);
+                assert!(f.app.up || f.app.down);
+            }
+        }
+    }
+
     #[test]
     fn nonplaying_presses_do_not_rearm_after_start() {
         use pong_low_level_common::State;

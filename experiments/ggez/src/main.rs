@@ -45,7 +45,9 @@ fn handle_key_down(game: &mut Game, held: &mut [bool; 4], key: KeyCode, repeated
             game.pause();
         }
     }
-    if previous == State::Playing && game.state == State::Paused {
+    if (previous == State::Playing && game.state == State::Paused)
+        || (previous == State::Over && game.state == State::Playing)
+    {
         *held = [false; 4];
     }
 }
@@ -235,6 +237,40 @@ impl event::EventHandler for App {
 #[cfg(test)]
 mod control_tests {
     use super::*;
+    #[test]
+    fn held_movement_does_not_carry_through_match_end_restart() {
+        for key in [
+            KeyCode::KeyW,
+            KeyCode::ArrowUp,
+            KeyCode::KeyS,
+            KeyCode::ArrowDown,
+        ] {
+            for restart in [KeyCode::Enter, KeyCode::KeyR] {
+                let mut game = Game::new(42);
+                game.start();
+                let mut held = [false; 4];
+                handle_key_down(&mut game, &mut held, key, false);
+                game.scores = [6, 2];
+                game.serve = 0.;
+                game.ball = Ball {
+                    x: W + BALL - 1.,
+                    y: H / 2.,
+                    vx: 350.,
+                    vy: 0.,
+                };
+                game.step(0.02, 0.);
+                assert_eq!(game.state, State::Over);
+                handle_key_down(&mut game, &mut held, restart, false);
+                assert_eq!(game.state, State::Playing);
+                assert_eq!(held, [false; 4], "{key:?} {restart:?}");
+                handle_key_down(&mut game, &mut held, key, true);
+                assert_eq!(held, [false; 4]);
+                handle_key_down(&mut game, &mut held, key, false);
+                assert!(held.iter().any(|v| *v));
+            }
+        }
+    }
+
     #[test]
     fn action_keys_keep_start_resume_restart_and_repeat_behavior() {
         let mut game = Game::new(42);

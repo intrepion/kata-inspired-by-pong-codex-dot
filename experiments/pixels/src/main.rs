@@ -40,6 +40,7 @@ fn handle_key(
     if !pressed || (!repeat && game.state == State::Playing) {
         movement.key(key, pressed);
     }
+    let previous = game.state;
     match key {
         KeyCode::Enter | KeyCode::KeyR if pressed && !repeat => game.start(),
         KeyCode::Space if pressed && !repeat => {
@@ -55,6 +56,9 @@ fn handle_key(
         }
         KeyCode::Escape if pressed => return true,
         _ => {}
+    }
+    if previous == State::Over && game.state == State::Playing {
+        movement.clear();
     }
     false
 }
@@ -275,6 +279,42 @@ mod tests {
 #[cfg(test)]
 mod movement_tests {
     use super::*;
+    #[test]
+    fn held_movement_does_not_carry_through_match_end_restart() {
+        use pong_core::{Ball, BALL, H, W};
+        for key in [
+            KeyCode::KeyW,
+            KeyCode::ArrowUp,
+            KeyCode::KeyS,
+            KeyCode::ArrowDown,
+        ] {
+            for restart in [KeyCode::Enter, KeyCode::KeyR] {
+                let mut game = Game::new(42);
+                game.start();
+                let mut input = MovementInput::default();
+                handle_key(&mut game, &mut input, key, true, false);
+                game.scores = [6, 2];
+                game.serve = 0.;
+                game.ball = Ball {
+                    x: W + BALL - 1.,
+                    y: H / 2.,
+                    vx: 350.,
+                    vy: 0.,
+                };
+                game.step(0.02, 0.);
+                assert_eq!(game.state, State::Over);
+                handle_key(&mut game, &mut input, restart, true, false);
+                assert_eq!(game.state, State::Playing);
+                assert_eq!(input.axis(), 0., "{key:?} {restart:?}");
+                handle_key(&mut game, &mut input, key, true, true);
+                assert_eq!(input.axis(), 0.);
+                handle_key(&mut game, &mut input, key, false, false);
+                handle_key(&mut game, &mut input, key, true, false);
+                assert_ne!(input.axis(), 0.);
+            }
+        }
+    }
+
     #[test]
     fn nonplaying_presses_do_not_rearm_after_start() {
         for state in [State::Ready, State::Paused, State::Over] {

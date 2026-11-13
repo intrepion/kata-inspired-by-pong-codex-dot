@@ -43,7 +43,9 @@ fn key_press(
         Key::Escape => game.pause(),
         _ => {}
     }
-    if previous == State::Playing && game.state == State::Paused {
+    if (previous == State::Playing && game.state == State::Paused)
+        || (previous == State::Over && game.state == State::Playing)
+    {
         *held = [false; 4];
     }
     matches!(key, Key::Return | Key::R | Key::Space | Key::Escape)
@@ -60,6 +62,37 @@ fn key_release(held: &mut [bool; 4], pressed: &mut std::collections::HashSet<Key
 #[cfg(test)]
 mod control_tests {
     use super::*;
+    #[test]
+    fn held_movement_does_not_carry_through_match_end_restart() {
+        for key in [Key::W, Key::Up, Key::S, Key::Down] {
+            for restart in [Key::Return, Key::R] {
+                let mut game = Game::new(42);
+                game.start();
+                let mut held = [false; 4];
+                let mut pressed = std::collections::HashSet::new();
+                key_press(&mut game, &mut held, &mut pressed, key);
+                game.scores = [6, 2];
+                game.serve = 0.;
+                game.ball = Ball {
+                    x: W + BALL - 1.,
+                    y: H / 2.,
+                    vx: 350.,
+                    vy: 0.,
+                };
+                game.step(0.02, 0.);
+                assert_eq!(game.state, State::Over);
+                key_press(&mut game, &mut held, &mut pressed, restart);
+                assert_eq!(game.state, State::Playing);
+                assert_eq!(held, [false; 4], "{key:?} {restart:?}");
+                key_press(&mut game, &mut held, &mut pressed, key);
+                assert_eq!(held, [false; 4]);
+                key_release(&mut held, &mut pressed, key);
+                key_press(&mut game, &mut held, &mut pressed, key);
+                assert!(held.iter().any(|v| *v));
+            }
+        }
+    }
+
     #[test]
     fn nonplaying_presses_do_not_rearm_after_start() {
         for state in [State::Ready, State::Paused, State::Over] {

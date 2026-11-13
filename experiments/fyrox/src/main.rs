@@ -85,6 +85,9 @@ impl App {
             }
         }
         if down && !repeat {
+            if self.game.state == State::Over && matches!(key, KeyCode::Enter | KeyCode::KeyR) {
+                self.suppressed = self.held;
+            }
             if matches!(key, KeyCode::Space | KeyCode::Escape) && self.game.state == State::Playing {
                 self.suppressed = self.held;
             }
@@ -299,6 +302,21 @@ mod benchmark_tests {
 #[cfg(test)]
 mod input_tests {
     use super::*;
+    #[test]
+    fn held_movement_does_not_carry_through_match_end_restart() {
+        for key in [KeyCode::KeyW, KeyCode::ArrowUp, KeyCode::KeyS, KeyCode::ArrowDown] {
+            for restart in [KeyCode::Enter, KeyCode::KeyR] {
+                let mut app=App::default();app.game.start();app.key_input(key,true,false);
+                app.game.scores=[6,2];app.game.serve=0.;app.game.ball=Ball{x:W+BALL-1.,y:H/2.,vx:350.,vy:0.};
+                app.game.step(0.02,0.);assert_eq!(app.game.state,State::Over);
+                app.key_input(restart,true,false);assert_eq!(app.game.state,State::Playing);
+                assert_eq!(app.movement_axis(),0.,"{key:?} {restart:?}");
+                app.key_input(key,true,true);assert_eq!(app.movement_axis(),0.);
+                app.key_input(key,false,false);app.key_input(key,true,false);assert_ne!(app.movement_axis(),0.);
+            }
+        }
+    }
+
     #[test]
     fn nonplaying_presses_stay_suppressed_until_release() {
         for state in [State::Ready, State::Paused, State::Over] {

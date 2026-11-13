@@ -58,7 +58,9 @@ fn handle_key_down(
     }
     let previous = game.state;
     let quit = control_key(game, key, repeat);
-    if previous == State::Playing && game.state == State::Paused {
+    if (previous == State::Playing && game.state == State::Paused)
+        || (previous == State::Over && game.state == State::Playing)
+    {
         movement.clear();
     }
     quit
@@ -449,6 +451,37 @@ mod movement_tests {
 #[cfg(test)]
 mod control_tests {
     use super::*;
+    #[test]
+    fn held_movement_does_not_carry_through_match_end_restart() {
+        use pong_core::{Ball, BALL, H, W};
+        for key in [KeyCode::W, KeyCode::Up, KeyCode::S, KeyCode::Down] {
+            for restart in [KeyCode::Enter, KeyCode::KpEnter, KeyCode::R] {
+                let mut game = Game::new(42);
+                game.start();
+                let mut input = MovementInput::default();
+                handle_key_down(&mut game, &mut input, key, false);
+                game.scores = [6, 2];
+                game.serve = 0.;
+                game.ball = Ball {
+                    x: W + BALL - 1.,
+                    y: H / 2.,
+                    vx: 350.,
+                    vy: 0.,
+                };
+                game.step(0.02, 0.);
+                assert_eq!(game.state, State::Over);
+                handle_key_down(&mut game, &mut input, restart, false);
+                assert_eq!(game.state, State::Playing);
+                assert_eq!(input.axis(), 0., "{key:?} {restart:?}");
+                handle_key_down(&mut game, &mut input, key, true);
+                assert_eq!(input.axis(), 0.);
+                input.key(key, false);
+                handle_key_down(&mut game, &mut input, key, false);
+                assert_ne!(input.axis(), 0.);
+            }
+        }
+    }
+
     #[test]
     fn nonplaying_presses_do_not_rearm_after_start() {
         for state in [State::Ready, State::Paused, State::Over] {
