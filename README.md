@@ -906,6 +906,6 @@ A current Ratatui static-musl candidate passed relocated Omarchy PTY and replay 
 
 ggez also accepts keypad Enter for start, resume and match-end restart; [Mac tests and automated-window evidence](docs/packaging/GGEZ-KEYPAD-ENTER-MAC-20261113.md) and [Windows model and replay checks](docs/packaging/GGEZ-KEYPAD-ENTER-WINDOWS-20261113.md) record the remaining physical-input gap.
 
-Piston now accepts keypad Enter as its existing Return action; [Omarchy adapter tests and replay](docs/packaging/PISTON-KEYPAD-ENTER-OMARCHY.md) record the remaining native-input gap.
+Piston now accepts keypad Enter as its existing Return action; [Omarchy](docs/packaging/PISTON-KEYPAD-ENTER-OMARCHY.md) and [Windows](docs/packaging/PISTON-KEYPAD-ENTER-WINDOWS-20261113.md) adapter tests and replays record the remaining native-input gap.
 
 Nannou now accepts keypad Enter with an independent focus-return gate; [Mac checks](docs/packaging/NANNOU-KEYPAD-ENTER-MAC-20261113.md) record their input limitations.

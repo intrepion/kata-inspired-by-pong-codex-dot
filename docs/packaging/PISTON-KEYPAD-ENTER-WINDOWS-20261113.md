@@ -1,0 +1,7 @@
+# Piston keypad Enter: Windows check, 2026-11-13
+
+At checkpoint `d26a84504b6e8783b6c556db1d65ff14b63cd721`, Piston adapter source Git blob `55fb3e016612b2e9652702953e01450f254a201f` passed all 17 locked, offline release tests on Windows MSVC stable Rust 1.99.1. The keypad regression supplies Piston key codes directly to check start, resume, restart, repeats and unfocused actions; it does not verify native event delivery.
+
+A locked offline release build succeeded; executable SHA-256 was `904ea53a5182957caa666c754874b89a2cd12949245fe126b7eeb127f0f18466`. Its app-owned scripted run exited 0 with empty stderr, and all 13 parsed telemetry records matched `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`. Six captures were produced. The inspected tick 480 image shows the paused court, pause bars, ball, paddles and score marker; SHA-256 `a2a68d071c30564de0f2f67c88d9f62acc39a4d07830d072cd21ed9b8b495c8c`. Logs, captures and copies of prior test and executable artifacts remain in sibling workspace directory `piston-keypad-windows-20261113`. An older debug-target attempt was stopped when many dependencies began recompiling; its partial target was preserved.
+
+The scripted replay does not exercise keypad input. Native and physical keypad delivery, accessibility input, full interactive gameplay, clean-machine installation, dependency notice review and release qualification remain unverified. This is not license clearance.
