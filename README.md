@@ -80,7 +80,7 @@ Each desktop cell is **build / runtime evidence**:
 | Miniquad | B / I | Fresh MSVC B + 1 test; scripted/six PNG reported passed; native Return/Space still no start | Fresh `4f4da1d` B, 7 tests; relocated package replay and six app-owned PNGs, exact model match; physical input unverified ([details](docs/packaging/MINIQUAD-C77-OMARCHY-REPLAY.md)) |
 | pixels + winit | Fresh `663aa40` B / native automated full match and restart; shell replay incomplete ([details](docs/PIXELS-MAC-CONTACT-TIMING-RECHECK.md)) | B / I | Fresh `7495366` B, 5 frontend tests; relocated package replay and six app-owned source PNGs, exact model match; physical input unverified ([details](docs/packaging/PIXELS-C77-OMARCHY-REPLAY.md)) |
 | raw wgpu + winit | B / I | B / I | Fresh `663aa40` B, 4 frontend tests; relocated package replay and six app-owned surface-readback PNGs, exact model match; physical input unverified ([details](docs/packaging/WGPU-C77-OMARCHY-REPLAY.md)) |
-| Piston | B / I | B / I | B / S + scripted/PNG sample passed; real input blocked |
+| Piston | B / I | B / I | Fresh `38584cd` B, 7 frontend tests; relocated package replay and six app-owned PNGs, exact model match; physical input unverified ([details](docs/packaging/PISTON-C77-OMARCHY-REPLAY.md)) |
 | ggez | B / I; Mac surface fix verified | B / I on earlier snapshot | Fresh `24fbcd9` B, 2 frontend tests; relocated package replay and six app-owned PNGs, exact model match; physical input unverified ([details](docs/packaging/GGEZ-C77-OMARCHY-REPLAY.md)) |
 | nannou | B / I before pacing follow-up | B / I | B / S + scripted/PNG sample passed; real input blocked |
 | Fyrox | B / I | B / I | B / S + scripted/PNG samples passed; real input blocked |
