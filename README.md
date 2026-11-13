@@ -70,6 +70,8 @@ Mac Fyrox and Blue Engine held-pause follow-up: four tests each and sequential a
 
 Mac Godot held-pause follow-up: integration and synthetic held-input smoke pass; sequential automated native pause/resume and fresh movement pass. [Evidence](docs/GODOT-HELD-PAUSE-FIX.md).
 
+Mac Godot resize/focus attempt: gameplay opened but the resize and focus transitions were not established; [limitations and log replacement](docs/GODOT-MAC-FOCUS-RESIZE-ATTEMPT.md).
+
 Mac bracket-lib pause-fix follow-up: eleven release tests and sequential automated movement/pause/resume pass; native held-across-pause remains open. [Evidence](docs/BRACKET-PAUSE-HELD-INPUT-FIX.md).
 
 Mac SDL3 pause-fix follow-up: four release tests and sequential automated movement/pause/resume pass; native held-across-pause remains open. [Evidence](docs/SDL3-PAUSE-HELD-INPUT-FIX.md).
