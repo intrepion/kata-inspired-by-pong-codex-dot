@@ -1,6 +1,6 @@
 // Preparation aid, not legal clearance or proof of linked-code attribution.
 import {readFileSync,readdirSync,lstatSync,realpathSync} from 'node:fs';
-import {dirname,relative,resolve,join,isAbsolute} from 'node:path';
+import {dirname,relative,resolve,join,isAbsolute,extname} from 'node:path';
 import {createHash} from 'node:crypto';
 const digest=b=>createHash('sha256').update(b).digest('hex');
 function safeFile(root,file) {
@@ -12,6 +12,8 @@ function safeFile(root,file) {
  if(!Buffer.from(text,'utf8').equals(bytes)||text.includes('\0')) throw Error('Notice must be UTF-8 text');
  return {source:rel.replaceAll('\\','/'),sha256:digest(bytes),bytes:bytes.length,text};
 }
+// Conventional names with source-code or structured-data extensions are not notice texts.
+const nonNoticeExtensions=new Set(['.c','.cc','.cpp','.h','.hpp','.rs','.js','.cjs','.mjs','.ts','.tsx','.jsx','.py','.sh','.ps1','.json','.toml','.yaml','.yml','.xml','.lock','.wasm','.exe','.dll']);
 function candidates(root) {
  const found=[];
  function visit(dir) {
@@ -19,7 +21,7 @@ function candidates(root) {
    if(e.name==='.git'||e.name==='target')continue;
    const file=join(dir,e.name);
    if(e.isDirectory()) visit(file);
-   else if(/^(?:licen[sc]e|copying|notice|copyright)(?:[._-]|$)/i.test(e.name)) found.push(file);
+   else if(/^(?:licen[sc]e|copying|notice|copyright)(?:[._-]|$)/i.test(e.name) && !nonNoticeExtensions.has(extname(e.name).toLowerCase())) found.push(file);
   }
  }
  visit(root); return found;

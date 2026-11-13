@@ -65,3 +65,11 @@ test('resolved dependency references must point to represented nodes',t=>{
   const input=meta(pkg);mutate(input);assert.throws(()=>buildNoticeBundle(input,root),/graph/i);
  }
 });
+
+test('notice-named source and metadata files are not treated as notice texts',t=>{
+ const {root,pkg}=fixture(t);
+ for(const name of ['license-inventory.cjs','license-check.rs','NOTICE.json','copyright.py']) writeFileSync(join(pkg,name),'not a notice');
+ assert.deepEqual(buildNoticeBundle(meta(pkg),root).index.missing_notice_files,['fixture@1.0.0']);
+ writeFileSync(join(pkg,'LICENSE-MIT'),'actual notice');
+ assert.equal(buildNoticeBundle(meta(pkg),root).index.packages[0].notices.length,1);
+});
