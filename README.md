@@ -816,4 +816,4 @@ Pixels, raw wgpu, ash, softbuffer and ggez now ignore live keydowns while unfocu
 
 Piston and Fyrox now ignore live keydowns after reported focus loss until focus returns; [Omarchy evidence](docs/packaging/PISTON-FYROX-UNFOCUSED-OMARCHY.md) documents tests and a Miniquad callback limitation.
 
-Miniquad gates reported focus loss on Linux while preserving its previous macOS and Windows callback behavior; [Omarchy evidence](docs/packaging/MINIQUAD-LINUX-FOCUS-OMARCHY.md) records callback limits and an incomplete-capture result.
+Miniquad gates reported focus loss on Linux while preserving its previous macOS and Windows callback behavior; [Omarchy evidence](docs/packaging/MINIQUAD-LINUX-FOCUS-OMARCHY.md) records callback limits and a corrected capture recheck.
