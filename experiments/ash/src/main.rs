@@ -42,6 +42,26 @@ impl Frontend {
         self.movement_held = [false; 4];
         self.app.blur();
     }
+    fn handle_key(&mut self, key: KeyCode, pressed: bool, repeat: bool) -> bool {
+        match key {
+            key @ (KeyCode::KeyW | KeyCode::ArrowUp | KeyCode::KeyS | KeyCode::ArrowDown) => {
+                if !pressed || !repeat {
+                    self.movement_key(key, pressed);
+                }
+            }
+            KeyCode::Space if pressed && !repeat => {
+                let was_playing = self.app.game.state == pong_low_level_common::State::Playing;
+                self.app.action();
+                if was_playing && self.app.game.state == pong_low_level_common::State::Paused {
+                    self.clear_movement();
+                }
+            }
+            KeyCode::KeyR if pressed && !repeat => self.app.game.start(),
+            KeyCode::Escape if pressed => return true,
+            _ => {}
+        }
+        false
+    }
 }
 impl ApplicationHandler for Frontend {
     fn resumed(&mut self, el: &ActiveEventLoop) {
@@ -87,21 +107,10 @@ impl ApplicationHandler for Frontend {
                 if self.demo.is_none() && !self.benchmarking =>
             {
                 let pressed = event.state == ElementState::Pressed;
-                match event.physical_key {
-                    PhysicalKey::Code(
-                        key @ (KeyCode::KeyW
-                        | KeyCode::ArrowUp
-                        | KeyCode::KeyS
-                        | KeyCode::ArrowDown),
-                    ) => self.movement_key(key, pressed),
-                    PhysicalKey::Code(KeyCode::Space) if pressed && !event.repeat => {
-                        self.app.action()
+                if let PhysicalKey::Code(key) = event.physical_key {
+                    if self.handle_key(key, pressed, event.repeat) {
+                        el.exit();
                     }
-                    PhysicalKey::Code(KeyCode::KeyR) if pressed && !event.repeat => {
-                        self.app.game.start()
-                    }
-                    PhysicalKey::Code(KeyCode::Escape) if pressed => el.exit(),
-                    _ => {}
                 }
             }
             WindowEvent::RedrawRequested => {
@@ -239,6 +248,48 @@ mod benchmark_tests {
 #[cfg(test)]
 mod movement_tests {
     use super::*;
+    #[test]
+    fn explicit_pause_clears_movement_until_fresh_press() {
+        for key in [
+            KeyCode::KeyW,
+            KeyCode::ArrowUp,
+            KeyCode::KeyS,
+            KeyCode::ArrowDown,
+        ] {
+            let mut f = Frontend::default();
+            f.handle_key(KeyCode::Space, true, false);
+            f.handle_key(key, true, false);
+            assert!(f.app.up || f.app.down);
+            f.handle_key(KeyCode::Space, true, false);
+            assert_eq!(f.app.game.state, pong_low_level_common::State::Paused);
+            assert!(!f.app.up && !f.app.down);
+            f.handle_key(KeyCode::Space, true, false);
+            assert_eq!(f.app.game.state, pong_low_level_common::State::Playing);
+            f.handle_key(key, true, true);
+            assert!(!f.app.up && !f.app.down, "repeat restored held movement");
+            f.handle_key(key, false, false);
+            f.handle_key(key, true, false);
+            assert!(f.app.up || f.app.down, "fresh press should move");
+        }
+    }
+    #[test]
+    fn action_keys_preserve_start_pause_restart_and_quit() {
+        let mut f = Frontend::default();
+        assert!(!f.handle_key(KeyCode::Space, false, false));
+        assert_eq!(f.app.game.state, pong_low_level_common::State::Ready);
+        f.handle_key(KeyCode::Space, true, false);
+        assert_eq!(f.app.game.state, pong_low_level_common::State::Playing);
+        f.handle_key(KeyCode::Space, true, true);
+        assert_eq!(f.app.game.state, pong_low_level_common::State::Playing);
+        f.handle_key(KeyCode::Space, true, false);
+        assert_eq!(f.app.game.state, pong_low_level_common::State::Paused);
+        f.handle_key(KeyCode::Space, true, false);
+        assert_eq!(f.app.game.state, pong_low_level_common::State::Playing);
+        f.app.game.scores = [2, 4];
+        f.handle_key(KeyCode::KeyR, true, false);
+        assert_eq!(f.app.game.scores, [0, 0]);
+        assert!(f.handle_key(KeyCode::Escape, true, false));
+    }
     #[test]
     fn aliases_remain_active_until_each_binding_releases() {
         for (a, b, up) in [
