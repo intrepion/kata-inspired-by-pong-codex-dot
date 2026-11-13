@@ -24,6 +24,24 @@ function candidates(root) {
  }
  visit(root); return found;
 }
+// Audited against the published raylib 6.0.0 archive and its recorded upstream revision.
+// Hash the complete source before taking only its original leading comment.
+const raylibHeaders=Object.freeze([
+ ['src/lib.rs','ede8d8a5446ea278d1a91171c0a09a23623b627c3dd1188a072e4d0fd02799b4'],
+ ['src/ease.rs','38b8a54d114f412698eba7b159a639aa62cbe6b6315714010e7dd447fb21b46e'],
+ ['src/prelude.rs','b3e3d48997507630dbfe1948f9b8fbda079647435da8edf94f1f6ea8a572e511'],
+ ['src/core/math.rs','0183cdc9933b947bd8a77a230c54acd7f741bba183a315a585657699a45c4b1d'],
+]);
+export function auditedSourceHeaders(root,entries) {
+ return entries.map(([path,expected])=>{
+  const f=safeFile(root,resolve(root,path));
+  if(f.sha256!==expected)throw Error('Audited source hash mismatch: '+path);
+  const end=f.text.indexOf('*/');
+  if(!f.text.startsWith('/*')||end<2)throw Error('Missing audited source header: '+path);
+  const text=f.text.slice(0,end+2);
+  return {source:f.source+' (leading comment)',sha256:digest(Buffer.from(text)),bytes:Buffer.byteLength(text),text};
+ });
+}
 export function buildNoticeBundle(metadata,repoRoot,{platform='Linux'}={}) {
  if(!['Linux','Windows','macOS'].includes(platform)) throw Error('Unsupported platform label');
  if(!Array.isArray(metadata.packages)||!Array.isArray(metadata.resolve?.nodes)) throw Error('Resolved Cargo metadata required');
@@ -39,6 +57,7 @@ export function buildNoticeBundle(metadata,repoRoot,{platform='Linux'}={}) {
    files=[join(root,'LICENSE')];fallback=true;
   }
   const notices=files.map(f=>safeFile(fallback?root:dir,f));
+  if(pkg.name==='raylib'&&pkg.version==='6.0.0'&&pkg.source==='registry+https://github.com/rust-lang/crates.io-index')notices.push(...auditedSourceHeaders(dir,raylibHeaders));
   packages.push({name:pkg.name,version:pkg.version,license:pkg.license??null,origin:pkg.source?.startsWith('registry+')?'registry':pkg.source?'external':'local',root_mit_fallback:fallback,notices});
  }
  const missing=packages.filter(p=>!p.notices.length).map(p=>p.name+'@'+p.version);
