@@ -386,7 +386,8 @@ fn main() -> Result<(), blue_engine::error::Error> {
         }
         rect(engine, "player", 32., game.player-PADDLE_H/2., PADDLE_W, PADDLE_H, 0.);
         rect(engine, "cpu", W-44., game.cpu-PADDLE_H/2., PADDLE_W, PADDLE_H, 0.);
-        rect(engine, "ball", game.ball.x-BALL, game.ball.y-BALL, BALL*2., BALL*2., 0.);
+        // Keep the ball in front of the net and paddles, but behind status panels.
+        rect(engine, "ball", game.ball.x-BALL, game.ball.y-BALL, BALL*2., BALL*2., 0.05);
         for side in 0..2 {
             for (part, (x, y, width, height)) in zero_score_parts(game.scores[side]).into_iter().enumerate() {
                 rect(engine, &format!("score-zero-{side}-{part}"), 330. + side as f32 * 170. + x, 20. + y, width, height, 0.);
