@@ -1,0 +1,42 @@
+[
+  {
+    "name": "gdextension-api",
+    "version": "0.3.3",
+    "license": "MPL-2.0"
+  },
+  {
+    "name": "godot",
+    "version": "0.4.5",
+    "license": "MPL-2.0"
+  },
+  {
+    "name": "godot-bindings",
+    "version": "0.4.5",
+    "license": "MPL-2.0"
+  },
+  {
+    "name": "godot-cell",
+    "version": "0.4.5",
+    "license": "MPL-2.0"
+  },
+  {
+    "name": "godot-codegen",
+    "version": "0.4.5",
+    "license": "MPL-2.0"
+  },
+  {
+    "name": "godot-core",
+    "version": "0.4.5",
+    "license": "MPL-2.0"
+  },
+  {
+    "name": "godot-ffi",
+    "version": "0.4.5",
+    "license": "MPL-2.0"
+  },
+  {
+    "name": "godot-macros",
+    "version": "0.4.5",
+    "license": "MPL-2.0"
+  }
+]

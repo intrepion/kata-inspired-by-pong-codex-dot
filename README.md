@@ -82,6 +82,8 @@ A minimal Windows Wry/Tao fixture compiles with no restricted Cargo license expr
 
 Wry/Tao no-IPC boundary model passes Windows API tests; origin, CSP and actual WebView enforcement remain unresolved. See [security investigation](docs/packaging/WRY-TAO-SECURITY-BOUNDARY-INVESTIGATION.md).
 
+Windows Godot instrumented extension map attributes objects to three MPL-declared bindings; editor inventory also flags a CA-certificate entry. See [target-specific findings](docs/packaging/GODOT-WINDOWS-MPL-LINK-INVENTORY.md).
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
