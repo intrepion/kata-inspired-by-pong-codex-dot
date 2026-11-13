@@ -34,7 +34,7 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
-Held-input audit follow-up: desktop adapter/model fixes are documented; native mobile touch held across a pause remains a source-review concern requiring platform reproduction. [Coverage and next checks](docs/HELD-INPUT-COVERAGE-20261113.md).
+Held-input audit follow-up: Swift retained-touch movement was reproduced at model level and guarded; 14 Swift tests and an iOS Simulator build pass, while overlapping simulator touches remain unverified. Android remains a separate source-review concern. [Coverage](docs/HELD-INPUT-COVERAGE-20261113.md); [Swift fix and limits](docs/SWIFT-HELD-TOUCH-PAUSE-FIX.md).
 
 Omarchy Ratatui enhanced-key repeat fix: ten release tests and model-matched terminal-cell replay pass; actual terminal input remains open. [Evidence](docs/RATATUI-HELD-REPEAT-FIX.md).
 
