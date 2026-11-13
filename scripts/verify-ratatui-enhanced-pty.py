@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """Exercise a Ratatui binary with synthetic terminal input in a PTY.
 
-Usage: python3 scripts/verify-ratatui-enhanced-pty.py BINARY RAW_OUTPUT [--fallback]
+Usage: python3 scripts/verify-ratatui-enhanced-pty.py BINARY RAW_OUTPUT [--fallback|--overlap]
 RAW_OUTPUT must not exist. This is not a real-terminal or physical-input test.
 """
 import sys
 import os,pty,fcntl,termios,struct,subprocess,select,time,codecs,re,signal
-if len(sys.argv) not in (3, 4) or (len(sys.argv) == 4 and sys.argv[3] != '--fallback'):
+if len(sys.argv) not in (3, 4) or (len(sys.argv) == 4 and sys.argv[3] not in ('--fallback', '--overlap')):
  raise SystemExit(__doc__)
 binary, raw_output = sys.argv[1:3]
-fallback = len(sys.argv) == 4
+fallback = len(sys.argv) == 4 and sys.argv[3] == '--fallback'
+overlap = len(sys.argv) == 4 and sys.argv[3] == '--overlap'
 if os.path.exists(raw_output):
  raise SystemExit('Refusing to overwrite raw output: ' + raw_output)
 m,s=pty.openpty(); fcntl.ioctl(s,termios.TIOCSWINSZ,struct.pack('HHHH',30,100,0,0)); before=termios.tcgetattr(s)
@@ -55,7 +56,13 @@ def pump(duration):
     col+=1
 
 def paddle():
- return tuple((i, ''.join(line[5:7])) for i,line in enumerate(screen) if any(c in '█▄▀' for c in line[5:7]))
+ # Ignore isolated ball cells when the ball crosses the paddle columns.
+ rows=[(i, ''.join(line[5:7])) for i,line in enumerate(screen) if any(c in '█▄▀' for c in line[5:7])]
+ groups=[]
+ for item in rows:
+  if not groups or item[0] != groups[-1][-1][0]+1: groups.append([])
+  groups[-1].append(item)
+ return tuple(max(groups, key=len)) if groups else ()
 def state(expected):
  assert expected in ''.join(screen[0]), (expected, ''.join(screen[0]))
 def send(seq,secs=.14): os.write(m,seq); pump(secs)
@@ -78,6 +85,26 @@ try:
   assert termios.tcgetattr(s)==before, 'terminal attributes not restored'
   print('PASS fallback: W latches up; X stops; S latches down; pause/resume clears movement; Q exits; termios restored')
   print('player paddle top rows:',initial[0][0],moving[0][0],latched[0][0],stopped[0][0],down[0][0],paused[0][0])
+ elif overlap:
+  assert query and 'Hold' in ''.join(screen[1]), 'enhanced keyboard path unavailable'
+  state('Ready'); send(b'\x1b[32;1:1u'); state('Playing'); initial=paddle()
+  send(b'\x1b[119;1:1u',.12); up=paddle()
+  assert up[0][0] < initial[0][0], (initial,up)
+  send(b'\x1b[115;1:1u'); opposed=paddle(); pump(.2)
+  assert paddle() == opposed, (opposed,paddle())
+  send(b'\x1b[119;1:3u',.2); down=paddle()
+  assert down[0][0] > opposed[0][0], (opposed,down)
+  send(b'\x1b[115;1:3u'); stopped=paddle(); pump(.2)
+  assert paddle() == stopped, (stopped,paddle())
+  send(b'\x1b[119;1:1u',.08); send(b'\x1b[1;1:1A',.08)
+  send(b'\x1b[119;1:3u',.12); alias=paddle(); pump(.12)
+  assert paddle()[0][0] < alias[0][0], (alias,paddle())
+  send(b'\x1b[1;1:3A'); released=paddle(); pump(.2)
+  assert paddle() == released, (released,paddle())
+  send(b'\x1b[113;1:1u'); assert p.wait(timeout=2)==0
+  assert termios.tcgetattr(s)==before, 'terminal attributes not restored'
+  print('PASS opposing W/S cancel; releasing W leaves S moving; releasing S stops; Up remains held after W release; releasing Up stops; Q exits; termios restored')
+  print('player paddle top rows:',initial[0][0],up[0][0],opposed[0][0],down[0][0],stopped[0][0],alias[0][0],released[0][0])
  else:
   assert query and 'Hold' in ''.join(screen[1]), 'enhanced keyboard path unavailable'
   state('Ready'); initial=paddle()
