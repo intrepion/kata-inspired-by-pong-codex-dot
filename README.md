@@ -1,5 +1,7 @@
 # Rallylight
 
+Piston now draws Ready and Paused indicators in the court; Mac geometry tests and a cached release build pass, with rendered verification still open. [Evidence](docs/packaging/PISTON-STATE-MAC-20261113.md)
+
 The shared low-level Ready screen now shows a play symbol instead of pause bars; Mac raster and model checks pass. [Evidence](docs/packaging/LOWLEVEL-READY-MAC-20261113.md)
 
 SDL3, ash and softbuffer now share an in-court winner indication; Mac model/raster checks pass, with native runtime verification still open. [Evidence](docs/packaging/LOWLEVEL-WINNER-MAC-20261113.md)
@@ -809,3 +811,5 @@ SDL3 now ignores queued pause/restart actions while unfocused; [Omarchy evidence
 Pixels, raw wgpu, ash, softbuffer and ggez now ignore live keydowns while unfocused; [Omarchy evidence](docs/packaging/WINDOWED-UNFOCUSED-ACTIONS-OMARCHY.md) records the regressions and runtime limits.
 
 Piston and Fyrox now ignore live keydowns after reported focus loss until focus returns; [Omarchy evidence](docs/packaging/PISTON-FYROX-UNFOCUSED-OMARCHY.md) documents tests and a Miniquad callback limitation.
+
+Miniquad gates reported focus loss on Linux while preserving its previous macOS and Windows callback behavior; [Omarchy evidence](docs/packaging/MINIQUAD-LINUX-FOCUS-OMARCHY.md) records callback limits and an incomplete-capture result.

@@ -69,7 +69,34 @@ fn handle_key_down(
     quit
 }
 
+#[derive(Default)]
+struct FocusGate {
+    lost: bool,
+}
+impl FocusGate {
+    fn on_loss(&mut self, reliable: bool) {
+        if reliable {
+            self.lost = true;
+        }
+    }
+    fn on_restore(&mut self) {
+        self.lost = false;
+    }
+    fn allows_input(&self) -> bool {
+        !self.lost
+    }
+}
+fn focused_key_down(
+    game: &mut Game,
+    movement: &mut MovementInput,
+    gate: &FocusGate,
+    key: KeyCode,
+    repeat: bool,
+) -> bool {
+    gate.allows_input() && handle_key_down(game, movement, key, repeat)
+}
 struct App {
+    focus_gate: FocusGate,
     ctx: Box<dyn RenderingBackend>,
     pipeline: Pipeline,
     bindings: Bindings,
@@ -115,6 +142,7 @@ impl App {
             );
         }
         Self {
+            focus_gate: FocusGate::default(),
             trace_input: std::env::args().any(|arg| arg == "--trace-input"),
             benchmarking,
             benchmark: benchmarking
@@ -327,7 +355,13 @@ impl EventHandler for App {
         if self.demo.is_some() || self.benchmarking {
             return;
         }
-        if handle_key_down(&mut self.game, &mut self.movement, k, repeat) {
+        if focused_key_down(
+            &mut self.game,
+            &mut self.movement,
+            &self.focus_gate,
+            k,
+            repeat,
+        ) {
             window::request_quit();
         }
     }
@@ -343,12 +377,16 @@ impl EventHandler for App {
         }
     }
     fn window_minimized_event(&mut self) {
+        self.focus_gate.on_loss(cfg!(target_os = "linux"));
         if self.demo.is_some() || self.benchmarking {
             return;
         }
         self.game.pause();
         self.movement.clear();
         self.acc = 0.;
+    }
+    fn window_restored_event(&mut self) {
+        self.focus_gate.on_restore();
     }
 }
 fn benchmark_args(args: &[String]) -> bool {
@@ -454,6 +492,30 @@ mod movement_tests {
 #[cfg(test)]
 mod control_tests {
     use super::*;
+    #[test]
+    fn focus_gate_blocks_reliable_loss_and_preserves_ambiguous_move() {
+        let mut gate = FocusGate::default();
+        let mut game = Game::new(42);
+        game.start();
+        game.scores = [3, 2];
+        game.pause();
+        let mut movement = MovementInput::default();
+        gate.on_loss(true);
+        assert!(!gate.allows_input());
+        focused_key_down(&mut game, &mut movement, &gate, KeyCode::Space, false);
+        focused_key_down(&mut game, &mut movement, &gate, KeyCode::R, false);
+        assert_eq!(game.state, State::Paused);
+        assert_eq!(game.scores, [3, 2]);
+        gate.on_restore();
+        assert!(gate.allows_input());
+        focused_key_down(&mut game, &mut movement, &gate, KeyCode::Space, false);
+        assert_eq!(game.state, State::Playing);
+        gate.on_loss(false);
+        assert!(
+            gate.allows_input(),
+            "ambiguous macOS window move must not disable input"
+        );
+    }
     #[test]
     fn active_restart_clears_held_movement() {
         for restart in [KeyCode::Enter, KeyCode::KpEnter, KeyCode::R] {

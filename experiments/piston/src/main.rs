@@ -70,6 +70,17 @@ fn winner_cells(game: &Game) -> Vec<[f64; 4]> {
     }
     cells
 }
+fn state_indicator_cells(state: State) -> Vec<[f64; 4]> {
+    match state {
+        State::Ready => [8., 16., 24., 32., 24., 16., 8.]
+            .into_iter()
+            .enumerate()
+            .map(|(i, width)| [430., 222. + i as f64 * 8., width, 8.])
+            .collect(),
+        State::Paused => vec![[420., 225., 12., 50.], [468., 225., 12., 50.]],
+        State::Playing | State::Over => Vec::new(),
+    }
+}
 
 // Returns whether the event resets the fixed-step clock.
 fn key_press(
@@ -131,6 +142,22 @@ fn key_release(held: &mut [bool; 4], pressed: &mut std::collections::HashSet<Key
 #[cfg(test)]
 mod control_tests {
     use super::*;
+    #[test]
+    fn ready_play_symbol_and_pause_bars_match_state() {
+        let mut game = Game::new(42);
+        let ready = state_indicator_cells(game.state);
+        assert_eq!(ready.len(), 7);
+        assert!(ready.contains(&[430., 246., 32., 8.]));
+        game.start();
+        assert!(state_indicator_cells(game.state).is_empty());
+        game.pause();
+        assert_eq!(
+            state_indicator_cells(game.state),
+            vec![[420., 225., 12., 50.], [468., 225., 12., 50.]]
+        );
+        game.state = State::Over;
+        assert!(state_indicator_cells(game.state).is_empty());
+    }
     #[test]
     fn unfocused_key_actions_do_not_resume_or_restart() {
         let mut g = Game::new(42);
@@ -444,7 +471,10 @@ fn draw_scene<G: piston_window::graphics::Graphics>(
             );
         }
     }
-    for cell in winner_cells(game) {
+    for cell in state_indicator_cells(game.state)
+        .into_iter()
+        .chain(winner_cells(game))
+    {
         rectangle([0.85, 1., 0.68, 1.], cell, t, g);
     }
 }
