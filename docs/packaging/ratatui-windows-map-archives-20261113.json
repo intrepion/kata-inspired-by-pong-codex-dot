@@ -1,0 +1,156 @@
+[
+  {
+    "archive": "liballoc-f9fd422e5eb593ae",
+    "category": "sysroot-or-unmapped",
+    "package": null,
+    "version": null,
+    "license": null
+  },
+  {
+    "archive": "libcompact_str-3aadcc4eb08b1de2",
+    "category": "cargo-registry",
+    "package": "compact_str",
+    "version": "0.8.2",
+    "license": "MIT"
+  },
+  {
+    "archive": "libcore-f9527ed7f1165c0a",
+    "category": "sysroot-or-unmapped",
+    "package": null,
+    "version": null,
+    "license": null
+  },
+  {
+    "archive": "libcrossterm_winapi-b1a0700b0c688aed",
+    "category": "cargo-registry",
+    "package": "crossterm_winapi",
+    "version": "0.9.1",
+    "license": "MIT"
+  },
+  {
+    "archive": "libcrossterm-5705d87b9de728b4",
+    "category": "cargo-registry",
+    "package": "crossterm",
+    "version": "0.28.1",
+    "license": "MIT"
+  },
+  {
+    "archive": "libfdeflate-bf2f62a588cc920d",
+    "category": "cargo-registry",
+    "package": "fdeflate",
+    "version": "0.3.7",
+    "license": "MIT OR Apache-2.0"
+  },
+  {
+    "archive": "libitoa-6c9beba155c8078a",
+    "category": "cargo-registry",
+    "package": "itoa",
+    "version": "1.0.19",
+    "license": "MIT OR Apache-2.0"
+  },
+  {
+    "archive": "libmemchr-a2f23cd0c351d48b",
+    "category": "cargo-registry",
+    "package": "memchr",
+    "version": "2.8.3",
+    "license": "Unlicense OR MIT"
+  },
+  {
+    "archive": "libpanic_unwind-4531eec6307bead5",
+    "category": "sysroot-or-unmapped",
+    "package": null,
+    "version": null,
+    "license": null
+  },
+  {
+    "archive": "libparking_lot_core-438a0195f12a48f7",
+    "category": "cargo-registry",
+    "package": "parking_lot_core",
+    "version": "0.9.12",
+    "license": "MIT OR Apache-2.0"
+  },
+  {
+    "archive": "libparking_lot-18404b662c797428",
+    "category": "cargo-registry",
+    "package": "parking_lot",
+    "version": "0.12.5",
+    "license": "MIT OR Apache-2.0"
+  },
+  {
+    "archive": "libpng-145dc437d65a66d7",
+    "category": "cargo-registry",
+    "package": "png",
+    "version": "0.17.16",
+    "license": "MIT OR Apache-2.0"
+  },
+  {
+    "archive": "libpong_core-57f837150ca5de8f",
+    "category": "first-party",
+    "package": "pong-core",
+    "version": "0.1.0",
+    "license": "MIT"
+  },
+  {
+    "archive": "libpong_scenario-56b1317794e333ff",
+    "category": "first-party",
+    "package": "pong-scenario",
+    "version": "0.1.0",
+    "license": "MIT"
+  },
+  {
+    "archive": "libratatui-8f9260eae70828cf",
+    "category": "cargo-registry",
+    "package": "ratatui",
+    "version": "0.29.0",
+    "license": "MIT"
+  },
+  {
+    "archive": "librustc_demangle-16b50824155ae42c",
+    "category": "sysroot-or-unmapped",
+    "package": null,
+    "version": null,
+    "license": null
+  },
+  {
+    "archive": "libserde_json-a7a7d68456940005",
+    "category": "cargo-registry",
+    "package": "serde_json",
+    "version": "1.0.154",
+    "license": "MIT OR Apache-2.0"
+  },
+  {
+    "archive": "libstd-3854312d46c17a37",
+    "category": "sysroot-or-unmapped",
+    "package": null,
+    "version": null,
+    "license": null
+  },
+  {
+    "archive": "libunicode_segmentation-7c75f99e379e7072",
+    "category": "cargo-registry",
+    "package": "unicode-segmentation",
+    "version": "1.13.3",
+    "license": "MIT OR Apache-2.0"
+  },
+  {
+    "archive": "libunicode_width-27f3ea30294ff252",
+    "category": "cargo-registry",
+    "package": "unicode-width",
+    "version": "0.2.0",
+    "license": "MIT OR Apache-2.0"
+  },
+  {
+    "archive": "libunicode_width-f24c3880a427debc",
+    "category": "cargo-registry",
+    "package": "unicode-width",
+    "version": "0.1.14",
+    "license": "MIT OR Apache-2.0"
+  },
+  {
+    "archive": "libzmij-dd38cfd3f8ec485d",
+    "category": "cargo-registry",
+    "package": "zmij",
+    "version": "1.0.23",
+    "license": "MIT"
+  }
+]
