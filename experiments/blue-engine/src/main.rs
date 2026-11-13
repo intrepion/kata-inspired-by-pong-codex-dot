@@ -48,6 +48,40 @@ fn status_label(game: &Game) -> &'static str {
         State::Over => "Match over",
     }
 }
+fn court_message(game: &Game) -> Option<&'static str> {
+    match game.state {
+        State::Ready => Some("READY"), State::Playing => None, State::Paused => Some("PAUSED"),
+        State::Over if game.scores[0] > game.scores[1] => Some("YOU WIN"),
+        State::Over if game.scores[1] > game.scores[0] => Some("CPU WINS"),
+        State::Over => Some("OVER"),
+    }
+}
+fn glyph(ch: u8) -> [u8; 7] {
+    match ch {
+        b'A'=>[14,17,17,31,17,17,17], b'C'=>[14,17,16,16,16,17,14],
+        b'D'=>[30,17,17,17,17,17,30], b'E'=>[31,16,16,30,16,16,31],
+        b'I'=>[14,4,4,4,4,4,14], b'N'=>[17,25,21,19,17,17,17],
+        b'O'=>[14,17,17,17,17,17,14], b'P'=>[30,17,17,30,16,16,16],
+        b'R'=>[30,17,17,30,20,18,17], b'S'=>[15,16,16,14,1,1,30],
+        b'U'=>[17,17,17,17,17,17,14], b'V'=>[17,17,17,17,17,10,4],
+        b'W'=>[17,17,17,21,21,21,10], b'Y'=>[17,17,10,4,4,4,4],
+        _=>[0;7],
+    }
+}
+// Each row of a five-column glyph has at most three contiguous runs.
+fn glyph_runs(bits: u8) -> [Option<(usize, usize)>; 3] {
+    let mut runs = [None; 3];
+    let mut count = 0;
+    let mut col = 0;
+    while col < 5 {
+        if bits & (1 << (4-col)) == 0 { col += 1; continue; }
+        let start = col;
+        while col < 5 && bits & (1 << (4-col)) != 0 { col += 1; }
+        runs[count] = Some((start, col-start));
+        count += 1;
+    }
+    runs
+}
 fn rect(engine: &mut Engine, name: &str, x: f32, y: f32, width: f32, height: f32, z: f32) {
     if let Some(object) = engine.objects.get_mut(name) {
         // Hide zero-sized score markers without creating a singular inverse matrix.
@@ -148,6 +182,16 @@ fn main() -> Result<(), blue_engine::error::Error> {
                 .set_color(0.85, 1., 0.68, 1.);
             rect(&mut engine, &name, 0., 0., 0., 0., 0.);
         }
+    }
+    square("status-panel", ObjectSettings::default(), &mut engine.renderer, &mut engine.objects)?;
+    engine.objects.get_mut("status-panel").unwrap().set_color(0.047, 0.129, 0.118, 1.);
+    rect(&mut engine, "status-panel", 0., 0., 0., 0., 0.1);
+    // Reuse fixed rectangles for the glyph runs instead of allocating GPU objects per frame.
+    for i in 0..8*7*3 {
+        let name = format!("status-{i}");
+        square(&name, ObjectSettings::default(), &mut engine.renderer, &mut engine.objects)?;
+        engine.objects.get_mut(name.as_str()).unwrap().set_color(1., 0.75, 0.32, 1.);
+        rect(&mut engine, &name, 0., 0., 0., 0., 0.1);
     }
     let mut game = Game::new(pong_scenario::SEED);
     let mut demo = pong_scenario::Demo::from_args();
@@ -254,6 +298,15 @@ fn main() -> Result<(), blue_engine::error::Error> {
             let width = if point < game.scores[side] { 8. } else { 0. };
             rect(engine, &name, 330.+side as f32*170.+point as f32*12., 20., width, 18., 0.);
         }}
+        let message = court_message(&game).unwrap_or("");
+        let left = (W - message.len() as f32 * 24.) / 2.;
+        rect(engine, "status-panel", left-8., 152., if message.is_empty() {0.} else {message.len() as f32*24.+16.}, 44., 0.1);
+        for i in 0..8*7*3 {
+            let ch = i / 21; let row = i / 3 % 7; let run = i % 3;
+            let segment = message.as_bytes().get(ch).and_then(|c| glyph_runs(glyph(*c)[row])[run]);
+            let (x, width) = segment.map_or((0., 0.), |(start, len)| (left + ch as f32*24. + start as f32*4., len as f32*4.));
+            rect(engine, &format!("status-{i}"), x, 160. + row as f32*4., width, if width > 0. {4.} else {0.}, 0.2);
+        }
         #[cfg(feature="windowed")]
         if benchmarking && !benchmark_done {
             let (width,height)=(engine.renderer.config.width,engine.renderer.config.height);
@@ -322,6 +375,23 @@ mod input_tests {
             game.start(); game.scores = scores; game.serve = 0.; game.ball.x = x; game.ball.y = H / 2.; game.ball.vx = vx; game.ball.vy = 0.;
             game.step(0.02, 0.); assert_eq!(status_label(&game), expected);
             game.start(); assert_eq!(status_label(&game), "Playing");
+        }
+    }
+    #[test]
+    fn court_messages_cover_states_and_glyph_runs() {
+        let mut game = Game::new(42);
+        assert_eq!(court_message(&game), Some("READY"));
+        game.start(); assert_eq!(court_message(&game), None);
+        game.pause(); assert_eq!(court_message(&game), Some("PAUSED"));
+        for (scores, expected) in [([7, 1], "YOU WIN"), ([1, 7], "CPU WINS"), ([7, 7], "OVER")] {
+            game.state = State::Over; game.scores = scores;
+            assert_eq!(court_message(&game), Some(expected));
+            assert!(expected.len() <= 8);
+            for ch in expected.bytes().filter(|ch| *ch != b' ') { assert_ne!(glyph(ch), [0;7]); }
+        }
+        for bits in 0..32 {
+            let reconstructed = glyph_runs(bits).into_iter().flatten().fold(0, |value, (start, len)| value | (((1 << len)-1) << (5-start-len)));
+            assert_eq!(reconstructed, bits);
         }
     }
     #[test]
