@@ -2,7 +2,7 @@
 
 Mac game-over input cross-check: nine native adapter suites and the shared web controller pass; Swift simulator rebuild is blocked by local service and cache permissions. [Evidence](docs/packaging/GAMEOVER-INPUT-MAC-20261113.md)
 
-Swift paddle collision now evaluates ball and paddle positions at contact and advances the remainder; Mac model regressions pass, with device and XCTest package checks outstanding. [Evidence](docs/packaging/SWIFT-COLLISION-MAC-20261113.md)
+Swift paddle collision now evaluates ball and paddle positions at contact and advances the remainder; Mac model and selected XCTest regressions pass, with device and SwiftPM package checks outstanding. [Evidence](docs/packaging/SWIFT-COLLISION-MAC-20261113.md)
 
 Mac cross-check: polling and four-engine non-playing-input regression suites, shared GUI/web controllers, and Godot headless injected-input smoke pass; physical input and rebuilt client replay remain open. [Evidence](docs/packaging/NONPLAYING-INPUT-MAC-20261113.md)
 
