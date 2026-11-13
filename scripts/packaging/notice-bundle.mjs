@@ -42,9 +42,10 @@ export function auditedSourceHeaders(root,entries) {
   return {source:f.source+' (leading comment)',sha256:digest(Buffer.from(text)),bytes:Buffer.byteLength(text),text};
  });
 }
-// Exact upstream root notices; each rule is bound to the published crate's
+// Exact upstream or source-referenced license texts; each rule is bound to the published crate's
 // recorded VCS revision and a source file independently matched to upstream.
 const upstreamRules=Object.freeze({
+ 'selectors@0.38.0':{rev:'572ecba2d1600e7c3d490586692a209faf703baa',path:'selectors',sourcePath:'lib.rs',sourceHash:'d54c6e13e9e952dac17d209171df8657e3cae93beaddace4906150cdec8d02e9',files:[['mozilla-MPL-2.0.txt','fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85','https://github.com/mozilla/openbadges-bakery/blob/3057b06f75997c22ad4f039960dd2688578c3d32/LICENSE-MPL-2.0']]},
  'alloc-stdlib@0.3.0':{rev:'0a81fd6928ea3b33c8cd484aa4575d50ffb98012',path:'alloc-stdlib',sourceHash:'3b1358fd99790a1063f0f2b4358d3771a75fcc3ee8e4560984326f86a8c56b0a',files:[['alloc-stdlib-LICENSE.txt','c0c56f26d9c051cac4d200c34c84e7ae9aaa853e01a982a1df08b09931e518ae','https://github.com/dropbox/rust-alloc-no-stdlib/blob/0a81fd6928ea3b33c8cd484aa4575d50ffb98012/LICENSE']]},
  'dlopen2@0.8.2':{rev:'cc80e4a0a90d499b677fdf7743699b4b3a43a989',path:'dlopen2',sourceHash:'e99da1fe29c4c9391b6e0f2de4220da7b5dafa62649a9889a9ab4a9f3722cbb5',files:[['dlopen2-LICENSE.txt','39fa265207450e77c62e90c5594a06c085b655d8374c7ced4bf7894b6bd95dd2','https://github.com/OpenByteDev/dlopen2/blob/cc80e4a0a90d499b677fdf7743699b4b3a43a989/LICENSE']]},
  'dlopen2_derive@0.4.3':{rev:'cc80e4a0a90d499b677fdf7743699b4b3a43a989',path:'dlopen2-derive',sourceHash:'f172e1b7acca5edabefc867c1f7dd8f6deaf3eeb0f53097740961fe47b770a72',files:[['dlopen2-LICENSE.txt','39fa265207450e77c62e90c5594a06c085b655d8374c7ced4bf7894b6bd95dd2','https://github.com/OpenByteDev/dlopen2/blob/cc80e4a0a90d499b677fdf7743699b4b3a43a989/LICENSE']]},
@@ -53,7 +54,7 @@ const upstreamRules=Object.freeze({
 export function auditedUpstreamNotices(packageRoot,noticeRoot,rule) {
  const vcs=JSON.parse(safeFile(packageRoot,resolve(packageRoot,'.cargo_vcs_info.json')).text);
  if(vcs.git?.sha1!==rule.rev||vcs.path_in_vcs!==rule.path)throw Error('Audited crate revision mismatch');
- if(safeFile(packageRoot,resolve(packageRoot,'src/lib.rs')).sha256!==rule.sourceHash)throw Error('Audited crate source hash mismatch');
+ if(safeFile(packageRoot,resolve(packageRoot,rule.sourcePath??'src/lib.rs')).sha256!==rule.sourceHash)throw Error('Audited crate source hash mismatch');
  return rule.files.map(([path,expected,url])=>{
   const f=safeFile(noticeRoot,resolve(noticeRoot,path));
   if(f.sha256!==expected)throw Error('Audited upstream notice hash mismatch');
