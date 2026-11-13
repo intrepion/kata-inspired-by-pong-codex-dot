@@ -134,6 +134,8 @@ Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequent
 
 Dioxus local-libxdo launcher now rejects package paths containing loader separators; relocated release replay still passes. [Evidence](docs/packaging/DIOXUS-LIBRARY-PATH-SEPARATOR-FIX.md).
 
+Omarchy Ratatui musl empty-environment PTY: enhanced and fallback flows passed from a read-only installation with absent HOME/XDG paths; clean-machine and physical input remain open. [Evidence](docs/packaging/RATATUI-MUSL-EMPTY-ENV-OMARCHY.md).
+
 Omarchy Ratatui musl distribution trace: installed target inputs match official archives; 186 linked libc members have source-name candidates; an incomplete notice draft preserves the musl and selected math notices, with final attribution review still open. [Evidence](docs/packaging/RATATUI-MUSL-DISTRIBUTION-TRACE.md).
 
 Omarchy Ratatui musl provenance: 25 linked Cargo archives mapped and verified against cached sources; exact distributed sysroot source and notice review remain open. [Evidence](docs/packaging/RATATUI-MUSL-STATIC-PROVENANCE.md).
