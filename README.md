@@ -90,6 +90,8 @@ Mac softbuffer target-filtered license metadata screen: no declared LGPL, GPL-3 
 
 Mac bracket-lib target-filtered license screen: no declared LGPL, GPL-3 or MPL in 84 resolved packages; native/system components and full source review remain open. [Evidence](docs/packaging/BRACKET-MAC-LICENSE-SCREEN.md).
 
+Mac raylib target screen: no restricted Cargo declarations in 50 packages; raylib, GLFW and stb-named code is present and native/system notice review remains open. [Evidence](docs/packaging/RAYLIB-MAC-LICENSE-SCREEN.md).
+
 Mac Macroquad target graph: no restricted license declarations among 49 root-reachable packages; workspace-wide results and system-license limits are recorded separately. [Evidence](docs/packaging/MACROQUAD-MAC-LICENSE-SCREEN.md).
 
 Mac Slint audit: tested binary contains Slint core/backend symbols; GPL-3 is one of several declared alternatives, with royalty-free attribution terms requiring review. [Evidence](docs/packaging/SLINT-MAC-LICENSE-SCREEN.md). Mac Piston metadata screen found no restricted declarations in 216 packages; system and source review remain open. [Evidence](docs/packaging/PISTON-MAC-LICENSE-SCREEN.md).
