@@ -81,6 +81,16 @@ fn state_indicator_cells(state: State) -> Vec<[f64; 4]> {
         State::Playing | State::Over => Vec::new(),
     }
 }
+fn indicator_backing(game: &Game) -> Option<[f64; 4]> {
+    match game.state {
+        State::Ready | State::Paused => Some([412., 214., 76., 66.]),
+        State::Over => winner_label(game).map(|message| {
+            let width = message.len() as f64 * 36.;
+            [(W as f64 - width) / 2. - 8., 217., width + 16., 58.]
+        }),
+        State::Playing => None,
+    }
+}
 
 // Returns whether the event resets the fixed-step clock.
 fn key_press(
@@ -142,6 +152,21 @@ fn key_release(held: &mut [bool; 4], pressed: &mut std::collections::HashSet<Key
 #[cfg(test)]
 mod control_tests {
     use super::*;
+    #[test]
+    fn indicator_backing_contains_each_visible_cell() {
+        let mut game = Game::new(42);
+        for (state, scores) in [(State::Ready, [0, 0]), (State::Paused, [0, 0]), (State::Over, [7, 2]), (State::Over, [2, 7])] {
+            game.state = state; game.scores = scores;
+            let panel = indicator_backing(&game).unwrap();
+            let cells: Vec<_> = state_indicator_cells(state).into_iter().chain(winner_cells(&game)).collect();
+            assert!(!cells.is_empty());
+            for [x, y, w, h] in cells {
+                assert!(x >= panel[0] && y >= panel[1] && x+w <= panel[0]+panel[2] && y+h <= panel[1]+panel[3]);
+            }
+        }
+        game.state = State::Playing;
+        assert_eq!(indicator_backing(&game), None);
+    }
     #[test]
     fn ready_play_symbol_and_pause_bars_match_state() {
         let mut game = Game::new(42);
@@ -470,6 +495,10 @@ fn draw_scene<G: piston_window::graphics::Graphics>(
                 g,
             );
         }
+    }
+    // Cover the ball and net before drawing the state, preserving legibility.
+    if let Some(panel) = indicator_backing(game) {
+        rectangle([0.047, 0.129, 0.118, 1.], panel, t, g);
     }
     for cell in state_indicator_cells(game.state)
         .into_iter()
