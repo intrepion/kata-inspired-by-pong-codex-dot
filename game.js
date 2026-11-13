@@ -15,6 +15,22 @@ function createPointerButtons() {
         }
     };
 }
+// A pause ends all active movement sources; repeats and continuing drags cannot re-arm them.
+function createControls() {
+    const keys = new Set(), buttons = createPointerButtons(), drags = new Set();
+    return {
+        keyDown(key, repeat) { if (!repeat)
+            keys.add(key.toLowerCase()); },
+        keyUp(key) { keys.delete(key.toLowerCase()); },
+        buttonDown(id, dir) { buttons.press(id, dir); },
+        buttonUp(id) { buttons.release(id); },
+        dragDown(id) { drags.add(id); },
+        dragUp(id) { drags.delete(id); },
+        dragAllowed(id) { return drags.has(id); },
+        suspend() { keys.clear(); buttons.clear(); drags.clear(); },
+        axis() { return buttons.axis() + Number(keys.has('arrowdown') || keys.has('s')) - Number(keys.has('arrowup') || keys.has('w')); }
+    };
+}
 function createGame(random = Math.random) {
     const s = { player: H / 2, cpu: H / 2, ball: { x: W / 2, y: H / 2, vx: 0, vy: 0 }, scores: [0, 0], state: 'ready', serve: 0, random, cpuTarget: H / 2, cpuReaction: 0, resetBall: () => { }, start: () => { }, step: () => { } };
     s.resetBall = (direction) => { s.ball = { x: W / 2, y: H / 2, vx: direction * 350, vy: (random() - .5) * 180 }; s.serve = .65; s.cpuTarget = H / 2; s.cpuReaction = .3; };
@@ -174,7 +190,7 @@ function createScriptedReplay(manifest) {
     };
 }
 if (typeof module !== 'undefined')
-    module.exports = { createPointerButtons, createGame, createFrameLoop, parseScenario, createScriptedReplay, W, H, PADDLE_H, BALL };
+    module.exports = { createControls, createPointerButtons, createGame, createFrameLoop, parseScenario, createScriptedReplay, W, H, PADDLE_H, BALL };
 if (typeof document !== 'undefined') {
     function element(selector, kind) {
         const found = document.querySelector(selector);
@@ -185,7 +201,7 @@ if (typeof document !== 'undefined') {
     const canvas = element('#court', HTMLCanvasElement), context = canvas.getContext('2d');
     if (!context)
         throw new Error('Canvas 2D rendering is unavailable');
-    const ctx = context, keys = new Set();
+    const ctx = context;
     let game = createGame();
     const loop = createFrameLoop(game);
     const demoRequested = new URLSearchParams(location.search).has('scripted-test');
@@ -196,7 +212,7 @@ if (typeof document !== 'undefined') {
     if (demoRequested)
         fetch('scenarios/smoke-v1.txt').then(r => { if (!r.ok)
             throw Error('Scenario manifest unavailable'); return r.text(); }).then(text => { replay = createScriptedReplay(parseScenario(text)); game = replay.game; }).catch(e => { console.error(e); demoError = String(e); });
-    const pointerButtons = createPointerButtons();
+    const controls = createControls();
     const overlay = element('#overlay', HTMLElement), message = element('#message', HTMLElement), hint = element('#hint', HTMLElement), start = element('#start', HTMLButtonElement), pause = element('#pause', HTMLButtonElement), status = element('#status', HTMLElement);
     function sync() {
         element('#you', HTMLElement).textContent = String(game.scores[0]);
@@ -220,8 +236,10 @@ if (typeof document !== 'undefined') {
     function toggle() {
         if (demoRequested)
             return;
-        if (game.state === 'playing')
+        if (game.state === 'playing') {
+            controls.suspend();
             game.state = 'paused';
+        }
         else if (game.state === 'paused')
             game.state = 'playing';
         loop.reset();
@@ -232,8 +250,10 @@ if (typeof document !== 'undefined') {
             return;
         if (game.state === 'paused')
             game.state = 'playing';
-        else
+        else {
+            controls.suspend();
             game.start();
+        }
         loop.reset();
         sync();
     });
@@ -245,12 +265,12 @@ if (typeof document !== 'undefined') {
             e.preventDefault();
         if (e.key === ' ' && !e.repeat && (game.state === 'playing' || game.state === 'paused'))
             toggle();
-        keys.add(e.key.toLowerCase());
+        if (game.state === 'playing')
+            controls.keyDown(e.key, e.repeat);
     });
-    document.addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
+    document.addEventListener('keyup', e => controls.keyUp(e.key));
     window.addEventListener('blur', () => {
-        keys.clear();
-        pointerButtons.clear();
+        controls.suspend();
         if (game.state === 'playing')
             toggle();
     });
@@ -260,19 +280,23 @@ if (typeof document !== 'undefined') {
     });
     for (const [id, dir] of [['up', -1], ['down', 1]]) {
         const el = element('#' + id, HTMLButtonElement);
-        el.addEventListener('pointerdown', e => { if (demoRequested)
-            return; e.preventDefault(); pointerButtons.press(e.pointerId, dir); el.setPointerCapture(e.pointerId); });
+        el.addEventListener('pointerdown', e => { if (demoRequested || game.state !== 'playing')
+            return; e.preventDefault(); controls.buttonDown(e.pointerId, dir); el.setPointerCapture(e.pointerId); });
         for (const event of ['pointerup', 'pointercancel', 'lostpointercapture'])
-            el.addEventListener(event, e => { pointerButtons.release(e.pointerId); });
+            el.addEventListener(event, e => { controls.buttonUp(e.pointerId); });
     }
     canvas.addEventListener('pointerdown', e => {
-        if (e.pointerType !== 'mouse')
+        if (!demoRequested && game.state === 'playing' && e.pointerType !== 'mouse') {
+            controls.dragDown(e.pointerId);
             canvas.setPointerCapture(e.pointerId);
+        }
     });
+    for (const event of ['pointerup', 'pointercancel', 'lostpointercapture'])
+        canvas.addEventListener(event, e => controls.dragUp(e.pointerId));
     canvas.addEventListener('pointermove', e => {
         if (demoRequested)
             return;
-        if (e.buttons && e.pointerType !== 'mouse' && game.state === 'playing') {
+        if (e.buttons && e.pointerType !== 'mouse' && game.state === 'playing' && controls.dragAllowed(e.pointerId)) {
             const rect = canvas.getBoundingClientRect();
             game.player = clamp((e.clientY - rect.top) / rect.height * H, PADDLE_H / 2, H - PADDLE_H / 2);
         }
@@ -282,7 +306,7 @@ if (typeof document !== 'undefined') {
         if (demoRequested)
             replay?.frame(t);
         else
-            loop.advance(t, pointerButtons.axis() + (keys.has('arrowdown') || keys.has('s') ? 1 : 0) - (keys.has('arrowup') || keys.has('w') ? 1 : 0));
+            loop.advance(t, controls.axis());
         draw();
         sync();
         if (demoError)
