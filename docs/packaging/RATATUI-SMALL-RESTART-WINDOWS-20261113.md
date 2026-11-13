@@ -1,0 +1,5 @@
+# Ratatui small-terminal gate: Windows build check
+
+At checkpoint `2002840966d871451425c922d6923d23a779da85`, Ratatui adapter blob `83ce9a5c6d689bab9f47188724e8603f23bbec55` built with locked offline Windows stable MSVC Rust and passed all 11 existing tests. Those tests include small and normal TestBackend rendering but do not exercise the new queued resize and restart sequence. The debug executable SHA-256 was `bdca4df595220c8bd86b0bafa58128890fefab907dab42ff39c85162ecb30e66`. Cargo reported incremental hard-link failures and copied files instead. Previous executable and tests remain in sibling workspace directory `ratatui-small-gate-windows-20261113`.
+
+The separate Omarchy PTY regression is documented in `RATATUI-SMALL-RESTART-PTY-OMARCHY.md`; its Unix PTY harness was not run on Windows. No Windows terminal resize/key interaction, physical input or new replay was performed. Actual Windows terminal compatibility and focus delivery, clean-machine operation, license clearance and release qualification remain open.
