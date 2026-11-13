@@ -72,7 +72,7 @@ Each desktop cell is **build / runtime evidence**:
 | Bevy | B / I; Mesh2d rechecked at `55d0975` | B / I + scripted captures **with DX12**; default Vulkan **F** ([details](docs/WINDOWS-BEVY-DIAGNOSIS.md)) | B / S + scripted/PNG sample passed; real input blocked |
 | Tauri + Rust WASM | B / I | B / I | B / native scripted Canvas PNG samples passed; real input unverified |
 | Miniquad | B / I | Fresh MSVC B + 1 test; scripted/six PNG reported passed; native Return/Space still no start | Fresh `4f4da1d` B, 7 tests; relocated package replay and six app-owned PNGs, exact model match; physical input unverified ([details](docs/packaging/MINIQUAD-C77-OMARCHY-REPLAY.md)) |
-| pixels + winit | B / I | B / I | B / S + scripted/source PNG passed; real input blocked |
+| pixels + winit | B / I | B / I | Fresh `7495366` B, 5 frontend tests; relocated package replay and six app-owned source PNGs, exact model match; physical input unverified ([details](docs/packaging/PIXELS-C77-OMARCHY-REPLAY.md)) |
 | raw wgpu + winit | B / I | B / I | B / S + scripted/PNG sample passed; real input blocked |
 | Piston | B / I | B / I | B / S + scripted/PNG sample passed; real input blocked |
 | ggez | B / I; Mac surface fix verified | B / I on earlier snapshot | B / S + scripted/PNG sample passed; real input blocked |
