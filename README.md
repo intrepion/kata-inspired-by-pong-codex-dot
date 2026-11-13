@@ -112,6 +112,8 @@ Windows passed the nine native and shared web match-end input regressions; [the 
 
 Kotlin paddle collision now uses contact timing and remaining-step motion; [Windows JVM evidence](docs/packaging/KOTLIN-DIAGONAL-COLLISION-WINDOWS.md) includes regression and replay limits.
 
+Windows rebuilt the three focused-button web consumers and passed the shared model suite; [the report](docs/packaging/WEB-FOCUSED-BUTTON-KEYBOARD-WINDOWS.md) records browser limits.
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
