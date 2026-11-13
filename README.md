@@ -68,6 +68,8 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
+Omarchy SDL3 read-only package launch: scripted replay passes with a non-writable package directory and isolated home/XDG paths; clean-machine and physical-input checks remain open. [Evidence](docs/packaging/SDL3-READONLY-INSTALL-OMARCHY.md).
+
 Omarchy ggez isolated-directory launch: the relocated release replay passes with separate home/XDG directories; Mesa cache files were observed and retained. [Evidence](docs/packaging/GGEZ-ISOLATED-HOME-OMARCHY.md).
 
 Omarchy Fyrox held-pause release pilot: relocated replay matches the model; the app created working-directory state and future package guidance now flags it; physical input, removal and notices remain open. [Evidence](docs/packaging/FYROX-HELD-OMARCHY-RELEASE-PILOT.md).
