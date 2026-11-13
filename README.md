@@ -1,5 +1,7 @@
 # Rallylight
 
+Fira Mono is being evaluated as a ggez font replacement; an isolated Mac pilot covers ASCII and bounded automated interaction, with release and broader layout checks outstanding. [Evidence](docs/packaging/GGEZ-MAC-FIRA-PILOT-20261113.md)
+
 An original real-time paddle game inspired by Pong. Return the ball, steer shots with your paddle, and beat the computer to seven points. The computer has a short reaction delay and a limited paddle speed, so well-placed shots can get past it. This independent kata is not affiliated with or endorsed by Atari.
 
 Android held-touch pause and restart fixes: 16 model/unit tests pass and a debug APK builds; simultaneous device input remains unverified. [Evidence](docs/ANDROID-HELD-TOUCH-PAUSE-FIX.md).
