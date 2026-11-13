@@ -1,0 +1,5 @@
+# SDL3 focused Escape: Mac cross-check (2026-11-13)
+
+SDL3 source blob `d7c995ac1f91f28dae8e74c02a69f9a58ddc0109` from `3d0c0094b7ffdb336aa05183d2d3f59b5307ba5d`, source SHA-256 `8cf03ca38129ffd7539d8537141d5dfae7332c711afc4105c95ab9c958c0d34c`, was built with the local core source matching that checkpoint's core blob. The cached offline locked release build succeeded (executable SHA-256 `11a3e02386b93fcdc74d5c0d7a4231e9646bc12b116173f18e924317ccf70a33`), and all 12 SDL3 release tests passed. The constructed-event regression covers unfocused Escape, focused Escape, and Quit in both focus states.
+
+In the native Mac window, desktop automation sent Space and observed Playing, then sent Escape; the SDL3 app exited. This confirms that automated focused Escape still quits in this run. The constructed event test is adapter-level evidence, not an OS-delivered queued key after focus loss; that sequence, physical keyboard input, full gameplay, and release qualification remain unverified. The app bundle and prior binary remain under `/tmp/pong-sdl-focus-escape-native-mac-20261113-v1/`.
