@@ -895,3 +895,5 @@ The raylib focus-return action gate also passed [Mac release-profile polling tes
 The original browser game completed a live automated computer-win match and restart on Omarchy Chrome; [evidence](docs/packaging/ORIGINAL-COMPUTER-WIN-CHROME-OMARCHY.md) records the bounded scope.
 
 Raw wgpu's Mac candidate also passed a bounded [automated movement and pause check](docs/packaging/WGPU-MOVEMENT-MAC-20261113.md); physical input remains unverified.
+
+Raw wgpu's court action prompts were rebuilt and captured on Omarchy; [evidence](docs/packaging/WGPU-ACTION-PROMPTS-OMARCHY.md) records the paused render and remaining checks.
