@@ -2,20 +2,14 @@ diff --git a/experiments/blue-engine/src/main.rs b/experiments/blue-engine/src/m
 index e0ffafe..17d4892 100644
 --- a/experiments/blue-engine/src/main.rs
 +++ b/experiments/blue-engine/src/main.rs
-@@ -295,6 +295,10 @@ fn main() -> Result<(), blue_engine::error::Error> {
- 
-     let mut previous = Instant::now();
+@@ -297,2 +297,6 @@ fn main() -> Result<(), blue_engine::error::Error> {
      let mut previous_hint_state = None;
 +    #[cfg(feature = "capture-headless")]
 +    let trace_dir = std::path::PathBuf::from(std::env::var("BLUE_TRACE_DIR").expect("fixture trace directory"));
 +    #[cfg(feature = "capture-headless")]
 +    let mut trace_count = 0u32;
      #[cfg(feature = "windowed")]
-     let mut accumulator = 0.;
-     #[cfg(feature = "windowed")]
-@@ -317,6 +321,19 @@ fn main() -> Result<(), blue_engine::error::Error> {
-         let dt = now.duration_since(previous).as_secs_f32().min(0.1);
-         previous = now;
+@@ -319,2 +323,15 @@ fn main() -> Result<(), blue_engine::error::Error> {
          #[cfg(feature = "capture-headless")]
 +        if demo.as_ref().is_some_and(|d| d.tick() >= 350) && trace_count < 16 {
 +            let tick = demo.as_ref().unwrap().tick();
@@ -31,5 +25,3 @@ index e0ffafe..17d4892 100644
 +        }
 +        #[cfg(feature = "capture-headless")]
          if let Some((path, remaining)) = &mut pending {
-             if *remaining > 0 { *remaining -= 1; return; }
-             let rgba = &engine.renderer.headless_texture_data;
