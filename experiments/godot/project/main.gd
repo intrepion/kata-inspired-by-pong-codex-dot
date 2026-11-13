@@ -4,6 +4,7 @@ var state: Dictionary
 var font: Font
 var axis := 0.0
 var capture_pending := false
+var input_focused := true
 const MOVEMENT_KEYS := [KEY_W, KEY_UP, KEY_S, KEY_DOWN]
 var suppressed_keys := {}
 
@@ -25,10 +26,12 @@ func _ready() -> void:
     font = ThemeDB.fallback_font
     state = simulation.snapshot()
     get_window().focus_exited.connect(func():
+        input_focused = false
         if not simulation.scripted_enabled():
             suppress_held_movement()
             simulation.pause()
     )
+    get_window().focus_entered.connect(func(): input_focused = true)
 
 func _physics_process(delta: float) -> void:
     if simulation.scripted_enabled():
@@ -73,6 +76,7 @@ func _unhandled_input(event: InputEvent) -> void:
     if simulation.scripted_enabled(): return
     if event is InputEventKey and not event.pressed:
         suppressed_keys.erase(event.physical_keycode)
+    if not input_focused: return
     if event is InputEventKey and event.pressed and not event.echo:
         if event.physical_keycode in [KEY_SPACE, KEY_ENTER, KEY_P, KEY_R]:
             suppress_held_movement()

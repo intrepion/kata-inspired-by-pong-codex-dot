@@ -859,3 +859,5 @@ Raylib now displays Ready and Paused instructions in the court, with centered ba
 Miniquad now shows start and resume instructions with its in-court symbols; [Omarchy tests and paused capture](docs/packaging/MINIQUAD-STATE-INSTRUCTIONS-OMARCHY.md) record the scope and limitations.
 
 SDL3 now ignores queued Escape keydowns after focus loss while retaining window-close behavior; [Omarchy regression and replay evidence](docs/packaging/SDL3-FOCUS-ESCAPE-OMARCHY.md) records the verification limits.
+
+Godot now gates queued keydowns after focus loss while still clearing released movement keys; [Omarchy synthetic-signal tests](docs/GODOT-FOCUS-ACTIONS-OMARCHY-20261113.md) record the limits.
