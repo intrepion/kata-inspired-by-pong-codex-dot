@@ -68,6 +68,10 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
+Omarchy Fyrox held-pause release pilot: relocated replay matches the model; the app created working-directory state and future package guidance now flags it; physical input, removal and notices remain open. [Evidence](docs/packaging/FYROX-HELD-OMARCHY-RELEASE-PILOT.md).
+
+Omarchy Ratatui fallback PTY: synthetic character input verifies latched movement, stop and pause clearing; real terminal and physical input remain open. [Evidence](docs/packaging/RATATUI-FALLBACK-PTY-OMARCHY.md).
+
 Omarchy SDL3 held-pause notice pilot: corrected target scan and six relocated manifest checks pass; native input and full notice review remain open. [Evidence](docs/packaging/SDL3-HELD-NOTICE-OMARCHY.md).
 
 Omarchy bracket-lib held-pause release pilot: relocated X11 fallback replay matches the model; physical input, native Wayland and dependency notices remain open. [Evidence](docs/packaging/BRACKET-HELD-OMARCHY-RELEASE-PILOT.md).
@@ -518,7 +522,7 @@ These are local archive extraction, relocated runtime and removal checks, **not 
 | pixels, raw wgpu | [Local replay/capture pilots](docs/packaging/MAC-PIXELS-WGPU-PILOT.md) | [Local ZIP/replay pilots](docs/packaging/WINDOWS-PORTABLE-BATCH.md) | [Four-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH.md) |
 | Piston, ggez | [Piston held-fix relocated replay and desktop smoke](docs/packaging/PISTON-HELD-MAC-RELOCATED.md); [earlier pilots](docs/packaging/MAC-PISTON-GGEZ-PILOT.md) | [Local ZIP/replay pilot](docs/packaging/WINDOWS-PORTABLE-BATCH2.md) | [Six-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH2.md) |
 | Fyrox | [Corrected HUD replay passed; full cleanup incomplete](docs/FYROX-HUD-SCALE-FIX.md) | [Local ZIP/replay; generated state preserved](docs/packaging/WINDOWS-PORTABLE-BATCH3.md) | [Corrected HUD replay passed; full cleanup incomplete](docs/FYROX-HUD-SCALE-FIX.md) |
-| Nannou, bracket-lib, Bevy | [Local replay/capture pilots](docs/packaging/MAC-FOUR-ENGINE-PILOT.md) | [Local ZIP/replay pilots; Bevy DX12](docs/packaging/WINDOWS-PORTABLE-BATCH3.md) | [Six-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH2.md) |
+| Nannou, bracket-lib, Bevy | [Nannou held-fix relocated check](docs/packaging/NANNOU-HELD-MAC-RELOCATED.md); [earlier pilots](docs/packaging/MAC-FOUR-ENGINE-PILOT.md) | [Local ZIP/replay pilots; Bevy DX12](docs/packaging/WINDOWS-PORTABLE-BATCH3.md) | [Six-adapter batch](docs/packaging/LINUX-PORTABLE-BATCH2.md) |
 | Blue Engine, softbuffer | [Blue held-fix relocated replay and desktop smoke](docs/packaging/BLUE-HELD-MAC-RELOCATED.md); [softbuffer pilot](docs/packaging/MAC-SOFTBUFFER-BLUE-PILOT.md) | [Blue state-only](docs/packaging/WINDOWS-PORTABLE-BATCH3.md); [softbuffer replay/capture](docs/packaging/WINDOWS-PORTABLE-BATCH.md) | [Final two local pilots](docs/packaging/LINUX-PORTABLE-BATCH3.md); Blue native captures unsupported |
 | Ratatui | [Local debug archive/cell replay](docs/packaging/RATATUI-MAC-DEBUG-PILOT.md) | [Local ZIP/cell replay only](docs/packaging/RATATUI-WINDOWS-PILOT.md) | [Terminal local pilot](docs/packaging/RATATUI-LINUX-PILOT.md); cells + bounded PTY, not screenshots |
 | GTK4 | Not recorded | Not recorded | [Local package pilot](docs/packaging/GTK-LINUX-PILOT.md); existing GTK4 libraries required |
