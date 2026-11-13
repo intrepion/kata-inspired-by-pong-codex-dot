@@ -1,0 +1,9 @@
+# Ratatui restart while terminal is too small — Omarchy, 2026-11-13
+
+The small-terminal screen says the game is paused, but the event loop previously handled R before checking size. An R press could reset an in-progress match while the score was hidden. The loop now checks the current size before processing keys, updates that decision on resize events, and ignores gameplay keys below 50×18. Q, Escape and Ctrl+C retain their exit paths when focused. At an adequate size, restart and controls retain their previous behavior.
+
+A real child-process PTY regression reproduced the issue before the fix: the displayed score reached 1–0, synthetic resize to 40×15 followed by R changed the restored score to 0–0. With the fix, synthetic Space and R while too small preserved the nonzero score; R after restoring 100×30 restarted to 0–0, and Q while small exited 0 with terminal attributes restored. Existing enhanced focus/resize and fallback keyboard PTY checks also passed. All 11 offline locked Ratatui tests passed.
+
+The fixed debug executable SHA-256 is `bf626b3980ff7252a93f89cc5b3c94df6d6203adeb66cda44c0ace7d4c35375b`; adapter source blob `83ce9a5c6d689bab9f47188724e8603f23bbec55` was based on checkpoint `3d4a079aeaf86fad3cc791b8518a65676b183750`. Harness SHA-256 `3b78361e07b06aaa6e062a78e3214d8b96ae0e67028394603a807ca702bd7a07`; passing raw stream SHA-256 `39e77ef4a7fd2f4b632329a8649bf88114d8e403d9050ef5a648999f86ed5c4d`. Raw streams and the preserved baseline executable remain under `/tmp/pong-ratatui-small-restart-20261113-a`.
+
+The harness injects terminal protocol bytes and SIGWINCH and uses a limited output parser. This is a running-process PTY check, not physical input or a real terminal-emulator resize test. Other platforms, terminal compatibility, complete notice review, clean-machine installation and release qualification remain open. Historical artifacts are retained.

@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 """Exercise a Ratatui binary with synthetic terminal input in a PTY.
 
-Usage: python3 scripts/verify-ratatui-enhanced-pty.py BINARY RAW_OUTPUT [--fallback|--overlap|--ctrl-c|--fallback-ctrl-c]
+Usage: python3 scripts/verify-ratatui-enhanced-pty.py BINARY RAW_OUTPUT [--fallback|--overlap|--ctrl-c|--fallback-ctrl-c|--small-restart]
 RAW_OUTPUT must not exist. This is not a real-terminal or physical-input test.
 """
 import sys
 import os,pty,fcntl,termios,struct,subprocess,select,time,codecs,re,signal
-if len(sys.argv) not in (3, 4) or (len(sys.argv) == 4 and sys.argv[3] not in ('--fallback', '--overlap', '--ctrl-c', '--fallback-ctrl-c')):
+if len(sys.argv) not in (3, 4) or (len(sys.argv) == 4 and sys.argv[3] not in ('--fallback', '--overlap', '--ctrl-c', '--fallback-ctrl-c', '--small-restart')):
  raise SystemExit(__doc__)
 binary, raw_output = sys.argv[1:3]
 fallback = len(sys.argv) == 4 and sys.argv[3] in ('--fallback', '--fallback-ctrl-c')
 overlap = len(sys.argv) == 4 and sys.argv[3] == '--overlap'
 ctrl_c = len(sys.argv) == 4 and sys.argv[3] in ('--ctrl-c', '--fallback-ctrl-c')
+small_restart = len(sys.argv) == 4 and sys.argv[3] == '--small-restart'
 if os.path.exists(raw_output):
  raise SystemExit('Refusing to overwrite raw output: ' + raw_output)
 m,s=pty.openpty(); fcntl.ioctl(s,termios.TIOCSWINSZ,struct.pack('HHHH',30,100,0,0)); before=termios.tcgetattr(s)
@@ -69,7 +70,36 @@ def state(expected):
 def send(seq,secs=.14): os.write(m,seq); pump(secs)
 try:
  pump(.5)
- if ctrl_c:
+ if small_restart:
+  assert query and 'Hold' in ''.join(screen[1]), 'enhanced keyboard path unavailable'
+  state('Ready'); send(b'\x1b[32;1:1u'); state('Playing')
+  deadline=time.monotonic()+12
+  score=None
+  while time.monotonic()<deadline:
+   pump(.2)
+   match=re.search(r'YOU (\d+) : (\d+) CPU', ''.join(screen[0]))
+   if match and int(match.group(1))+int(match.group(2))>0:
+    score=match.groups(); break
+  assert score is not None, 'no point scored before deadline'
+  fcntl.ioctl(s,termios.TIOCSWINSZ,struct.pack('HHHH',15,40,0,0))
+  os.kill(p.pid,signal.SIGWINCH); pump(.3)
+  assert 'Terminal too small' in ''.join(screen[0]), ''.join(screen[0])
+  send(b'\x1b[32;1:1u')
+  send(b'\x1b[114;1:1u')
+  fcntl.ioctl(s,termios.TIOCSWINSZ,struct.pack('HHHH',30,100,0,0))
+  os.kill(p.pid,signal.SIGWINCH); pump(.3); state('Paused')
+  match=re.search(r'YOU (\d+) : (\d+) CPU', ''.join(screen[0]))
+  assert match and match.groups()==score, ('restart changed score while too small', score, match.groups() if match else None)
+  send(b'\x1b[114;1:1u'); state('Playing')
+  match=re.search(r'YOU (\d+) : (\d+) CPU', ''.join(screen[0]))
+  assert match and match.groups()==('0','0'), 'restart did not work after resize'
+  fcntl.ioctl(s,termios.TIOCSWINSZ,struct.pack('HHHH',15,40,0,0))
+  os.kill(p.pid,signal.SIGWINCH); pump(.3)
+  assert 'Terminal too small' in ''.join(screen[0]), ''.join(screen[0])
+  send(b'\x1b[113;1:1u'); assert p.wait(timeout=2)==0
+  assert termios.tcgetattr(s)==before, 'terminal attributes not restored'
+  print('PASS restart ignored while too small; score preserved; restart works after resize; Q exits while too small and restores terminal attributes')
+ elif ctrl_c:
   assert query, 'terminal capability negotiation did not complete'
   state('Ready')
   send(b' ' if fallback else b'\x1b[32;1:1u'); state('Playing')

@@ -97,9 +97,10 @@ fn restore(enhanced: bool) {
     );
     let _ = terminal::disable_raw_mode();
 }
+fn too_small(width: u16, height: u16) -> bool { width < 50 || height < 18 }
 fn draw(f: &mut Frame, g: &Game, releases: bool) {
     let a = f.area();
-    if a.width < 50 || a.height < 18 {
+    if too_small(a.width, a.height) {
         f.render_widget(
             Paragraph::new(
                 "Terminal too small. Resize to at least 50 × 18.\nGame paused. Q quits.",
@@ -256,6 +257,8 @@ fn main() -> io::Result<()> {
     let mut acc = 0.;
     let dt = 1. / 120.;
     'game: loop {
+        let size = term.size()?;
+        let mut blocked_by_size = too_small(size.width, size.height);
         // Bound event processing so autorepeat cannot starve simulation/rendering.
         for _ in 0..128 {
             if !event::poll(Duration::ZERO)? {
@@ -269,7 +272,7 @@ fn main() -> io::Result<()> {
                             KeyCode::Char('c') if k.modifiers.contains(KeyModifiers::CONTROL) => {
                                 break 'game
                             }
-                            KeyCode::Char(' ') => {
+                            KeyCode::Char(' ') if !blocked_by_size => {
                                 if matches!(g.state, State::Ready | State::Over) {
                                     g.start()
                                 } else {
@@ -278,7 +281,7 @@ fn main() -> io::Result<()> {
                                 input.clear();
                                 acc = 0.;
                             }
-                            KeyCode::Char('r') => {
+                            KeyCode::Char('r') if !blocked_by_size => {
                                 g.start();
                                 input.clear();
                                 acc = 0.;
@@ -286,7 +289,7 @@ fn main() -> io::Result<()> {
                             _ => {}
                         }
                     }
-                    if g.state == State::Playing {
+                    if !blocked_by_size && g.state == State::Playing {
                         input.key(k, releases);
                     }
                 }
@@ -297,7 +300,8 @@ fn main() -> io::Result<()> {
                     acc = 0.;
                 }
                 Event::FocusGained => focused = true,
-                Event::Resize(_, _) => {
+                Event::Resize(width, height) => {
+                    blocked_by_size = too_small(width, height);
                     g.pause();
                     input.clear();
                     acc = 0.;
@@ -309,7 +313,7 @@ fn main() -> io::Result<()> {
         acc += (now - prev).as_secs_f32().min(0.1);
         prev = now;
         let size = term.size()?;
-        if size.width < 50 || size.height < 18 {
+        if too_small(size.width, size.height) {
             g.pause();
             input.clear();
             acc = 0.;

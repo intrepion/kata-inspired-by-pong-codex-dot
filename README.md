@@ -879,3 +879,5 @@ Ratatui now ignores queued key actions between terminal focus loss and focus gai
 The original browser game now ignores queued keydowns after window blur or while hidden; [Omarchy DOM and localhost Chrome checks](docs/packaging/ORIGINAL-WEB-FOCUS-ACTIONS-OMARCHY.md) record the remaining real-focus verification.
 
 Ratatui's Ctrl+C exit and terminal restoration sequences were checked in enhanced and fallback PTYs; [Omarchy evidence](docs/packaging/RATATUI-CTRL-C-PTY-OMARCHY.md) records the scope.
+
+Ratatui now blocks gameplay keys while its terminal is too small, preserving a hidden match score; [Omarchy PTY regression evidence](docs/packaging/RATATUI-SMALL-RESTART-PTY-OMARCHY.md) records resize, restart and quit checks.
