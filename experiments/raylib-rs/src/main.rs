@@ -17,6 +17,9 @@ fn status_position(ox: f32, oy: f32, scale: f32) -> (f32, f32) {
 }
 fn escape_requests_exit(focused: bool, pressed: bool) -> bool { focused && pressed }
 fn action_flags(pressed: [bool; 5]) -> (bool, bool, bool) { (pressed[0] || pressed[1] || pressed[2], pressed[3], pressed[4]) }
+fn score_text(game: &Game) -> String {
+    format!("YOU {} : {} CPU", game.scores[0], game.scores[1])
+}
 fn benchmark_args(args: &[String]) -> bool {
     let enabled = args.iter().any(|a| a == "--benchmark");
     assert!(
@@ -208,11 +211,14 @@ fn main() {
             BALL * s,
             Color::WHITE,
         );
+        let score = score_text(&game);
+        let score_size = (24.0 * s).max(10.0) as i32;
+        let score_width = d.measure_text(&score, score_size);
         d.draw_text(
-            &format!("{}      {}", game.scores[0], game.scores[1]),
-            (ox + W * s / 2.0 - 60.0 * s) as i32,
+            &score,
+            (ox + W * s / 2.0 - score_width as f32 / 2.0) as i32,
             (oy + 25.0 * s) as i32,
-            (32.0 * s).max(10.0) as i32,
+            score_size,
             Color::WHITE,
         );
         if let Some(message) = court_message(&game) {
@@ -526,6 +532,13 @@ mod tests {
             held[i] = true;
             assert_ne!(movement_with_pause(&mut game, &mut gate, held, false), 0.);
         }
+    }
+    #[test]
+    fn score_text_identifies_both_sides() {
+        let mut game = Game::new(42);
+        assert_eq!(score_text(&game), "YOU 0 : 0 CPU");
+        game.scores = [2, 7];
+        assert_eq!(score_text(&game), "YOU 2 : 7 CPU");
     }
     #[test]
     fn benchmark_is_opt_in() {

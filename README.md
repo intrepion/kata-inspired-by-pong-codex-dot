@@ -961,3 +961,6 @@ Blue Engine score-owner labels also passed a [native Mac cross-check](docs/packa
 Blue Engine court hints received a [Mac native-window check](docs/packaging/BLUE-COURT-HINTS-MAC-20261113.md); a transient capture and performance remain unresolved.
 
 A [Blue Engine transition-order investigation](docs/packaging/BLUE-TRANSITION-ORDER-MAC-20261113.md) identifies a plausible one-frame mismatch; the captured transient remains unconfirmed and no fix is claimed.
+
+
+Raylib macOS: the score line identifies YOU and CPU; a release-build Ready screen and 18 automated tests were checked. See [bounded evidence](docs/packaging/RAYLIB-SCORE-LABELS-MAC-20261113.md); gameplay, physical input, other sizes and release qualification remain open.
