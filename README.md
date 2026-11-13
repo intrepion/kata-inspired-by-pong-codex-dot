@@ -20,6 +20,8 @@ Windows Yew release WASM: 13 controller tests and localhost Chrome first-click P
 
 Windows Leptos and Dioxus release WASM: localhost Chrome first-click Pause and in-page focus-loss checks pass; native-wrapper focus and physical input remain open. [Evidence](docs/WINDOWS-LEPTOS-DIOXUS-FOCUS-RECHECK.md).
 
+Windows-built Yew release static ZIP: extracted hashes and relocated localhost Chrome Start/Pause/Resume pass; dependency notices and distribution remain open. [Evidence](docs/packaging/YEW-FOCUS-WINDOWS-STATIC-PILOT.md).
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
