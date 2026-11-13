@@ -20,4 +20,10 @@ test('verified dependency archive creates a manifest and launcher',{skip:!usable
  assert.match(readFileSync(join(stage,'XDO-COPYRIGHT'),'utf8'),/Copyright/);
  assert.match(readFileSync(join(stage,'README.txt'),'utf8'),/Linux release pilot/);
  assert.throws(()=>packageDioxus('/bin/true',dep,out,source),/already exists/);assert.ok(result.archive_sha256);
+ const colonOut=join(dir,'colon:output'); packageDioxus('/bin/true',dep,colonOut,source);
+ const bad=spawnSync(join(colonOut,'pong-dioxus-local-xdo-linux-arm64','run-pong-dioxus'),[],{cwd:dir,encoding:'utf8',env:{...process.env,LD_LIBRARY_PATH:''}});
+ assert.notEqual(bad.status,0); assert.match(bad.stderr,/colon/);
+ const semicolonOut=join(dir,'semicolon;output'); packageDioxus('/bin/true',dep,semicolonOut,source);
+ const badSemi=spawnSync(join(semicolonOut,'pong-dioxus-local-xdo-linux-arm64','run-pong-dioxus'),[],{cwd:dir,encoding:'utf8',env:{...process.env,LD_LIBRARY_PATH:''}});
+ assert.notEqual(badSemi.status,0); assert.match(badSemi.stderr,/semicolon/);
 });
