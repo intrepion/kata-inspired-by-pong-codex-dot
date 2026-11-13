@@ -1,0 +1,41 @@
+diff --git a/experiments/nannou/Cargo.lock b/experiments/nannou/Cargo.lock
+index 74d9aab..203c559 100644
+--- a/experiments/nannou/Cargo.lock
++++ b/experiments/nannou/Cargo.lock
+@@ -889 +888,0 @@ dependencies = [
+- "ktx2",
+@@ -3186,9 +3184,0 @@ checksum = "e2db585e1d738fc771bf08a151420d3ed193d9d895a36df7f6f8a9456b911ddc"
+-[[package]]
+-name = "ktx2"
+-version = "0.5.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1d50be8a24c37debdf3170be6ca396d5b5b165f37f94837891adac735ca416b8"
+-dependencies = [
+- "bitflags 2.13.2",
+-]
+-
+@@ -3543,2 +3532,0 @@ version = "0.20.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0724cb959deabe5531d8f4f34f1c128bba778d72e1c8337b95421a12663e0b5f"
+@@ -4306,0 +4295 @@ dependencies = [
++ "bevy_core_pipeline",
+diff --git a/experiments/nannou/Cargo.toml b/experiments/nannou/Cargo.toml
+index ddce8dd..1ccf415 100644
+--- a/experiments/nannou/Cargo.toml
++++ b/experiments/nannou/Cargo.toml
+@@ -7,0 +8 @@ edition = "2021"
++bevy_core_pipeline = { version = "=0.19.1", default-features = false }
+@@ -11,0 +13,3 @@ pong-core = { path = "../../crates/pong-core" }
++
++[patch.crates-io]
++nannou_draw = { path = '../../vendor/nannou-draw-no-lut' }
+diff --git a/experiments/nannou/src/main.rs b/experiments/nannou/src/main.rs
+index 938ec68..91c4a1e 100644
+--- a/experiments/nannou/src/main.rs
++++ b/experiments/nannou/src/main.rs
+@@ -1,0 +2 @@ use nannou::prelude::*;
++use bevy_core_pipeline::tonemapping::Tonemapping;
+@@ -105,0 +107 @@ fn model(app: &App) -> Model {
++    let camera = app.new_camera().tonemapping(Tonemapping::None).build();
+@@ -106,0 +109 @@ fn model(app: &App) -> Model {
++        .camera(camera)
