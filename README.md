@@ -941,3 +941,5 @@ Miniquad now labels its in-court score pips YOU and CPU; [Mac evidence](docs/pac
 The raw wgpu zero-score marks were also checked in a [native Mac window](docs/packaging/WGPU-ZERO-SCORE-MAC-20261113.md); physical input and distribution qualification remain open.
 
 Miniquad zero-score marks also passed a [Mac native-window cross-check](docs/packaging/MINIQUAD-ZERO-SCORE-MAC-20261113.md), with physical input and release qualification still open.
+
+Blue Engine zero-score geometry was also checked in a [Mac native window](docs/packaging/BLUE-ZERO-SCORE-MAC-20261113.md); physical input and distribution qualification remain open.
