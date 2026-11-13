@@ -92,6 +92,8 @@ Windows ggez non-playing movement regression: five release tests passed and 13 s
 
 Windows rechecked all six native non-playing movement regressions and a Miniquad scripted replay; see [the Windows report](docs/packaging/NATIVE-NONPLAYING-INPUT-WINDOWS.md) for scope and limits.
 
+Windows Macroquad polling regressions and replay passed; [the recheck](docs/packaging/POLLING-NONPLAYING-INPUT-WINDOWS.md) records its scope and remaining Windows adapters.
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
