@@ -1,0 +1,37 @@
+diff --git a/experiments/blue-engine/src/main.rs b/experiments/blue-engine/src/main.rs
+index e0ffafe..1a8486e 100644
+--- a/experiments/blue-engine/src/main.rs
++++ b/experiments/blue-engine/src/main.rs
+@@ -283,6 +283,10 @@ fn main() -> Result<(), blue_engine::error::Error> {
+     }
+     let mut game = Game::new(pong_scenario::SEED);
+     let mut demo = pong_scenario::Demo::from_args();
++    // Isolated verification fixture: inject once, then let Game::step score.
++    let fixture_winner = std::env::var("BLUE_FIXTURE_WINNER").expect("fixture winner");
++    assert!(fixture_winner == "player" || fixture_winner == "cpu");
++    let mut fixture_injected = false;
+     #[cfg(feature = "windowed")]
+     assert!(
+         !std::env::args().any(|a| a == "--scripted-captures"),
+@@ -333,7 +337,20 @@ fn main() -> Result<(), blue_engine::error::Error> {
+             pending = None;
+         }
+         if demo.as_ref().is_some_and(|d| d.finished()) { std::process::exit(0); }
+-        if let Some(demo) = &mut demo { demo.advance(&mut game, dt); }
++        if let Some(demo) = &mut demo {
++            if !fixture_injected && demo.tick() >= 120 {
++                fixture_injected = true;
++                game.serve = 0.;
++                game.ball.y = H / 2.;
++                game.ball.vy = 0.;
++                if fixture_winner == "player" {
++                    game.scores = [6, 2]; game.ball.x = W + BALL - 1.; game.ball.vx = 350.;
++                } else {
++                    game.scores = [2, 6]; game.ball.x = -BALL + 1.; game.ball.vx = -350.;
++                }
++            }
++            demo.advance(&mut game, dt);
++        }
+         #[cfg(feature = "windowed")]
+         if benchmarking {
+             accumulator+=dt;

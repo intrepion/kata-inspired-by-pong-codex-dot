@@ -926,6 +926,8 @@ Blue Engine now updates hint geometry only on state changes; [Windows tests, cap
 
 Blue Engine now draws the ball in front of the net at a distinct depth; [Windows headless overlap checks](docs/packaging/BLUE-BALL-NET-DEPTH-WINDOWS-20261113.md) record the observed variability and fix limits.
 
+An isolated [Windows Blue Engine winning-point fixture](docs/packaging/BLUE-WINNING-FIXTURE-WINDOWS-20261113.md) captured both winner screens and a scripted restart.
+
 A [bounded Windows callback benchmark](docs/benchmarks/BLUE-HINTS-WINDOWS-BOUNDED-20261113.md) compares Blue Engine builds before and after score labels and hints; its noisy sample and a baseline access violation need follow-up.
 
 The Blue Engine baseline access violation did not recur in [five further Windows runs](docs/benchmarks/BLUE-ACCESS-VIOLATION-RECHECK-WINDOWS-20261113.md); its cause remains unknown.
