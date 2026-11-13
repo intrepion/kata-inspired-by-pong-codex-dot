@@ -5,7 +5,7 @@ Usage: python3 scripts/verify-ratatui-enhanced-pty.py BINARY RAW_OUTPUT
 RAW_OUTPUT must not exist. This is not a real-terminal or physical-input test.
 """
 import sys
-import os,pty,fcntl,termios,struct,subprocess,select,time,codecs,re
+import os,pty,fcntl,termios,struct,subprocess,select,time,codecs,re,signal
 if len(sys.argv) != 3:
  raise SystemExit(__doc__)
 binary, raw_output = sys.argv[1:]
@@ -74,6 +74,23 @@ try:
  assert fresh != repeated and fresh[0][0] < repeated[0][0], (repeated,fresh)
  send(b'\x1b[119;1:3u'); released=paddle(); pump(.2)
  assert paddle() == released, (released,paddle())
+ # Inject the terminal focus-loss sequence while down is held.
+ send(b'\x1b[115;1:1u',.17); before_focus=paddle()
+ send(b'\x1b[O'); state('Paused'); focus_paused=paddle()
+ send(b'\x1b[32;1:1u'); state('Playing'); pump(.2)
+ assert paddle() == focus_paused, (focus_paused,paddle())
+ # Re-arm movement before resize, then confirm it remains cleared on resume.
+ send(b'\x1b[115;1:3u'); send(b'\x1b[115;1:1u',.17)
+ assert paddle() != focus_paused, (focus_paused,paddle())
+ # Deliver an actual PTY dimension change plus SIGWINCH to the child.
+ fcntl.ioctl(s,termios.TIOCSWINSZ,struct.pack('HHHH',15,40,0,0))
+ os.kill(p.pid,signal.SIGWINCH); pump(.3)
+ assert 'Terminal too small' in ''.join(screen[0]), ''.join(screen[0])
+ fcntl.ioctl(s,termios.TIOCSWINSZ,struct.pack('HHHH',30,100,0,0))
+ os.kill(p.pid,signal.SIGWINCH); pump(.3); state('Paused')
+ send(b'\x1b[32;1:1u'); state('Playing'); resized=paddle(); pump(.2)
+ assert paddle() == resized, (resized,paddle())
+ print('PASS synthetic focus loss and PTY resize paused play and cleared movement')
  send(b'\x1b[113;1:1u'); assert p.wait(timeout=2)==0
  assert termios.tcgetattr(s)==before, 'terminal attributes not restored'
  print('PASS enhanced protocol; ready -> playing -> paused -> playing; W press moved; held repeat after pause stayed stopped; fresh press moved; release stopped; Q exited; termios restored')

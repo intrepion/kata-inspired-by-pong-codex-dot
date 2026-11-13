@@ -22,6 +22,8 @@ Windows Leptos and Dioxus release WASM: localhost Chrome first-click Pause and i
 
 Windows-built Yew release static ZIP: extracted hashes, localhost Chrome Start/Pause/Resume and SVG icon fetch pass; dependency notices and distribution remain open. [Evidence](docs/packaging/YEW-FOCUS-WINDOWS-STATIC-PILOT.md).
 
+Swift iOS simulator bundle now has explicit version metadata; ad-hoc signing and device distribution remain open. [Evidence](docs/SWIFT-HELD-TOUCH-PAUSE-FIX.md).
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
@@ -51,6 +53,8 @@ Mac Nannou pause-fix follow-up: five release tests and sequential automated move
 Mac Godot pause-prompt fix: headless integration smoke passes and automated desktop pause/resume shows and clears the unobscured prompt. [Evidence](docs/GODOT-MAC-CONTACT-TIMING-ATTEMPT.md).
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
+
+Omarchy Ratatui focus and resize PTY: synthetic focus loss and a PTY resize paused the release executable and cleared movement; real terminal and physical input remain open. [Evidence](docs/packaging/RATATUI-FOCUS-RESIZE-PTY-OMARCHY.md).
 
 Omarchy Ratatui enhanced-key PTY: the relocated release process passed a synthetic press/pause/repeat/release check; real-terminal and physical-input behavior remain open. [Evidence](docs/packaging/RATATUI-ENHANCED-PTY-OMARCHY.md).
 
