@@ -2,6 +2,8 @@
 
 An original real-time paddle game inspired by Pong. Return the ball, steer shots with your paddle, and beat the computer to seven points. The computer has a short reaction delay and a limited paddle speed, so well-placed shots can get past it. This independent kata is not affiliated with or endorsed by Atari.
 
+Android held-touch pause fix: 15 model/unit tests pass and a debug APK builds; simultaneous device input remains unverified. [Evidence](docs/ANDROID-HELD-TOUCH-PAUSE-FIX.md).
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.

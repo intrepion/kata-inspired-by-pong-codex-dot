@@ -1,0 +1,7 @@
+# Android held-touch pause fix
+
+On Windows at checkpoint `61a173ca37aa1e8fa791cf8251b453daf3a54054`, a Kotlin model regression reproduced the retained target: after a court pointer down, pause/resume and a continuing move, the player moved from 250 to 257.52 when a step ran. This drives `Game` and `TouchInput` directly; it does not reproduce Android View dispatch or a simulator gesture.
+
+The pause button now calls `TouchInput.togglePause`, clearing the owner and target before toggling the game. Continuing move or release events from the old pointer cannot restore movement; a new down can acquire control. The regression exercises pause/resume, stale move, old release, fresh movement, cancellation and stale move after cancellation. Existing tests cover other-finger ownership and lifecycle clearing. Offline Gradle `testDebugUnitTest` passed all 15 tests and `assembleDebug` succeeded on the isolated project with JDK 21 and Android SDK 35. The built debug APK SHA-256 is `b599e0158fee82fa96f4c10887a7f5b940e2723a83c403a3c2124657eff6bff6`. The original failing JUnit XML, build outputs and tests are preserved in the workspace `android-held-pause-20261113`.
+
+An approved `adb devices` check reported no attached device or running emulator. The initial sandboxed Gradle attempt could not connect to its local daemon; an approved local-network retry succeeded. Android event dispatch, simultaneous court/button touches on an emulator or physical device, app installation and release qualification remain open. The analogous Swift case is separate and unchanged.

@@ -19,6 +19,10 @@ class TouchInput {
     fun up(id: Int) {
         if (pointerId == id) clear()
     }
+    fun togglePause(game: Game) {
+        clear()
+        game.togglePause()
+    }
     fun clear() {
         pointerId = null
         targetY = null

@@ -14,7 +14,7 @@ class MainActivity: Activity() {
   field=PongView(this,scripted)
   val buttons=LinearLayout(this).apply { gravity=Gravity.CENTER }
   val start=Button(this).apply { text="Start / Restart"; setOnClickListener { field.game.start() } }
-  val pause=Button(this).apply { text="Pause / Resume"; setOnClickListener { field.game.togglePause() } }
+  val pause=Button(this).apply { text="Pause / Resume"; setOnClickListener { field.touch.togglePause(field.game) } }
   start.isEnabled=!scripted; pause.isEnabled=!scripted
   buttons.addView(start); buttons.addView(pause)
   layout.addView(title); layout.addView(field,LinearLayout.LayoutParams(-1,0,1f)); layout.addView(buttons)
