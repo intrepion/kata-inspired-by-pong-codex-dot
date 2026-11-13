@@ -1,7 +1,7 @@
 //! Bevy owns input and presentation; pong-core owns all gameplay.
-use bevy::render::view::screenshot::{Screenshot, save_to_disk};
+use bevy::render::view::screenshot::{save_to_disk, Screenshot};
 use bevy::{prelude::*, window::PrimaryWindow};
-use pong_core::{BALL, Game, H, PADDLE_H, PADDLE_W, State, W, WIN};
+use pong_core::{Game, State, BALL, H, PADDLE_H, PADDLE_W, W, WIN};
 use pong_scenario::Demo;
 
 fn benchmark_args(args: &[String]) -> bool {
@@ -34,6 +34,10 @@ impl MovementGate {
     fn finish_frame(&mut self, state: State) {
         self.was_playing &= state == State::Playing;
     }
+}
+fn restart_game(game: &mut Game, gate: &mut MovementGate) {
+    game.start();
+    gate.was_playing = false;
 }
 fn movement_axis(state: State, gate: &mut MovementGate, held: [bool; 4]) -> f32 {
     let playing = state == State::Playing;
@@ -210,7 +214,7 @@ fn input_and_simulation(
         return;
     }
     if keys.just_pressed(KeyCode::KeyR) {
-        game.0.start();
+        restart_game(&mut game.0, &mut movement);
         clock.0 = 0.;
     }
     if keys.just_pressed(KeyCode::Enter) {
@@ -431,6 +435,29 @@ mod input_tests {
                 held[i] = true;
                 assert_ne!(movement_axis(State::Playing, &mut gate, held), 0.);
             }
+        }
+    }
+}
+
+#[cfg(test)]
+mod active_restart_tests {
+    use super::*;
+    #[test]
+    fn held_key_must_not_survive_active_restart() {
+        for i in 0..4 {
+            let mut game = Game::new(42);
+            let mut gate = MovementGate::default();
+            game.start();
+            movement_axis(game.state, &mut gate, [false; 4]);
+            let mut held = [false; 4];
+            held[i] = true;
+            assert_ne!(movement_axis(game.state, &mut gate, held), 0.);
+            restart_game(&mut game, &mut gate);
+            assert_eq!(movement_axis(game.state, &mut gate, held), 0.);
+            held[i] = false;
+            movement_axis(game.state, &mut gate, held);
+            held[i] = true;
+            assert_ne!(movement_axis(game.state, &mut gate, held), 0.);
         }
     }
 }

@@ -1,5 +1,7 @@
 # Rallylight
 
+Bevy now suppresses movement held through active restart until release; the Mac adapter suite and cached release build pass. [Evidence](docs/packaging/BEVY-ACTIVE-RESTART-MAC-20261113.md)
+
 Macroquad now suppresses a movement key held through an active restart until release; Mac adapter tests and a cached release build pass. [Evidence](docs/packaging/MACROQUAD-ACTIVE-RESTART-MAC-20261113.md)
 
 Swift and Rust collision timing were compared on 13,060 single-step Mac model cases, with no bounce-direction mismatch in the tested grid. [Evidence](docs/packaging/SWIFT-RUST-COLLISION-PARITY-MAC-20261113.md)
