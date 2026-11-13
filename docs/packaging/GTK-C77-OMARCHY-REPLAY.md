@@ -1,0 +1,7 @@
+# GTK contact-timing replay on Omarchy
+
+2026-11-13, Omarchy ARM64; source `0870089d5b7d747ae42addc5a94b24cab3384a57` includes contact-timing physics `c77bf3a`. A fresh offline locked release build, the GTK Cairo snapshot test and all eight shared GUI-model tests passed. The local Linux portable pilot archive was extracted into a separate directory; its archive digest and all four extracted manifest entries verified. Archive size: 336,381 bytes; archive SHA-256: `6a0f00b4f72cbbd54ce339151d4d7d077b6f2985268029d653ad4cab80ff1853`; binary SHA-256: `d72957a466b8248393b87cd47b650509408a7fd7ee1a02111eea076e18cf3085`.
+
+With approved host-display access, the relocated binary completed `--scripted-test --scripted-captures` with exit 0. Its 13 telemetry records exactly match the revised contact-timing model reference through finished tick 1440. Six app-owned Cairo rerender PNGs were produced; tick 600 was inspected and showed score, court, paddles and ball. These use the same drawing routine on a separate surface and are not compositor screenshots. Archive, extraction, captures and telemetry remain under distinct `/tmp/pong-gtk-c77-*` paths; historical artifacts were preserved.
+
+This is a local package extraction and scripted event-loop/replay check. Physical input, focus/resize, full-match interaction, clean-machine installation, complete dependency notices and public distribution remain unverified. GTK4 and its platform libraries are required on the host and are not bundled.
