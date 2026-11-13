@@ -16,6 +16,8 @@ The testing matrices below record **verified results**, separately from work in 
 
 Miniquad keypad Enter now shares the existing start/restart action; Windows action-boundary tests pass, while native delivery and the separate Unknown-key issue remain open. [Evidence](docs/MINIQUAD-KEYPAD-ENTER.md).
 
+Omarchy Miniquad explicit-pause fix: ten adapter tests pass, including stale held input and repeat suppression; native input and other-platform/package rechecks remain pending. [Evidence](docs/MINIQUAD-PAUSE-HELD-INPUT-FIX.md).
+
 Windows Miniquad winner-label follow-up: eight tests and a fresh replay pass; a simulated match reaches an unobstructed CPU winner frame; native input and interactive matches remain unverified. [Evidence](docs/WINDOWS-MINIQUAD-WINNER-RECHECK.md).
 
 Windows WebView2 scripted shutdown probe: two original exits logged the unregister error, while two isolated window-close probe exits did not; normal and cross-platform behavior remain open. [Evidence](docs/WINDOWS-WEBVIEW2-SHUTDOWN-PROBE.md).

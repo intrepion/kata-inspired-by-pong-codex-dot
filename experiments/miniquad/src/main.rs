@@ -47,6 +47,23 @@ fn control_key(game: &mut Game, key: KeyCode, repeat: bool) -> bool {
     false
 }
 
+fn handle_key_down(
+    game: &mut Game,
+    movement: &mut MovementInput,
+    key: KeyCode,
+    repeat: bool,
+) -> bool {
+    if !repeat {
+        movement.key(key, true);
+    }
+    let previous = game.state;
+    let quit = control_key(game, key, repeat);
+    if previous == State::Playing && game.state == State::Paused {
+        movement.clear();
+    }
+    quit
+}
+
 struct App {
     ctx: Box<dyn RenderingBackend>,
     pipeline: Pipeline,
@@ -305,8 +322,7 @@ impl EventHandler for App {
         if self.demo.is_some() || self.benchmarking {
             return;
         }
-        self.movement.key(k, true);
-        if control_key(&mut self.game, k, repeat) {
+        if handle_key_down(&mut self.game, &mut self.movement, k, repeat) {
             window::request_quit();
         }
     }
@@ -460,6 +476,25 @@ mod control_tests {
         game.scores = [3, 4];
         control_key(&mut game, KeyCode::R, false);
         assert_eq!(game.scores, [0, 0]);
+    }
+    #[test]
+    fn explicit_pause_clears_movement_until_fresh_press() {
+        for key in [KeyCode::W, KeyCode::Up, KeyCode::S, KeyCode::Down] {
+            let mut game = Game::new(42);
+            let mut movement = MovementInput::default();
+            handle_key_down(&mut game, &mut movement, KeyCode::Enter, false);
+            handle_key_down(&mut game, &mut movement, key, false);
+            assert_ne!(movement.axis(), 0.);
+            handle_key_down(&mut game, &mut movement, KeyCode::Space, false);
+            assert_eq!(game.state, State::Paused);
+            assert_eq!(movement.axis(), 0.);
+            handle_key_down(&mut game, &mut movement, KeyCode::Space, false);
+            assert_eq!(game.state, State::Playing);
+            handle_key_down(&mut game, &mut movement, key, true);
+            assert_eq!(movement.axis(), 0., "repeat must not restore cleared input");
+            handle_key_down(&mut game, &mut movement, key, false);
+            assert_ne!(movement.axis(), 0., "fresh press should move");
+        }
     }
     #[test]
     fn repeat_and_unknown_do_not_start_or_pause() {
