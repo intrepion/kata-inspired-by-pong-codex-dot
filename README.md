@@ -929,3 +929,5 @@ The shared match-end restart instruction was also checked in [Mac SDL3](docs/pac
 Pixels now labels score ownership and shows in-court start, resume and restart instructions; [Mac](docs/packaging/PIXELS-COURT-HELP-MAC-20261113.md) and [Windows](docs/packaging/PIXELS-COURT-HELP-WINDOWS-20261113.md) evidence records the tested scope.
 
 Miniquad now backs its winner and restart text for legibility; [Mac](docs/packaging/MINIQUAD-WINNER-BACKING-MAC-20261113.md) and [Windows](docs/packaging/MINIQUAD-WINNER-BACKING-WINDOWS-20261113.md) evidence records the tested scope.
+
+Miniquad now shows a zero in an empty score group; [Windows scripted captures](docs/packaging/MINIQUAD-ZERO-SCORE-WINDOWS-20261113.md) show 0–0 and 0–1.

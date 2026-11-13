@@ -179,6 +179,33 @@ fn rect(v: &mut Vec<Vertex>, x: f32, y: f32, w: f32, h: f32, color: [f32; 3]) {
         });
     }
 }
+fn score_vertices(v: &mut Vec<Vertex>, scores: [u32; 2]) {
+    for side in 0..2 {
+        let direction = side as f32 * 2. - 1.;
+        let x = W / 2. + direction * 30.;
+        if scores[side] == 0 {
+            for (dx, dy, w, h) in [
+                (-3., 0., 2., 16.),
+                (3., 0., 2., 16.),
+                (0., -7., 4., 2.),
+                (0., 7., 4., 2.),
+            ] {
+                rect(v, x + dx, 24. + dy, w, h, [1., 1., 1.]);
+            }
+        } else {
+            for i in 0..scores[side] {
+                rect(
+                    v,
+                    W / 2. + direction * (30. + i as f32 * 16.),
+                    24.,
+                    8.,
+                    16.,
+                    [1., 1., 1.],
+                );
+            }
+        }
+    }
+}
 // Minimal 5×7 glyphs keep the status readable without a font dependency.
 fn glyph(c: char) -> [u8; 7] {
     match c {
@@ -297,19 +324,8 @@ impl EventHandler for App {
             BALL * 2.,
             [1., 1., 1.],
         );
-        // Score pips keep this renderer font-free.
-        for side in 0..2 {
-            for i in 0..self.game.scores[side] {
-                rect(
-                    &mut v,
-                    W / 2. + (side as f32 * 2. - 1.) * (30. + i as f32 * 16.),
-                    24.,
-                    8.,
-                    16.,
-                    [1., 1., 1.],
-                );
-            }
-        }
+        // Draw a zero for empty groups and retain pips for positive scores.
+        score_vertices(&mut v, self.game.scores);
         state_vertices(&self.game, &mut v);
         self.ctx
             .buffer_update(self.bindings.vertex_buffers[0], BufferSource::slice(&v));
@@ -444,6 +460,20 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn zero_scores_have_outlines_and_positive_scores_keep_pips() {
+        let mut vertices = Vec::new();
+        score_vertices(&mut vertices, [0, 0]);
+        assert_eq!(vertices.len(), 8 * 6);
+        vertices.clear();
+        score_vertices(&mut vertices, [0, 1]);
+        assert_eq!(vertices.len(), 5 * 6);
+        let pip_left = (W / 2. + 30. - 4.) / W * 2. - 1.;
+        assert!((vertices[24].pos[0] - pip_left).abs() < 1e-6);
+        vertices.clear();
+        score_vertices(&mut vertices, [2, 3]);
+        assert_eq!(vertices.len(), 5 * 6);
+    }
     #[test]
     fn benchmark_is_opt_in() {
         assert!(!benchmark_args(&[]));
