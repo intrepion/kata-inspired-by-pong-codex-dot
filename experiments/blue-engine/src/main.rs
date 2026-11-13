@@ -39,6 +39,15 @@ fn sample_movement(state: State, gate: &mut MovementGate, held: [bool; 4], enter
 }
 #[cfg(any(feature = "windowed", test))]
 fn restart(game: &mut Game, gate: &mut MovementGate) { gate.was_playing = false; game.start(); }
+#[cfg(any(feature = "windowed", test))]
+fn status_label(game: &Game) -> &'static str {
+    match game.state {
+        State::Ready => "Ready", State::Playing => "Playing", State::Paused => "Paused",
+        State::Over if game.scores[0] > game.scores[1] => "YOU WIN",
+        State::Over if game.scores[1] > game.scores[0] => "CPU WINS",
+        State::Over => "Match over",
+    }
+}
 fn rect(engine: &mut Engine, name: &str, x: f32, y: f32, width: f32, height: f32, z: f32) {
     if let Some(object) = engine.objects.get_mut(name) {
         // Hide zero-sized score markers without creating a singular inverse matrix.
@@ -234,7 +243,7 @@ fn main() -> Result<(), blue_engine::error::Error> {
                 engine.camera.set_projection(Projection::Orthographic { zoom: (W + 30.).max((H + 30.) * aspect) });
                 engine.camera.update_view_projection(&mut engine.renderer);
             }
-            let next = format!("Pong Blue Engine | YOU {} : {} CPU | {:?} | Enter: play | W/S/arrows | Space: pause | R: restart",game.scores[0],game.scores[1],game.state);
+            let next = format!("Pong Blue Engine | YOU {} : {} CPU | {} | Enter: play | W/S/arrows | Space: pause | R: restart",game.scores[0],game.scores[1],status_label(&game));
             if title != next { window.set_title(&next); title = next; }
         }
         rect(engine, "player", 32., game.player-PADDLE_H/2., PADDLE_W, PADDLE_H, 0.);
@@ -303,6 +312,18 @@ mod benchmark_tests {
 #[cfg(test)]
 mod input_tests {
     use super::*;
+    #[test]
+    fn status_names_winner_and_clears_after_restart() {
+        let mut game = Game::new(42);
+        assert_eq!(status_label(&game), "Ready");
+        game.start(); assert_eq!(status_label(&game), "Playing");
+        game.pause(); assert_eq!(status_label(&game), "Paused");
+        for (scores, x, vx, expected) in [([6, 2], W + BALL - 1., 350., "YOU WIN"), ([2, 6], -BALL + 1., -350., "CPU WINS")] {
+            game.start(); game.scores = scores; game.serve = 0.; game.ball.x = x; game.ball.y = H / 2.; game.ball.vx = vx; game.ball.vy = 0.;
+            game.step(0.02, 0.); assert_eq!(status_label(&game), expected);
+            game.start(); assert_eq!(status_label(&game), "Playing");
+        }
+    }
     #[test]
     fn first_playing_sample_suppresses_held_key() {
         let mut gate=MovementGate::default();

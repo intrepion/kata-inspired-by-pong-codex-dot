@@ -841,3 +841,5 @@ GTK, Slint and GPUI now name the winner in their shared status; [Omarchy evidenc
 bracket-lib now names the winner in its in-window header; [Omarchy evidence](docs/packaging/BRACKET-WINNER-OMARCHY.md) records tests and a paused scripted capture.
 
 Ratatui now names the winner in its header; [Omarchy evidence](docs/packaging/RATATUI-WINNER-OMARCHY.md) records minimum-size TestBackend checks and a scripted cell export.
+
+Blue Engine now names the winner in its window title; [Omarchy evidence](docs/packaging/BLUE-WINNER-TITLE-OMARCHY.md) records state tests and a windowed scripted replay, with title visibility and visual match-end checks still open.
