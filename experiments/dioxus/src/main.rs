@@ -2,6 +2,11 @@ use dioxus::prelude::*;
 use pong_web_ui_common::{Session, CSS};
 #[cfg(feature = "desktop")]
 mod native_demo;
+fn preserve_activation(event: KeyboardEvent) {
+    if pong_web_ui_common::native_activation_key(&event.key().to_string()) {
+        event.stop_propagation();
+    }
+}
 fn main() {
     #[cfg(feature = "desktop")]
     native_demo::configure();
@@ -51,12 +56,12 @@ fn App() -> Element {
     },
     h1 {"Pong • Dioxus"} p {"Rust shared simulation · Dioxus native desktop / WASM web"}
     div { dangerous_inner_html: svg }
-    button {onclick:move |_| session.write().start(),"Start / Restart"}
-    button {onclick:move |_| session.write().toggle_pause(),"Pause / Resume"}
-    button {onpointerdown:move |e:PointerEvent| {e.prevent_default();session.write().movement_button(pong_web_ui_common::Direction::Up,e.pointer_id(),true)},onpointerup:move |e|session.write().movement_button(pong_web_ui_common::Direction::Up,e.pointer_id(),false),onpointerleave:move |e|session.write().movement_button(pong_web_ui_common::Direction::Up,e.pointer_id(),false),onpointercancel:move |e|session.write().movement_button(pong_web_ui_common::Direction::Up,e.pointer_id(),false),"▲ Hold"}
-    button {onpointerdown:move |e:PointerEvent| {e.prevent_default();session.write().movement_button(pong_web_ui_common::Direction::Down,e.pointer_id(),true)},onpointerup:move |e|session.write().movement_button(pong_web_ui_common::Direction::Down,e.pointer_id(),false),onpointerleave:move |e|session.write().movement_button(pong_web_ui_common::Direction::Down,e.pointer_id(),false),onpointercancel:move |e|session.write().movement_button(pong_web_ui_common::Direction::Down,e.pointer_id(),false),"▼ Hold"}
+    button {onkeydown: preserve_activation, onclick:move |_| session.write().start(),"Start / Restart"}
+    button {onkeydown: preserve_activation, onclick:move |_| session.write().toggle_pause(),"Pause / Resume"}
+    button {onkeydown: preserve_activation, onpointerdown:move |e:PointerEvent| {e.prevent_default();session.write().movement_button(pong_web_ui_common::Direction::Up,e.pointer_id(),true)},onpointerup:move |e|session.write().movement_button(pong_web_ui_common::Direction::Up,e.pointer_id(),false),onpointerleave:move |e|session.write().movement_button(pong_web_ui_common::Direction::Up,e.pointer_id(),false),onpointercancel:move |e|session.write().movement_button(pong_web_ui_common::Direction::Up,e.pointer_id(),false),"▲ Hold"}
+    button {onkeydown: preserve_activation, onpointerdown:move |e:PointerEvent| {e.prevent_default();session.write().movement_button(pong_web_ui_common::Direction::Down,e.pointer_id(),true)},onpointerup:move |e|session.write().movement_button(pong_web_ui_common::Direction::Down,e.pointer_id(),false),onpointerleave:move |e|session.write().movement_button(pong_web_ui_common::Direction::Down,e.pointer_id(),false),onpointercancel:move |e|session.write().movement_button(pong_web_ui_common::Direction::Down,e.pointer_id(),false),"▼ Hold"}
     p {"W/S or ↑/↓ move · Enter restarts · Space pauses. Click the court to focus."}
-    a {href:"https://intrepion.github.io/", "Back to Kata Arcade"}
+    a {onkeydown: preserve_activation, href:"https://intrepion.github.io/", "Back to Kata Arcade"}
     }
     }
 }

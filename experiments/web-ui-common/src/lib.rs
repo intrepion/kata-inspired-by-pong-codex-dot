@@ -230,6 +230,10 @@ impl Session {
         )
     }
 }
+/// Preserve browser-native activation on focused buttons and links.
+pub fn native_activation_key(k: &str) -> bool {
+    matches!(k, "Enter" | " ")
+}
 pub fn handled_key(k: &str) -> bool {
     matches!(
         k,
@@ -240,6 +244,15 @@ pub const CSS:&str="body{margin:0;background:#080f19;color:#eef6ff;font:16px sys
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn native_activation_is_limited_to_enter_and_space() {
+        assert!(native_activation_key("Enter"));
+        assert!(native_activation_key(" "));
+        for key in ["w", "s", "ArrowUp", "ArrowDown", "Escape"] {
+            assert!(!native_activation_key(key));
+        }
+    }
+
     #[test]
     fn held_inputs_do_not_carry_through_match_end_restart() {
         use pong_core::{Ball, BALL, H, W};
