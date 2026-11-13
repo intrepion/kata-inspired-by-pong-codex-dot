@@ -1,0 +1,9 @@
+# Fyrox winner indication
+
+Fyrox's existing UI header previously displayed only `Over` at match end. It now identifies `YOU WIN` or `CPU WINS` according to the final score, with a neutral `Match over` fallback for a tied Over state. Ready, Playing and Paused retain their prior labels. This uses the existing Fyrox text node and introduces no font or dependency.
+
+On Windows MSVC stable Rust 1.99.1, a regression driving a winning point first failed against the old `Over` label. All nine locked offline debug tests then passed, including both winning sides, restart clearing the result, Ready, Paused and the tie fallback. A fresh debug executable SHA-256 `9aaa2f0f8c66aeb1622f72dc2d4cb14a75bd0938035fd9089d92047f26b05132` completed an isolated scripted run: exit 0, empty stderr, and all 13 telemetry records matched `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`. The binary was built before the final test-only additions; production code did not change afterward. Cargo reported incremental hard-link fallback, and stdout reported OpenGL fragment-shader recompilation performance warnings.
+
+Six app-owned UI captures were generated; the inspected tick-480 capture showed the Paused header and court, SHA-256 `e1a6460f3b97856901d31a18b7473dd039ce336382022abc96f3d847ce1fff5e`. The standard replay does not reach game over, so the rendered winner message is not verified. Logs, captures and prior binaries remain in sibling workspace directory `fyrox-winner-windows-20261113`.
+
+This is Windows model and app-owned capture evidence, not physical input, a complete interactive match, cross-platform validation, license clearance, clean-machine testing or release qualification. Fyrox's dependency audit remains separate and unresolved. The unrelated local Pixels draft remains preserved in the original checkout and its patch file.

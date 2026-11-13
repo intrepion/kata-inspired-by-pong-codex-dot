@@ -192,6 +192,8 @@ Miniquad now shows Ready and Paused indicators in court; [Windows evidence](docs
 
 Windows passed Pixels court-state tests and inspected a paused app-owned capture; [the report](docs/packaging/PIXELS-COURT-STATES-WINDOWS.md) records winner and input limits.
 
+Fyrox now identifies the match winner in its header; [Windows evidence](docs/packaging/FYROX-WINNER-WINDOWS-20261113.md) records tests, capture and visual limits.
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
