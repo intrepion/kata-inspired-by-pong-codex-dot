@@ -164,6 +164,8 @@ Windows passed ash, softbuffer and Blue Engine active-restart tests and an ash r
 
 Windows passed the shared low-level winner model and ash/softbuffer suites; [the report](docs/packaging/LOWLEVEL-WINNER-WINDOWS-20261113.md) records rendering limits.
 
+Windows passed Fyrox's active-restart regression and scripted replay; [the report](docs/packaging/FYROX-ACTIVE-RESTART-WINDOWS.md) records input and license limits.
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
