@@ -1,0 +1,7 @@
+# Macroquad held movement on active restart
+
+2026-11-13, macOS ARM64. An isolated adapter regression reproduced that pressing R while a movement key remained held during play restarted the game but left that key active: the expected zero axis was -1. This is an input-model reproduction, not physical keyboard or compositor evidence. The source tested before the fix was fetched from checkpoint `32f7ece6761750350c29b2d34feb25cb7dd7f629`.
+
+Both the Enter start path and R restart now use a helper that starts the game and marks the movement gate as needing a fresh playing sample. Any key held at that sample stays suppressed until released; a subsequent fresh press moves normally. The focused regression tests all four movement bindings, release and fresh press. Offline locked release-profile Macroquad tests passed 5/5, and the cached release build succeeded. Changed main.rs SHA-256 `d183369db1114287906aaba039f55a5e195526e96bb550f92dad6df137f1dfd5`; locally rebuilt executable SHA-256 `1556b3d613b6bc6d3bfa20fdd9d0530ef1b048eac83729ed571b1d9842081764`.
+
+No new graphical replay, actual held-key test, app package, clean-machine or release qualification is claimed. Other polling adapters may need separate active-restart review; this change is limited to Macroquad. The isolated overlay and cached target remain under `/tmp/pong-mac-input-recheck-20261113-v1` and `/tmp/pong-mac-input-target-20261113-v1`; prior artifacts were preserved.

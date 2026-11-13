@@ -85,7 +85,7 @@ impl App {
             }
         }
         if down && !repeat {
-            if self.game.state == State::Over && matches!(key, KeyCode::Enter | KeyCode::KeyR) {
+            if key == KeyCode::KeyR || (self.game.state == State::Over && key == KeyCode::Enter) {
                 self.suppressed = self.held;
             }
             if matches!(key, KeyCode::Space | KeyCode::Escape) && self.game.state == State::Playing {
@@ -302,6 +302,19 @@ mod benchmark_tests {
 #[cfg(test)]
 mod input_tests {
     use super::*;
+    #[test]
+    fn active_restart_blocks_held_direction_until_release() {
+        let mut app = App::default(); app.game.start();
+        app.key_input(KeyCode::KeyW, true, false);
+        assert_eq!(app.movement_axis(), -1.);
+        app.key_input(KeyCode::KeyR, true, false);
+        assert_eq!(app.movement_axis(), 0.);
+        app.key_input(KeyCode::KeyW, true, true);
+        assert_eq!(app.movement_axis(), 0.);
+        app.key_input(KeyCode::KeyW, false, false);
+        app.key_input(KeyCode::KeyW, true, false);
+        assert_eq!(app.movement_axis(), -1.);
+    }
     #[test]
     fn held_movement_does_not_carry_through_match_end_restart() {
         for key in [KeyCode::KeyW, KeyCode::ArrowUp, KeyCode::KeyS, KeyCode::ArrowDown] {
