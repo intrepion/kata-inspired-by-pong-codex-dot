@@ -26,6 +26,8 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
+Omarchy Fyrox held-pause fix: four release tests and a model-matched scripted replay pass; physical input remains open. [Evidence](docs/FYROX-HELD-PAUSE-FIX.md).
+
 Omarchy Godot held-pause fix: synthetic adapter events cover four movement keys, three pause keys and fresh alias presses; headless smoke and scripted replay pass. Native and physical input remain open. [Evidence](docs/GODOT-HELD-PAUSE-FIX.md).
 
 Mac Slint shared pause follow-up: ten controller tests and sequential automated movement/pause/resume pass; held-across-pause native input remains open. [Evidence](docs/GUI-EXPLICIT-PAUSE-INPUT-FIX.md).

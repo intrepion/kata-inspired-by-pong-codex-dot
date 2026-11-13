@@ -12,7 +12,7 @@ use fyrox::{
         widget::{WidgetBuilder, WidgetMessage},
         Thickness, UiNode, UserInterface,
     },
-    keyboard::KeyCode,
+    keyboard::{KeyCode, PhysicalKey},
     plugin::{error::GameResult, Plugin, PluginContext},
 };
 use pong_core::*;
@@ -42,6 +42,9 @@ struct App {
     held: [bool; 4],
     #[visit(skip)]
     #[reflect(hidden)]
+    suppressed: [bool; 4],
+    #[visit(skip)]
+    #[reflect(hidden)]
     acc: f32,
     nodes: Vec<Handle<UiNode>>,
     title: Handle<UiNode>,
@@ -61,9 +64,35 @@ impl Default for App {
             scenario: pong_scenario::Scenario::default(),
             demo: pong_scenario::Demo::from_args(),
             held: [false; 4],
+            suppressed: [false; 4],
             acc: 0.,
             nodes: Vec::new(),
             title: Handle::NONE,
+        }
+    }
+}
+impl App {
+    fn movement_axis(&self) -> f32 {
+        let active = std::array::from_fn::<_, 4, _>(|i| self.held[i] && !self.suppressed[i]);
+        (active[2] || active[3]) as u8 as f32 - (active[0] || active[1]) as u8 as f32
+    }
+    fn key_input(&mut self, key: KeyCode, down: bool, repeat: bool) {
+        for (i, k) in [KeyCode::KeyW, KeyCode::ArrowUp, KeyCode::KeyS, KeyCode::ArrowDown].into_iter().enumerate() {
+            if key == k {
+                self.held[i] = down;
+                if !down { self.suppressed[i] = false; }
+            }
+        }
+        if down && !repeat {
+            if matches!(key, KeyCode::Space | KeyCode::Escape) && self.game.state == State::Playing {
+                self.suppressed = self.held;
+            }
+            if key == KeyCode::Enter {
+                if self.game.state == State::Paused { self.game.toggle_pause(); }
+                else if self.game.state != State::Playing { self.game.start(); }
+            } else if key == KeyCode::KeyR { self.game.start(); }
+            else if key == KeyCode::Space { self.game.toggle_pause(); }
+            else if key == KeyCode::Escape { self.game.pause(); }
         }
     }
 }
@@ -119,8 +148,7 @@ impl Plugin for App {
             while self.acc >= 1. / 120. {
                 self.game.step(
                     1. / 120.,
-                    (self.held[2] || self.held[3]) as u8 as f32
-                        - (self.held[0] || self.held[1]) as u8 as f32,
+                    self.movement_axis(),
                 );
                 self.acc -= 1. / 120.;
             }
@@ -223,38 +251,12 @@ impl Plugin for App {
                 WindowEvent::Focused(false) => {
                     self.game.pause();
                     self.held = [false; 4];
+                    self.suppressed = [false; 4];
                     self.acc = 0.;
                 }
                 WindowEvent::KeyboardInput { event, .. } => {
-                    let key = event.physical_key;
-                    let down = event.state == ElementState::Pressed;
-                    for (i, k) in [
-                        KeyCode::KeyW,
-                        KeyCode::ArrowUp,
-                        KeyCode::KeyS,
-                        KeyCode::ArrowDown,
-                    ]
-                    .into_iter()
-                    .enumerate()
-                    {
-                        if key == k {
-                            self.held[i] = down;
-                        }
-                    }
-                    if down && !event.repeat {
-                        if key == KeyCode::Enter {
-                            if self.game.state == State::Paused {
-                                self.game.toggle_pause();
-                            } else if self.game.state != State::Playing {
-                                self.game.start();
-                            }
-                        } else if key == KeyCode::KeyR {
-                            self.game.start();
-                        } else if key == KeyCode::Space {
-                            self.game.toggle_pause();
-                        } else if key == KeyCode::Escape {
-                            self.game.pause();
-                        }
+                    if let PhysicalKey::Code(key) = event.physical_key {
+                        self.key_input(key, event.state == ElementState::Pressed, event.repeat);
                     }
                 }
                 _ => {}
@@ -291,4 +293,46 @@ mod benchmark_tests {
     fn reject_combined_modes() {
         benchmark_args(&["--benchmark".into(), "--scripted-test".into()]);
     }
+}
+
+#[cfg(test)]
+mod input_tests {
+    use super::*;
+    #[test]
+    fn held_movement_does_not_resume_after_pause_until_release() {
+        for movement in [KeyCode::KeyW, KeyCode::ArrowUp, KeyCode::KeyS, KeyCode::ArrowDown] {
+            for pause in [KeyCode::Space, KeyCode::Escape] {
+                let mut app = App::default();
+                app.game.start();
+                app.key_input(movement, true, false);
+                assert_ne!(app.movement_axis(), 0.);
+                app.key_input(pause, true, false);
+                app.key_input(KeyCode::Enter, true, false);
+                assert_eq!(app.game.state, State::Playing);
+                app.key_input(movement, true, true);
+                assert_eq!(app.movement_axis(), 0., "{movement:?} after {pause:?}");
+                app.key_input(movement, false, false);
+                app.key_input(movement, true, false);
+                assert_ne!(app.movement_axis(), 0.);
+            }
+        }
+    }
+    #[test]
+    fn fresh_alias_and_opposite_bindings_remain_independent() {
+        let mut app = App::default();
+        app.game.start();
+        app.key_input(KeyCode::KeyW, true, false);
+        app.key_input(KeyCode::Space, true, false);
+        app.key_input(KeyCode::Enter, true, false);
+        app.key_input(KeyCode::ArrowUp, true, false);
+        assert_eq!(app.movement_axis(), -1.);
+        app.key_input(KeyCode::KeyS, true, false);
+        assert_eq!(app.movement_axis(), 0.);
+        app.key_input(KeyCode::ArrowUp, false, false);
+        assert_eq!(app.movement_axis(), 1.);
+        app.key_input(KeyCode::KeyW, false, false);
+        app.key_input(KeyCode::KeyW, true, false);
+        assert_eq!(app.movement_axis(), 0.);
+    }
+
 }
