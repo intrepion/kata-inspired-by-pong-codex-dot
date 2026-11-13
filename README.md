@@ -887,3 +887,5 @@ The original blur-click fix was cross-checked on Omarchy; [build parity, synthet
 The Ratatui small-terminal score-preservation fix also passed a fallback-key PTY regression; [Omarchy evidence](docs/packaging/RATATUI-SMALL-FALLBACK-PTY-OMARCHY.md) records the before/after result.
 
 Raylib now suppresses action keys held on the first focused sample until release; [Omarchy evidence](docs/packaging/RAYLIB-FOCUS-HELD-ACTIONS-OMARCHY.md) records the first-sample tradeoff and remaining native checks.
+
+The current original browser game received a bounded live Chrome W/S and Space check on Omarchy; [evidence](docs/packaging/ORIGINAL-KEYBOARD-CHROME-OMARCHY.md) distinguishes automated keys from physical input.
