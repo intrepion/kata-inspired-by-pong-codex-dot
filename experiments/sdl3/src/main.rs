@@ -56,6 +56,23 @@ fn explicit_action(app: &mut App) -> bool {
     previous == pong_low_level_common::State::Playing
         && app.game.state == pong_low_level_common::State::Paused
 }
+#[derive(Clone, Copy)]
+enum LiveAction {
+    Pause,
+    Restart,
+}
+fn live_action(app: &mut App, gate: &mut MovementGate, focused: bool, action: LiveAction) -> bool {
+    if !focused {
+        return false;
+    }
+    match action {
+        LiveAction::Pause => explicit_action(app),
+        LiveAction::Restart => {
+            restart(app, gate);
+            false
+        }
+    }
+}
 fn main() -> Result<(), String> {
     let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     let sdl = sdl3::init().map_err(|e| e.to_string())?;
@@ -86,6 +103,7 @@ fn main() -> Result<(), String> {
         app.game = pong_low_level_common::Game::new(pong_scenario::SEED);
     }
     let mut last = Instant::now();
+    let mut focused = canvas.window().has_input_focus();
     'running: loop {
         let mut entered_pause = false;
         for event in events.poll_iter() {
@@ -99,16 +117,28 @@ fn main() -> Result<(), String> {
                     keycode: Some(Keycode::Space),
                     repeat: false,
                     ..
-                } if demo.is_none() && !benchmarking => entered_pause |= explicit_action(&mut app),
+                } if demo.is_none() && !benchmarking => {
+                    entered_pause |=
+                        live_action(&mut app, &mut movement, focused, LiveAction::Pause)
+                }
                 Event::KeyDown {
                     keycode: Some(Keycode::R),
                     repeat: false,
                     ..
-                } if demo.is_none() && !benchmarking => restart(&mut app, &mut movement),
+                } if demo.is_none() && !benchmarking => {
+                    live_action(&mut app, &mut movement, focused, LiveAction::Restart);
+                }
                 Event::Window {
                     win_event: WindowEvent::FocusLost,
                     ..
-                } if demo.is_none() && !benchmarking => lose_focus(&mut app, &mut movement),
+                } if demo.is_none() && !benchmarking => {
+                    focused = false;
+                    lose_focus(&mut app, &mut movement);
+                }
+                Event::Window {
+                    win_event: WindowEvent::FocusGained,
+                    ..
+                } => focused = true,
                 _ => {}
             }
         }
@@ -206,6 +236,21 @@ fn main() -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn unfocused_actions_cannot_resume_or_restart_game() {
+        let mut app = App::default();
+        app.game.start();
+        app.game.scores = [3, 2];
+        let mut gate = MovementGate::default();
+        lose_focus(&mut app, &mut gate);
+        live_action(&mut app, &mut gate, false, LiveAction::Pause);
+        assert_eq!(app.game.state, pong_low_level_common::State::Paused);
+        live_action(&mut app, &mut gate, false, LiveAction::Restart);
+        assert_eq!(app.game.state, pong_low_level_common::State::Paused);
+        assert_eq!(app.game.scores, [3, 2]);
+        live_action(&mut app, &mut gate, true, LiveAction::Pause);
+        assert_eq!(app.game.state, pong_low_level_common::State::Playing);
+    }
     #[test]
     fn focus_loss_then_immediate_resume_suppresses_held_direction() {
         let mut app = App::default();

@@ -793,3 +793,5 @@ raylib-rs reserves a footer for status text so it no longer overlaps the paddle;
 raylib-rs and Nannou now suppress a held direction when focus loss is followed by immediate resume; [Omarchy adapter regressions](docs/packaging/POLLING-FOCUS-RESUME-OMARCHY.md) describe the scope and limits.
 
 SDL3 now resets its polling gate on focus loss; [Omarchy evidence](docs/packaging/SDL-FOCUS-RESUME-OMARCHY.md) covers the first-sample regression and a bounded review of other polling frontends.
+
+SDL3 now ignores queued pause/restart actions while unfocused; [Omarchy evidence](docs/packaging/SDL-UNFOCUSED-ACTIONS-OMARCHY.md) records the regression and its limits.
