@@ -65,7 +65,10 @@ impl Frontend {
                     self.clear_movement();
                 }
             }
-            KeyCode::KeyR if pressed && !repeat => self.app.game.start(),
+            KeyCode::KeyR if pressed && !repeat => {
+                self.clear_movement();
+                self.app.game.start();
+            }
             KeyCode::Escape if pressed => return true,
             _ => {}
         }
@@ -257,6 +260,20 @@ mod benchmark_tests {
 #[cfg(test)]
 mod movement_tests {
     use super::*;
+    #[test]
+    fn active_restart_suppresses_movement_until_fresh_press() {
+        let mut f = Frontend::default();
+        f.app.game.start();
+        f.handle_key(KeyCode::KeyW, true, false);
+        assert!(f.app.up);
+        f.handle_key(KeyCode::KeyR, true, false);
+        assert!(!f.app.up);
+        f.handle_key(KeyCode::KeyW, true, true);
+        assert!(!f.app.up);
+        f.handle_key(KeyCode::KeyW, false, false);
+        f.handle_key(KeyCode::KeyW, true, false);
+        assert!(f.app.up);
+    }
     #[test]
     fn held_movement_does_not_carry_through_match_end_restart() {
         use pong_low_level_common::{State, BALL, H, W};

@@ -42,6 +42,10 @@ fn sample_movement(
     gate.was_playing = playing;
     gate.directions(held, suppress)
 }
+fn restart(app: &mut App, gate: &mut MovementGate) {
+    gate.was_playing = false;
+    app.game.start();
+}
 fn explicit_action(app: &mut App) -> bool {
     let previous = app.game.state;
     app.action();
@@ -96,7 +100,7 @@ fn main() -> Result<(), String> {
                     keycode: Some(Keycode::R),
                     repeat: false,
                     ..
-                } if demo.is_none() && !benchmarking => app.game.start(),
+                } if demo.is_none() && !benchmarking => restart(&mut app, &mut movement),
                 Event::Window {
                     win_event: WindowEvent::FocusLost,
                     ..
@@ -198,6 +202,22 @@ fn main() -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn active_restart_suppresses_movement_until_fresh_press() {
+        let mut app = App::default();
+        app.game.start();
+        let mut gate = MovementGate::default();
+        sample_movement(&app, &mut gate, [false; 4], false);
+        let held = [true, false, false, false];
+        assert_eq!(sample_movement(&app, &mut gate, held, false), (true, false));
+        restart(&mut app, &mut gate);
+        assert_eq!(
+            sample_movement(&app, &mut gate, held, false),
+            (false, false)
+        );
+        sample_movement(&app, &mut gate, [false; 4], false);
+        assert_eq!(sample_movement(&app, &mut gate, held, false), (true, false));
+    }
     #[test]
     fn winning_score_keeps_held_movement_suppressed_on_restart() {
         use pong_low_level_common::{State, BALL, H, W};

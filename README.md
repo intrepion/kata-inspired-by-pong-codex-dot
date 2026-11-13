@@ -733,3 +733,5 @@ The same active-restart held-input issue is fixed at the shared GTK/Slint/GPUI m
 Active restart now clears held movement in ggez, Miniquad and Piston as well. The [Omarchy native follow-up](docs/packaging/RESTART-HELD-NATIVE-OMARCHY.md) records handler tests, a bounded mobile source review and remaining adapter checks.
 
 Fyrox, Nannou and raylib-rs now suppress held movement through active restart; [Omarchy adapter regressions](docs/packaging/RESTART-POLLING-FYROX-OMARCHY.md) describe the test scope and limits.
+
+Active-restart held movement is also fixed in ash, softbuffer, SDL3 and Blue Engine. The [Omarchy evidence](docs/packaging/RESTART-LOWLEVEL-BLUE-OMARCHY.md) records adapter tests and remaining runtime limits.
