@@ -14,6 +14,8 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
+Mac Fyrox and Blue Engine held-pause follow-up: four tests each and sequential automated movement/pause/resume pass; native held-across-pause remains open. [Fyrox](docs/FYROX-HELD-PAUSE-FIX.md); [Blue Engine](docs/BLUE-HELD-PAUSE-FIX.md).
+
 Mac Godot held-pause follow-up: integration and synthetic held-input smoke pass; sequential automated native pause/resume and fresh movement pass. [Evidence](docs/GODOT-HELD-PAUSE-FIX.md).
 
 Mac bracket-lib pause-fix follow-up: eleven release tests and sequential automated movement/pause/resume pass; native held-across-pause remains open. [Evidence](docs/BRACKET-PAUSE-HELD-INPUT-FIX.md).
