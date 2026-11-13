@@ -1,0 +1,9 @@
+# Ratatui enhanced-repeat package check on Omarchy
+
+2026-11-13, Omarchy ARM64. A fresh isolated offline locked release build at source `61a173ca37aa1e8fa791cf8251b453daf3a54054` includes the [enhanced-key repeat fix](../RATATUI-HELD-REPEAT-FIX.md); all ten frontend tests passed. Source `experiments/ratatui/src/main.rs` Git blob `d93e737fab26b749f7f20dc6898b959a19b63f32`; binary SHA-256 `2e985f886e1480f7bf3bb3016ce10a1cf460ba30c1d36ea93db914d8d4684245`.
+
+The local portable packager produced a 413,893-byte archive, SHA-256 `a6db759669bdba251b07ddb3a60e694f4a58d90b3dc872a5a52339d72a2aea85`. Its archive checksum and all four extracted manifest entries verified after extraction into a separate directory. The relocated executable's scripted TestBackend run matched all 13 contact-timing reference records and produced six text/JSON cell pairs. These are application-owned cells, not terminal screenshots.
+
+A separate synthetic pseudo-terminal launch used `TERM=xterm-256color`, 100×30 cells and sent Space then Q. Output contained `Playing` and fallback latched-input instructions; the process exited 0, terminal attributes matched their initial values, and cursor and alternate-screen restoration sequences appeared. The initial Ready state was not independently observed. This is bounded PTY I/O, not physical keyboard input, enhanced-terminal key-release reporting or a desktop-terminal visual check.
+
+Build, archive, extraction, replay, cells and raw PTY output remain in `/tmp/pong-ratatui-package-held-build-20261113`, `/tmp/pong-ratatui-held-package-20261113`, `/tmp/pong-ratatui-held-relocated-20261113`, `/tmp/pong-ratatui-held-package-replay-20261113.log`, `/tmp/pong-ratatui-held-package-cells-20261113` and `/tmp/pong-ratatui-held-package-pty-20261113.bin`. Prior artifacts were retained; no uninstall was attempted. This local extraction does not qualify clean-machine installation, dependency notices, enhanced native input or distribution.
