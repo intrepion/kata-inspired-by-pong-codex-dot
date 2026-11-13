@@ -39,7 +39,8 @@ function createGame(random = Math.random) {
         if (s.state !== 'playing' || !Number.isFinite(dt) || !Number.isFinite(input))
             return;
         dt = clamp(dt, 0, .033);
-        s.player = clamp(s.player + clamp(input, -1, 1) * 470 * dt, PADDLE_H / 2, H - PADDLE_H / 2);
+        const oldPlayer = s.player, oldCpu = s.cpu, playerSpeed = clamp(input, -1, 1) * 470;
+        s.player = clamp(oldPlayer + playerSpeed * dt, PADDLE_H / 2, H - PADDLE_H / 2);
         const b = s.ball; // The opponent reacts periodically to the ball's current position, with a small aiming error.
         s.cpuReaction -= dt;
         if (s.cpuReaction <= 0) {
@@ -52,7 +53,7 @@ function createGame(random = Math.random) {
             s.serve -= dt;
             return;
         }
-        const oldX = b.x;
+        const oldX = b.x, oldY = b.y, oldVy = b.vy;
         b.x += b.vx * dt;
         b.y += b.vy * dt;
         if (b.y < BALL) {
@@ -63,14 +64,39 @@ function createGame(random = Math.random) {
             b.y = 2 * (H - BALL) - b.y;
             b.vy = -Math.abs(b.vy);
         }
-        for (const [x, y, dir] of [[38, s.player, 1], [W - 38, s.cpu, -1]]) {
+        for (const [x, dir] of [[38, 1], [W - 38, -1]]) {
             const face = x + dir * (PADDLE_W / 2 + BALL);
-            if ((dir === 1 ? oldX >= face && b.x <= face : oldX <= face && b.x >= face) && Math.abs(b.y - y) <= PADDLE_H / 2 + BALL) {
-                const angle = clamp((b.y - y) / (PADDLE_H / 2), -1, 1) * 1.05;
+            const crosses = dir === 1 ? oldX >= face && b.x <= face : oldX <= face && b.x >= face;
+            if (!crosses || oldX === b.x)
+                continue;
+            const fraction = (face - oldX) / (b.x - oldX), contactTime = dt * fraction;
+            let hitY = oldY + oldVy * contactTime;
+            if (hitY < BALL)
+                hitY = 2 * BALL - hitY;
+            else if (hitY > H - BALL)
+                hitY = 2 * (H - BALL) - hitY;
+            const paddleY = dir === 1
+                ? clamp(oldPlayer + playerSpeed * contactTime, PADDLE_H / 2, H - PADDLE_H / 2)
+                : clamp(oldCpu + clamp(s.cpuTarget - oldCpu, -cpuSpeed * contactTime, cpuSpeed * contactTime), PADDLE_H / 2, H - PADDLE_H / 2);
+            if (Math.abs(hitY - paddleY) <= PADDLE_H / 2 + BALL) {
+                const angle = clamp((hitY - paddleY) / (PADDLE_H / 2), -1, 1) * 1.05;
                 const speed = Math.min(720, Math.hypot(b.vx, b.vy) * 1.055);
                 b.x = face;
+                b.y = hitY;
                 b.vx = dir * speed * Math.cos(angle);
                 b.vy = speed * Math.sin(angle);
+                const remaining = dt - contactTime;
+                b.x += b.vx * remaining;
+                b.y += b.vy * remaining;
+                if (b.y < BALL) {
+                    b.y = 2 * BALL - b.y;
+                    b.vy = Math.abs(b.vy);
+                }
+                else if (b.y > H - BALL) {
+                    b.y = 2 * (H - BALL) - b.y;
+                    b.vy = -Math.abs(b.vy);
+                }
+                break;
             }
         }
         if (b.x < -BALL || b.x > W + BALL) {

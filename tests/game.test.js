@@ -1,6 +1,6 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { createGame, H, PADDLE_H } = require('../game');
+const { createGame, H, PADDLE_H, BALL } = require('../game');
 test('start, movement and bounds', () => { const g = createGame(() => .2); g.start(); assert.equal(g.state, 'playing'); for (let i = 0; i < 100; i++)
     g.step(.033, -1); assert.equal(g.player, PADDLE_H / 2); });
 test('paddle reflects ball and steers angle', () => { const g = createGame(() => .2); g.start(); g.serve = 0; g.player = H / 2; g.ball = { x: 60, y: H / 2 + 25, vx: -350, vy: 0 }; g.step(.033); assert.ok(g.ball.vx > 0); assert.ok(g.ball.vy > 0); });
@@ -126,4 +126,38 @@ test('browser handlers clear movement on pause and reject continuing touch drags
  const afterClick=playerY;els.up.emit('click',{detail:1});frame(380);assert.equal(playerY,afterClick);
  for(let i=0;i<100;i++)els.down.emit('click',{detail:0});frame(390);assert.equal(playerY,410);
  els.pause.emit('click');els.up.emit('click',{detail:0});frame(400);assert.equal(playerY,410);
+});
+
+test('independent original collision uses crossing height on both sides',()=>{
+ for(const [x,vx] of [[60,-350],[840,350]])for(const [y,vy,bounce] of [[180,600,false],[215,-600,true]]){
+  const g=createGame(()=>.5);g.start();g.serve=0;g.cpuReaction=1;g.ball={x,y,vx,vy};g.step(.033,0);
+  assert.equal(Math.sign(g.ball.vx)!==Math.sign(vx),bounce,`x=${x}, y=${y}, vy=${vy}`);
+ }
+});
+test('independent original collision uses moving paddle at contact and keeps remaining travel',()=>{
+ for(const side of ['player','cpu']){
+  const g=createGame(()=>.5);g.start();g.serve=0;g.cpuReaction=1;g.cpuTarget=455;
+  g.ball={x:side==='player'?54:846,y:side==='player'?306.3:304.3,vx:side==='player'?-350:350,vy:0};
+  g.step(1/120,side==='player'?1:0);assert.equal(Math.sign(g.ball.vx),side==='player'?-1:1,`${side} was not at the face in time`);
+ }
+ for(const [x,vx,face] of [[54,-350,52],[846,350,848]]){
+  const g=createGame(()=>.5);g.start();g.serve=0;g.cpuReaction=1;g.ball={x,y:250,vx,vy:0};g.step(1/120,0);
+  assert.ok(vx<0?g.ball.x>face:g.ball.x<face,'ball travels after contact');
+ }
+});
+test('independent original collision handles wall reflection before and after contact',()=>{
+ for(const [x,vx] of [[60,-350],[840,350]])for(const [y,vy,paddle] of [[10,-600,45],[490,600,455]]){
+  const g=createGame(()=>.5);g.start();g.serve=0;g.player=paddle;g.cpu=paddle;g.cpuTarget=paddle;g.cpuReaction=1;g.ball={x,y,vx,vy};g.step(.033,0);
+  assert.equal(Math.sign(g.ball.vx),-Math.sign(vx));assert.ok(g.ball.y>=BALL && g.ball.y<=H-BALL);
+ }
+ for(const [x,vx] of [[54,-350],[846,350]])for(const [y,paddle,sign] of [[8.3,45,1],[491.7,455,-1]]){
+  const g=createGame(()=>.5);g.start();g.serve=0;g.player=paddle;g.cpu=paddle;g.cpuTarget=paddle;g.cpuReaction=1;g.ball={x,y,vx,vy:0};g.step(1/120,0);
+  assert.equal(Math.sign(g.ball.vx),-Math.sign(vx));assert.equal(Math.sign(g.ball.vy),sign);assert.ok(g.ball.y>=BALL && g.ball.y<=H-BALL);
+ }
+});
+test('independent original collision handles tangent contact and a stationary ball at the face',()=>{
+ for(const [x,vx,face] of [[54,-350,52],[846,350,848]]){
+  const g=createGame(()=>.5);g.start();g.serve=0;g.cpuReaction=1;g.ball={x,y:303,vx,vy:0};g.step(1/120,0);assert.equal(Math.sign(g.ball.vx),-Math.sign(vx));
+  g.ball={x:face,y:250,vx:0,vy:0};g.step(1/120,0);assert.equal(g.ball.vx,0);assert.equal(g.ball.x,face);
+ }
 });
