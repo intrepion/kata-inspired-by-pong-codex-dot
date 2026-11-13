@@ -20,7 +20,7 @@ Enter/R starts or restarts; W/S or arrows move; Space starts or pauses/resumes; 
 cargo test --manifest-path experiments/qtbridge-rust/Cargo.toml --no-default-features
 ```
 
-The controller's three unit tests cover agreement with the shared core, pause/restart, invalid time and bounded catch-up. Optional Qt dependencies still need initial Cargo resolution; `--no-default-features` is not a promise of an offline first build.
+Nine controller/gameplay tests cover agreement with the shared core, snapshot schema consumed by QML, movement bounds, bounce behavior, scoring/game-over, pause/resume/restart, invalid time, bounded catch-up and irregular frame partitioning. Optional Qt dependencies still need initial Cargo resolution; `--no-default-features` is not a promise of an offline first build.
 
 ## Licensing / distribution
 
