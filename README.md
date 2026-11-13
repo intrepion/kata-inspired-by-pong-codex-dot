@@ -1,5 +1,7 @@
 # Rallylight
 
+Swift and Rust collision timing were compared on 3,060 single-step Mac model cases, with no bounce-direction mismatch in the tested grid. [Evidence](docs/packaging/SWIFT-RUST-COLLISION-PARITY-MAC-20261113.md)
+
 Mac game-over input cross-check: nine native adapter suites and the shared web controller pass; Swift simulator rebuild is blocked by local service and cache permissions. [Evidence](docs/packaging/GAMEOVER-INPUT-MAC-20261113.md)
 
 Swift paddle collision now evaluates ball and paddle positions at contact and advances the remainder; Mac model and selected XCTest regressions pass, with device and SwiftPM package checks outstanding. [Evidence](docs/packaging/SWIFT-COLLISION-MAC-20261113.md)
