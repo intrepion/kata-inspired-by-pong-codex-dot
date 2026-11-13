@@ -14,6 +14,8 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
+Windows Fyrox contact-timing follow-up: two frontend tests and scripted replay pass with all 13 model checkpoints matched; a paused app-owned frame was inspected. [Evidence](docs/WINDOWS-FYROX-CONTACT-TIMING.md).
+
 Windows Blue Engine contact-timing follow-up: two frontend tests and windowed/headless scripted replays pass; a headless frame was inspected, while native input remains open. [Evidence](docs/WINDOWS-BLUE-CONTACT-TIMING.md).
 
 Windows Ratatui contact-timing follow-up: eight frontend tests and scripted TestBackend replay pass, with all 13 model checkpoints matched; real terminal interaction remains open. [Evidence](docs/WINDOWS-RATATUI-CONTACT-TIMING.md).
