@@ -104,6 +104,8 @@ Mac softbuffer target-filtered license metadata screen: no declared LGPL, GPL-3 
 
 Mac bracket-lib target-filtered license screen: no declared LGPL, GPL-3 or MPL in 84 resolved packages; native/system components and full source review remain open. [Evidence](docs/packaging/BRACKET-MAC-LICENSE-SCREEN.md).
 
+Mac Pixels and raw wgpu target graphs have no restricted license declarations in 123 and 119 packages respectively; native, system and source reviews remain open. [Evidence](docs/packaging/PIXELS-WGPU-MAC-LICENSE-SCREEN.md).
+
 Mac Bevy audit: the original pilot lacks the embedded Fira Mono notice; a separate local candidate includes the pinned notice and passes extracted hash checks. [Evidence](docs/packaging/BEVY-MAC-FONT-LICENSE.md).
 
 Mac Blue Engine target metadata screen: no restricted declarations in 199 packages; system and source-level license review remain open. [Evidence](docs/packaging/BLUE-MAC-LICENSE-SCREEN.md).
