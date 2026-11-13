@@ -7,6 +7,7 @@ pub struct Model {
     last: Instant,
     accumulator: f32,
     held: std::collections::HashSet<String>,
+    suppressed: std::collections::HashSet<String>,
 }
 impl Default for Model {
     fn default() -> Self {
@@ -17,6 +18,7 @@ impl Default for Model {
             last: Instant::now(),
             accumulator: 0.,
             held: Default::default(),
+            suppressed: Default::default(),
         }
     }
 }
@@ -39,6 +41,7 @@ impl Model {
         self.up = false;
         self.down = false;
         self.held.clear();
+        self.suppressed.clear();
         self.game.pause();
         self.accumulator = 0.;
         self.last = Instant::now();
@@ -63,11 +66,16 @@ impl Model {
             }
         } else {
             self.held.remove(key);
+            self.suppressed.remove(key);
         }
         // Each direction may have several physical bindings held at once.
         // Releasing one binding must not release the others.
-        self.up = ["w", "up"].iter().any(|key| self.held.contains(*key));
-        self.down = ["s", "down"].iter().any(|key| self.held.contains(*key));
+        self.up = ["w", "up"]
+            .iter()
+            .any(|key| self.held.contains(*key) && !self.suppressed.contains(*key));
+        self.down = ["s", "down"]
+            .iter()
+            .any(|key| self.held.contains(*key) && !self.suppressed.contains(*key));
         match key {
             "enter" if pressed => {
                 if self.game.state == State::Paused {
@@ -76,7 +84,19 @@ impl Model {
                     self.game.start()
                 }
             }
-            "space" if pressed => self.game.toggle_pause(),
+            "space" if pressed => {
+                if self.game.state == State::Playing {
+                    for key in ["w", "up", "s", "down"] {
+                        if self.held.contains(key) {
+                            self.suppressed.insert(key.to_owned());
+                        }
+                    }
+                    self.up = false;
+                    self.down = false;
+                    self.accumulator = 0.;
+                }
+                self.game.toggle_pause();
+            }
             "r" if pressed => self.game.start(),
             "escape" if pressed => self.blur(),
             _ => {}
@@ -127,6 +147,59 @@ mod repeat_tests {
         m.key("space", false);
         m.key("space", true);
         assert_eq!(m.game.state, State::Playing);
+    }
+    #[test]
+    fn pause_blocks_held_movement_and_repeats_until_release() {
+        for (key, direction) in [("w", -1.), ("Up", -1.), ("s", 1.), ("Down", 1.)] {
+            let mut m = Model::default();
+            m.game.start();
+            m.key(key, true);
+            m.advance(0.05);
+            assert_ne!(m.game.player, 250.);
+            m.key("space", true);
+            assert_eq!(m.game.state, State::Paused);
+            assert!(!m.up && !m.down);
+            m.key("space", true);
+            assert_eq!(m.game.state, State::Paused, "pause repeat toggled");
+            m.key("space", false);
+            m.key("space", true);
+            assert_eq!(m.game.state, State::Playing);
+            m.key(key, true);
+            let stopped = m.game.player;
+            m.advance(0.05);
+            assert_eq!(m.game.player, stopped, "held repeat restored movement");
+            m.key(key, false);
+            m.key(key, true);
+            m.advance(0.05);
+            assert!(
+                (m.game.player - stopped) * direction > 0.,
+                "fresh press did not move"
+            );
+        }
+    }
+    #[test]
+    fn pause_suppression_is_per_binding_and_blur_resets_it() {
+        let mut m = Model::default();
+        m.game.start();
+        m.key("w", true);
+        m.key("Up", true);
+        m.key("space", true);
+        m.key("space", false);
+        m.key("space", true);
+        m.key("W", true);
+        assert!(!m.up, "repeat and case change must stay suppressed");
+        m.key("w", false);
+        m.key("w", true);
+        assert!(
+            m.up,
+            "fresh binding should work while another is suppressed"
+        );
+        m.key("w", false);
+        assert!(!m.up, "other binding remains suppressed until release");
+        m.blur();
+        m.key("Enter", true);
+        m.key("Up", true);
+        assert!(m.up, "blur must discard suppression state");
     }
     #[test]
     fn catchup_is_bounded() {
