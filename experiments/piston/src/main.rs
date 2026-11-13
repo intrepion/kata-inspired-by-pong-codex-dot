@@ -14,6 +14,104 @@ fn benchmark_args(args: &[String]) -> bool {
     enabled
 }
 
+// Returns whether the event resets the fixed-step clock.
+fn key_press(
+    game: &mut Game,
+    held: &mut [bool; 4],
+    pressed: &mut std::collections::HashSet<Key>,
+    key: Key,
+) -> bool {
+    if !pressed.insert(key) {
+        return false;
+    }
+    for (i, k) in [Key::W, Key::Up, Key::S, Key::Down].into_iter().enumerate() {
+        if key == k {
+            held[i] = true;
+        }
+    }
+    let previous = game.state;
+    match key {
+        Key::Return => {
+            if game.state == State::Paused {
+                game.toggle_pause();
+            } else if game.state != State::Playing {
+                game.start();
+            }
+        }
+        Key::R => game.start(),
+        Key::Space => game.toggle_pause(),
+        Key::Escape => game.pause(),
+        _ => {}
+    }
+    if previous == State::Playing && game.state == State::Paused {
+        *held = [false; 4];
+    }
+    matches!(key, Key::Return | Key::R | Key::Space | Key::Escape)
+}
+fn key_release(held: &mut [bool; 4], pressed: &mut std::collections::HashSet<Key>, key: Key) {
+    pressed.remove(&key);
+    for (i, k) in [Key::W, Key::Up, Key::S, Key::Down].into_iter().enumerate() {
+        if key == k {
+            held[i] = false;
+        }
+    }
+}
+
+#[cfg(test)]
+mod control_tests {
+    use super::*;
+    #[test]
+    fn actions_and_aliases_preserve_independent_key_behavior() {
+        let mut game = Game::new(42);
+        let mut held = [false; 4];
+        let mut pressed = std::collections::HashSet::new();
+        assert!(key_press(&mut game, &mut held, &mut pressed, Key::Return));
+        assert_eq!(game.state, State::Playing);
+        key_release(&mut held, &mut pressed, Key::Return);
+        key_press(&mut game, &mut held, &mut pressed, Key::W);
+        key_press(&mut game, &mut held, &mut pressed, Key::Up);
+        key_release(&mut held, &mut pressed, Key::W);
+        assert!(held[1]);
+        key_press(&mut game, &mut held, &mut pressed, Key::Space);
+        assert_eq!(game.state, State::Paused);
+        assert!(!key_press(&mut game, &mut held, &mut pressed, Key::Space));
+        assert_eq!(game.state, State::Paused);
+        key_release(&mut held, &mut pressed, Key::Space);
+        key_press(&mut game, &mut held, &mut pressed, Key::Space);
+        assert_eq!(game.state, State::Playing);
+        key_press(&mut game, &mut held, &mut pressed, Key::Up);
+        assert!(!held[1]);
+        key_press(&mut game, &mut held, &mut pressed, Key::W);
+        assert!(held[0]);
+        game.scores = [2, 4];
+        assert!(key_press(&mut game, &mut held, &mut pressed, Key::R));
+        assert_eq!(game.scores, [0, 0]);
+    }
+    #[test]
+    fn explicit_pause_clears_movement_until_release_and_fresh_press() {
+        for pause in [Key::Space, Key::Escape] {
+            for key in [Key::W, Key::Up, Key::S, Key::Down] {
+                let mut game = Game::new(42);
+                let mut held = [false; 4];
+                let mut pressed = std::collections::HashSet::new();
+                key_press(&mut game, &mut held, &mut pressed, Key::Return);
+                key_release(&mut held, &mut pressed, Key::Return);
+                key_press(&mut game, &mut held, &mut pressed, key);
+                assert!(held.iter().any(|v| *v));
+                key_press(&mut game, &mut held, &mut pressed, pause);
+                assert_eq!(game.state, State::Paused);
+                assert!(!held.iter().any(|v| *v));
+                key_press(&mut game, &mut held, &mut pressed, Key::Return);
+                assert_eq!(game.state, State::Playing);
+                key_press(&mut game, &mut held, &mut pressed, key);
+                assert!(!held.iter().any(|v| *v), "repeat restored movement");
+                key_release(&mut held, &mut pressed, key);
+                key_press(&mut game, &mut held, &mut pressed, key);
+                assert!(held.iter().any(|v| *v), "fresh press should move");
+            }
+        }
+    }
+}
 fn main() {
     let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     let mut window: PistonWindow = WindowSettings::new(
@@ -36,37 +134,12 @@ fn main() {
     while let Some(e) = window.next() {
         if demo.is_none() && !benchmarking {
             if let Some(Button::Keyboard(key)) = e.press_args() {
-                for (i, k) in [Key::W, Key::Up, Key::S, Key::Down].into_iter().enumerate() {
-                    if key == k {
-                        held[i] = true;
-                    }
-                }
-                if pressed.insert(key) {
-                    if matches!(key, Key::Return | Key::R | Key::Space | Key::Escape) {
-                        clock.reset(Instant::now());
-                    }
-                    match key {
-                        Key::Return => {
-                            if game.state == State::Paused {
-                                game.toggle_pause();
-                            } else if game.state != State::Playing {
-                                game.start();
-                            }
-                        }
-                        Key::R => game.start(),
-                        Key::Space => game.toggle_pause(),
-                        Key::Escape => game.pause(),
-                        _ => {}
-                    }
+                if key_press(&mut game, &mut held, &mut pressed, key) {
+                    clock.reset(Instant::now());
                 }
             }
             if let Some(Button::Keyboard(key)) = e.release_args() {
-                pressed.remove(&key);
-                for (i, k) in [Key::W, Key::Up, Key::S, Key::Down].into_iter().enumerate() {
-                    if key == k {
-                        held[i] = false;
-                    }
-                }
+                key_release(&mut held, &mut pressed, key);
             }
             if let Some(false) = e.focus_args() {
                 game.pause();
