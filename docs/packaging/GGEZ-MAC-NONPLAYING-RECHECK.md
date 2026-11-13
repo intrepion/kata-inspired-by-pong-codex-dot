@@ -1,0 +1,7 @@
+# Mac ggez non-playing movement recheck
+
+On 2026-11-13, macOS ARM64 checkpoint b4019e81189ef91d105b6c8d603893d6081d522a was checked in an isolated checkout with a copy-on-write target preserving the prior option-ext build. Locked offline Release build succeeded; all five frontend tests passed. The new regression checks W, Up, S and Down presses in Ready, Paused and Over, Enter to start/resume, ignored repeat, and a fresh press; these are action/model tests, not actual OS key delivery.
+
+The rebuilt executable SHA-256 is 7098fd6d20adca8b9b466e14fb30042e843fe61089e942de6801a87b85c5e70f. A separate native scripted run exited 0 and its 13 JSON records exactly matched docs/evidence/rust-core-contact-timing-model-20261112.jsonl; it produced six app-owned PNGs, not visually inspected in this run. Scripted actions bypass native input and do not independently validate the key fix.
+
+Checkout remains at /tmp/pong-ggez-option-mac-review-20261113-v1, target at /tmp/pong-ggez-nonplaying-mac-target-20261113-v1 and replay at /tmp/pong-ggez-nonplaying-mac-replay-20261113-v1. Historical binaries and evidence remain intact. Physical and native held-across-transition input, focus behavior, other platforms and release qualification remain open. The separately documented [embedded Liberation font provenance](GGEZ-MAC-LIBERATION-FONT.md) remains unresolved. Checkpoint when recorded: c47d9485bdcd5de1df850cc67db9c1696c13bde2.
