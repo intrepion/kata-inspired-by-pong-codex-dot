@@ -106,7 +106,7 @@ Windows Ratatui MSVC notice discovery: the manifest now declares the existing pr
 
 Windows Ratatui local debug ZIP: extracted files match their staged hashes and the relocated scripted TestBackend replay matches the current model; terminal and release qualification remain open. [Evidence](docs/packaging/RATATUI-C77-WINDOWS-DEBUG-PILOT.md).
 
-Windows Ratatui contact-timing follow-up: eight frontend tests and scripted TestBackend replay pass, with all 13 model checkpoints matched; real terminal interaction remains open. [Evidence](docs/WINDOWS-RATATUI-CONTACT-TIMING.md).
+Windows Ratatui enhanced-repeat follow-up: ten tests and scripted TestBackend replay pass, with all 13 model checkpoints matched; real terminal interaction remains open. [Evidence](docs/WINDOWS-RATATUI-CONTACT-TIMING.md).
 
 Windows Slint contact-timing follow-up: a fresh scripted replay matches all 13 model checkpoints and a paused component capture was inspected; normal native and physical input remain open. [Evidence](docs/WINDOWS-SLINT-CONTACT-TIMING.md).
 
