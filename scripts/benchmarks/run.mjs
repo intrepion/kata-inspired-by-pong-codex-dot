@@ -36,11 +36,13 @@ export function runPilot(options, binaryArguments = ['--benchmark']) {
   for(let i=0;i<3;i++) {
     const before=os.loadavg();
     const r=spawnSync(binary,binaryArguments,{encoding:'utf8',timeout:30000,maxBuffer:4*1024*1024});
-    const line=r.stdout?.split('\n').find(x=>x.startsWith('PONG_BENCHMARK '));
-    const backendLine=r.stdout?.split('\n').find(x=>x.startsWith('PONG_BENCHMARK_BACKEND '));
+    const lines=r.stdout?.split('\n')??[];
+    const sampleLines=lines.filter(x=>x.startsWith('PONG_BENCHMARK '));
+    const backendLines=lines.filter(x=>x.startsWith('PONG_BENCHMARK_BACKEND '));
+    const line=sampleLines[0], backendLine=backendLines[0];
     const raw_sample=line?.slice('PONG_BENCHMARK '.length)??null;
     const raw_backend=backendLine?.slice('PONG_BENCHMARK_BACKEND '.length)??null;
-    const parse_errors={sample:null,backend:null};
+    const parse_errors={sample:sampleLines.length>1?'Multiple benchmark samples':null,backend:backendLines.length>1?'Multiple benchmark backend records':null};
     let sample=null,reported_backend=null;
     try { if(raw_sample!==null) sample=JSON.parse(raw_sample); } catch(e) { parse_errors.sample=e.message; }
     try { if(raw_backend!==null) reported_backend=JSON.parse(raw_backend); } catch(e) { parse_errors.backend=e.message; }

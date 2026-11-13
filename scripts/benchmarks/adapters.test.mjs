@@ -140,3 +140,20 @@ test('profile is explicit and missing profile is unverified',()=>{
  assert.equal(parseArguments([...base,'--adapter','fyrox','--profile','release']).profile,'release');
  for(const a of [[...base,'--profile','fast'],[...base,'--profile'],[...base,'--profile','debug','--profile','release']]) assert.throws(()=>parseArguments(a));
 });
+
+test('runner rejects duplicate sample and backend markers',()=>{
+  const dir=mkdtempSync(join(tmpdir(),'pong-runner-duplicate-'));
+  try {
+    const binary=join(dir,'fixture.cjs');
+    const sample={schema:1,metric:'frame_callback_interval_ms',warmup_seconds:5,nominal_measure_seconds:10,samples:2,resized:false,sampled_seconds:10,mean_ms:5000,p50_ms:5000,p95_ms:5000,p99_ms:5000,max_ms:5000,width:900,height:500,intervals_ms:[5000,5000]};
+    const sampleLine='PONG_BENCHMARK '+JSON.stringify(sample)+'\n';
+    const backendLine='PONG_BENCHMARK_BACKEND '+JSON.stringify({renderer:'fixture'})+'\n';
+    for(const [name,lines,field] of [['samples',sampleLine+sampleLine,'sample'],['backends',sampleLine+backendLine+backendLine,'backend']]) {
+      writeFileSync(binary,`require('node:fs').writeSync(1,${JSON.stringify(lines)});`);
+      const output=join(dir,name+'.json');
+      const result=runPilot(parseArguments([process.execPath,output,'fixture-only','synthetic ambiguity test']),[binary]);
+      assert.equal(result.runs.length,3);
+      assert.ok(result.runs.every(run=>!run.valid && /Multiple/.test(run.parse_errors[field])));
+    }
+  } finally {rmSync(dir,{recursive:true,force:true});}
+});

@@ -19,6 +19,8 @@ built-ins. Desktop display access is required; inability to open a display is a
 failed run, not a zero-performance result. Do not change OS security settings to
 run this. Do not pass scripted-test/capture flags with `--benchmark`.
 
+The runner rejects multiple sample or backend markers in one process output as ambiguous. [Windows regression evidence](DUPLICATE-MARKER-GUARD.md).
+
 ## Protocol v1
 
 - Three fresh process runs, each bounded externally at 30 seconds.
