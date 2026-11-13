@@ -1,6 +1,7 @@
 // Explicit publication allowlist. Original runner output stays local.
 import {readFileSync, writeFileSync} from 'node:fs';
 import {pathToFileURL} from 'node:url';
+import {validSample} from './run.mjs';
 const sampleNumbers = ['schema','warmup_seconds','nominal_measure_seconds','samples','sampled_seconds','mean_ms','p50_ms','p95_ms','p99_ms','max_ms','width','height'];
 export function publicReport(raw) {
   if(raw?.schema!==1 || raw.protocol!=='pong-frame-callback-v1' || !Array.isArray(raw.runs)) throw Error('Unsupported benchmark report');
@@ -13,7 +14,7 @@ export function publicReport(raw) {
   for(const run of raw.runs) {
     if(!Number.isInteger(run.iteration) || typeof run.valid!=='boolean') throw Error('Malformed run');
     const output={iteration:run.iteration,exit:Number.isInteger(run.exit)?run.exit:null,valid:run.valid,sample:null};
-    if(run.valid && !run.sample) throw Error('Valid run must have a sample');
+    if(run.valid && (run.exit!==0 || run.signal!=null || run.error!=null || run.parse_errors?.sample!=null || run.parse_errors?.backend!=null || !validSample(run.sample))) throw Error('Run marked valid failed execution or measurement validation');
     if(run.sample) {
       const s=run.sample;
       if(s.metric!=='frame_callback_interval_ms' || typeof s.resized!=='boolean' || !Array.isArray(s.intervals_ms)) throw Error('Malformed sample');
