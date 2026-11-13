@@ -1,0 +1,5 @@
+# Windows Dioxus Desktop pause-fix attempt
+
+On 2026-11-13, Dioxus Desktop from isolated snapshot `173c0ef1ea933479159e561a97028a4aa1118f67`, including shared web explicit-pause fix `9811948669e76b6e07886590f5924b306c280e79`, built successfully in Windows MSVC debug mode with locked offline dependencies. Its native adapter test target contained zero tests. The separately recorded shared-controller suite passed 12 tests in the [web recheck](WINDOWS-WEB-EXPLICIT-PAUSE-RECHECK.md). Executable SHA-256: `b50b46980b3b6ac800c6fe14a8a2d7e54902ed4c3ea7fc73824dc97ed9ddf4fa`.
+
+The foreground native `--scripted-test --scripted-scenes` attempt did not finish or produce scene files, stdout or stderr during a roughly 40-second wait; the owned test process was interrupted. This is incomplete, not a replay pass or identified root cause. Local binary, empty logs and output directory remain in `web-pause-windows-c77`. No native interaction or physical input is claimed; no desktop approval was retried. Native export, presentation, input, focus/resize, full match and release qualification remain open.

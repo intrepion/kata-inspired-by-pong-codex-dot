@@ -16,6 +16,8 @@ The testing matrices below record **verified results**, separately from work in 
 
 Mac Miniquad pause follow-up: ten release tests pass; sequential desktop start/move/pause/resume/fresh movement checked. Held-across-pause native delivery remains open. [Evidence](docs/MINIQUAD-PAUSE-HELD-INPUT-FIX.md).
 
+Windows Miniquad pause-fix follow-up: 10 action/model tests and fresh scripted replay pass; native key delivery remains open. [Evidence](docs/WINDOWS-MINIQUAD-PAUSE-RECHECK.md). Windows Dioxus Desktop built, but its scripted export did not complete in the bounded attempt. [Details](docs/WINDOWS-DIOXUS-NATIVE-PAUSE-ATTEMPT.md).
+
 Miniquad keypad Enter now shares the existing start/restart action; Windows and Mac action-boundary tests pass; Mac automated `KP_Enter` starts and resets, but its delivered key code, physical delivery and the separate Windows Unknown-key issue remain open. [Evidence](docs/MINIQUAD-KEYPAD-ENTER.md).
 
 Omarchy Miniquad explicit-pause fix: ten adapter tests pass, including stale held input and repeat suppression; native input and other-platform/package rechecks remain pending. [Evidence](docs/MINIQUAD-PAUSE-HELD-INPUT-FIX.md).
