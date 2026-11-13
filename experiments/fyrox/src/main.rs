@@ -24,6 +24,9 @@ struct App {
     game: Game,
     #[visit(skip)]
     #[reflect(hidden)]
+    focused: bool,
+    #[visit(skip)]
+    #[reflect(hidden)]
     benchmarking: bool,
     #[visit(skip)]
     #[reflect(hidden)]
@@ -58,6 +61,7 @@ impl Default for App {
     fn default() -> Self {
         Self {
             game: Game::new(42),
+            focused: true,
             benchmarking: benchmark_args(&std::env::args().collect::<Vec<_>>()),
             benchmark: None,
             benchmark_done: false,
@@ -75,6 +79,9 @@ impl App {
     fn movement_axis(&self) -> f32 {
         let active = std::array::from_fn::<_, 4, _>(|i| self.held[i] && !self.suppressed[i]);
         (active[2] || active[3]) as u8 as f32 - (active[0] || active[1]) as u8 as f32
+    }
+    fn focused_key_input(&mut self, focused: bool, key: KeyCode, down: bool, repeat: bool) {
+        if focused { self.key_input(key, down, repeat); }
     }
     fn key_input(&mut self, key: KeyCode, down: bool, repeat: bool) {
         for (i, k) in [KeyCode::KeyW, KeyCode::ArrowUp, KeyCode::KeyS, KeyCode::ArrowDown].into_iter().enumerate() {
@@ -252,15 +259,18 @@ impl Plugin for App {
         }
         if let Event::WindowEvent { event, .. } = event {
             match event {
-                WindowEvent::Focused(false) => {
-                    self.game.pause();
-                    self.held = [false; 4];
-                    self.suppressed = [false; 4];
-                    self.acc = 0.;
+                WindowEvent::Focused(focused) => {
+                    self.focused = *focused;
+                    if !focused {
+                        self.game.pause();
+                        self.held = [false; 4];
+                        self.suppressed = [false; 4];
+                        self.acc = 0.;
+                    }
                 }
                 WindowEvent::KeyboardInput { event, .. } => {
                     if let PhysicalKey::Code(key) = event.physical_key {
-                        self.key_input(key, event.state == ElementState::Pressed, event.repeat);
+                        self.focused_key_input(self.focused, key, event.state == ElementState::Pressed, event.repeat);
                     }
                 }
                 _ => {}
@@ -302,6 +312,16 @@ mod benchmark_tests {
 #[cfg(test)]
 mod input_tests {
     use super::*;
+    #[test]
+    fn unfocused_key_actions_do_not_resume_or_restart() {
+        let mut app = App::default(); app.game.start(); app.game.scores = [3, 2]; app.game.pause();
+        app.focused_key_input(false, KeyCode::Space, true, false);
+        assert_eq!(app.game.state, State::Paused);
+        app.focused_key_input(false, KeyCode::KeyR, true, false);
+        assert_eq!(app.game.state, State::Paused); assert_eq!(app.game.scores, [3, 2]);
+        app.focused_key_input(true, KeyCode::Space, true, false);
+        assert_eq!(app.game.state, State::Playing);
+    }
     #[test]
     fn active_restart_blocks_held_direction_until_release() {
         let mut app = App::default(); app.game.start();

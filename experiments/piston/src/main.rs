@@ -110,6 +110,15 @@ fn key_press(
     }
     matches!(key, Key::Return | Key::R | Key::Space | Key::Escape)
 }
+fn focused_key_press(
+    game: &mut Game,
+    held: &mut [bool; 4],
+    pressed: &mut std::collections::HashSet<Key>,
+    focused: bool,
+    key: Key,
+) -> bool {
+    focused && key_press(game, held, pressed, key)
+}
 fn key_release(held: &mut [bool; 4], pressed: &mut std::collections::HashSet<Key>, key: Key) {
     pressed.remove(&key);
     for (i, k) in [Key::W, Key::Up, Key::S, Key::Down].into_iter().enumerate() {
@@ -122,6 +131,22 @@ fn key_release(held: &mut [bool; 4], pressed: &mut std::collections::HashSet<Key
 #[cfg(test)]
 mod control_tests {
     use super::*;
+    #[test]
+    fn unfocused_key_actions_do_not_resume_or_restart() {
+        let mut g = Game::new(42);
+        g.start();
+        g.scores = [3, 2];
+        g.pause();
+        let mut held = [false; 4];
+        let mut pressed = std::collections::HashSet::new();
+        focused_key_press(&mut g, &mut held, &mut pressed, false, Key::Return);
+        assert_eq!(g.state, State::Paused);
+        focused_key_press(&mut g, &mut held, &mut pressed, false, Key::R);
+        assert_eq!(g.state, State::Paused);
+        assert_eq!(g.scores, [3, 2]);
+        focused_key_press(&mut g, &mut held, &mut pressed, true, Key::Return);
+        assert_eq!(g.state, State::Playing);
+    }
     #[test]
     fn title_names_winner_after_scoring_and_clears_on_restart() {
         let mut game = Game::new(42);
@@ -293,21 +318,25 @@ fn main() {
     let mut pressed = std::collections::HashSet::new();
     let mut clock = UpdateClock::new(Instant::now());
     let mut last_title = String::new();
+    let mut focused = true;
     while let Some(e) = window.next() {
         if demo.is_none() && !benchmarking {
             if let Some(Button::Keyboard(key)) = e.press_args() {
-                if key_press(&mut game, &mut held, &mut pressed, key) {
+                if focused_key_press(&mut game, &mut held, &mut pressed, focused, key) {
                     clock.reset(Instant::now());
                 }
             }
             if let Some(Button::Keyboard(key)) = e.release_args() {
                 key_release(&mut held, &mut pressed, key);
             }
-            if let Some(false) = e.focus_args() {
-                game.pause();
-                held = [false; 4];
-                pressed.clear();
-                clock.reset(Instant::now());
+            if let Some(now_focused) = e.focus_args() {
+                focused = now_focused;
+                if !focused {
+                    game.pause();
+                    held = [false; 4];
+                    pressed.clear();
+                    clock.reset(Instant::now());
+                }
             }
         }
         if e.update_args().is_some() {
