@@ -14,6 +14,8 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
+Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
+
 Mac Slint shared pause follow-up: ten controller tests and sequential automated movement/pause/resume pass; held-across-pause native input remains open. [Evidence](docs/GUI-EXPLICIT-PAUSE-INPUT-FIX.md).
 
 Mac Miniquad pause follow-up: ten release tests pass; sequential desktop start/move/pause/resume/fresh movement checked. Held-across-pause native delivery remains open. [Evidence](docs/MINIQUAD-PAUSE-HELD-INPUT-FIX.md).
@@ -29,6 +31,8 @@ Windows GUI pause-fix follow-up: 10 shared model tests and fresh Slint/GPUI scri
 Windows Miniquad pause-fix follow-up: 10 action/model tests and fresh scripted replay pass; native key delivery remains open. [Evidence](docs/WINDOWS-MINIQUAD-PAUSE-RECHECK.md). Windows Dioxus Desktop scripted export completed under approved host execution after restricted attempts stalled; actual window input remains open. [Details](docs/WINDOWS-DIOXUS-NATIVE-PAUSE-ATTEMPT.md).
 
 Miniquad keypad Enter now shares the existing start/restart action; Windows and Mac action-boundary tests pass; Mac automated `KP_Enter` starts and resets, but its delivered key code, physical delivery and the separate Windows Unknown-key issue remain open. [Evidence](docs/MINIQUAD-KEYPAD-ENTER.md).
+
+Piston explicit-pause fix: nine adapter tests pass, including Space/Escape held-input and repeat regressions; scripted replay matches the model. Native input, packages and other platforms remain pending. [Evidence](docs/PISTON-PAUSE-HELD-INPUT-FIX.md).
 
 ggez explicit-pause fix: four adapter tests pass, including Space/Escape held-input and repeat regressions; scripted replay matches the model. Native input, packages and other platforms remain pending. [Evidence](docs/GGEZ-PAUSE-HELD-INPUT-FIX.md).
 

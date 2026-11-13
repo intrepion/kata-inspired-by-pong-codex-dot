@@ -1,0 +1,9 @@
+# Piston explicit-pause held-input fix
+
+Piston's Space and Escape pause paths previously left held movement active. Its event loop also set movement before checking whether a key press was a repeat, allowing a repeated press to restore a cleared hold. An adapter-boundary regression failed before the fix. Shared physics was not changed.
+
+The Piston input adapter now clears movement when Space or Escape transitions Playing to Paused, and retains pressed-key identities until release so repeat presses cannot restore movement. Key release and a fresh press reactivate movement. The test covers W, Up, S and Down, both pause keys, Enter resume and fresh presses; a second test covers aliases, pause repeat and restart. All nine Piston release tests passed on Omarchy, as did an offline locked release build. The tested tree was based on `04817c13de2e7f6ad2fcf7206b6930908bcca603`, with `experiments/piston/src/main.rs` Git blob `4121efcfd47bd4412ff39ed6f3b7c06fc2c3ebf5`. Tested binary SHA-256 was `adb081ff8536d4351770f5878ebfca8937a80620ba6d84458688465c8946684e`; the earlier binary remains at `/tmp/pong-piston-pre-pause-20261113/pong-piston`.
+
+With permitted display access, the new binary completed its bounded scripted replay with 13 telemetry records exactly matching `docs/evidence/rust-core-contact-timing-model-20261112.jsonl` and six app-owned PNGs. Outputs remain under `/tmp/pong-piston-pause-fix-20261113/` and `/tmp/pong-piston-pause-fix-output-20261113.txt`. These captures were not visually inspected in this run. Replay bypasses real key input and does not independently verify the pause behavior.
+
+Native/physical input, other platforms, rebuilt packages, full matches and release qualification remain pending. Existing evidence is historical; other engine adapters have independent key paths and are not covered by this fix.

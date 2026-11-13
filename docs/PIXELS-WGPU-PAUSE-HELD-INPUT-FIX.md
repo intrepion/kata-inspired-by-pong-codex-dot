@@ -7,3 +7,9 @@ Both adapters now clear movement when Space transitions Playing to Paused and ig
 With permitted display access, both final binaries completed bounded scripted replays with 13 telemetry records exactly matching `docs/evidence/rust-core-contact-timing-model-20261112.jsonl` and six app-owned PNGs each. Outputs are retained under `/tmp/pong-pixels-pause-final-20261113/`, `/tmp/pong-wgpu-pause-final-20261113/` and corresponding `-output-20261113.txt` files. Earlier captures from the first post-fix builds were inspected; the final captures were not separately inspected. These replays bypass real key input and do not independently verify the pause behavior.
 
 Native/physical input, other platforms, rebuilt packages, full matches and release qualification remain pending. Existing evidence is historical. Additional low-level adapters have separate key paths and are not covered by this fix.
+
+## Mac recheck
+
+macOS ARM64 source `caca70820acbb49046878fae07eb69509dc5eca6`. Offline locked release builds reused copy-on-write caches; Pixels passed seven tests and raw wgpu six, including each held-input action-boundary regression. Binary SHA-256: Pixels `3214f50d8272e15e847a8cbe15784b17004eb4111830c9192f2454c64bf5a152`; wgpu `ab52b528613e139f2ef46b607271fee5c55d81f148485539197e34fa947f2a5b`.
+
+Each packaged app opened via supported desktop automation. Sequential Enter, held W, Space, Space, held S and Space produced visible upward movement, Paused, resumed play, downward movement and Paused. Apps exited. W was released before pause; native held-across-pause and physical keyboard input were not tested. No fresh scripted replay or capture is claimed.
