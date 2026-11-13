@@ -1,5 +1,7 @@
 # Rallylight
 
+SDL3, ash and softbuffer now share an in-court winner indication; Mac model/raster checks pass, with native runtime verification still open. [Evidence](docs/packaging/LOWLEVEL-WINNER-MAC-20261113.md)
+
 Piston now names the winner in its window title; Mac model tests and a cached release build pass, with end-screen visibility still open. [Evidence](docs/packaging/PISTON-WINNER-MAC-20261113.md)
 
 raylib-rs now displays the match winner; Mac model tests and a cached release build pass, with rendered end-screen verification still open. [Evidence](docs/packaging/RAYLIB-WINNER-MAC-20261113.md)
@@ -777,3 +779,5 @@ Yew, Leptos and Dioxus web now provide a bounded movement step for non-pointer b
 [Omarchy ggez winner cross-check](docs/packaging/GGEZ-WINNER-OMARCHY-20261113.md): eight tests passed, and a rebuilt debug replay matched retained telemetry; the scripted capture showed the pause overlay but did not reach a winner screen.
 
 raylib-rs now names the winner in its match-end overlay; [Omarchy evidence](docs/packaging/RAYLIB-WINNER-OMARCHY-20261113.md) records the tests and scripted capture, which did not reach a winner screen.
+
+raylib-rs reserves a footer for status text so it no longer overlaps the paddle; [Omarchy evidence](docs/packaging/RAYLIB-FOOTER-OMARCHY-20261113.md) includes geometry tests and a scripted capture.

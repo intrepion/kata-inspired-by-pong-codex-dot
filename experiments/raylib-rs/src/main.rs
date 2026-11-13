@@ -1,12 +1,20 @@
 use pong_core::{Game, State, BALL, H, PADDLE_H, PADDLE_W, W};
 use raylib::prelude::*;
 
-/// Returns aspect-preserving court scale and letterbox offsets.
+/// Reserve a scaled footer below the aspect-preserving court.
+const FOOTER_H: f32 = 36.;
 fn viewport(width: f32, height: f32) -> (f32, f32, f32) {
-    let scale = (width / W).min(height / H).max(0.001);
-    (scale, (width - W * scale) / 2.0, (height - H * scale) / 2.0)
+    let scale = (width / W).min(height / (H + FOOTER_H)).max(0.001);
+    (
+        scale,
+        (width - W * scale) / 2.0,
+        (height - (H + FOOTER_H) * scale) / 2.0,
+    )
 }
 
+fn status_position(ox: f32, oy: f32, scale: f32) -> (f32, f32) {
+    (ox + 15. * scale, oy + (H + 8.) * scale)
+}
 fn benchmark_args(args: &[String]) -> bool {
     let enabled = args.iter().any(|a| a == "--benchmark");
     assert!(
@@ -183,14 +191,15 @@ fn main() {
                 Color::WHITE,
             );
         }
+        let (status_x, status_y) = status_position(ox, oy, s);
         d.draw_text(
             &format!(
                 "{:?} | W/S arrows | Enter/R restart | Space pause | Esc exit",
                 game.state
             ),
-            (ox + 15.0 * s) as i32,
-            (oy + H * s - 26.0 * s) as i32,
-            (14.0 * s).max(8.0) as i32,
+            status_x as i32,
+            status_y as i32,
+            (14.0 * s).max(1.0) as i32,
             Color::GRAY,
         );
         if let Some(demo) = &demo {
@@ -237,6 +246,16 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn status_is_outside_court_and_inside_window() {
+        for (width, height) in [(900., 500.), (1800., 1000.), (900., 700.)] {
+            let (scale, ox, oy) = viewport(width, height);
+            let (x, y) = status_position(ox, oy, scale);
+            assert!(y >= oy + H * scale, "status overlaps court");
+            assert!(x >= 0. && x < width);
+            assert!(y + 14. * scale <= height);
+        }
+    }
     #[test]
     fn winner_message_tracks_winning_point_and_restart() {
         let mut game = Game::new(42);
@@ -417,8 +436,8 @@ mod tests {
     }
     #[test]
     fn letterboxing_preserves_aspect() {
-        assert_eq!(viewport(1800.0, 1000.0), (2.0, 0.0, 0.0));
-        assert_eq!(viewport(1000.0, 500.0), (1.0, 50.0, 0.0));
-        assert_eq!(viewport(900.0, 700.0), (1.0, 0.0, 100.0));
+        assert_eq!(viewport(1800.0, 1072.0), (2.0, 0.0, 0.0));
+        assert_eq!(viewport(1000.0, 536.0), (1.0, 50.0, 0.0));
+        assert_eq!(viewport(900.0, 736.0), (1.0, 0.0, 100.0));
     }
 }

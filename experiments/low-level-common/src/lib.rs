@@ -1,6 +1,21 @@
 //! Identical rectangles, input, and timing for the three low-level comparisons.
 pub use pong_core::{Game, State, BALL, H, PADDLE_H, PADDLE_W, W};
 pub const BACKGROUND: [u8; 3] = [12, 20, 35];
+// Minimal 5x7 uppercase glyphs for the two match-result labels.
+fn result_glyph(ch: u8) -> [u8; 7] {
+    match ch {
+        b'C' => [14, 17, 16, 16, 16, 17, 14],
+        b'I' => [14, 4, 4, 4, 4, 4, 14],
+        b'N' => [17, 25, 21, 19, 17, 17, 17],
+        b'O' => [14, 17, 17, 17, 17, 17, 14],
+        b'P' => [30, 17, 17, 30, 16, 16, 16],
+        b'S' => [15, 16, 16, 14, 1, 1, 30],
+        b'U' => [17, 17, 17, 17, 17, 17, 14],
+        b'W' => [17, 17, 17, 21, 21, 21, 10],
+        b'Y' => [17, 17, 10, 4, 4, 4, 4],
+        _ => [0; 7],
+    }
+}
 #[derive(Clone, Copy, Debug)]
 pub struct Rect {
     pub x: f32,
@@ -50,7 +65,13 @@ impl App {
         self.acc = 0.;
     }
     pub fn title(&self, backend: &str) -> String {
-        format!("Pong {backend} | {} : {} | {:?} | W/S or arrows • Space start/pause • R restart • Esc quit",self.game.scores[0],self.game.scores[1],self.game.state)
+        let status: String = match self.game.state {
+            State::Over if self.game.scores[0] > self.game.scores[1] => "YOU WIN".into(),
+            State::Over if self.game.scores[1] > self.game.scores[0] => "CPU WINS".into(),
+            State::Over => "MATCH OVER".into(),
+            state => format!("{state:?}"),
+        };
+        format!("Pong {backend} | {status} | {} : {} | W/S or arrows • Space start/pause • R restart • Esc quit",self.game.scores[0],self.game.scores[1])
     }
     pub fn rectangles(&self) -> Vec<Rect> {
         let mut out = Vec::new();
@@ -92,9 +113,37 @@ impl App {
                 }
             }
         }
-        if self.game.state != State::Playing {
+        if matches!(self.game.state, State::Ready | State::Paused) {
             rect(420., 225., 12., 50., [255, 180, 80]);
             rect(468., 225., 12., 50., [255, 180, 80]);
+        }
+        if self.game.state == State::Over {
+            let winner = if self.game.scores[0] > self.game.scores[1] {
+                Some((344., "YOU WIN"))
+            } else if self.game.scores[1] > self.game.scores[0] {
+                Some((522., "CPU WINS"))
+            } else {
+                None
+            };
+            if let Some((x, message)) = winner {
+                rect(x, 70., 34., 6., [255, 180, 80]);
+                let left = (W - message.len() as f32 * 36.) / 2.;
+                for (i, ch) in message.bytes().enumerate() {
+                    for (y, row) in result_glyph(ch).iter().enumerate() {
+                        for col in 0..5 {
+                            if row & (1 << (4 - col)) != 0 {
+                                rect(
+                                    left + i as f32 * 36. + col as f32 * 6.,
+                                    225. + y as f32 * 6.,
+                                    6.,
+                                    6.,
+                                    [255, 180, 80],
+                                );
+                            }
+                        }
+                    }
+                }
+            }
         }
         out
     }
@@ -124,6 +173,38 @@ pub fn raster(app: &App, pixels: &mut [u32], width: u32, height: u32) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn winner_title_and_score_marker_follow_winning_point() {
+        for (scores, x, vx, text, marker_x, other_x) in [
+            ([6, 3], W + BALL - 1., 350., "YOU WIN", 350, 528),
+            ([2, 6], -BALL + 1., -350., "CPU WINS", 528, 350),
+        ] {
+            let mut a = App::default();
+            a.game.start();
+            a.game.scores = scores;
+            a.game.serve = 0.;
+            a.game.ball.x = x;
+            a.game.ball.y = H / 2.;
+            a.game.ball.vx = vx;
+            a.game.ball.vy = 0.;
+            a.game.step(0.02, 0.);
+            assert_eq!(a.game.state, State::Over);
+            assert!(a.title("test").contains(text));
+            let mut pixels = vec![0; 900 * 500];
+            raster(&a, &mut pixels, 900, 500);
+            assert_eq!(pixels[72 * 900 + marker_x], 0xffb450);
+            assert_ne!(pixels[72 * 900 + other_x], 0xffb450);
+            assert!(!a
+                .rectangles()
+                .iter()
+                .any(|r| r.x == 420. && r.y == 225. && r.w == 12. && r.h == 50.));
+            a.action();
+            assert_eq!(a.game.state, State::Playing);
+            assert!(!a.title("test").contains(text));
+            raster(&a, &mut pixels, 900, 500);
+            assert_ne!(pixels[72 * 900 + marker_x], 0xffb450);
+        }
+    }
     #[test]
     fn start_pause_focus() {
         let mut a = App::default();
