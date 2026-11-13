@@ -11,3 +11,7 @@ A separate Windows fixture reproduced a parser exception before any run record w
 ## Timing consistency
 
 A Windows regression showed that a structurally complete sample could claim ten measured seconds even when its intervals summed to two milliseconds. The runner now compares sampled duration, mean, nearest-rank p50/p95/p99 and maximum with the recorded intervals, using a small relative floating-point tolerance. This validates internal consistency, not the origin or presentation of the measurements. The adapter and public-report suites passed 27 tests; one Windows signal test was skipped. A read-only scan accepted all 143 previously published valid samples. Fixtures are not benchmark measurements.
+
+## Omarchy fixture output portability
+
+On Omarchy, four runner fixture tests failed because short-lived Node fixture processes exited successfully but their asynchronous `console.log` output did not reach the captured pipe. A direct probe reproduced empty captured output with `console.log` and `process.stdout.write`, while `fs.writeSync` reached the parent. The affected synthetic fixtures now synchronously emit the same sample/backend lines, as existing failure fixtures already did. All 24 runner/adapter and four public-report tests passed locally afterward. This changes test fixtures only, not the production runner, validity rules or benchmark measurement; the observed pipe behavior is host/environment-specific. A subsequent [Macroquad release pilot](MACROQUAD-C77-OMARCHY-PILOT.md) passed all three runs.

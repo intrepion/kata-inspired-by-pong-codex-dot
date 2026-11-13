@@ -13,7 +13,9 @@ test('runner records selected adapter over three fixture processes, not a benchm
   const dir=mkdtempSync(join(tmpdir(),'pong-runner-fixture-'));
   try {
     const binary=join(dir,'fixture.cjs'), output=join(dir,'results.json');
-    writeFileSync(binary,'#!/usr/bin/env node\nconsole.log(\'PONG_BENCHMARK_BACKEND {"video_driver":"fixture","renderer":"fixture"}\');\nconsole.log(\'PONG_BENCHMARK '+JSON.stringify({schema:1,metric:'frame_callback_interval_ms',warmup_seconds:5,nominal_measure_seconds:10,samples:2,resized:false,sampled_seconds:10,mean_ms:5000,p50_ms:5000,p95_ms:5000,p99_ms:5000,max_ms:5000,width:900,height:500,intervals_ms:[5000,5000]})+'\');\n',{mode:0o755});
+    const sample={schema:1,metric:'frame_callback_interval_ms',warmup_seconds:5,nominal_measure_seconds:10,samples:2,resized:false,sampled_seconds:10,mean_ms:5000,p50_ms:5000,p95_ms:5000,p99_ms:5000,max_ms:5000,width:900,height:500,intervals_ms:[5000,5000]};
+    const lines='PONG_BENCHMARK_BACKEND '+JSON.stringify({video_driver:'fixture',renderer:'fixture'})+'\nPONG_BENCHMARK '+JSON.stringify(sample)+'\n';
+    writeFileSync(binary,`require('node:fs').writeSync(1,${JSON.stringify(lines)});`);
     const options=parseArguments([process.execPath,output,'fixture-only','synthetic runner test','--adapter','softbuffer']);
     runPilot(options,[binary]);
     const data=JSON.parse(readFileSync(output,'utf8'));
@@ -87,7 +89,7 @@ test('runner rejects incomplete or inconsistent samples instead of marking them 
   const dir=mkdtempSync(join(tmpdir(),'pong-runner-invalid-'));
   try {
     const fixture=join(dir,'fixture.cjs'),output=join(dir,'results.json');
-    writeFileSync(fixture,`console.log('PONG_BENCHMARK '+JSON.stringify({samples:2,sampled_seconds:10}));`);
+    writeFileSync(fixture,`require('node:fs').writeSync(1,${JSON.stringify('PONG_BENCHMARK '+JSON.stringify({samples:2,sampled_seconds:10})+'\n')});`);
     const data=runPilot(parseArguments([process.execPath,output,'fixture','not a benchmark']),[fixture]);
     assert.equal(data.runs.length,3);
     assert.ok(data.runs.every(r=>r.valid===false));
@@ -107,7 +109,7 @@ test('runner retains malformed sample and backend output as invalid evidence',()
   const dir=mkdtempSync(join(tmpdir(),'pong-runner-malformed-'));
   try {
     const fixture=join(dir,'fixture.cjs'),output=join(dir,'results.json');
-    writeFileSync(fixture,`console.log('PONG_BENCHMARK {bad'); console.log('PONG_BENCHMARK_BACKEND {bad');`);
+    writeFileSync(fixture,`require('node:fs').writeSync(1,${JSON.stringify('PONG_BENCHMARK {bad\nPONG_BENCHMARK_BACKEND {bad\n')});`);
     const data=runPilot(parseArguments([process.execPath,output,'fixture','not a benchmark']),[fixture]);
     assert.equal(data.runs.length,3);
     assert.ok(data.runs.every(r=>!r.valid && r.parse_errors.sample && r.parse_errors.backend));
@@ -120,7 +122,7 @@ test('malformed backend invalidates an otherwise complete sample',()=>{
   try {
     const fixture=join(dir,'fixture.cjs'),output=join(dir,'results.json');
     const sample={schema:1,metric:'frame_callback_interval_ms',warmup_seconds:5,nominal_measure_seconds:10,samples:2,resized:false,sampled_seconds:10,mean_ms:5000,p50_ms:5000,p95_ms:5000,p99_ms:5000,max_ms:5000,width:900,height:500,intervals_ms:[5000,5000]};
-    writeFileSync(fixture,`console.log('PONG_BENCHMARK '+${JSON.stringify(JSON.stringify(sample))}); console.log('PONG_BENCHMARK_BACKEND {bad');`);
+    writeFileSync(fixture,`require('node:fs').writeSync(1,${JSON.stringify('PONG_BENCHMARK '+JSON.stringify(sample)+'\nPONG_BENCHMARK_BACKEND {bad\n')});`);
     const data=runPilot(parseArguments([process.execPath,output,'fixture','not a benchmark']),[fixture]);
     assert.ok(data.runs.every(r=>!r.valid && r.parse_errors.backend && r.sample.samples===2));
   } finally {rmSync(dir,{recursive:true,force:true});}
