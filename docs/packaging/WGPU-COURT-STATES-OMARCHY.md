@@ -1,0 +1,7 @@
+# Raw wgpu in-court state messages — Omarchy, 2026-11-13
+
+Raw wgpu previously exposed game state only in its window title. Its shader now draws `READY`, `PAUSED`, `YOU WIN`, or `CPU WINS` inside the court, with a defensive `OVER` fallback for a tied game-over state. A small backdrop keeps the letters clear of the ball and divider; live play has no message. The existing tally-style scores remain unchanged.
+
+A state-code regression failed before implementation and passes afterward for Ready, Playing, Paused, both winners, a tie and restart. All 11 locked offline adapter tests pass. A fresh locked debug build (SHA-256 `6d3ff9f0a69be9c03df1e215624fda9ca4427d9c30774802ee482c1a59b2948e`) completed a local-display scripted replay: exit 0, empty stderr, six app-owned captures and 13 checkpoints exactly matching `/tmp/pong-wgpu-c77-host-telemetry-20261113.jsonl`. Its tick-480 capture was inspected and visibly shows `PAUSED`, the court, paddles and ball. Outputs remain at `../pong-wgpu-state-check-20261113/`. Source Git blobs: renderer `9ed876996cfc35b432b13a8ad367ebb8a171203c`; shader `2314b072975edb87a60c6c2c474116a19f6a6dd7`.
+
+The unit test checks state mapping and the replay validates shader compilation and paused rendering. Ready and winner messages were not visually checked; physical input, complete-match behavior, other graphics backends and release qualification remain open. Earlier artifacts were retained.

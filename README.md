@@ -827,3 +827,5 @@ Miniquad gates reported focus loss on Linux while preserving its previous macOS 
 Pixels now draws the score inside the court, independent of the window title; [Omarchy evidence](docs/packaging/PIXELS-COURT-SCORE-OMARCHY.md) records the regression and scripted capture.
 
 Pixels now shows Ready, Paused and winner messages in the court; [Omarchy evidence](docs/packaging/PIXELS-COURT-STATES-OMARCHY.md) distinguishes the app replay from controlled framebuffer fixtures.
+
+Raw wgpu now shows Ready, Paused and winner messages inside the court; [Omarchy evidence](docs/packaging/WGPU-COURT-STATES-OMARCHY.md) records state mapping and a paused app capture.
