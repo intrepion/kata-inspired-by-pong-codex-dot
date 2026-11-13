@@ -1,0 +1,9 @@
+# Nannou action keys held at focus return — Omarchy, 2026-11-13
+
+The earlier unfocused polling gate reopened immediately on focus gain, so a key reported as newly pressed on the first focused sample could still resume, restart or quit. After a focus-loss callback the adapter now samples Enter, R, Space and Escape independently on the first focused update. Any reported held or newly pressed key is suppressed until a sample observes it released; another action key remains independent. A press made on that first sample is intentionally treated as potentially held and requires release and a fresh press. A clear first sample allows normal later presses. Movement retains its existing independent suppression.
+
+The synthetic action-gate regression failed before suppression and passed after it for each of the four keys, release/repress, a clear initial sample and independent Enter/R bindings. All 15 offline locked debug tests passed. The debug build SHA-256 is `1f9ca36bea87bf24f9c0ec36b71a33083fdb64b33cc6ea29bf635d77cb18e75c`; tested adapter blob `be499e984676ffdce7db3802cbfbdf4964427116` was based on checkpoint `109afde4a16da8eb98a3e486d477b6575f22f0ab`. The previous target executable was copied before rebuilding to `/tmp/pong-nannou-focus-held-actions-20261113-a/preexisting-debug-binary`.
+
+With host-display access, the app-owned scripted replay exited 0 and its 13 records byte-matched `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`; renderer informational messages appeared on stderr. Logs remain under `/tmp/pong-nannou-focus-held-actions-20261113-a`.
+
+These are synthetic polling tests and scripted replay, not OS callback ordering, physical input or native focus verification. Actual platform key-state delivery, other platforms, full gameplay, clean-machine installation and release qualification remain open. Prior artifacts and evidence are retained.

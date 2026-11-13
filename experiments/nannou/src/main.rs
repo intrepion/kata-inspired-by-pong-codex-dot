@@ -68,8 +68,24 @@ fn live_input(game: &mut Game, movement: &mut MovementGate, focused: bool, held:
     if restart_pressed { restart(game, movement); }
     Some((movement_with_pause(game, movement, held, pause_pressed), escape_pressed))
 }
+#[derive(Default)]
+struct ActionGate { suppressed: [bool; 4], resample: bool }
+impl ActionGate {
+    fn on_focus_loss(&mut self) { self.resample = true; }
+    fn sample(&mut self, held: [bool; 4], just_pressed: [bool; 4]) -> [bool; 4] {
+        if self.resample {
+            for i in 0..4 { self.suppressed[i] = held[i] || just_pressed[i]; }
+            self.resample = false;
+        }
+        for i in 0..4 {
+            if !held[i] && !just_pressed[i] { self.suppressed[i] = false; }
+        }
+        std::array::from_fn(|i| just_pressed[i] && !self.suppressed[i])
+    }
+}
 struct Model {
     focused: bool,
+    actions: ActionGate,
     benchmarking: bool,
     benchmark_done: std::sync::atomic::AtomicBool,
     benchmark: std::sync::Mutex<Option<pong_benchmark::Frames>>,
@@ -96,6 +112,7 @@ fn model(app: &App) -> Model {
         .build();
     Model {
         focused: true,
+        actions: ActionGate::default(),
         benchmarking,
         benchmark_done: std::sync::atomic::AtomicBool::new(false),
         benchmark: std::sync::Mutex::new(None),
@@ -114,6 +131,7 @@ fn lose_focus(game: &mut Game, movement: &mut MovementGate, accumulator: &mut f3
 }
 fn unfocused(_: &App, m: &mut Model) {
     m.focused = false;
+    m.actions.on_focus_loss();
     if m.demo.is_some() || m.benchmarking {
         return;
     }
@@ -158,7 +176,10 @@ fn update(app: &App, m: &mut Model) {
         }
         return;
     }
+    if !m.focused { m.accumulator = 0.; return; }
     let k = app.keys();
+    let action_keys = [KeyCode::Enter, KeyCode::KeyR, KeyCode::Space, KeyCode::Escape];
+    let actions = m.actions.sample(action_keys.map(|key| k.pressed(key)), action_keys.map(|key| k.just_pressed(key)));
     let Some((axis, quit)) = live_input(
         &mut m.game,
         &mut m.movement,
@@ -169,9 +190,9 @@ fn update(app: &App, m: &mut Model) {
             k.pressed(KeyCode::ArrowDown),
             k.pressed(KeyCode::KeyS),
         ],
-        k.just_pressed(KeyCode::Enter) || k.just_pressed(KeyCode::KeyR),
-        k.just_pressed(KeyCode::Space),
-        k.just_pressed(KeyCode::Escape),
+        actions[0] || actions[1],
+        actions[2],
+        actions[3],
     ) else { m.accumulator = 0.; return; };
     if quit { app.quit(); }
     m.accumulator += app.time_delta().min(0.1);
@@ -241,6 +262,23 @@ fn view(app: &App, m: &Model) {
 #[cfg(test)]
 mod movement_tests {
     use super::*;
+    #[test]
+    fn actions_held_on_focus_gain_wait_for_release() {
+        for i in 0..4 {
+            let mut gate = ActionGate::default(); gate.on_focus_loss();
+            let mut down = [false; 4]; down[i] = true;
+            assert_eq!(gate.sample(down, down), [false; 4]);
+            assert_eq!(gate.sample(down, down), [false; 4]);
+            gate.sample([false; 4], [false; 4]);
+            assert_eq!(gate.sample(down, down), down);
+        }
+        let mut gate = ActionGate::default(); gate.on_focus_loss();
+        gate.sample([false; 4], [false; 4]);
+        assert_eq!(gate.sample([true,false,false,false], [true,false,false,false]), [true,false,false,false]);
+        gate.on_focus_loss();
+        gate.sample([true,false,false,false], [true,false,false,false]);
+        assert_eq!(gate.sample([true,true,false,false], [false,true,false,false]), [false,true,false,false]);
+    }
     #[test]
     fn unfocused_poll_cannot_resume_restart_or_quit() {
         let mut game = Game::new(42); game.start(); game.scores = [3, 2]; game.pause();
