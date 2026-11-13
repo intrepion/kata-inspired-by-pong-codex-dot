@@ -15,6 +15,21 @@ fn benchmark_args(args: &[String]) -> bool {
 #[derive(Default)]
 struct MovementGate { suppressed: [bool; 4], was_playing: bool }
 #[cfg(any(feature = "windowed", test))]
+#[derive(Default)]
+struct ActionGate { suppressed: [bool; 4], resample: bool }
+#[cfg(any(feature = "windowed", test))]
+impl ActionGate {
+    fn on_focus_loss(&mut self) { self.resample = true; }
+    fn sample(&mut self, held: [bool; 4], pressed: [bool; 4]) -> [bool; 4] {
+        if self.resample {
+            for i in 0..4 { self.suppressed[i] = held[i] || pressed[i]; }
+            self.resample = false;
+        }
+        for i in 0..4 { if !held[i] && !pressed[i] { self.suppressed[i] = false; } }
+        std::array::from_fn(|i| pressed[i] && !self.suppressed[i])
+    }
+}
+#[cfg(any(feature = "windowed", test))]
 impl MovementGate {
     fn axis(&mut self, held: [bool; 4], entering_pause: bool) -> f32 {
         for (blocked, down) in self.suppressed.iter_mut().zip(held) {
@@ -211,6 +226,8 @@ fn main() -> Result<(), blue_engine::error::Error> {
     #[cfg(feature = "windowed")]
     let mut movement_gate = MovementGate::default();
     #[cfg(feature = "windowed")]
+    let mut action_gate = ActionGate::default();
+    #[cfg(feature = "windowed")]
     let mut title = String::new();
     #[cfg(feature = "windowed")]
     let mut dimensions = (0, 0);
@@ -256,6 +273,7 @@ fn main() -> Result<(), blue_engine::error::Error> {
         if demo.is_none() && !benchmarking {
         let focused = engine.window.as_ref().is_some_and(|window| window.has_focus());
         if !focused {
+            action_gate.on_focus_loss();
             let input = &engine.simple_input;
             let held = [input.key_held(KeyCode::KeyW), input.key_held(KeyCode::ArrowUp), input.key_held(KeyCode::KeyS), input.key_held(KeyCode::ArrowDown)];
             sample_movement(State::Paused, &mut movement_gate, held, true);
@@ -264,13 +282,15 @@ fn main() -> Result<(), blue_engine::error::Error> {
         } else {
             let input = &engine.simple_input;
             let was_playing = game.state == State::Playing;
-            if input.key_pressed(KeyCode::Enter) {
+            let keys = [KeyCode::Enter, KeyCode::KeyR, KeyCode::Space, KeyCode::Escape];
+            let actions = action_gate.sample(keys.map(|key| input.key_held(key)), keys.map(|key| input.key_pressed(key)));
+            if actions[0] {
                 if game.state == State::Paused { game.toggle_pause(); }
                 else if game.state != State::Playing { game.start(); }
             }
-            if input.key_pressed(KeyCode::KeyR) { restart(&mut game, &mut movement_gate); }
-            if input.key_pressed(KeyCode::Space) { game.toggle_pause(); }
-            if input.key_pressed(KeyCode::Escape) { game.pause(); }
+            if actions[1] { restart(&mut game, &mut movement_gate); }
+            if actions[2] { game.toggle_pause(); }
+            if actions[3] { game.pause(); }
             let held = [input.key_held(KeyCode::KeyW), input.key_held(KeyCode::ArrowUp), input.key_held(KeyCode::KeyS), input.key_held(KeyCode::ArrowDown)];
             let axis = sample_movement(game.state, &mut movement_gate, held, was_playing && game.state == State::Paused);
             accumulator += dt;
@@ -365,6 +385,22 @@ mod benchmark_tests {
 #[cfg(test)]
 mod input_tests {
     use super::*;
+    #[test]
+    fn focus_return_requires_release_of_held_actions() {
+        for i in 0..4 {
+            let mut gate = ActionGate::default(); gate.on_focus_loss();
+            let mut held = [false; 4]; held[i] = true;
+            assert_eq!(gate.sample(held, held), [false; 4]);
+            assert_eq!(gate.sample(held, held), [false; 4]);
+            gate.sample([false; 4], [false; 4]);
+            assert_eq!(gate.sample(held, held), held);
+        }
+        let mut gate = ActionGate::default(); gate.on_focus_loss();
+        gate.sample([false; 4], [false; 4]);
+        assert_eq!(gate.sample([true,false,false,false], [true,false,false,false]), [true,false,false,false]);
+        gate.on_focus_loss(); gate.sample([true,false,false,false], [true,false,false,false]);
+        assert_eq!(gate.sample([true,true,false,false], [false,true,false,false]), [false,true,false,false]);
+    }
     #[test]
     fn status_names_winner_and_clears_after_restart() {
         let mut game = Game::new(42);
