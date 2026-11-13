@@ -13,3 +13,6 @@ ggez = { version = "=0.10.0", default-features = false }
 # Scoped fix for occluded Metal surfaces starving the event loop.
 [patch.crates-io]
 ggez = { path = "../../vendor/ggez" }
+
+# Scoped MIT/Apache dirs-sys patch removes option-ext; see vendor/dirs-sys-ggez/PATCH.md.
+dirs-sys = { path = "../../vendor/dirs-sys-ggez" }
