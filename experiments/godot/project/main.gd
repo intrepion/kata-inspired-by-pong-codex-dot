@@ -84,6 +84,16 @@ func _unhandled_input(event: InputEvent) -> void:
             KEY_R: simulation.start()
             KEY_ESCAPE: get_tree().quit()
 
+func status_message(snapshot: Dictionary) -> String:
+    match snapshot.state:
+        "Ready": return "Space to start"
+        "Paused": return "Paused - Space to resume"
+        "Over":
+            if snapshot.score_player > snapshot.score_cpu: return "YOU WIN - Space to restart"
+            if snapshot.score_cpu > snapshot.score_player: return "CPU WINS - Space to restart"
+            return "Match over - Space to restart"
+        _: return ""
+
 func _draw() -> void:
     if state == null or state.is_empty(): return
     draw_rect(Rect2(0, 0, 900, 500), Color("101a2a"))
@@ -94,7 +104,9 @@ func _draw() -> void:
     draw_string(font, Vector2(370, 48), "%d     %d" % [state.score_player, state.score_cpu], HORIZONTAL_ALIGNMENT_LEFT, -1, 32)
     draw_string(font, Vector2(28, 533), "GODOT + RUST  |  First to 7  |  " + state.state, HORIZONTAL_ALIGNMENT_LEFT, -1, 20)
     draw_string(font, Vector2(28, 563), "W/S or arrows: move   Space: start/pause   R: restart   Esc: quit", HORIZONTAL_ALIGNMENT_LEFT, -1, 17)
-    if state.state == "Ready" or state.state == "Paused" or state.state == "Over":
-        var message: String = "Space to start" if state.state == "Ready" else ("Paused - Space to resume" if state.state == "Paused" else "Match over - Space to restart")
-        draw_rect(Rect2(264, 230, 400, 42), Color("101a2a"))
-        draw_string(font, Vector2(280, 260), message, HORIZONTAL_ALIGNMENT_LEFT, -1, 24)
+    var message := status_message(state)
+    if not message.is_empty():
+        var width := font.get_string_size(message, HORIZONTAL_ALIGNMENT_LEFT, -1, 24).x
+        var left := (900.0 - width) / 2.0
+        draw_rect(Rect2(left - 16, 230, width + 32, 42), Color("101a2a"))
+        draw_string(font, Vector2(left, 260), message, HORIZONTAL_ALIGNMENT_LEFT, -1, 24)
