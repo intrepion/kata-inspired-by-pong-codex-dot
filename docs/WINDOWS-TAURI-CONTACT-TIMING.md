@@ -1,0 +1,9 @@
+# Windows Tauri contact-timing recheck
+
+On 2026-11-13 a clean source snapshot of `5ce27cb4e39ab84281e0d934ec0dba147a2279a6` was used for a locked offline Windows MSVC debug build. The first native build failed because Tauri's Windows resource build required `clients/tauri/icons/icon.ico`, which was absent from the snapshot. A lossless single-image ICO container containing the existing tracked 128x128 PNG was added; its SHA-256 is `60365427be02ed110f3a6c33ecfa7936dd0e593a270e71a865f9a04560b39780`. A Node regression verifies the ICO header and embedded PNG bytes. With this file present, the native build and both Tauri evidence-validation tests passed.
+
+The embedded `pong-wasm` was freshly built with locked offline release settings; its SHA-256 is `1324cd2935611280582fa5ca294f5dde03b1661dfa82d10d2b965b324d590d58`. Both Node WASM ABI tests passed. The native debug executable SHA-256 is `cf778ec08742ee8ea9d1ea50a1722bfe33cac96b129faea48cdbaf4357c8bb45`.
+
+The foreground native scripted run exited 0 and exported six app-owned Canvas PNGs and 13 [telemetry records](evidence/windows-tauri-contact-timing-20261113.jsonl). Parsed records match the contact-timing model reference through finished tick 1440; object key order differs. The inspected tick 480 canvas shows the unobstructed pause label, court, paddles and ball. It excludes DOM scores, the rest of the webview and window decorations, and is not a desktop screenshot or physical input evidence. WebView2 logged an error on exit that it could not unregister `Chrome_WidgetWin_0` (error 1412); the process nevertheless exited 0. The source snapshot, generated WASM, executable, logs and captures remain in the separate local `tauri-windows-c77` directory.
+
+Normal native interaction, sustained and physical input, full match, focus/resize, packaging and release qualification remain open for this revision. Previous assets and evidence remain historical.
