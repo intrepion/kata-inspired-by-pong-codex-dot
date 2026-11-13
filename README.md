@@ -352,6 +352,7 @@ These are local archive extraction, relocated runtime and removal checks, **not 
 | GPUI | Not recorded | [Local ZIP/state-only replay](docs/packaging/GPUI-WINDOWS-PILOT.md) | [Local archive/state-only replay](docs/packaging/GPUI-LINUX-PILOT.md) |
 | Tauri + Rust WASM | Not recorded | Not recorded | [Local archive/relocated replay pilot](docs/packaging/TAURI-LINUX-PILOT.md); WebKitGTK required, notices pending |
 | Yew native Tauri wrapper | Not recorded | Not recorded | [Local debug archive/relocated replay pilot](docs/packaging/YEW-TAURI-LINUX-PILOT.md); WebKitGTK required, notices pending |
+| Leptos native Tauri wrapper | Not recorded | Not recorded | [Local debug archive/relocated replay pilot](docs/packaging/LEPTOS-TAURI-LINUX-PILOT.md); WebKitGTK required, notices pending |
 | Other adapters | Not recorded | Not recorded | Not recorded |
 
 Evidence and limitations: [packaging index](docs/packaging/README.md), [Mac Macroquad](docs/packaging/MACROQUAD-MAC-PILOT.md), [Windows Macroquad](docs/packaging/MACROQUAD-WINDOWS-PILOT.md), [Mac SDL3](docs/packaging/SDL3-MAC-PILOT.md), [Mac raylib](docs/packaging/RAYLIB-MAC-PILOT.md), [Linux ash](docs/packaging/ASH-LINUX-PILOT.md).
