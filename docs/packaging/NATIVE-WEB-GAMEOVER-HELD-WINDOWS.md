@@ -1,0 +1,7 @@
+# Windows native and web game-over held-input recheck
+
+At checkpoint `02fed664994da024a3bdd0f0a2643a0af2ad564b`, including `bdbae23`, Windows MSVC stable Rust 1.99.1 passed locked offline adapter/controller tests: Miniquad 12, Pixels 9, wgpu 8, Piston 11, ggez 6, ash 10, softbuffer 8, Fyrox 6, bracket-lib 13 and shared web controller 15. ggez used the release profile; the others used debug. Each suite included its match-end held-input regression. Source Git blobs match the corresponding entries in [the Omarchy report](NATIVE-WEB-GAMEOVER-HELD-OMARCHY.md). Cargo reported incremental-cache hard-link fallback to copies for several copied targets.
+
+A fresh locked offline debug Miniquad build produced executable SHA-256 `6a909cd7929f7a061f38608210fc2b3c46f61ba8288d29b9b4cb6c26cf20bdbc`. Its scripted run exited 0, stderr was empty, and all 13 records matched `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`. This standard replay does not reach game over or exercise real keys. No captures were requested. Its target is `target-native-gameover-windows-20261113` and output is in sibling workspace directory `native-gameover-windows-20261113`. Separate copied ggez, Fyrox and bracket targets and the separate web test target remain in the checkout.
+
+The regressions call adapter/controller logic rather than OS or browser events. Physical input, browser pointer delivery, both-winner integration, clean-machine and release qualification remain open; the other eight native frontends were not replayed in this Windows batch.
