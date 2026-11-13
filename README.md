@@ -50,6 +50,8 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
+Omarchy Ratatui enhanced-key PTY: the relocated release process passed a synthetic press/pause/repeat/release check; real-terminal and physical-input behavior remain open. [Evidence](docs/packaging/RATATUI-ENHANCED-PTY-OMARCHY.md).
+
 Omarchy Ratatui release pilot now includes a resolved-graph notice discovery bundle; relocated replay and six manifest entries verify, with notice review and clean-machine installation pending. [Evidence](docs/packaging/RATATUI-RELEASE-NOTICE-OMARCHY.md).
 
 Omarchy tab-loss check was inconclusive because the automation reported both pages visible; no unverified focus-listener changes were adopted. [Details](docs/WEB-TAB-FOCUS-ATTEMPT.md).
@@ -271,7 +273,7 @@ Details: [baseline frontends](docs/desktop-comparison.md), [extra engines](exper
 | Slint | `9195b63` cached debug B / automated full match and reset; shell replay timed out ([details](docs/SLINT-MAC-CONTACT-TIMING-RECHECK.md)) | B / I: start, scoring, pause/resume, reset | `ccd3783` B, 10 shared tests; relocated replay and six component PNGs match model; physical input unverified ([details](docs/packaging/SLINT-GPUI-PAUSE-OMARCHY-PILOT.md)) |
 | GPUI | B / I: Enter start, held-W movement, scoring, Space pause | B / I; maximized rendering checked | `ccd3783` B, 1 geometry + 10 shared tests; relocated state-only replay matches model; visual/input unverified ([details](docs/packaging/SLINT-GPUI-PAUSE-OMARCHY-PILOT.md)) |
 | GTK4 | Blocked: native dependencies missing / U | U / U | `59957bb` B, 1 frontend + 10 shared model tests; relocated replay and six app-owned Cairo PNGs match model; physical input unverified ([details](docs/packaging/GTK-GUI-PAUSE-OMARCHY-PILOT.md)) |
-| Ratatui | B / pseudo-terminal checks; enhanced-terminal interaction unverified | B / blocked: direct launch has no targetable window; Windows Terminal access blocked by product policy | Fresh repeat-fix release B, 10 tests; relocated package replay and bounded PTY startup/exit; physical terminal input unverified ([details](docs/packaging/RATATUI-REPEAT-OMARCHY-PACKAGE.md); [earlier run](docs/packaging/RATATUI-C77-OMARCHY-REPLAY.md)) |
+| Ratatui | B / pseudo-terminal checks; enhanced-terminal interaction unverified | B / blocked: direct launch has no targetable window; Windows Terminal access blocked by product policy | Fresh repeat-fix release B, 10 tests; relocated package replay and synthetic enhanced-key PTY pause/repeat check; real-terminal and physical input unverified ([details](docs/packaging/RATATUI-REPEAT-OMARCHY-PACKAGE.md); [earlier run](docs/packaging/RATATUI-C77-OMARCHY-REPLAY.md)) |
 
 Details: [low-level clients](experiments/LOW-LEVEL.md), [GUI toolkits](experiments/GUI-TOOLKITS.md), [Ratatui](experiments/ratatui/README.md). GPUI's initial default Mac check required the separate Metal Toolchain; the runtime-shader path and later native worker results are reflected above.
 
