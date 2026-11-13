@@ -771,3 +771,5 @@ Bevy and bracket-lib now suppress held movement through active restart; see the 
 Yew, Leptos and Dioxus web now provide a bounded movement step for non-pointer button activation. [Omarchy evidence](docs/packaging/WEB-NONPOINTER-ACTIVATION-OMARCHY.md) records model and browser hold checks; assistive-technology activation and Dioxus desktop remain open.
 
 [Omarchy ggez winner cross-check](docs/packaging/GGEZ-WINNER-OMARCHY-20261113.md): eight tests passed, and a rebuilt debug replay matched retained telemetry; the scripted capture showed the pause overlay but did not reach a winner screen.
+
+raylib-rs now names the winner in its match-end overlay; [Omarchy evidence](docs/packaging/RAYLIB-WINNER-OMARCHY-20261113.md) records the tests and scripted capture, which did not reach a winner screen.
