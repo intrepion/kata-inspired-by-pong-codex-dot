@@ -54,6 +54,8 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
+Omarchy Ratatui focus and resize PTY: synthetic focus loss and a PTY resize paused the release executable and cleared movement; real terminal and physical input remain open. [Evidence](docs/packaging/RATATUI-FOCUS-RESIZE-PTY-OMARCHY.md).
+
 Omarchy Ratatui enhanced-key PTY: the relocated release process passed a synthetic press/pause/repeat/release check; real-terminal and physical-input behavior remain open. [Evidence](docs/packaging/RATATUI-ENHANCED-PTY-OMARCHY.md).
 
 Omarchy Ratatui release pilot now includes a resolved-graph notice discovery bundle; relocated replay and six manifest entries verify, with notice review and clean-machine installation pending. [Evidence](docs/packaging/RATATUI-RELEASE-NOTICE-OMARCHY.md).
