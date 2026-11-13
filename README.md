@@ -964,3 +964,6 @@ A [Blue Engine transition-order investigation](docs/packaging/BLUE-TRANSITION-OR
 
 
 Raylib macOS: the score line identifies YOU and CPU; a release-build Ready screen and 18 automated tests were checked. See [bounded evidence](docs/packaging/RAYLIB-SCORE-LABELS-MAC-20261113.md); gameplay, physical input, other sizes and release qualification remain open.
+
+
+Raylib macOS narrow-window follow-up: the clipped control footer was split and measured; a resized Ready screen showed both lines without clipping at the tested size. [Evidence and limits](docs/packaging/RAYLIB-NARROW-FOOTER-MAC-20261113.md).
