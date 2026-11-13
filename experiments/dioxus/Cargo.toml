@@ -17,4 +17,4 @@ web-time = "1"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 # Dioxus web history currently assumes Location is enabled transitively.
-web-sys = { version = "0.3", features = ["Location"] }
+web-sys = { version = "0.3", features = ["Location", "MouseEvent", "UiEvent"] }

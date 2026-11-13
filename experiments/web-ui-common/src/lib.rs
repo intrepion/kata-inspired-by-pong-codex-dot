@@ -125,6 +125,19 @@ impl Session {
         };
         self.button_keys[direction] = [false; 2];
     }
+    /// A non-pointer button activation moves once; pointer holds use their own path.
+    pub fn movement_button_activate(&mut self, direction: Direction) {
+        if self.demo.is_none() && self.game.state == State::Playing {
+            let delta = match direction {
+                Direction::Up => -32.,
+                Direction::Down => 32.,
+            };
+            self.game.player = (self.game.player + delta).clamp(
+                pong_core::PADDLE_H / 2.,
+                pong_core::H - pong_core::PADDLE_H / 2.,
+            );
+        }
+    }
     pub fn start(&mut self) {
         if self.demo.is_some() {
             return;
@@ -281,6 +294,28 @@ pub const CSS:&str="body{margin:0;background:#080f19;color:#eef6ff;font:16px sys
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn non_pointer_button_activation_moves_once_only_while_playing_and_clamps() {
+        let mut s = Session::default();
+        s.movement_button_activate(Direction::Up);
+        assert_eq!(s.game.player, pong_core::H / 2.);
+        s.start();
+        s.movement_button_activate(Direction::Up);
+        assert_eq!(s.game.player, pong_core::H / 2. - 32.);
+        s.game.player = pong_core::PADDLE_H / 2. + 1.;
+        s.movement_button_activate(Direction::Up);
+        assert_eq!(s.game.player, pong_core::PADDLE_H / 2.);
+        s.movement_button_activate(Direction::Down);
+        assert_eq!(s.game.player, pong_core::PADDLE_H / 2. + 32.);
+        s.pause();
+        let before = s.game.player;
+        s.movement_button_activate(Direction::Down);
+        assert_eq!(s.game.player, before);
+        s.enable_demo();
+        let before = s.game.player;
+        s.movement_button_activate(Direction::Down);
+        assert_eq!(s.game.player, before);
+    }
     #[test]
     fn restarting_during_play_clears_all_held_sources() {
         let mut s = Session::default();

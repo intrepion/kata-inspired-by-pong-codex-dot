@@ -15,6 +15,18 @@ fn benchmark_args(args: &[String]) -> bool {
     );
     enabled
 }
+fn winner_message(game: &Game) -> Option<&'static str> {
+    if game.state != State::Over {
+        return None;
+    }
+    Some(if game.scores[0] > game.scores[1] {
+        "YOU WIN - ENTER OR R TO RESTART"
+    } else if game.scores[1] > game.scores[0] {
+        "CPU WINS - ENTER OR R TO RESTART"
+    } else {
+        "MATCH OVER - ENTER OR R TO RESTART"
+    })
+}
 
 #[derive(Default)]
 struct MovementGate {
@@ -162,6 +174,15 @@ fn main() {
             (32.0 * s).max(10.0) as i32,
             Color::WHITE,
         );
+        if let Some(message) = winner_message(&game) {
+            d.draw_text(
+                message,
+                (ox + 230.0 * s) as i32,
+                (oy + 235.0 * s) as i32,
+                (24.0 * s).max(10.0) as i32,
+                Color::WHITE,
+            );
+        }
         d.draw_text(
             &format!(
                 "{:?} | W/S arrows | Enter/R restart | Space pause | Esc exit",
@@ -216,6 +237,38 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn winner_message_tracks_winning_point_and_restart() {
+        let mut game = Game::new(42);
+        assert_eq!(winner_message(&game), None);
+        for (scores, x, vx, message) in [
+            (
+                [6, 3],
+                W + BALL - 1.,
+                350.,
+                "YOU WIN - ENTER OR R TO RESTART",
+            ),
+            (
+                [2, 6],
+                -BALL + 1.,
+                -350.,
+                "CPU WINS - ENTER OR R TO RESTART",
+            ),
+        ] {
+            game.start();
+            game.scores = scores;
+            game.serve = 0.;
+            game.ball.x = x;
+            game.ball.y = H / 2.;
+            game.ball.vx = vx;
+            game.ball.vy = 0.;
+            game.step(0.02, 0.);
+            assert_eq!(game.state, State::Over);
+            assert_eq!(winner_message(&game), Some(message));
+            game.start();
+            assert_eq!(winner_message(&game), None);
+        }
+    }
     #[test]
     fn active_restart_blocks_held_direction_until_release() {
         let mut game = Game::new(42);
