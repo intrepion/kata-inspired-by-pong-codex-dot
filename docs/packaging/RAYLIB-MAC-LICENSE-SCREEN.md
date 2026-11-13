@@ -9,3 +9,19 @@ nm -m on the executable showed text symbols named InitWindow, glfwInit, LoadFont
 otool -L showed direct OpenGL, Cocoa, IOKit, CoreFoundation, CoreVideo, AppKit, CoreGraphics, CoreServices and Foundation frameworks, plus libSystem and libobjc. It did not list libiconv as a direct load; indirect and dynamically loaded libraries were not established. System-component licenses and clean-machine behavior remain open.
 
 Metadata SHA-256 a154437dc114ac8a963ae99605f22d3a21eb315b7cf86cc63036b2da0ccb5620; lockfile SHA-256 920e0fa806c0a24ea0381b0d7499d4bb23fa6b8deef4e9af51e583b613362c8e. Metadata remains at /tmp/pong-raylib-mac-metadata-20261113-v1.json. This is not a release clearance or complete audit. All prior artifacts remain intact. Checkpoint when recorded: 5dcb419704270cac918d01c007fd1ca5cbc4e511.
+
+## Selected native-source provenance
+
+The cached raylib-sys 6.0.0 crate archive SHA-256 36be0f95d9ea818847eedf4a6a73cbd5331db5a558069747dae827ac3c12fdf8 matches the workspace lockfile checksum. Its .cargo_vcs_info.json identifies raylib-rs revision [2b0b3e3](https://github.com/raylib-rs/raylib-rs/tree/2b0b3e355a911325058544523d0b5845edbbbc55); that revision identifies raylib submodule [dbc56a8](https://github.com/raysan5/raylib/tree/dbc56a87da87d973a9c5baa4e7438a9d20121d28). Git blob hashes of these selected cached files matched that submodule revision:
+
+| File in raylib submodule | Git blob |
+| --- | --- |
+| [LICENSE](https://github.com/raysan5/raylib/blob/dbc56a87da87d973a9c5baa4e7438a9d20121d28/LICENSE) | bc6f4b8519d759f7d8d64311ffeeb0423cf127a8 |
+| [GLFW LICENSE.md](https://github.com/raysan5/raylib/blob/dbc56a87da87d973a9c5baa4e7438a9d20121d28/src/external/glfw/LICENSE.md) | 7494a3f689caf46e268f7ac0b28a07f5416f8c65 |
+| [GLFW init.c](https://github.com/raysan5/raylib/blob/dbc56a87da87d973a9c5baa4e7438a9d20121d28/src/external/glfw/src/init.c) | 532264e16ff860a308252ae11e30864a26cbe9b6 |
+| [stb_image_write.h](https://github.com/raysan5/raylib/blob/dbc56a87da87d973a9c5baa4e7438a9d20121d28/src/external/stb_image_write.h) | e4b32ed1bc32ef9c962acbf47a9d10af01939e08 |
+| [rtext.c](https://github.com/raysan5/raylib/blob/dbc56a87da87d973a9c5baa4e7438a9d20121d28/src/rtext.c) | 7b9d5f2c848c32e2d0f336562ba78c42cda1ad01 |
+
+The raylib and GLFW notices provide permissive terms with preservation and altered-source conditions; stb_image_write offers an MIT alternative and a public-domain alternative. The raylib-sys build output retained in the reused Mac target reports using raylib's GLFW, building a static raylib library, and compiling GLFW init.c; it also reports audio enabled. The tested executable's glfwInit and stb write symbols are consistent with that evidence. The log originated in an earlier reused target path; it does not by itself prove byte-for-byte correspondence between every cached source file and the final executable.
+
+This targeted comparison does not cover all raylib native code, bundled codecs, assets, toolchain or system libraries, and does not prove notice sufficiency or clearance under the strict license policy. In particular, audio was enabled and remains to be audited. No artifact was removed or published.
