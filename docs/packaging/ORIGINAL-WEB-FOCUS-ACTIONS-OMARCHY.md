@@ -1,0 +1,9 @@
+# Original browser game focus gate — Omarchy, 2026-11-13
+
+The original TypeScript game paused and cleared controls on window blur but its document keydown handler could still process a queued Space and resume before focus returned. The handler now ignores keydowns after window blur until window focus, and while the document is hidden. Key releases still clear held state. Initial focus is assumed until the first blur; controls and scripted mode otherwise retain their existing behavior.
+
+The DOM-handler regression reproduced the defect before the fix: a synthetic blur paused the match, then a queued Space resumed it. It now confirms that queued Space stays paused after blur, works after focus, stays paused while hidden, and works when visible again. On Node v26.12.1, `npm test` passed its TypeScript build and both test files; direct counts were 24 game tests and 2 CPU-contact tests. Tested SHA-256 values: `game.ts` `26860db65480e0f07cf94846a37e791029f0186f58d997571cc349ec7baff624`, generated `game.js` `26bd21597f042682ce7d191be3b7d646e9351372f3a1051611a52d6b19ba55a1`, and `tests/game.test.js` `7d5c4899d31c4ed66e29798c541ebe837e8851c1a1a50b697bd8359842503c17`. Base checkpoint `ddb09af6c6d919f9db7efa7b683eb70510bf57b6`.
+
+A local-only server at `127.0.0.1:4197` served the rebuilt page to Chrome via supported browser controls. Clicking Start, Pause and Resume displayed the expected ready, paused and rally states. Opening another test tab did not produce an observed pause in the original tab, so that attempt did not establish actual browser focus or visibility event delivery. The server was stopped after the check.
+
+The regression uses synthetic DOM events; the browser interaction is a separate bounded control check, not physical keyboard input or a verified real tab-loss transition. Other browsers, mobile, actual focus delivery and release qualification remain open. Historical evidence is retained.

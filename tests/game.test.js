@@ -137,6 +137,16 @@ test('browser handlers clear movement on pause and reject continuing touch drags
  const afterClick=playerY;els.up.emit('click',{detail:1});frame(380);assert.equal(playerY,afterClick);
  for(let i=0;i<100;i++)els.down.emit('click',{detail:0});frame(390);assert.equal(playerY,410);
  els.pause.emit('click');els.up.emit('click',{detail:0});frame(400);assert.equal(playerY,410);
+ els.start.emit('click'); assert.notEqual(els.status.textContent,'Paused');
+ win.emit('blur'); assert.equal(els.status.textContent,'Paused');
+ doc.emit('keydown',{key:' ',repeat:false,target:els.court});
+ assert.equal(els.status.textContent,'Paused','queued Space must not resume while window is unfocused');
+ win.emit('focus'); doc.emit('keydown',{key:' ',repeat:false,target:els.court});
+ assert.notEqual(els.status.textContent,'Paused');
+ doc.hidden=true; doc.emit('visibilitychange'); assert.equal(els.status.textContent,'Paused');
+ doc.emit('keydown',{key:' ',repeat:false,target:els.court}); assert.equal(els.status.textContent,'Paused');
+ doc.hidden=false; doc.emit('visibilitychange'); doc.emit('keydown',{key:' ',repeat:false,target:els.court});
+ assert.notEqual(els.status.textContent,'Paused');
 });
 
 test('independent original collision uses crossing height on both sides',()=>{

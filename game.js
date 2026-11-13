@@ -289,8 +289,9 @@ if (typeof document !== 'undefined') {
         sync();
     });
     pause.addEventListener('click', toggle);
+    let windowFocused = true;
     document.addEventListener('keydown', e => {
-        if (demoRequested)
+        if (demoRequested || !windowFocused || document.hidden)
             return;
         if (e.key === ' ' && (e.target === start || e.target === pause))
             return;
@@ -302,7 +303,9 @@ if (typeof document !== 'undefined') {
             controls.keyDown(e.key, e.repeat);
     });
     document.addEventListener('keyup', e => controls.keyUp(e.key));
+    window.addEventListener('focus', () => { windowFocused = true; });
     window.addEventListener('blur', () => {
+        windowFocused = false;
         controls.suspend();
         if (game.state === 'playing')
             toggle();
