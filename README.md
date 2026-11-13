@@ -857,3 +857,5 @@ Raw wgpu's window title now labels the scores and winner; [Omarchy evidence](doc
 Raylib now displays Ready and Paused instructions in the court, with centered backed winner text. [Omarchy evidence](docs/packaging/RAYLIB-COURT-STATES-OMARCHY.md) records the tests and paused capture.
 
 Miniquad now shows start and resume instructions with its in-court symbols; [Omarchy tests and paused capture](docs/packaging/MINIQUAD-STATE-INSTRUCTIONS-OMARCHY.md) record the scope and limitations.
+
+SDL3 now ignores queued Escape keydowns after focus loss while retaining window-close behavior; [Omarchy regression and replay evidence](docs/packaging/SDL3-FOCUS-ESCAPE-OMARCHY.md) records the verification limits.

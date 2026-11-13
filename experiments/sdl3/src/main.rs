@@ -73,6 +73,10 @@ fn live_action(app: &mut App, gate: &mut MovementGate, focused: bool, action: Li
         }
     }
 }
+fn exit_requested(event: &Event, focused: bool) -> bool {
+    matches!(event, Event::Quit { .. })
+        || (focused && matches!(event, Event::KeyDown { keycode: Some(Keycode::Escape), .. }))
+}
 fn main() -> Result<(), String> {
     let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     let sdl = sdl3::init().map_err(|e| e.to_string())?;
@@ -107,12 +111,8 @@ fn main() -> Result<(), String> {
     'running: loop {
         let mut entered_pause = false;
         for event in events.poll_iter() {
+            if exit_requested(&event, focused) { break 'running; }
             match event {
-                Event::Quit { .. }
-                | Event::KeyDown {
-                    keycode: Some(Keycode::Escape),
-                    ..
-                } => break 'running,
                 Event::KeyDown {
                     keycode: Some(Keycode::Space),
                     repeat: false,
@@ -236,6 +236,14 @@ fn main() -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn queued_escape_after_focus_loss_does_not_exit() {
+        let escape = Event::KeyDown { timestamp: 0, window_id: 1, keycode: Some(Keycode::Escape), scancode: Some(Scancode::Escape), keymod: sdl3::keyboard::Mod::NOMOD, repeat: false, which: 0, raw: 0 };
+        assert!(!exit_requested(&escape, false));
+        assert!(exit_requested(&escape, true));
+        assert!(exit_requested(&Event::Quit { timestamp: 0 }, false));
+        assert!(exit_requested(&Event::Quit { timestamp: 0 }, true));
+    }
     #[test]
     fn unfocused_actions_cannot_resume_or_restart_game() {
         let mut app = App::default();
