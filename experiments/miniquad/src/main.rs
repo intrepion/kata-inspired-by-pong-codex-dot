@@ -57,6 +57,9 @@ fn handle_key_down(
         movement.key(key, true);
     }
     let previous = game.state;
+    if !repeat && matches!(key, KeyCode::Enter | KeyCode::KpEnter | KeyCode::R) {
+        movement.clear();
+    }
     let quit = control_key(game, key, repeat);
     if (previous == State::Playing && game.state == State::Paused)
         || (previous == State::Over && game.state == State::Playing)
@@ -451,6 +454,19 @@ mod movement_tests {
 #[cfg(test)]
 mod control_tests {
     use super::*;
+    #[test]
+    fn active_restart_clears_held_movement() {
+        for restart in [KeyCode::Enter, KeyCode::KpEnter, KeyCode::R] {
+            let mut g = Game::new(42);
+            g.start();
+            let mut held = MovementInput::default();
+            handle_key_down(&mut g, &mut held, KeyCode::W, false);
+            handle_key_down(&mut g, &mut held, restart, false);
+            assert_eq!(held.axis(), 0.);
+            handle_key_down(&mut g, &mut held, KeyCode::W, true);
+            assert_eq!(held.axis(), 0.);
+        }
+    }
     #[test]
     fn held_movement_does_not_carry_through_match_end_restart() {
         use pong_core::{Ball, BALL, H, W};
