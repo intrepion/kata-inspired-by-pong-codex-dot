@@ -18,7 +18,7 @@ Mac Miniquad pause follow-up: ten release tests pass; sequential desktop start/m
 
 Windows GUI pause-fix follow-up: 10 shared model tests and fresh Slint/GPUI scripted runs pass; native held-key delivery remains open. [Evidence](docs/WINDOWS-GUI-EXPLICIT-PAUSE-RECHECK.md).
 
-Windows Miniquad pause-fix follow-up: 10 action/model tests and fresh scripted replay pass; native key delivery remains open. [Evidence](docs/WINDOWS-MINIQUAD-PAUSE-RECHECK.md). Windows Dioxus Desktop built, but its scripted export did not complete in the bounded attempt. [Details](docs/WINDOWS-DIOXUS-NATIVE-PAUSE-ATTEMPT.md).
+Windows Miniquad pause-fix follow-up: 10 action/model tests and fresh scripted replay pass; native key delivery remains open. [Evidence](docs/WINDOWS-MINIQUAD-PAUSE-RECHECK.md). Windows Dioxus Desktop built, but its scripted export did not complete; an isolated probe reached component construction without observing the timer future poll. [Details](docs/WINDOWS-DIOXUS-NATIVE-PAUSE-ATTEMPT.md).
 
 Miniquad keypad Enter now shares the existing start/restart action; Windows and Mac action-boundary tests pass; Mac automated `KP_Enter` starts and resets, but its delivered key code, physical delivery and the separate Windows Unknown-key issue remain open. [Evidence](docs/MINIQUAD-KEYPAD-ENTER.md).
 
