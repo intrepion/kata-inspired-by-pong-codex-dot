@@ -13,7 +13,7 @@ fn benchmark_args(args: &[String]) -> bool {
 }
 #[cfg(any(feature = "windowed", test))]
 #[derive(Default)]
-struct MovementGate { suppressed: [bool; 4] }
+struct MovementGate { suppressed: [bool; 4], was_playing: bool }
 #[cfg(any(feature = "windowed", test))]
 impl MovementGate {
     fn axis(&mut self, held: [bool; 4], entering_pause: bool) -> f32 {
@@ -23,6 +23,13 @@ impl MovementGate {
         let active = std::array::from_fn::<_, 4, _>(|i| held[i] && !self.suppressed[i]);
         (active[2] || active[3]) as u8 as f32 - (active[0] || active[1]) as u8 as f32
     }
+}
+#[cfg(any(feature = "windowed", test))]
+fn sample_movement(state: State, gate: &mut MovementGate, held: [bool; 4], entering_pause: bool) -> f32 {
+    let playing = state == State::Playing;
+    let suppress = entering_pause || !playing || !gate.was_playing;
+    gate.was_playing = playing;
+    gate.axis(held, suppress)
 }
 fn rect(engine: &mut Engine, name: &str, x: f32, y: f32, width: f32, height: f32, z: f32) {
     if let Some(object) = engine.objects.get_mut(name) {
@@ -190,7 +197,7 @@ fn main() -> Result<(), blue_engine::error::Error> {
         if !focused {
             let input = &engine.simple_input;
             let held = [input.key_held(KeyCode::KeyW), input.key_held(KeyCode::ArrowUp), input.key_held(KeyCode::KeyS), input.key_held(KeyCode::ArrowDown)];
-            movement_gate.axis(held, game.state == State::Playing);
+            sample_movement(State::Paused, &mut movement_gate, held, true);
             game.pause();
             accumulator = 0.;
         } else {
@@ -204,9 +211,10 @@ fn main() -> Result<(), blue_engine::error::Error> {
             if input.key_pressed(KeyCode::Space) { game.toggle_pause(); }
             if input.key_pressed(KeyCode::Escape) { game.pause(); }
             let held = [input.key_held(KeyCode::KeyW), input.key_held(KeyCode::ArrowUp), input.key_held(KeyCode::KeyS), input.key_held(KeyCode::ArrowDown)];
-            let axis = movement_gate.axis(held, was_playing && game.state == State::Paused);
+            let axis = sample_movement(game.state, &mut movement_gate, held, was_playing && game.state == State::Paused);
             accumulator += dt;
             while accumulator >= 1. / 120. { game.step(1. / 120., axis); accumulator -= 1. / 120.; }
+            movement_gate.was_playing &= game.state == State::Playing;
         }
         }
         #[cfg(feature = "windowed")]
@@ -274,6 +282,27 @@ mod benchmark_tests {
 #[cfg(test)]
 mod input_tests {
     use super::*;
+    #[test]
+    fn first_playing_sample_suppresses_held_key() {
+        let mut gate=MovementGate::default();
+        assert_eq!(sample_movement(State::Playing,&mut gate,[true,false,false,false],false),0.);
+        assert_eq!(sample_movement(State::Playing,&mut gate,[true,false,false,false],false),0.);
+        sample_movement(State::Playing,&mut gate,[false;4],false);
+        assert_eq!(sample_movement(State::Playing,&mut gate,[true,false,false,false],false),-1.);
+    }
+    #[test]
+    fn nonplaying_held_keys_do_not_move_after_resume() {
+        for state in [State::Ready, State::Paused, State::Over] {
+            for i in 0..4 {
+                let mut gate=MovementGate::default(); let mut held=[false;4]; held[i]=true;
+                assert_eq!(sample_movement(state,&mut gate,held,false),0.,"{state:?}");
+                assert_eq!(sample_movement(State::Playing,&mut gate,held,false),0.);
+                held[i]=false; sample_movement(State::Playing,&mut gate,held,false);
+                held[i]=true; assert_ne!(sample_movement(State::Playing,&mut gate,held,false),0.);
+            }
+        }
+    }
+
     #[test]
     fn held_movement_stays_suppressed_through_resume() {
         for index in 0..4 {

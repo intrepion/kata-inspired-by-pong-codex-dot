@@ -72,6 +72,17 @@ impl Pong {
                 if !self.focused || !self.keys.insert(key) {
                     return false;
                 }
+                if self.game.state != State::Playing
+                    && matches!(
+                        key,
+                        VirtualKeyCode::W
+                            | VirtualKeyCode::Up
+                            | VirtualKeyCode::S
+                            | VirtualKeyCode::Down
+                    )
+                {
+                    self.suppressed.insert(key);
+                }
                 match key {
                     VirtualKeyCode::Escape | VirtualKeyCode::Q => return true,
                     VirtualKeyCode::Space => {
@@ -340,6 +351,30 @@ mod tests {
             key: k,
             scan_code: 0,
             pressed,
+        }
+    }
+    #[test]
+    fn nonplaying_presses_stay_suppressed_until_release() {
+        for state in [State::Ready, State::Paused, State::Over] {
+            for movement in [
+                VirtualKeyCode::W,
+                VirtualKeyCode::Up,
+                VirtualKeyCode::S,
+                VirtualKeyCode::Down,
+            ] {
+                let mut p = Pong::new();
+                p.game.state = state;
+                p.event(key(movement, true));
+                p.event(key(VirtualKeyCode::Space, true));
+                assert_eq!(p.game.state, State::Playing);
+                let before = p.game.player;
+                p.advance(0.05);
+                assert_eq!(p.game.player, before, "{state:?} {movement:?}");
+                p.event(key(movement, false));
+                p.event(key(movement, true));
+                p.advance(0.05);
+                assert_ne!(p.game.player, before);
+            }
         }
     }
     #[test]

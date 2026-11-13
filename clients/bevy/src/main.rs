@@ -25,6 +25,21 @@ struct Replay {
     pending: Option<(std::path::PathBuf, std::time::Instant)>,
 }
 
+#[derive(Resource, Default)]
+struct MovementGate {
+    suppressed: [bool; 4],
+    was_playing: bool,
+}
+fn movement_axis(state: State, gate: &mut MovementGate, held: [bool; 4]) -> f32 {
+    let playing = state == State::Playing;
+    let suppress = !playing || !gate.was_playing;
+    gate.was_playing = playing;
+    for (blocked, down) in gate.suppressed.iter_mut().zip(held) {
+        *blocked = down && (suppress || *blocked);
+    }
+    let active = std::array::from_fn::<_, 4, _>(|i| held[i] && !gate.suppressed[i]);
+    (active[2] || active[3]) as u8 as f32 - (active[0] || active[1]) as u8 as f32
+}
 #[derive(Resource)]
 struct Match(Game);
 #[derive(Resource, Default)]
@@ -64,6 +79,7 @@ fn main() {
         })
         .insert_resource(Match(Game::new(seed)))
         .insert_resource(Clock::default())
+        .insert_resource(MovementGate::default())
         .insert_resource(ClearColor(Color::srgb(0.035, 0.08, 0.075)))
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
@@ -158,6 +174,7 @@ fn input_and_simulation(
     windows: Query<&Window, With<PrimaryWindow>>,
     mut game: ResMut<Match>,
     mut clock: ResMut<Clock>,
+    mut movement: ResMut<MovementGate>,
 ) {
     if replay.pending.is_some() {
         return;
@@ -183,6 +200,7 @@ fn input_and_simulation(
     };
     if !window.focused {
         game.0.pause();
+        movement.was_playing = false;
         clock.0 = 0.;
         return;
     }
@@ -202,8 +220,16 @@ fn input_and_simulation(
         game.0.toggle_pause();
         clock.0 = 0.;
     }
-    let input = (keys.pressed(KeyCode::ArrowDown) || keys.pressed(KeyCode::KeyS)) as i32
-        - (keys.pressed(KeyCode::ArrowUp) || keys.pressed(KeyCode::KeyW)) as i32;
+    let input = movement_axis(
+        game.0.state,
+        &mut movement,
+        [
+            keys.pressed(KeyCode::ArrowUp),
+            keys.pressed(KeyCode::KeyW),
+            keys.pressed(KeyCode::ArrowDown),
+            keys.pressed(KeyCode::KeyS),
+        ],
+    );
     if game.0.state != State::Playing {
         clock.0 = 0.;
         return;
@@ -212,9 +238,10 @@ fn input_and_simulation(
     const DT: f32 = 1. / 120.;
     clock.0 += time.delta_secs().min(0.1);
     while clock.0 >= DT {
-        game.0.step(DT, input as f32);
+        game.0.step(DT, input);
         clock.0 -= DT;
     }
+    movement.was_playing &= game.0.state == State::Playing;
 }
 
 fn present(
@@ -328,5 +355,48 @@ mod benchmark_tests {
     #[should_panic(expected = "distinct")]
     fn reject_combined_modes() {
         benchmark_args(&["--benchmark".into(), "--scripted-test".into()]);
+    }
+}
+
+#[cfg(test)]
+mod input_tests {
+    use super::*;
+    #[test]
+    fn first_playing_sample_and_focus_loss_suppress_keys_independently() {
+        let mut gate = MovementGate::default();
+        assert_eq!(
+            movement_axis(State::Playing, &mut gate, [true, false, false, false]),
+            0.
+        );
+        movement_axis(State::Playing, &mut gate, [false; 4]);
+        assert_eq!(
+            movement_axis(State::Playing, &mut gate, [true, false, false, false]),
+            -1.
+        );
+        gate.was_playing = false;
+        assert_eq!(
+            movement_axis(State::Playing, &mut gate, [true, false, false, false]),
+            0.
+        );
+        assert_eq!(
+            movement_axis(State::Playing, &mut gate, [true, true, false, false]),
+            -1.
+        );
+    }
+    #[test]
+    fn nonplaying_held_keys_do_not_move_after_resume() {
+        for state in [State::Ready, State::Paused, State::Over] {
+            for i in 0..4 {
+                let mut gate = MovementGate::default();
+                let mut held = [false; 4];
+                held[i] = true;
+                assert_eq!(movement_axis(state, &mut gate, held), 0., "{state:?}");
+                assert_eq!(movement_axis(State::Playing, &mut gate, held), 0.);
+                held[i] = false;
+                movement_axis(State::Playing, &mut gate, held);
+                held[i] = true;
+                assert_ne!(movement_axis(State::Playing, &mut gate, held), 0.);
+            }
+        }
     }
 }

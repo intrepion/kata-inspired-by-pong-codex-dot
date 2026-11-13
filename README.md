@@ -164,6 +164,8 @@ Omarchy Miniquad winning-score fixture: real scoring reached both game-over stat
 
 Omarchy Miniquad winner overlay: an isolated forced-state visual fixture rendered both winner messages; real game-over progression and physical input remain open. [Evidence](docs/packaging/MINIQUAD-WINNER-FIXTURE-OMARCHY.md).
 
+Omarchy Bevy, Blue Engine, bracket-lib and Fyrox input: non-playing movement is suppressed until release; adapter tests, release builds and scripted replays pass. Physical input and cross-platform checks remain open. [Evidence](docs/packaging/FOUR-ENGINE-NONPLAYING-INPUT-OMARCHY.md).
+
 Omarchy polling input: Nannou, raylib-rs, SDL3 and Macroquad suppress keys held outside play until release; tests, release builds and scripted replays pass. Other native paths remain under review. [Evidence](docs/packaging/POLLING-NONPLAYING-INPUT-OMARCHY.md).
 
 Omarchy native input: Miniquad, Pixels, wgpu, Piston, ash and softbuffer now ignore movement presses outside play; adapter tests and release builds pass. Polling adapters and native input need follow-up. [Evidence](docs/packaging/NATIVE-NONPLAYING-INPUT-OMARCHY.md).
