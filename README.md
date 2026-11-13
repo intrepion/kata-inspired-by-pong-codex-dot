@@ -881,3 +881,5 @@ The original browser game now ignores queued keydowns after window blur or while
 Ratatui's Ctrl+C exit and terminal restoration sequences were checked in enhanced and fallback PTYs; [Omarchy evidence](docs/packaging/RATATUI-CTRL-C-PTY-OMARCHY.md) records the scope.
 
 Ratatui now blocks gameplay keys while its terminal is too small, preserving a hidden match score; [Omarchy PTY regression evidence](docs/packaging/RATATUI-SMALL-RESTART-PTY-OMARCHY.md) records resize, restart and quit checks.
+
+The original blur-click fix was cross-checked on Omarchy; [build parity, synthetic tests and localhost Chrome evidence](docs/packaging/ORIGINAL-BLUR-CLICK-OMARCHY-CROSSCHECK.md) records the remaining focus-ordering gap.

@@ -1,0 +1,9 @@
+# Original browser blur-click fix — Omarchy cross-check
+
+The Windows change at `3b16b88129c35e87264db3f99205b08ad4ee09f3` gates Start and Pause clicks while the window is blurred or the document hidden. At base checkpoint `c566b149ab7142b46b411d22831e68f00af50f6b`, Git showed no changes to the browser source, generated output, tests or build configuration since `0533646743e0ad018e359c15d6cf72e86685b108`.
+
+Node v26.12.1 and the project-pinned TypeScript 5.9.3 built the source. Before rebuilding, checked-in `game.js` SHA-256 `5c4848df63c12d0414ded3dc089f4fca226b46e6abe9e2de2365c511a6d5a0d4` differed from fresh compiler output only in line wrapping of the Pause click handler. This checkpoint updates the generated file to the exact pinned output, SHA-256 `ef226fff881ea0bc720eefd1665e27f92dc46b166f9bf88a4e68167638121912`; a separate `/tmp` compiler output byte-matched it. Tested `game.ts` SHA-256 `0a94c3226118d9a0ed47cfd889a595c2b5902022a0cac5e3f61523f17e487d4d`; `tests/click-focus.test.js` SHA-256 `e44b72dfc3e4e06d5673f20dbc3810684398917696d5417af35f2294ae1b2cc2`.
+
+`npm test` passed all three test files: the original 24 game tests, two CPU-contact tests and the click-focus test. The latter uses synthetic DOM blur, hidden-state and click events; it verifies ignored blurred/hidden clicks and focused mock pointer and non-pointer activation. It does not establish real browser event ordering.
+
+The rebuilt page was served on localhost `127.0.0.1:4198` and tested in Chrome via supported browser controls. Clicking Start entered play, clicking Pause showed Paused, and Space on the focused Pause/Resume button resumed and paused again. This is browser automation, not physical input. Actual focus loss with a queued click, hidden-tab ordering, assistive technology, other browsers and release qualification remain open. The local server was stopped afterward. Prior artifacts are retained.
