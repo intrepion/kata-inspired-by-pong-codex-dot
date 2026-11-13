@@ -21,6 +21,9 @@ fn winner_message(game: &Game) -> Option<&'static str> {
         "MATCH OVER - ENTER TO RESTART"
     })
 }
+fn ready_message(game: &Game) -> Option<&'static str> {
+    (game.state == State::Ready).then_some("PRESS SPACE OR ENTER TO START")
+}
 #[derive(Default)]
 struct MovementGate {
     suppressed: [bool; 4],
@@ -199,6 +202,9 @@ fn view(app: &App, m: &Model) {
         .x_y(0.0, 190.0)
         .font_size(32)
         .color(WHITE);
+    if let Some(message) = ready_message(&m.game) {
+        d.text(message).x_y(0.0, 0.0).font_size(28).color(WHITE);
+    }
     if m.game.state == State::Paused {
         d.text("PAUSED  •  SPACE TO RESUME")
             .x_y(0.0, -190.0)
@@ -224,6 +230,17 @@ fn view(app: &App, m: &Model) {
 #[cfg(test)]
 mod movement_tests {
     use super::*;
+    #[test]
+    fn ready_prompt_clears_after_start_and_stays_hidden_on_pause_or_over() {
+        let mut game = Game::new(42);
+        assert_eq!(ready_message(&game), Some("PRESS SPACE OR ENTER TO START"));
+        game.start();
+        assert_eq!(ready_message(&game), None);
+        game.pause();
+        assert_eq!(ready_message(&game), None);
+        game.state = State::Over;
+        assert_eq!(ready_message(&game), None);
+    }
     #[test]
     fn focus_loss_then_immediate_resume_suppresses_held_key() {
         let mut game = Game::new(42);
