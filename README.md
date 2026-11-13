@@ -14,6 +14,8 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
+Mac bracket-lib pause-fix follow-up: eleven release tests and sequential automated movement/pause/resume pass; native held-across-pause remains open. [Evidence](docs/BRACKET-PAUSE-HELD-INPUT-FIX.md).
+
 Mac SDL3 pause-fix follow-up: four release tests and sequential automated movement/pause/resume pass; native held-across-pause remains open. [Evidence](docs/SDL3-PAUSE-HELD-INPUT-FIX.md).
 
 Mac raylib pause-fix follow-up: five release tests and sequential automated movement/pause/resume pass after a sustained start press; shorter Return actions did not start in this run. [Evidence](docs/RAYLIB-PAUSE-HELD-INPUT-FIX.md).
