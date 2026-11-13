@@ -19,7 +19,7 @@
 
 Ash and SDL3 have at least one discovered notice file for each resolved package, so their collected texts were used for the next local archive pilots. Missing-file lists on the other ten graphs are preserved, not filled using guessed generic license text or silently marked complete. The packager rejects those incomplete bundles.
 
-The raylib-rs missing-file gap has [exact-version source-header evidence](RAYLIB-RS-NOTICE-INVESTIGATION.md); the current collector does not include those headers.
+The raylib-rs missing-file gap has [exact-version source-header evidence and an audited collection pilot](RAYLIB-RS-NOTICE-INVESTIGATION.md). Its filtered ARM64 graph now collects the verified headers; other-platform gaps and broader review remain.
 
 The softbuffer gap has a focused [exact-version investigation](SOFTBUFFER-DRM-FOURCC-NOTICE-INVESTIGATION.md); its notice remains unresolved.
 

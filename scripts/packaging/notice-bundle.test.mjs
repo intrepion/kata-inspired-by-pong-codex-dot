@@ -11,3 +11,20 @@ test('symlink notice sources rejected', {skip:process.platform==='win32'},t=>{co
 test('platform title is explicit while existing Linux output remains unchanged',t=>{const{root,pkg}=fixture(t);writeFileSync(join(pkg,'LICENSE'),'MIT text');const implicit=buildNoticeBundle(meta(pkg),root);const linux=buildNoticeBundle(meta(pkg),root,{platform:'Linux'});assert.deepEqual(implicit,linux);const windows=buildNoticeBundle(meta(pkg),root,{platform:'Windows'});assert(windows.text.startsWith('Pong Windows dependency notice preparation\n'));assert.deepEqual(windows.index.packages,linux.index.packages);assert.equal(windows.index.bundle_sha256,createHash('sha256').update(windows.text).digest('hex'));assert.throws(()=>buildNoticeBundle(meta(pkg),root,{platform:'Windows\nApproved'}),/platform/);});
 
 test('first-party fallback rejects a sibling checkout on every platform',t=>{const a=fixture(t),b=fixture(t);assert.throws(()=>buildNoticeBundle(meta(b.pkg,{name:'pong-outside',source:null}),a.root),/outside repository/);});
+
+test('audited headers preserve source bytes and reject changed or escaping files',async t=>{
+ const {auditedSourceHeaders}=await import('./notice-bundle.mjs');const {root,pkg}=fixture(t),source='/* Original notice\r\nCopyright holder\r\n*/\ncode\n',file=join(pkg,'source.rs');writeFileSync(file,source);
+ const hash=createHash('sha256').update(source).digest('hex'),[notice]=auditedSourceHeaders(pkg,[['source.rs',hash]]);
+ assert.equal(notice.text,'/* Original notice\r\nCopyright holder\r\n*/');assert.equal(notice.sha256,createHash('sha256').update(notice.text).digest('hex'));assert.equal(notice.source,'source.rs (leading comment)');
+ writeFileSync(file,source+'changed');assert.throws(()=>auditedSourceHeaders(pkg,[['source.rs',hash]]),/hash mismatch/);
+ assert.throws(()=>auditedSourceHeaders(pkg,[['../LICENSE',hash]]),/escapes/);
+ if(process.platform!=='win32'){symlinkSync(join(root,'LICENSE'),join(pkg,'link.rs'));assert.throws(()=>auditedSourceHeaders(pkg,[['link.rs',hash]]),/Symlink/);}
+ const noHeader='code';writeFileSync(file,noHeader);assert.throws(()=>auditedSourceHeaders(pkg,[['source.rs',createHash('sha256').update(noHeader).digest('hex')]]),/Missing audited/);
+});
+
+test('raylib source audit applies only to the exact registry version',t=>{
+ const{root,pkg}=fixture(t);const base={name:'raylib',version:'6.0.0',source:'registry+https://github.com/rust-lang/crates.io-index'};
+ assert.throws(()=>buildNoticeBundle(meta(pkg,base),root),/ENOENT/);
+ assert.deepEqual(buildNoticeBundle(meta(pkg,{...base,version:'6.0.1'}),root).index.missing_notice_files,['raylib@6.0.1']);
+ assert.deepEqual(buildNoticeBundle(meta(pkg,{...base,source:'git+https://example.invalid/raylib'}),root).index.missing_notice_files,['raylib@6.0.0']);
+});
