@@ -111,6 +111,17 @@ impl App {
             (0., 0., 4., 20.),
             (0., 17., 22., 4.),
         ];
+        for (left, label) in [(343., "YOU"), (521., "CPU")] {
+            for (i, ch) in label.bytes().enumerate() {
+                for (y, row) in result_glyph(ch).iter().enumerate() {
+                    for col in 0..5 {
+                        if row & (1 << (4 - col)) != 0 {
+                            rect(left + i as f32 * 12. + col as f32 * 2., 5. + y as f32 * 2., 2., 2., [220, 230, 245]);
+                        }
+                    }
+                }
+            }
+        }
         for (x, n) in [(350., self.game.scores[0]), (528., self.game.scores[1])] {
             for (i, (a, b, w, h)) in segments.iter().enumerate() {
                 if DIGITS[n.min(9) as usize] & (1 << i) != 0 {

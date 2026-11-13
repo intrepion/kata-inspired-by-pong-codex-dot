@@ -48,3 +48,15 @@ fn ready_and_pause_show_in_court_instructions_only_outside_play() {
     app.action();
     assert!(orange_pixels(&app) > 0, "Paused needs resume instructions");
 }
+
+#[test]
+fn score_owners_are_visible_in_court() {
+    let app = App::default();
+    let mut pixels = vec![0; 900 * 500];
+    raster(&app, &mut pixels, 900, 500);
+    for (name, x0) in [("YOU", 343), ("CPU", 521)] {
+        let count = (5..19).flat_map(|y| (x0..x0 + 36).map(move |x| y * 900 + x))
+            .filter(|&i| pixels[i] == 0xdce6f5).count();
+        assert!(count > 0, "{name} score label should be visible");
+    }
+}
