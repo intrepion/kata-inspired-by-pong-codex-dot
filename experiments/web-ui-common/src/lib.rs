@@ -62,10 +62,18 @@ impl Session {
             return;
         }
         match key {
-            "ArrowUp" => self.held[0] = pressed,
-            "w" | "W" => self.held[1] = pressed,
-            "ArrowDown" => self.held[2] = pressed,
-            "s" | "S" => self.held[3] = pressed,
+            "ArrowUp" if !pressed || (!repeat && self.game.state == State::Playing) => {
+                self.held[0] = pressed
+            }
+            "w" | "W" if !pressed || (!repeat && self.game.state == State::Playing) => {
+                self.held[1] = pressed
+            }
+            "ArrowDown" if !pressed || (!repeat && self.game.state == State::Playing) => {
+                self.held[2] = pressed
+            }
+            "s" | "S" if !pressed || (!repeat && self.game.state == State::Playing) => {
+                self.held[3] = pressed
+            }
             "Enter" if pressed && !repeat => self.start(),
             " " | "Escape" if pressed && !repeat => self.toggle_pause(),
             _ => {}
@@ -79,7 +87,9 @@ impl Session {
                 Direction::Down => 1,
             }];
             if pressed {
-                pointers.insert(pointer_id);
+                if self.game.state == State::Playing {
+                    pointers.insert(pointer_id);
+                }
             } else {
                 pointers.remove(&pointer_id);
             }
@@ -94,7 +104,9 @@ impl Session {
     }
     /// Ignore focus transitions within the game controls; pause when focus leaves them.
     pub fn focus_left(&mut self, next_inside: bool) {
-        if !next_inside { self.pause(); }
+        if !next_inside {
+            self.pause();
+        }
     }
     pub fn pause(&mut self) {
         if self.demo.is_some() {
@@ -224,6 +236,45 @@ pub const CSS:&str="body{margin:0;background:#080f19;color:#eef6ff;font:16px sys
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn nonplaying_inputs_wait_for_release_and_fresh_press() {
+        for state in [State::Ready, State::Paused, State::Over] {
+            for key in ["ArrowUp", "w", "ArrowDown", "s"] {
+                let mut s = Session::default();
+                s.game.state = state;
+                s.key(key, true, false);
+                if state == State::Paused {
+                    s.toggle_pause();
+                } else {
+                    s.start();
+                }
+                s.key(key, true, true);
+                s.tick(0.05);
+                assert_eq!(s.game.player, 250., "{state:?} {key}");
+                s.key(key, false, false);
+                s.key(key, true, false);
+                s.tick(0.05);
+                assert_ne!(s.game.player, 250.);
+            }
+            for direction in [Direction::Up, Direction::Down] {
+                let mut s = Session::default();
+                s.game.state = state;
+                s.movement_button(direction, 7, true);
+                if state == State::Paused {
+                    s.toggle_pause();
+                } else {
+                    s.start();
+                }
+                s.tick(0.05);
+                assert_eq!(s.game.player, 250., "pointer {state:?}");
+                s.movement_button(direction, 7, false);
+                s.movement_button(direction, 8, true);
+                s.tick(0.05);
+                assert_ne!(s.game.player, 250.);
+            }
+        }
+    }
+
     #[test]
     fn shared_demo_is_bounded_and_exports_six_scenes() {
         let mut s = Session::default();
@@ -456,12 +507,18 @@ mod focus_tests {
         session.key("w", true, false);
         session.focus_left(true);
         session.tick(0.05);
-        assert!(session.game.player < 250.0, "internal focus preserves held movement");
+        assert!(
+            session.game.player < 250.0,
+            "internal focus preserves held movement"
+        );
         session.focus_left(false);
         assert_eq!(session.game.state, State::Paused);
         session.toggle_pause();
         let stopped = session.game.player;
         session.tick(0.05);
-        assert_eq!(session.game.player, stopped, "external focus loss clears held movement");
+        assert_eq!(
+            session.game.player, stopped,
+            "external focus loss clears held movement"
+        );
     }
 }

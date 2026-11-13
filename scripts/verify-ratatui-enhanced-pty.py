@@ -108,13 +108,18 @@ try:
  else:
   assert query and 'Hold' in ''.join(screen[1]), 'enhanced keyboard path unavailable'
   state('Ready'); initial=paddle()
+  send(b'\x1b[119;1:1u') # W first pressed while Ready.
   send(b'\x1b[32;1:1u'); state('Playing')
+  send(b'\x1b[119;1:2u',.2); assert paddle() == initial, 'Ready press or repeat rearmed movement'
+  send(b'\x1b[119;1:3u')
   send(b'\x1b[119;1:1u',.17); moving=paddle()
   assert moving and moving != initial and moving[0][0] < initial[0][0], (initial,moving)
   send(b'\x1b[32;1:1u'); state('Paused'); paused=paddle()
+  send(b'\x1b[115;1:1u') # S first pressed while Paused.
   send(b'\x1b[32;1:1u'); state('Playing')
-  send(b'\x1b[119;1:2u',.22); repeated=paddle()
+  send(b'\x1b[119;1:2u',.12); send(b'\x1b[115;1:2u',.12); repeated=paddle()
   assert repeated == paused, (paused,repeated)
+  send(b'\x1b[115;1:3u')
   send(b'\x1b[119;1:3u')
   send(b'\x1b[119;1:1u',.17); fresh=paddle()
   assert fresh != repeated and fresh[0][0] < repeated[0][0], (repeated,fresh)
@@ -139,7 +144,7 @@ try:
   print('PASS synthetic focus loss and PTY resize paused play and cleared movement')
   send(b'\x1b[113;1:1u'); assert p.wait(timeout=2)==0
   assert termios.tcgetattr(s)==before, 'terminal attributes not restored'
-  print('PASS enhanced protocol; ready -> playing -> paused -> playing; W press moved; held repeat after pause stayed stopped; fresh press moved; release stopped; Q exited; termios restored')
+  print('PASS enhanced protocol; Ready/Paused presses and repeats ignored; ready -> playing -> paused -> playing; W press moved; held repeat after pause stayed stopped; fresh press moved; release stopped; Q exited; termios restored')
   print('player paddle top rows:',initial[0][0],moving[0][0],paused[0][0],repeated[0][0],fresh[0][0])
 finally:
  if p.poll() is None: p.terminate(); p.wait(timeout=2)

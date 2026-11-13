@@ -62,6 +62,8 @@ func _physics_process(delta: float) -> void:
             if simulation.scripted_finished(): get_tree().quit()
         return
 
+    if simulation.snapshot().state != "Playing":
+        suppress_held_movement()
     axis = movement_axis()
     simulation.advance(delta, axis)
     state = simulation.snapshot()
@@ -72,7 +74,7 @@ func _unhandled_input(event: InputEvent) -> void:
     if event is InputEventKey and not event.pressed:
         suppressed_keys.erase(event.physical_keycode)
     if event is InputEventKey and event.pressed and not event.echo:
-        if event.physical_keycode in [KEY_SPACE, KEY_ENTER, KEY_P] and simulation.snapshot().state == "Playing":
+        if event.physical_keycode in [KEY_SPACE, KEY_ENTER, KEY_P, KEY_R]:
             suppress_held_movement()
         match event.physical_keycode:
             KEY_SPACE, KEY_ENTER:
