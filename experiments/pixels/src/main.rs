@@ -42,7 +42,10 @@ fn handle_key(
     }
     let previous = game.state;
     match key {
-        KeyCode::Enter | KeyCode::KeyR if pressed && !repeat => game.start(),
+        KeyCode::Enter | KeyCode::KeyR if pressed && !repeat => {
+            movement.clear();
+            game.start();
+        }
         KeyCode::Space if pressed && !repeat => {
             if game.state == State::Ready {
                 game.start();
@@ -279,6 +282,22 @@ mod tests {
 #[cfg(test)]
 mod movement_tests {
     use super::*;
+    #[test]
+    fn active_restart_clears_held_movement_until_fresh_press() {
+        for restart in [KeyCode::Enter, KeyCode::KeyR] {
+            let mut game = Game::new(42);
+            game.start();
+            let mut movement = MovementInput::default();
+            handle_key(&mut game, &mut movement, KeyCode::KeyW, true, false);
+            handle_key(&mut game, &mut movement, restart, true, false);
+            assert_eq!(movement.axis(), 0.);
+            handle_key(&mut game, &mut movement, KeyCode::KeyW, true, true);
+            assert_eq!(movement.axis(), 0.);
+            handle_key(&mut game, &mut movement, KeyCode::KeyW, false, false);
+            handle_key(&mut game, &mut movement, KeyCode::KeyW, true, false);
+            assert_eq!(movement.axis(), -1.);
+        }
+    }
     #[test]
     fn held_movement_does_not_carry_through_match_end_restart() {
         use pong_core::{Ball, BALL, H, W};

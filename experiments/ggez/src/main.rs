@@ -32,6 +32,7 @@ fn handle_key_down(game: &mut Game, held: &mut [bool; 4], key: KeyCode, repeated
     let previous = game.state;
     if !repeated {
         if key == KeyCode::KeyR {
+            *held = [false; 4];
             game.start();
         } else if key == KeyCode::Enter {
             if game.state == State::Paused {
@@ -237,6 +238,17 @@ impl event::EventHandler for App {
 #[cfg(test)]
 mod control_tests {
     use super::*;
+    #[test]
+    fn active_restart_clears_held_movement() {
+        let mut g = Game::new(42);
+        g.start();
+        let mut held = [false; 4];
+        handle_key_down(&mut g, &mut held, KeyCode::KeyW, false);
+        handle_key_down(&mut g, &mut held, KeyCode::KeyR, false);
+        assert_eq!(held, [false; 4]);
+        handle_key_down(&mut g, &mut held, KeyCode::KeyW, true);
+        assert_eq!(held, [false; 4]);
+    }
     #[test]
     fn held_movement_does_not_carry_through_match_end_restart() {
         for key in [

@@ -38,7 +38,10 @@ fn key_press(
                 game.start();
             }
         }
-        Key::R => game.start(),
+        Key::R => {
+            *held = [false; 4];
+            game.start();
+        }
         Key::Space => game.toggle_pause(),
         Key::Escape => game.pause(),
         _ => {}
@@ -62,6 +65,21 @@ fn key_release(held: &mut [bool; 4], pressed: &mut std::collections::HashSet<Key
 #[cfg(test)]
 mod control_tests {
     use super::*;
+    #[test]
+    fn active_restart_clears_held_movement() {
+        let mut g = Game::new(42);
+        g.start();
+        let mut held = [false; 4];
+        let mut pressed = std::collections::HashSet::new();
+        key_press(&mut g, &mut held, &mut pressed, Key::W);
+        key_press(&mut g, &mut held, &mut pressed, Key::R);
+        assert_eq!(held, [false; 4]);
+        key_press(&mut g, &mut held, &mut pressed, Key::W);
+        assert_eq!(held, [false; 4]);
+        key_release(&mut held, &mut pressed, Key::W);
+        key_press(&mut g, &mut held, &mut pressed, Key::W);
+        assert!(held[0]);
+    }
     #[test]
     fn held_movement_does_not_carry_through_match_end_restart() {
         for key in [Key::W, Key::Up, Key::S, Key::Down] {

@@ -1,5 +1,7 @@
 # Rallylight
 
+Swift and Rust collision timing were compared on 3,060 single-step Mac model cases, with no bounce-direction mismatch in the tested grid. [Evidence](docs/packaging/SWIFT-RUST-COLLISION-PARITY-MAC-20261113.md)
+
 Mac game-over input cross-check: nine native adapter suites and the shared web controller pass; Swift simulator rebuild is blocked by local service and cache permissions. [Evidence](docs/packaging/GAMEOVER-INPUT-MAC-20261113.md)
 
 Swift paddle collision now evaluates ball and paddle positions at contact and advances the remainder; Mac model and selected XCTest regressions pass, with device and SwiftPM package checks outstanding. [Evidence](docs/packaging/SWIFT-COLLISION-MAC-20261113.md)
@@ -721,3 +723,7 @@ Evidence and limitations: [packaging index](docs/packaging/README.md), [Mac Macr
 Yew, Leptos and Dioxus movement buttons now support holding Space or Enter when focused. Omarchy shared-model tests and bounded localhost browser checks are recorded in [the keyboard hold evidence](docs/packaging/WEB-BUTTON-KEYBOARD-HOLD-OMARCHY.md); physical input and desktop wrapper qualification remain open.
 
 Restarting an active Yew, Leptos or Dioxus game now clears held movement sources; see the [Omarchy regression evidence](docs/packaging/WEB-RESTART-HELD-OMARCHY.md) for test scope and limits.
+
+The same active-restart held-input issue is fixed at the shared GTK/Slint/GPUI model and the Pixels and raw wgpu event handlers. [Omarchy follow-up evidence](docs/packaging/RESTART-HELD-FOLLOWUP-OMARCHY.md) records regressions and the still-open overlapping browser and native-input checks.
+
+Active restart now clears held movement in ggez, Miniquad and Piston as well. The [Omarchy native follow-up](docs/packaging/RESTART-HELD-NATIVE-OMARCHY.md) records handler tests, a bounded mobile source review and remaining adapter checks.
