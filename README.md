@@ -923,3 +923,5 @@ The shared low-level court now shows an R-to-restart instruction after a match; 
 The updated shared renderer also passed a [Windows ash release replay check](docs/packaging/ASH-RESTART-HINT-WINDOWS-20261113.md); the replay does not reach match end.
 
 The shared match-end restart instruction was also checked in [Mac SDL3](docs/packaging/SDL3-RESTART-HINT-MAC-20261113.md); physical input and distribution review remain open.
+
+Pixels now labels score ownership and shows in-court start, resume and restart instructions; [Mac evidence](docs/packaging/PIXELS-COURT-HELP-MAC-20261113.md) records the tested scope.

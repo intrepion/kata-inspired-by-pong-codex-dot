@@ -243,16 +243,43 @@ fn status_glyph(ch: u8) -> [u8; 7] {
         b'D' => [30, 17, 17, 17, 17, 17, 30],
         b'E' => [31, 16, 16, 30, 16, 16, 31],
         b'I' => [14, 4, 4, 4, 4, 4, 14],
+        b'M' => [17, 27, 21, 21, 17, 17, 17],
         b'N' => [17, 25, 21, 19, 17, 17, 17],
         b'O' => [14, 17, 17, 17, 17, 17, 14],
         b'P' => [30, 17, 17, 30, 16, 16, 16],
         b'R' => [30, 17, 17, 30, 20, 18, 17],
         b'S' => [15, 16, 16, 14, 1, 1, 30],
+        b'T' => [31, 4, 4, 4, 4, 4, 4],
         b'U' => [17, 17, 17, 17, 17, 17, 14],
         b'V' => [17, 17, 17, 17, 17, 10, 4],
         b'W' => [17, 17, 17, 21, 21, 21, 10],
         b'Y' => [17, 17, 10, 4, 4, 4, 4],
         _ => [0; 7],
+    }
+}
+fn instruction(game: &Game) -> Option<&'static str> {
+    match game.state {
+        State::Ready => Some("ENTER TO START"),
+        State::Paused => Some("SPACE TO RESUME"),
+        State::Over => Some("ENTER TO RESTART"),
+        State::Playing => None,
+    }
+}
+fn draw_small_text(frame: &mut [u8], text: &str, left: usize, top: usize) {
+    const CELL: usize = 2;
+    for (index, ch) in text.bytes().enumerate() {
+        for (row, bits) in status_glyph(ch).into_iter().enumerate() {
+            for col in 0..5 {
+                if bits & (1 << (4 - col)) != 0 {
+                    for y in (top + row * CELL)..(top + (row + 1) * CELL) {
+                        for x in (left + index * 6 * CELL + col * CELL)..(left + index * 6 * CELL + (col + 1) * CELL) {
+                            let offset = (y * W as usize + x) * 4;
+                            frame[offset..offset + 4].copy_from_slice(&[220, 230, 245, 255]);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 fn draw(frame: &mut [u8], g: &Game) {
@@ -302,6 +329,19 @@ fn draw(frame: &mut [u8], g: &Game) {
             }
         }
     }
+    if let Some(text) = instruction(g) {
+        let left = (W as usize - text.len() * 12) / 2;
+        // Back the hint so the net and ball cannot obscure its letters.
+        for y in 198..220 {
+            for x in (left - 5)..(left + text.len() * 12 + 5) {
+                let offset = (y * W as usize + x) * 4;
+                frame[offset..offset + 4].copy_from_slice(&[6, 10, 23, 255]);
+            }
+        }
+        draw_small_text(frame, text, left, 202);
+    }
+    draw_small_text(frame, "YOU", 343, 5);
+    draw_small_text(frame, "CPU", 521, 5);
     // Draw scores in the court so they remain visible without a window title.
     const DIGITS: [u8; 10] = [0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f];
     const SEGMENTS: [(usize, usize, usize, usize); 7] = [
@@ -416,6 +456,26 @@ mod tests {
         assert_eq!(pixel(355, 25), &[220, 230, 245, 255]);
         assert_eq!(pixel(547, 30), &[220, 230, 245, 255]);
         assert_eq!(pixel(533, 25), &[6, 10, 23, 255]);
+    }
+    #[test]
+    fn court_identifies_sides_and_gives_state_specific_instructions() {
+        for text in ["YOU", "CPU", "ENTER TO START", "SPACE TO RESUME", "ENTER TO RESTART"] {
+            for ch in text.bytes().filter(|c| *c != b' ') {
+                assert!(status_glyph(ch).iter().any(|row| *row != 0), "missing glyph {ch}");
+            }
+        }
+        let mut game = Game::new(42);
+        let mut frame = vec![0; W as usize * H as usize * 4];
+        assert_eq!(instruction(&game), Some("ENTER TO START"));
+        draw(&mut frame, &game);
+        let pixel = |frame: &[u8], x: usize, y: usize| frame[(y * W as usize + x) * 4..(y * W as usize + x) * 4 + 4].to_vec();
+        assert_eq!(pixel(&frame, 343, 5), [220,230,245,255]); // Y
+        assert_eq!(pixel(&frame, 523, 5), [220,230,245,255]); // C
+        let hint_pixels = |frame: &[u8]| (198..220).flat_map(|y| (300..600).map(move |x| (y * W as usize + x) * 4)).filter(|&i| frame[i..i+4] == [220,230,245,255]).count();
+        assert!(hint_pixels(&frame) > 0);
+        game.start(); assert_eq!(instruction(&game), None); draw(&mut frame, &game); assert_eq!(hint_pixels(&frame), 0);
+        game.pause(); assert_eq!(instruction(&game), Some("SPACE TO RESUME")); draw(&mut frame, &game); assert!(hint_pixels(&frame) > 0);
+        game.state = State::Over; assert_eq!(instruction(&game), Some("ENTER TO RESTART")); draw(&mut frame, &game); assert!(hint_pixels(&frame) > 0);
     }
     #[test]
     fn benchmark_is_opt_in() {
