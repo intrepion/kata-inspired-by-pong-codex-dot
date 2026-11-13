@@ -203,7 +203,7 @@ fn view(app: &App, m: &Model) {
         .font_size(32)
         .color(WHITE);
     if let Some(message) = ready_message(&m.game) {
-        d.text(message).x_y(0.0, 0.0).font_size(28).color(WHITE);
+        d.text(message).x_y(0.0, -90.0).font_size(28).color(WHITE);
     }
     if m.game.state == State::Paused {
         d.text("PAUSED  •  SPACE TO RESUME")

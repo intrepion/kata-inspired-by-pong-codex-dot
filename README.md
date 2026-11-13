@@ -1,6 +1,6 @@
 # Rallylight
 
-Nannou now displays an in-court start prompt while Ready; Mac model tests and a cached release build pass, with rendered verification still open. [Evidence](docs/packaging/NANNOU-READY-MAC-20261113.md)
+Nannou's in-court Ready prompt was moved clear of the ball and checked in a Mac window; full gameplay remains open. [Evidence](docs/packaging/NANNOU-READY-MAC-20261113.md)
 
 Piston now draws Ready and Paused indicators in the court; Mac geometry tests and a cached release build pass, with rendered verification still open. [Evidence](docs/packaging/PISTON-STATE-MAC-20261113.md)
 
