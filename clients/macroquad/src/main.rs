@@ -206,6 +206,35 @@ async fn main() {
 mod movement_tests {
     use super::*;
     #[test]
+    fn winning_score_keeps_held_movement_suppressed_on_restart() {
+        for i in 0..4 {
+            for (scores, x, vx) in [([6, 2], W + BALL - 1., 350.), ([2, 6], -BALL + 1., -350.)] {
+                let mut game = Game::new(42);
+                game.start();
+                let mut gate = MovementGate::default();
+                movement_axis(&game, &mut gate, [false; 4], false);
+                let mut held = [false; 4];
+                held[i] = true;
+                assert_ne!(movement_axis(&game, &mut gate, held, false), 0.);
+                game.scores = scores;
+                game.serve = 0.;
+                game.ball.x = x;
+                game.ball.y = H / 2.;
+                game.ball.vx = vx;
+                game.ball.vy = 0.;
+                game.step(0.02, 0.);
+                assert_eq!(game.state, State::Over);
+                gate.finish_frame(game.state);
+                game.start();
+                assert_eq!(movement_axis(&game, &mut gate, held, false), 0.);
+                held[i] = false;
+                movement_axis(&game, &mut gate, held, false);
+                held[i] = true;
+                assert_ne!(movement_axis(&game, &mut gate, held, false), 0.);
+            }
+        }
+    }
+    #[test]
     fn game_over_between_samples_blocks_held_on_immediate_restart() {
         let mut game = Game::new(42);
         game.start();

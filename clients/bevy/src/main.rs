@@ -30,6 +30,11 @@ struct MovementGate {
     suppressed: [bool; 4],
     was_playing: bool,
 }
+impl MovementGate {
+    fn finish_frame(&mut self, state: State) {
+        self.was_playing &= state == State::Playing;
+    }
+}
 fn movement_axis(state: State, gate: &mut MovementGate, held: [bool; 4]) -> f32 {
     let playing = state == State::Playing;
     let suppress = !playing || !gate.was_playing;
@@ -241,7 +246,7 @@ fn input_and_simulation(
         game.0.step(DT, input);
         clock.0 -= DT;
     }
-    movement.was_playing &= game.0.state == State::Playing;
+    movement.finish_frame(game.0.state);
 }
 
 fn present(
@@ -382,6 +387,35 @@ mod input_tests {
             movement_axis(State::Playing, &mut gate, [true, true, false, false]),
             -1.
         );
+    }
+    #[test]
+    fn winning_score_keeps_held_movement_suppressed_on_restart() {
+        for i in 0..4 {
+            for (scores, x, vx) in [([6, 2], W + BALL - 1., 350.), ([2, 6], -BALL + 1., -350.)] {
+                let mut game = Game::new(42);
+                game.start();
+                let mut gate = MovementGate::default();
+                let mut held = [false; 4];
+                movement_axis(game.state, &mut gate, held);
+                held[i] = true;
+                assert_ne!(movement_axis(game.state, &mut gate, held), 0.);
+                game.scores = scores;
+                game.serve = 0.;
+                game.ball.x = x;
+                game.ball.y = H / 2.;
+                game.ball.vx = vx;
+                game.ball.vy = 0.;
+                game.step(0.02, 0.);
+                assert_eq!(game.state, State::Over);
+                gate.finish_frame(game.state);
+                game.start();
+                assert_eq!(movement_axis(game.state, &mut gate, held), 0.);
+                held[i] = false;
+                movement_axis(game.state, &mut gate, held);
+                held[i] = true;
+                assert_ne!(movement_axis(game.state, &mut gate, held), 0.);
+            }
+        }
     }
     #[test]
     fn nonplaying_held_keys_do_not_move_after_resume() {

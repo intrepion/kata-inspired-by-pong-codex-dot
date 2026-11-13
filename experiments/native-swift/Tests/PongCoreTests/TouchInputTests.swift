@@ -36,6 +36,31 @@ final class TouchInputTests: XCTestCase {
         XCTAssertEqual(touch.axis(player: 250), 1)
     }
 
+    func testHeldGestureThroughWinningScoreRequiresFreshDragAfterRestart() {
+        for (scores, x, vx) in [([6, 2], Float(907), Float(350)), ([2, 6], Float(-7), Float(-350))] {
+            var game = Game()
+            var touch = TouchInput()
+            game.start()
+            touch.update(400, playing: true)
+            game.scores = scores
+            game.serve = 0
+            game.ball.x = x
+            game.ball.y = 250
+            game.ball.vx = vx
+            game.ball.vy = 0
+            game.step(0.02, input: 0)
+            XCTAssertEqual(game.state, .over)
+            // Mirrors the app's restart button ordering.
+            touch.suppressActive()
+            game.start()
+            touch.update(450, playing: true)
+            XCTAssertEqual(touch.axis(player: game.player), 0)
+            touch.end()
+            touch.update(400, playing: true)
+            XCTAssertNotEqual(touch.axis(player: game.player), 0)
+        }
+    }
+
     func testPauseWithoutActiveGestureAllowsNextDrag() {
         var touch = TouchInput()
         touch.suppressActive()

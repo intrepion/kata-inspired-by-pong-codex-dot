@@ -78,6 +78,28 @@ class TouchInputTest {
         input.move(8, 450f)
         assertNull(input.targetY)
     }
+    @Test fun heldGestureThroughWinningScoreRequiresFreshDownAfterRestart() {
+        for ((scores, x, vx) in listOf(Triple(intArrayOf(6, 2), 907f, 350f), Triple(intArrayOf(2, 6), -7f, -350f))) {
+            val game = Game()
+            val input = TouchInput()
+            game.start()
+            input.down(7, 400f)
+            game.scores = scores
+            game.serve = 0f
+            game.ball = Ball(x, 250f, vx, 0f)
+            game.step(0.02f, 0f)
+            assertEquals(GameState.OVER, game.state)
+            input.start(game)
+            input.move(7, 450f)
+            assertNull(input.targetY)
+            val before = game.player
+            game.step(0.02f, input.targetY?.let { ((it - game.player) / 20f).coerceIn(-1f, 1f) } ?: 0f)
+            assertEquals(before, game.player, 0f)
+            input.up(7)
+            input.down(8, 400f)
+            assertNotNull(input.targetY)
+        }
+    }
     @Test fun heldGestureDoesNotMoveAfterRestart() {
         val game = Game()
         val input = TouchInput()
