@@ -9,12 +9,42 @@ fn benchmark_args(args: &[String]) -> bool {
     );
     enabled
 }
+#[derive(Default)]
+struct MovementGate {
+    suppressed: [bool; 4],
+}
+impl MovementGate {
+    fn axis(&mut self, held: [bool; 4], entering_pause: bool) -> f32 {
+        for (blocked, down) in self.suppressed.iter_mut().zip(held) {
+            *blocked = down && (entering_pause || *blocked);
+        }
+        let active = std::array::from_fn::<_, 4, _>(|i| held[i] && !self.suppressed[i]);
+        (active[2] || active[3]) as u8 as f32 - (active[0] || active[1]) as u8 as f32
+    }
+}
+fn movement_with_pause(
+    game: &mut Game,
+    movement: &mut MovementGate,
+    held: [bool; 4],
+    pause_pressed: bool,
+) -> f32 {
+    let was_playing = game.state == State::Playing;
+    if pause_pressed {
+        if game.state == State::Ready {
+            game.start();
+        } else {
+            game.toggle_pause();
+        }
+    }
+    movement.axis(held, was_playing && game.state == State::Paused)
+}
 struct Model {
     benchmarking: bool,
     benchmark_done: std::sync::atomic::AtomicBool,
     benchmark: std::sync::Mutex<Option<pong_benchmark::Frames>>,
     scenario: pong_scenario::Scenario,
     game: Game,
+    movement: MovementGate,
     demo: Option<Demo>,
     pending: Option<(std::path::PathBuf, std::time::Instant)>,
     accumulator: f32,
@@ -38,6 +68,7 @@ fn model(app: &App) -> Model {
         benchmark: std::sync::Mutex::new(None),
         scenario: pong_scenario::Scenario::default(),
         game: Game::new(pong_scenario::SEED),
+        movement: MovementGate::default(),
         demo: Demo::from_args(),
         pending: None,
         accumulator: 0.0,
@@ -92,18 +123,20 @@ fn update(app: &App, m: &mut Model) {
     if k.just_pressed(KeyCode::Enter) || k.just_pressed(KeyCode::KeyR) {
         m.game.start();
     }
-    if k.just_pressed(KeyCode::Space) {
-        if m.game.state == State::Ready {
-            m.game.start();
-        } else {
-            m.game.toggle_pause();
-        }
-    }
     if k.just_pressed(KeyCode::Escape) {
         app.quit();
     }
-    let axis = (k.pressed(KeyCode::ArrowDown) || k.pressed(KeyCode::KeyS)) as u8 as f32
-        - (k.pressed(KeyCode::ArrowUp) || k.pressed(KeyCode::KeyW)) as u8 as f32;
+    let axis = movement_with_pause(
+        &mut m.game,
+        &mut m.movement,
+        [
+            k.pressed(KeyCode::ArrowUp),
+            k.pressed(KeyCode::KeyW),
+            k.pressed(KeyCode::ArrowDown),
+            k.pressed(KeyCode::KeyS),
+        ],
+        k.just_pressed(KeyCode::Space),
+    );
     m.accumulator += app.time_delta().min(0.1);
     while m.accumulator >= 1.0 / 120.0 {
         m.game.step(1.0 / 120.0, axis);
@@ -158,6 +191,49 @@ fn view(app: &App, m: &Model) {
     }
 }
 
+#[cfg(test)]
+mod movement_tests {
+    use super::*;
+    #[test]
+    fn space_starts_pauses_and_resumes_without_restoring_hold() {
+        let mut game = Game::new(42);
+        let mut gate = MovementGate::default();
+        let held = [true, false, false, false];
+        assert_eq!(movement_with_pause(&mut game, &mut gate, held, true), -1.);
+        assert_eq!(game.state, State::Playing);
+        assert_eq!(movement_with_pause(&mut game, &mut gate, held, true), 0.);
+        assert_eq!(game.state, State::Paused);
+        assert_eq!(movement_with_pause(&mut game, &mut gate, held, true), 0.);
+        assert_eq!(game.state, State::Playing);
+        movement_with_pause(&mut game, &mut gate, [false; 4], false);
+        assert_eq!(movement_with_pause(&mut game, &mut gate, held, false), -1.);
+    }
+    #[test]
+    fn pause_suppression_is_per_binding_and_opposites_cancel() {
+        let mut gate = MovementGate::default();
+        assert_eq!(gate.axis([true, true, false, false], false), -1.);
+        assert_eq!(gate.axis([true, true, false, false], true), 0.);
+        assert_eq!(gate.axis([true, false, false, false], false), 0.);
+        assert_eq!(gate.axis([true, true, false, false], false), -1.);
+        assert_eq!(gate.axis([true, true, true, false], false), 0.);
+        assert_eq!(gate.axis([false, true, true, false], false), 0.);
+    }
+    #[test]
+    fn pause_suppresses_held_keys_until_release_and_fresh_press() {
+        for index in 0..4 {
+            let mut gate = MovementGate::default();
+            let mut held = [false; 4];
+            held[index] = true;
+            assert_ne!(gate.axis(held, false), 0.);
+            assert_eq!(gate.axis(held, true), 0.);
+            assert_eq!(gate.axis(held, false), 0.);
+            held[index] = false;
+            assert_eq!(gate.axis(held, false), 0.);
+            held[index] = true;
+            assert_ne!(gate.axis(held, false), 0.);
+        }
+    }
+}
 #[cfg(test)]
 mod benchmark_tests {
     use super::benchmark_args;

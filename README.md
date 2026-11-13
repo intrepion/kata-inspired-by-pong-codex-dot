@@ -32,6 +32,8 @@ Windows Miniquad pause-fix follow-up: 10 action/model tests and fresh scripted r
 
 Miniquad keypad Enter now shares the existing start/restart action; Windows and Mac action-boundary tests pass; Mac automated `KP_Enter` starts and resets, but its delivered key code, physical delivery and the separate Windows Unknown-key issue remain open. [Evidence](docs/MINIQUAD-KEYPAD-ENTER.md).
 
+Nannou explicit-pause fix: five adapter tests pass, including polled held-key suppression; scripted replay matches the model. Native input, focus changes, packages and other platforms remain pending. [Evidence](docs/NANNOU-PAUSE-HELD-INPUT-FIX.md).
+
 Piston explicit-pause fix: nine adapter tests pass, including Space/Escape held-input and repeat regressions; scripted replay matches the model. Mac cached build and sequential automated pause/resume check pass; held-across-pause native input remains pending. [Evidence](docs/PISTON-PAUSE-HELD-INPUT-FIX.md).
 
 ggez explicit-pause fix: four adapter tests pass, including Space/Escape held-input and repeat regressions; scripted replay matches the model. Mac cached release build, four tests and sequential automated pause/resume check pass; held-across-pause native input remains pending. [Evidence](docs/GGEZ-PAUSE-HELD-INPUT-FIX.md).
