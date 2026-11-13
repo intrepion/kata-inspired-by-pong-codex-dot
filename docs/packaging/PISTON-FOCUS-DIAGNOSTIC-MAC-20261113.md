@@ -1,0 +1,7 @@
+# Piston Mac input diagnostic (2026-11-13)
+
+The prior native Ready test in `PISTON-INDICATOR-BACKING-MAC-20261113.md` did not respond to automated Return or R. A separate temporary diagnostic build of that source added local logging of Piston focus events and keyboard press names plus the current focus flag, without changing input handling. Its executable SHA-256 was `788334176099e3146e42914a74b1415f4e6a467027ab236d1aa57218e0e32125`. The original source was restored to SHA-256 `5bea945c6252b87e8b36ab80b441a095971dce92d55dcb955ebd03e96f450f31`; prior app bundles were preserved.
+
+After desktop automation opened the window, clicked the court, and sent Return and R, the local diagnostic log showed `focus=true`, `focus=false`, then `press=Return focused=false` and `press=R focused=false`. An explicit accessibility Raise action followed by Return produced another `press=Return focused=false`, without a logged focus regain. The UI remained Ready. The source intentionally gates action presses while its focus flag is false, explaining the immediate rejection in this diagnostic run.
+
+The event log SHA-256 is `0f490e4b1b497e9722efdc6a0848593c84798482bc0709e6c6e5333d2c9271fa`, retained at `/tmp/pong-piston-focus-events-20261113-v1.log`; the diagnostic app is under `/tmp/pong-piston-focus-diag-mac-20261113-v1/`. The source of focus loss and lack of a regain is not established. This does not prove a physical-user defect or validate removing the focus gate; a confirmed real focus transition and physical input remain open.
