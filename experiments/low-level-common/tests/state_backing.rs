@@ -32,3 +32,19 @@ fn winner_backing_covers_the_net_after_a_winning_point() {
         assert_eq!(pixel(&app, 449, 230), 0x0c1423);
     }
 }
+
+#[test]
+fn ready_and_pause_show_in_court_instructions_only_outside_play() {
+    fn orange_pixels(app: &App) -> usize {
+        let mut pixels = vec![0; 900 * 500];
+        raster(app, &mut pixels, 900, 500);
+        (290..311).flat_map(|y| (280..620).map(move |x| y * 900 + x))
+            .filter(|&i| pixels[i] == 0xffb450).count()
+    }
+    let mut app = App::default();
+    assert!(orange_pixels(&app) > 0, "Ready needs start instructions");
+    app.action();
+    assert_eq!(orange_pixels(&app), 0, "Playing has no instruction");
+    app.action();
+    assert!(orange_pixels(&app) > 0, "Paused needs resume instructions");
+}

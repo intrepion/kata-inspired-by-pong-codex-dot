@@ -1,0 +1,9 @@
+# Low-level in-court instructions: Windows SDL3
+
+The shared low-level renderer now places `SPACE TO START` under the Ready symbol and `SPACE TO RESUME` under the Paused bars, with an opaque backing; Playing has no instruction. This makes the controls available when window titles are hidden. SDL3, softbuffer and ash use the shared rectangle list; no gameplay or input behavior changed.
+
+The new state-render regression failed before the change and passed afterward. On Windows stable MSVC Rust, locked offline shared tests passed nine cases (six unit and three integration), including glyph availability and the existing indicator-backing regressions. All 12 SDL3 adapter tests passed. Cargo fell back to copying incremental files; ordinary SDL3 test and build retained the known `LNK4098` CRT warning.
+
+The rebuilt SDL3 debug executable SHA-256 was `f661ad1cc4a84eac5b6f053fe2c7e5f710cc44ba118d5df95e85340c2b8e8238`, shared source Git blob `a4da9a0a024b5d700403055f1dc069fe8e37fde7`. The app-owned scripted run exited 0 with empty stderr and all 13 telemetry records matched `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`. Six framebuffer captures were produced; the inspected [tick-480 paused capture](../evidence/sdl3-pause-instruction-windows-20261113.png), SHA-256 `cbc313af7344ae5492f856e33e9225e2f3635151abb297a9fd16cb2e829d70dc`, shows the complete resume instruction. Prior executable, logs and captures remain in sibling workspace directory `lowlevel-prompt-windows-20261113`.
+
+The replay does not capture Ready or a winning state; their visual layouts remain unverified. Softbuffer and ash were not rebuilt for this change. This is shared raster and SDL3 app-owned scripted evidence, not OS keyboard delivery, physical input, a complete match, clean-machine operation, license clearance or release qualification.

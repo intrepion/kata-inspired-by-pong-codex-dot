@@ -1,15 +1,20 @@
 //! Identical rectangles, input, and timing for the three low-level comparisons.
 pub use pong_core::{Game, State, BALL, H, PADDLE_H, PADDLE_W, W};
 pub const BACKGROUND: [u8; 3] = [12, 20, 35];
-// Minimal 5x7 uppercase glyphs for the two match-result labels.
+// Minimal 5x7 uppercase glyphs for in-court status text.
 fn result_glyph(ch: u8) -> [u8; 7] {
     match ch {
+        b'A' => [14, 17, 17, 31, 17, 17, 17],
         b'C' => [14, 17, 16, 16, 16, 17, 14],
+        b'E' => [31, 16, 16, 30, 16, 16, 31],
         b'I' => [14, 4, 4, 4, 4, 4, 14],
+        b'M' => [17, 27, 21, 21, 17, 17, 17],
         b'N' => [17, 25, 21, 19, 17, 17, 17],
         b'O' => [14, 17, 17, 17, 17, 17, 14],
         b'P' => [30, 17, 17, 30, 16, 16, 16],
+        b'R' => [30, 17, 17, 30, 20, 18, 17],
         b'S' => [15, 16, 16, 14, 1, 1, 30],
+        b'T' => [31, 4, 4, 4, 4, 4, 4],
         b'U' => [17, 17, 17, 17, 17, 17, 14],
         b'W' => [17, 17, 17, 21, 21, 21, 10],
         b'Y' => [17, 17, 10, 4, 4, 4, 4],
@@ -114,7 +119,7 @@ impl App {
             }
         }
         if matches!(self.game.state, State::Ready | State::Paused) {
-            rect(405., 210., 90., 80., BACKGROUND);
+            rect(300., 210., 300., 110., BACKGROUND);
         }
         if self.game.state == State::Ready {
             for (i, width) in [8., 16., 24., 32., 24., 16., 8.].into_iter().enumerate() {
@@ -123,6 +128,23 @@ impl App {
         } else if self.game.state == State::Paused {
             rect(420., 225., 12., 50., [255, 180, 80]);
             rect(468., 225., 12., 50., [255, 180, 80]);
+        }
+        let instruction = match self.game.state {
+            State::Ready => Some("SPACE TO START"),
+            State::Paused => Some("SPACE TO RESUME"),
+            _ => None,
+        };
+        if let Some(message) = instruction {
+            let left = (W - message.len() as f32 * 18.) / 2.;
+            for (i, ch) in message.bytes().enumerate() {
+                for (y, row) in result_glyph(ch).iter().enumerate() {
+                    for col in 0..5 {
+                        if row & (1 << (4 - col)) != 0 {
+                            rect(left + i as f32 * 18. + col as f32 * 3., 290. + y as f32 * 3., 3., 3., [255, 180, 80]);
+                        }
+                    }
+                }
+            }
         }
         if self.game.state == State::Over {
             let winner = if self.game.scores[0] > self.game.scores[1] {
@@ -182,7 +204,14 @@ pub fn raster(app: &App, pixels: &mut [u32], width: u32, height: u32) {
 mod tests {
     use super::*;
     #[test]
-    fn ready_play_indicator_differs_from_paused_bars() {
+    fn instruction_glyphs_exist() {
+        for ch in b"SPACE TO STARTSPACE TO RESUME" {
+            if *ch != b' ' {
+                assert!(result_glyph(*ch).iter().any(|row| *row != 0), "missing glyph: {}", *ch as char);
+            }
+        }
+    }
+    #[test]    fn ready_play_indicator_differs_from_paused_bars() {
         let mut app = App::default();
         let ready = app.rectangles();
         assert!(ready

@@ -865,3 +865,5 @@ Godot now gates queued keydowns after focus loss while still clearing released m
 Nannou now gates live action polling while unfocused; [Omarchy regression and replay evidence](docs/packaging/NANNOU-FOCUS-ACTIONS-OMARCHY.md) describes the remaining native focus checks.
 
 Raylib now gates Escape on window focus while retaining the normal window-close path; [Omarchy predicate and replay evidence](docs/packaging/RAYLIB-FOCUS-ESCAPE-OMARCHY.md) records the native checks still needed.
+
+The shared low-level SDL3, softbuffer and ash renderer now displays start and resume instructions in court; [Windows SDL3 tests and capture](docs/packaging/LOWLEVEL-INSTRUCTIONS-WINDOWS-20261113.md) record the scope and limits.
