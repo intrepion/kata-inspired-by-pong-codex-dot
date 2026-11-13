@@ -1,0 +1,7 @@
+# Windows Miniquad winner-label recheck
+
+On 2026-11-13, Miniquad was built with locked offline dependencies in Windows MSVC debug mode from `ee445a7ad5fd38c78b3cb7d2de8f305c11490ea4`, including winner-label fix `1fd1a6984812e5f103046793982cb880ae263a92`, using a fresh target directory. Executable SHA-256: `0a5e8efa990b97f860c1558f5b059fdc264ef1ff971dff3351cfb040a0a59617`. All eight frontend/model tests passed, including the test that produces different winner geometry and clears it after restart. These are geometry/model tests, not proof of displayed text or OS key delivery.
+
+The existing scripted replay exited 0 with empty stderr, six app-owned PNGs and 13 [telemetry records](evidence/windows-miniquad-winner-20261113.jsonl) matching the contact-timing reference line-for-line through finished tick 1440. The inspected paused tick 480 capture shows the court, paddles and ball. This scenario does not reach game over and does not show the new winner or restart label; the image is not a desktop screenshot.
+
+The prior [Windows input diagnosis](MINIQUAD-WINDOWS-INPUT-DIAGNOSIS.md) recorded supported automated keys arriving as Unknown. It was not retested or bypassed. Winner-label appearance in a real game, native and physical input, full match, focus/resize, packaging and release qualification remain open. Previous binaries, captures and outputs remain intact; this run's artifacts remain locally in `c77-miniquad-winner-windows-20261113` and `target-miniquad-winner-c77`.

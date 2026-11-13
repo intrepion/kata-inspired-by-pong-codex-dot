@@ -14,6 +14,8 @@ An original real-time paddle game inspired by Pong. Return the ball, steer shots
 
 The testing matrices below record **verified results**, separately from work in progress. An activity row does not imply that an application is currently open, that every check passed, or that a release is ready.
 
+Windows Miniquad winner-label follow-up: eight tests and a fresh replay pass; game-over text appearance and native input remain unverified. [Evidence](docs/WINDOWS-MINIQUAD-WINNER-RECHECK.md).
+
 Windows WebView2 scripted shutdown probe: two original exits logged the unregister error, while two isolated window-close probe exits did not; normal and cross-platform behavior remain open. [Evidence](docs/WINDOWS-WEBVIEW2-SHUTDOWN-PROBE.md).
 
 Windows Leptos native pause-fix follow-up: fresh native scripted state/SVG export matches the model; native input and the recurring WebView2 exit diagnostic remain open. [Evidence](docs/WINDOWS-LEPTOS-NATIVE-PAUSE-RECHECK.md).
