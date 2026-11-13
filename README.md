@@ -789,3 +789,5 @@ raylib-rs now names the winner in its match-end overlay; [Omarchy evidence](docs
 raylib-rs reserves a footer for status text so it no longer overlaps the paddle; [Omarchy evidence](docs/packaging/RAYLIB-FOOTER-OMARCHY-20261113.md) includes geometry tests and a scripted capture.
 
 raylib-rs and Nannou now suppress a held direction when focus loss is followed by immediate resume; [Omarchy adapter regressions](docs/packaging/POLLING-FOCUS-RESUME-OMARCHY.md) describe the scope and limits.
+
+SDL3 now resets its polling gate on focus loss; [Omarchy evidence](docs/packaging/SDL-FOCUS-RESUME-OMARCHY.md) covers the first-sample regression and a bounded review of other polling frontends.

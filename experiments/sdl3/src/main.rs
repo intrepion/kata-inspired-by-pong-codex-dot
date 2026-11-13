@@ -46,6 +46,10 @@ fn restart(app: &mut App, gate: &mut MovementGate) {
     gate.was_playing = false;
     app.game.start();
 }
+fn lose_focus(app: &mut App, gate: &mut MovementGate) {
+    gate.was_playing = false;
+    app.blur();
+}
 fn explicit_action(app: &mut App) -> bool {
     let previous = app.game.state;
     app.action();
@@ -104,7 +108,7 @@ fn main() -> Result<(), String> {
                 Event::Window {
                     win_event: WindowEvent::FocusLost,
                     ..
-                } if demo.is_none() && !benchmarking => app.blur(),
+                } if demo.is_none() && !benchmarking => lose_focus(&mut app, &mut movement),
                 _ => {}
             }
         }
@@ -202,6 +206,27 @@ fn main() -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn focus_loss_then_immediate_resume_suppresses_held_direction() {
+        let mut app = App::default();
+        app.game.start();
+        let mut gate = MovementGate::default();
+        sample_movement(&app, &mut gate, [false; 4], false);
+        let held = [true, false, false, false];
+        assert_eq!(sample_movement(&app, &mut gate, held, false), (true, false));
+        lose_focus(&mut app, &mut gate);
+        assert!(!explicit_action(&mut app));
+        assert_eq!(
+            sample_movement(&app, &mut gate, held, false),
+            (false, false)
+        );
+        assert_eq!(
+            sample_movement(&app, &mut gate, held, false),
+            (false, false)
+        );
+        sample_movement(&app, &mut gate, [false; 4], false);
+        assert_eq!(sample_movement(&app, &mut gate, held, false), (true, false));
+    }
     #[test]
     fn active_restart_suppresses_movement_until_fresh_press() {
         let mut app = App::default();
