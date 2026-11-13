@@ -823,3 +823,5 @@ Piston and Fyrox now ignore live keydowns after reported focus loss until focus 
 Miniquad gates reported focus loss on Linux while preserving its previous macOS and Windows callback behavior; [Omarchy evidence](docs/packaging/MINIQUAD-LINUX-FOCUS-OMARCHY.md) records callback limits and a corrected capture recheck.
 
 Pixels now draws the score inside the court, independent of the window title; [Omarchy evidence](docs/packaging/PIXELS-COURT-SCORE-OMARCHY.md) records the regression and scripted capture.
+
+Pixels now shows Ready, Paused and winner messages in the court; [Omarchy evidence](docs/packaging/PIXELS-COURT-STATES-OMARCHY.md) distinguishes the app replay from controlled framebuffer fixtures.

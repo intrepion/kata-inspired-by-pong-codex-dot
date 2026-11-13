@@ -226,6 +226,35 @@ impl ApplicationHandler for App {
         }
     }
 }
+fn state_message(game: &Game) -> Option<&'static str> {
+    match game.state {
+        State::Ready => Some("READY"),
+        State::Paused => Some("PAUSED"),
+        State::Playing => None,
+        State::Over if game.scores[0] > game.scores[1] => Some("YOU WIN"),
+        State::Over if game.scores[1] > game.scores[0] => Some("CPU WINS"),
+        State::Over => Some("OVER"),
+    }
+}
+fn status_glyph(ch: u8) -> [u8; 7] {
+    match ch {
+        b'A' => [14, 17, 17, 31, 17, 17, 17],
+        b'C' => [14, 17, 16, 16, 16, 17, 14],
+        b'D' => [30, 17, 17, 17, 17, 17, 30],
+        b'E' => [31, 16, 16, 30, 16, 16, 31],
+        b'I' => [14, 4, 4, 4, 4, 4, 14],
+        b'N' => [17, 25, 21, 19, 17, 17, 17],
+        b'O' => [14, 17, 17, 17, 17, 17, 14],
+        b'P' => [30, 17, 17, 30, 16, 16, 16],
+        b'R' => [30, 17, 17, 30, 20, 18, 17],
+        b'S' => [15, 16, 16, 14, 1, 1, 30],
+        b'U' => [17, 17, 17, 17, 17, 17, 14],
+        b'V' => [17, 17, 17, 17, 17, 10, 4],
+        b'W' => [17, 17, 17, 21, 21, 21, 10],
+        b'Y' => [17, 17, 10, 4, 4, 4, 4],
+        _ => [0; 7],
+    }
+}
 fn draw(frame: &mut [u8], g: &Game) {
     for (i, p) in frame.as_chunks_mut::<4>().0.iter_mut().enumerate() {
         let x = (i % W as usize) as f32;
@@ -243,6 +272,35 @@ fn draw(frame: &mut [u8], g: &Game) {
         } else {
             [6, 10, 23, 255]
         });
+    }
+    if let Some(message) = state_message(g) {
+        const CELL: usize = 4;
+        let left = (W as usize - message.len() * 6 * CELL) / 2;
+        // Clear the scene behind the non-playing message so a ball or net
+        // crossing a glyph cannot make its text ambiguous.
+        for y in 152..196 {
+            for x in (left - 8)..(left + message.len() * 6 * CELL + 8) {
+                let offset = (y * W as usize + x) * 4;
+                frame[offset..offset + 4].copy_from_slice(&[6, 10, 23, 255]);
+            }
+        }
+        for (index, ch) in message.bytes().enumerate() {
+            for (row, bits) in status_glyph(ch).into_iter().enumerate() {
+                for col in 0..5 {
+                    if bits & (1 << (4 - col)) == 0 {
+                        continue;
+                    }
+                    for y in (160 + row * CELL)..(160 + (row + 1) * CELL) {
+                        for x in (left + index * 6 * CELL + col * CELL)
+                            ..(left + index * 6 * CELL + (col + 1) * CELL)
+                        {
+                            let offset = (y * W as usize + x) * 4;
+                            frame[offset..offset + 4].copy_from_slice(&[255, 180, 80, 255]);
+                        }
+                    }
+                }
+            }
+        }
     }
     // Draw scores in the court so they remain visible without a window title.
     const DIGITS: [u8; 10] = [0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f];
@@ -302,6 +360,51 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn court_shows_state_and_distinguishes_winner() {
+        let mut game = Game::new(42);
+        let render = |game: &Game| {
+            let mut frame = vec![0; W as usize * H as usize * 4];
+            draw(&mut frame, game);
+            frame
+                .chunks_exact(4)
+                .filter(|pixel| *pixel == [255, 180, 80, 255])
+                .count()
+        };
+        assert_eq!(state_message(&game), Some("READY"));
+        assert!(render(&game) > 100, "Ready indicator");
+        game.start();
+        assert_eq!(state_message(&game), None);
+        assert_eq!(render(&game), 0, "no label in play");
+        game.pause();
+        assert_eq!(state_message(&game), Some("PAUSED"));
+        assert!(render(&game) > 100, "Paused indicator");
+        game.state = State::Over;
+        game.scores = [7, 2];
+        assert_eq!(state_message(&game), Some("YOU WIN"));
+        let player = render(&game);
+        game.scores = [2, 7];
+        assert_eq!(state_message(&game), Some("CPU WINS"));
+        let cpu = render(&game);
+        assert!(player > 100 && cpu > 100);
+        assert_ne!(player, cpu);
+        game.scores = [7, 7];
+        assert_eq!(state_message(&game), Some("OVER"));
+        assert!(render(&game) > 100, "defensive tie fallback");
+    }
+    #[test]
+    fn message_backdrop_clears_ball_only_outside_play() {
+        let mut game = Game::new(42);
+        game.ball.x = 390.;
+        game.ball.y = 155.;
+        let mut frame = vec![0; W as usize * H as usize * 4];
+        draw(&mut frame, &game);
+        let offset = (155 * W as usize + 390) * 4;
+        assert_eq!(&frame[offset..offset + 4], &[6, 10, 23, 255]);
+        game.state = State::Playing;
+        draw(&mut frame, &game);
+        assert_eq!(&frame[offset..offset + 4], &[240, 250, 255, 255]);
+    }
     #[test]
     fn court_displays_current_scores_without_window_title() {
         let mut game = Game::new(42);
