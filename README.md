@@ -106,6 +106,8 @@ Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequent
 
 Dioxus local-libxdo launcher now rejects package paths containing loader separators; relocated release replay still passes. [Evidence](docs/packaging/DIOXUS-LIBRARY-PATH-SEPARATOR-FIX.md).
 
+Omarchy Ratatui musl provenance: 25 linked Cargo archives mapped and verified against cached sources; exact distributed sysroot source and notice review remain open. [Evidence](docs/packaging/RATATUI-MUSL-STATIC-PROVENANCE.md).
+
 Omarchy Ratatui static musl experiment: approved official target installed; release build, 10 tests, model replay and synthetic PTY checks pass, with static-component licensing still under review. [Evidence](docs/packaging/RATATUI-MUSL-STATIC-OMARCHY.md).
 
 Omarchy Ratatui musl feasibility: target-specific metadata is available, but the installed toolchain lacks ARM64 musl core; no musl executable or release is claimed. [Evidence](docs/packaging/RATATUI-MUSL-FEASIBILITY-OMARCHY.md).
