@@ -62,6 +62,8 @@ Windows dependency audit found MPL-2.0 declarations in enabled ggez, Fyrox and n
 
 ggez uses a scoped dirs-sys patch removing option-ext; Windows release tests and scripted replay pass, while Unix validation and a complete dependency audit remain open. See [evidence](docs/packaging/GGEZ-WINDOWS-OPTION-EXT-PATCH.md).
 
+Fyrox Windows feature investigation: disabling defaults breaks the implementation import, while explicitly enabling it retains Symphonia; [replacement remains open](docs/packaging/FYROX-WINDOWS-MPL-FEASIBILITY.md).
+
 ## Current activity (last reported)
 
 **Snapshot updated: 2026-11-12 13:24 UTC.** This is a committed progress snapshot, **not live process telemetry**. Refreshing this checkpoint branch shows the latest published report, not an automatic view of the computers. Activity is updated at meaningful starts, completions, pauses, and blockers; a row can become stale between updates.
