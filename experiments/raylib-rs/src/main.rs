@@ -19,8 +19,12 @@ fn benchmark_args(args: &[String]) -> bool {
 #[derive(Default)]
 struct MovementGate {
     suppressed: [bool; 4],
+    was_playing: bool,
 }
 impl MovementGate {
+    fn finish_frame(&mut self, state: State) {
+        self.was_playing &= state == State::Playing;
+    }
     fn axis(&mut self, held: [bool; 4], entering_pause: bool) -> f32 {
         for (blocked, down) in self.suppressed.iter_mut().zip(held) {
             *blocked = down && (entering_pause || *blocked);
@@ -35,7 +39,6 @@ fn movement_with_pause(
     held: [bool; 4],
     pause_pressed: bool,
 ) -> f32 {
-    let was_playing = game.state == State::Playing;
     if pause_pressed {
         if game.state == State::Ready {
             game.start();
@@ -43,7 +46,10 @@ fn movement_with_pause(
             game.toggle_pause();
         }
     }
-    movement.axis(held, was_playing && game.state == State::Paused)
+    let playing = game.state == State::Playing;
+    let suppress = !playing || !movement.was_playing;
+    movement.was_playing = playing;
+    movement.axis(held, suppress)
 }
 fn main() {
     let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
@@ -92,6 +98,7 @@ fn main() {
                 game.step(1.0 / 120.0, axis);
                 accumulator -= 1.0 / 120.0;
             }
+            movement.finish_frame(game.state);
         }
         if benchmarking {
             accumulator += window.get_frame_time().min(0.1);
@@ -206,6 +213,59 @@ fn main() {
 mod tests {
     use super::*;
     #[test]
+    fn game_over_between_samples_blocks_held_on_immediate_restart() {
+        let mut game = Game::new(42);
+        game.start();
+        let mut gate = MovementGate::default();
+        movement_with_pause(&mut game, &mut gate, [false; 4], false);
+        game.state = State::Over;
+        gate.finish_frame(game.state);
+        game.start();
+        assert_eq!(
+            movement_with_pause(&mut game, &mut gate, [true, false, false, false], false),
+            0.
+        );
+    }
+    #[test]
+    fn movement_held_on_same_frame_as_resume_stays_suppressed() {
+        let mut game = Game::new(42);
+        game.state = State::Paused;
+        let mut gate = MovementGate::default();
+        let held = [true, false, false, false];
+        assert_eq!(movement_with_pause(&mut game, &mut gate, held, true), 0.);
+        assert_eq!(game.state, State::Playing);
+        assert_eq!(movement_with_pause(&mut game, &mut gate, held, false), 0.);
+    }
+    #[test]
+    fn nonplaying_held_keys_do_not_move_after_resume() {
+        for state in [State::Ready, State::Paused, State::Over] {
+            for i in 0..4 {
+                let mut game = Game::new(42);
+                game.state = state;
+                let mut gate = MovementGate::default();
+                let mut held = [false; 4];
+                held[i] = true;
+                assert_eq!(
+                    movement_with_pause(&mut game, &mut gate, held, false),
+                    0.,
+                    "{state:?}"
+                );
+                if state == State::Over {
+                    game.start();
+                } else {
+                    movement_with_pause(&mut game, &mut gate, held, true);
+                }
+                assert_eq!(game.state, State::Playing);
+                assert_eq!(movement_with_pause(&mut game, &mut gate, held, false), 0.);
+                held[i] = false;
+                movement_with_pause(&mut game, &mut gate, held, false);
+                held[i] = true;
+                assert_ne!(movement_with_pause(&mut game, &mut gate, held, false), 0.);
+            }
+        }
+    }
+
+    #[test]
     fn pause_suppression_is_per_binding_and_opposites_cancel() {
         let mut gate = MovementGate::default();
         assert_eq!(gate.axis([true, true, false, false], false), -1.);
@@ -222,8 +282,12 @@ mod tests {
             let mut gate = MovementGate::default();
             let mut held = [false; 4];
             held[i] = true;
-            assert_ne!(movement_with_pause(&mut game, &mut gate, held, true), 0.);
+            assert_eq!(movement_with_pause(&mut game, &mut gate, held, true), 0.);
             assert_eq!(game.state, State::Playing);
+            held[i] = false;
+            movement_with_pause(&mut game, &mut gate, held, false);
+            held[i] = true;
+            assert_ne!(movement_with_pause(&mut game, &mut gate, held, false), 0.);
             assert_eq!(movement_with_pause(&mut game, &mut gate, held, true), 0.);
             assert_eq!(game.state, State::Paused);
             assert_eq!(movement_with_pause(&mut game, &mut gate, held, true), 0.);

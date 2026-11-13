@@ -134,6 +134,8 @@ Mac ggez option-ext patch: Release tests and replay pass; a duplicate Unix-only 
 
 Mac ggez non-playing movement fix: five Release tests and 13-record model-matched scripted replay pass; real key delivery remains open. [Evidence](docs/packaging/GGEZ-MAC-NONPLAYING-RECHECK.md).
 
+Mac non-playing input recheck: six adapter Release suites pass; five rebuilt native replays match the model. Ash runtime and real input remain open. [Evidence](docs/packaging/NATIVE-NONPLAYING-MAC-RECHECK.md).
+
 Mac ggez asset audit: tested binaries embed Liberation Mono 1.04; exact font-license provenance and notice remain unresolved. [Evidence](docs/packaging/GGEZ-MAC-LIBERATION-FONT.md).
 
 Mac Fyrox Release license investigation: MPL-declared Symphonia code symbols are present in the tested executable; a second MPL-declared graph path lacks direct symbol confirmation. [Evidence](docs/packaging/FYROX-MAC-MPL-SCREEN.md).
@@ -161,6 +163,8 @@ Dioxus local-libxdo launcher now rejects package paths containing loader separat
 Omarchy Miniquad winning-score fixture: real scoring reached both game-over states and scripted restart cleared them from controlled near-winning positions. [Evidence](docs/packaging/MINIQUAD-SCORING-FIXTURE-OMARCHY.md).
 
 Omarchy Miniquad winner overlay: an isolated forced-state visual fixture rendered both winner messages; real game-over progression and physical input remain open. [Evidence](docs/packaging/MINIQUAD-WINNER-FIXTURE-OMARCHY.md).
+
+Omarchy polling input: Nannou, raylib-rs, SDL3 and Macroquad suppress keys held outside play until release; tests, release builds and scripted replays pass. Other native paths remain under review. [Evidence](docs/packaging/POLLING-NONPLAYING-INPUT-OMARCHY.md).
 
 Omarchy native input: Miniquad, Pixels, wgpu, Piston, ash and softbuffer now ignore movement presses outside play; adapter tests and release builds pass. Polling adapters and native input need follow-up. [Evidence](docs/packaging/NATIVE-NONPLAYING-INPUT-OMARCHY.md).
 

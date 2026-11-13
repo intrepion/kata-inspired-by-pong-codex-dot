@@ -1,6 +1,26 @@
 use macroquad::prelude::*;
 use pong_core::{Game, State, BALL, H, PADDLE_H, PADDLE_W, W};
 #[derive(Default)]
+struct MovementGate {
+    suppressed: [bool; 4],
+    was_playing: bool,
+}
+impl MovementGate {
+    fn finish_frame(&mut self, state: State) {
+        self.was_playing &= state == State::Playing;
+    }
+}
+fn movement_axis(game: &Game, gate: &mut MovementGate, held: [bool; 4], lost_focus: bool) -> f32 {
+    let playing = game.state == State::Playing;
+    let suppress = lost_focus || !playing || !gate.was_playing;
+    gate.was_playing = playing;
+    for (blocked, down) in gate.suppressed.iter_mut().zip(held) {
+        *blocked = down && (suppress || *blocked);
+    }
+    let active = std::array::from_fn::<_, 4, _>(|i| held[i] && !gate.suppressed[i]);
+    (active[2] || active[3]) as u8 as f32 - (active[0] || active[1]) as u8 as f32
+}
+#[derive(Default)]
 struct FocusEvents {
     lost: bool,
 }
@@ -40,8 +60,10 @@ async fn main() {
     let mut accumulator = 0.;
     let subscriber = macroquad::input::utils::register_input_subscriber();
     let mut focus = FocusEvents::default();
+    let mut movement = MovementGate::default();
     loop {
         macroquad::input::utils::repeat_all_miniquad_input(&mut focus, subscriber);
+        let lost_focus = focus.lost;
         if !scripted {
             if focus.lost {
                 g.pause();
@@ -65,8 +87,17 @@ async fn main() {
                 g.pause()
             }
         }
-        let input = (is_key_down(KeyCode::Down) || is_key_down(KeyCode::S)) as i32
-            - (is_key_down(KeyCode::Up) || is_key_down(KeyCode::W)) as i32;
+        let input = movement_axis(
+            &g,
+            &mut movement,
+            [
+                is_key_down(KeyCode::Up),
+                is_key_down(KeyCode::W),
+                is_key_down(KeyCode::Down),
+                is_key_down(KeyCode::S),
+            ],
+            lost_focus,
+        );
         if benchmarking {
             accumulator += get_frame_time().min(0.1);
             while accumulator >= pong_scenario::STEP {
@@ -82,9 +113,10 @@ async fn main() {
         } else {
             accumulator += get_frame_time().min(0.1);
             while accumulator >= 1. / 120. {
-                g.step(1. / 120., input as f32);
+                g.step(1. / 120., input);
                 accumulator -= 1. / 120.;
             }
+            movement.finish_frame(g.state);
         }
         clear_background(Color::from_hex(0x0c211e));
         let scale = (screen_width() / W)
@@ -166,6 +198,75 @@ async fn main() {
         }
         if demo.as_ref().is_some_and(|d| d.finished()) {
             break;
+        }
+    }
+}
+
+#[cfg(test)]
+mod movement_tests {
+    use super::*;
+    #[test]
+    fn game_over_between_samples_blocks_held_on_immediate_restart() {
+        let mut game = Game::new(42);
+        game.start();
+        let mut gate = MovementGate::default();
+        movement_axis(&game, &mut gate, [false; 4], false);
+        game.state = State::Over;
+        gate.finish_frame(game.state);
+        game.start();
+        assert_eq!(
+            movement_axis(&game, &mut gate, [true, false, false, false], false),
+            0.
+        );
+    }
+    #[test]
+    fn same_frame_start_and_focus_loss_suppress_held_keys_independently() {
+        let mut game = Game::new(42);
+        let mut gate = MovementGate::default();
+        game.start();
+        assert_eq!(
+            movement_axis(&game, &mut gate, [true, false, false, false], false),
+            0.
+        );
+        movement_axis(&game, &mut gate, [false; 4], false);
+        assert_eq!(
+            movement_axis(&game, &mut gate, [true, false, false, false], false),
+            -1.
+        );
+        assert_eq!(
+            movement_axis(&game, &mut gate, [true, false, false, false], true),
+            0.
+        );
+        assert_eq!(
+            movement_axis(&game, &mut gate, [true, true, false, false], false),
+            -1.
+        );
+        assert_eq!(
+            movement_axis(&game, &mut gate, [true, false, false, false], false),
+            0.
+        );
+    }
+    #[test]
+    fn nonplaying_held_keys_do_not_move_after_resume() {
+        for state in [State::Ready, State::Paused, State::Over] {
+            for i in 0..4 {
+                let mut game = Game::new(42);
+                game.state = state;
+                let mut gate = MovementGate::default();
+                let mut held = [false; 4];
+                held[i] = true;
+                assert_eq!(
+                    movement_axis(&game, &mut gate, held, false),
+                    0.,
+                    "{state:?}"
+                );
+                game.state = State::Playing;
+                assert_eq!(movement_axis(&game, &mut gate, held, false), 0.);
+                held[i] = false;
+                movement_axis(&game, &mut gate, held, false);
+                held[i] = true;
+                assert_ne!(movement_axis(&game, &mut gate, held, false), 0.);
+            }
         }
     }
 }
