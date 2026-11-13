@@ -68,6 +68,8 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
+Omarchy Blue Engine non-writable package launch: state-only replay matches the model; graphics warnings, physical input and clean-machine installation remain open. [Evidence](docs/packaging/BLUE-READONLY-INSTALL-OMARCHY.md).
+
 Omarchy Fyrox dedicated working directory: the non-writable package ran its replay without error-level logs and wrote its registry in the dedicated folder; package launch instructions corrected. [Evidence](docs/packaging/FYROX-DEDICATED-CWD-OMARCHY.md).
 
 Omarchy Fyrox non-writable launch: replay finishes but registry writes log permission errors; package guidance now recommends a dedicated writable working directory. [Evidence](docs/packaging/FYROX-READONLY-INSTALL-OMARCHY.md).
