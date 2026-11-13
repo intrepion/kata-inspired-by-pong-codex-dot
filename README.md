@@ -920,4 +920,6 @@ Fyrox now accepts keypad Enter; [Mac tests and automated-window evidence](docs/p
 
 The shared low-level court now shows an R-to-restart instruction after a match; [Mac Softbuffer evidence](docs/packaging/LOWLEVEL-RESTART-HINT-MAC-20261113.md) and [Windows renderer and replay checks](docs/packaging/LOWLEVEL-RESTART-HINT-WINDOWS-20261113.md) record the remaining gaps.
 
+The updated shared renderer also passed a [Windows ash release replay check](docs/packaging/ASH-RESTART-HINT-WINDOWS-20261113.md); the replay does not reach match end.
+
 The shared match-end restart instruction was also checked in [Mac SDL3](docs/packaging/SDL3-RESTART-HINT-MAC-20261113.md); physical input and distribution review remain open.
