@@ -11,6 +11,19 @@ fn benchmark_args(args: &[String]) -> bool {
     );
     enabled
 }
+#[cfg(any(feature = "windowed", test))]
+#[derive(Default)]
+struct MovementGate { suppressed: [bool; 4] }
+#[cfg(any(feature = "windowed", test))]
+impl MovementGate {
+    fn axis(&mut self, held: [bool; 4], entering_pause: bool) -> f32 {
+        for (blocked, down) in self.suppressed.iter_mut().zip(held) {
+            *blocked = down && (entering_pause || *blocked);
+        }
+        let active = std::array::from_fn::<_, 4, _>(|i| held[i] && !self.suppressed[i]);
+        (active[2] || active[3]) as u8 as f32 - (active[0] || active[1]) as u8 as f32
+    }
+}
 fn rect(engine: &mut Engine, name: &str, x: f32, y: f32, width: f32, height: f32, z: f32) {
     if let Some(object) = engine.objects.get_mut(name) {
         // Hide zero-sized score markers without creating a singular inverse matrix.
@@ -128,6 +141,8 @@ fn main() -> Result<(), blue_engine::error::Error> {
     #[cfg(feature = "windowed")]
     let mut accumulator = 0.;
     #[cfg(feature = "windowed")]
+    let mut movement_gate = MovementGate::default();
+    #[cfg(feature = "windowed")]
     let mut title = String::new();
     #[cfg(feature = "windowed")]
     let mut dimensions = (0, 0);
@@ -173,10 +188,14 @@ fn main() -> Result<(), blue_engine::error::Error> {
         if demo.is_none() && !benchmarking {
         let focused = engine.window.as_ref().is_some_and(|window| window.has_focus());
         if !focused {
+            let input = &engine.simple_input;
+            let held = [input.key_held(KeyCode::KeyW), input.key_held(KeyCode::ArrowUp), input.key_held(KeyCode::KeyS), input.key_held(KeyCode::ArrowDown)];
+            movement_gate.axis(held, game.state == State::Playing);
             game.pause();
             accumulator = 0.;
         } else {
             let input = &engine.simple_input;
+            let was_playing = game.state == State::Playing;
             if input.key_pressed(KeyCode::Enter) {
                 if game.state == State::Paused { game.toggle_pause(); }
                 else if game.state != State::Playing { game.start(); }
@@ -184,8 +203,8 @@ fn main() -> Result<(), blue_engine::error::Error> {
             if input.key_pressed(KeyCode::KeyR) { game.start(); }
             if input.key_pressed(KeyCode::Space) { game.toggle_pause(); }
             if input.key_pressed(KeyCode::Escape) { game.pause(); }
-            let axis = (input.key_held(KeyCode::KeyS) || input.key_held(KeyCode::ArrowDown)) as u8 as f32
-                - (input.key_held(KeyCode::KeyW) || input.key_held(KeyCode::ArrowUp)) as u8 as f32;
+            let held = [input.key_held(KeyCode::KeyW), input.key_held(KeyCode::ArrowUp), input.key_held(KeyCode::KeyS), input.key_held(KeyCode::ArrowDown)];
+            let axis = movement_gate.axis(held, was_playing && game.state == State::Paused);
             accumulator += dt;
             while accumulator >= 1. / 120. { game.step(1. / 120., axis); accumulator -= 1. / 120.; }
         }
@@ -250,4 +269,35 @@ mod benchmark_tests {
     fn reject_combined_modes() {
         benchmark_args(&["--benchmark".into(), "--scripted-test".into()]);
     }
+}
+
+#[cfg(test)]
+mod input_tests {
+    use super::*;
+    #[test]
+    fn held_movement_stays_suppressed_through_resume() {
+        for index in 0..4 {
+            let mut gate = MovementGate::default();
+            let mut held = [false; 4];
+            held[index] = true;
+            assert_ne!(gate.axis(held, false), 0.);
+            assert_eq!(gate.axis(held, true), 0.);
+            assert_eq!(gate.axis(held, false), 0.);
+            held[index] = false;
+            assert_eq!(gate.axis(held, false), 0.);
+            held[index] = true;
+            assert_ne!(gate.axis(held, false), 0.);
+        }
+    }
+    #[test]
+    fn aliases_and_opposing_keys_remain_independent() {
+        let mut gate = MovementGate::default();
+        assert_eq!(gate.axis([true, false, false, false], true), 0.);
+        assert_eq!(gate.axis([true, true, false, false], false), -1.);
+        assert_eq!(gate.axis([true, true, true, false], false), 0.);
+        assert_eq!(gate.axis([true, false, true, false], false), 1.);
+        assert_eq!(gate.axis([false, false, true, false], false), 1.);
+        assert_eq!(gate.axis([true, false, true, false], false), 0.);
+    }
+
 }
