@@ -64,6 +64,8 @@ Mac Godot pause-prompt fix: headless integration smoke passes and automated desk
 
 Mac Pixels, wgpu and softbuffer pause follow-up: 7/6/6 release tests and sequential automated movement/pause/resume checks pass; native held-across-pause remains open. [Pixels/wgpu](docs/PIXELS-WGPU-PAUSE-HELD-INPUT-FIX.md); [softbuffer/ash](docs/SOFTBUFFER-ASH-PAUSE-HELD-INPUT-FIX.md).
 
+Omarchy SDL3 held-pause notice pilot: corrected target scan and six relocated manifest checks pass; native input and full notice review remain open. [Evidence](docs/packaging/SDL3-HELD-NOTICE-OMARCHY.md).
+
 Omarchy bracket-lib held-pause release pilot: relocated X11 fallback replay matches the model; physical input, native Wayland and dependency notices remain open. [Evidence](docs/packaging/BRACKET-HELD-OMARCHY-RELEASE-PILOT.md).
 
 Omarchy ggez held-pause release pilot: relocated archive checks and model-matched replay pass; physical input and dependency notices remain open. [Evidence](docs/packaging/GGEZ-HELD-OMARCHY-RELEASE-PILOT.md).
