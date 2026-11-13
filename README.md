@@ -785,3 +785,5 @@ Yew, Leptos and Dioxus web now provide a bounded movement step for non-pointer b
 raylib-rs now names the winner in its match-end overlay; [Omarchy evidence](docs/packaging/RAYLIB-WINNER-OMARCHY-20261113.md) records the tests and scripted capture, which did not reach a winner screen.
 
 raylib-rs reserves a footer for status text so it no longer overlaps the paddle; [Omarchy evidence](docs/packaging/RAYLIB-FOOTER-OMARCHY-20261113.md) includes geometry tests and a scripted capture.
+
+raylib-rs and Nannou now suppress a held direction when focus loss is followed by immediate resume; [Omarchy adapter regressions](docs/packaging/POLLING-FOCUS-RESUME-OMARCHY.md) describe the scope and limits.
