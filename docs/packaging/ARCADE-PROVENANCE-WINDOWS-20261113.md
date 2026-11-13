@@ -1,0 +1,7 @@
+# Arcade capture input provenance: Windows
+
+The existing `scripts/verify-arcade.mjs` verifies the image hashes and validates provenance field formats, but does not compare recorded input hashes with the referenced Git commit. The separate `node scripts/verify-arcade-provenance.mjs` check now compares each CI capture's recorded inputs to the corresponding Git objects and reports, without failing, input files that differ in the current checkout. It requires the recorded commit and files to be present locally; a shallow clone lacking the commit cannot complete it. It does not verify the remote deployment, CI run authenticity, or how screenshots were captured.
+
+On Windows Node v24.20.0 at checkpoint `02ca7e01bdc838415807a9539f446db923fc5622`, the existing image verifier passed both captures and the new check matched both captures' recorded inputs to commit `f178db7fc83065a95f53f0bf7efc699e26803cf0`. The current `game.js` differs from that historical input; `index.html` and `style.css` match. These are historical captures, not evidence of the current checkout's browser behavior.
+
+An isolated local Git fixture verified that a changed working file is reported while a deliberately incorrect recorded hash is rejected. The fixture and expected failure log remain in sibling workspace directory `arcade-provenance-fixture-windows-20261113`. No public site, screenshot, or release was changed. Current browser interaction, accessibility, clean-machine behavior, dependency licenses and release readiness remain separate.
