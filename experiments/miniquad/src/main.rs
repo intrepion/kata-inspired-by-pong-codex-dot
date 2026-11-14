@@ -95,6 +95,14 @@ fn focused_key_down(
 ) -> bool {
     gate.allows_input() && handle_key_down(game, movement, key, repeat)
 }
+fn reset_live_clock(acc: &mut f32, last: &mut Instant, now: Instant) { *acc = 0.; *last = now; }
+fn handle_live_key(game: &mut Game, movement: &mut MovementInput, gate: &FocusGate, key: KeyCode, repeat: bool, acc: &mut f32, last: &mut Instant, now: Instant) -> bool {
+    let before = game.state;
+    let quit = focused_key_down(game, movement, gate, key, repeat);
+    let restart = gate.allows_input() && !repeat && matches!(key, KeyCode::Enter | KeyCode::KpEnter | KeyCode::R);
+    if before != game.state || restart { reset_live_clock(acc, last, now); }
+    quit
+}
 struct App {
     focus_gate: FocusGate,
     ctx: Box<dyn RenderingBackend>,
@@ -409,12 +417,15 @@ impl EventHandler for App {
         if self.demo.is_some() || self.benchmarking {
             return;
         }
-        if focused_key_down(
+        if handle_live_key(
             &mut self.game,
             &mut self.movement,
             &self.focus_gate,
             k,
             repeat,
+            &mut self.acc,
+            &mut self.last,
+            Instant::now(),
         ) {
             window::request_quit();
         }
@@ -437,10 +448,13 @@ impl EventHandler for App {
         }
         self.game.pause();
         self.movement.clear();
-        self.acc = 0.;
+        reset_live_clock(&mut self.acc, &mut self.last, Instant::now());
     }
     fn window_restored_event(&mut self) {
         self.focus_gate.on_restore();
+        if self.demo.is_none() && !self.benchmarking {
+            reset_live_clock(&mut self.acc, &mut self.last, Instant::now());
+        }
     }
 }
 fn benchmark_args(args: &[String]) -> bool {
@@ -732,6 +746,79 @@ mod control_tests {
             handle_key_down(&mut game, &mut movement, key, false);
             assert_ne!(movement.axis(), 0., "fresh press should move");
         }
+    }
+    #[test]
+    fn ignored_actions_movement_and_escape_preserve_clock() {
+        use std::time::Duration;
+        let mut game = Game::new(42);
+        let mut movement = MovementInput::default();
+        let mut gate = FocusGate::default();
+        let base = Instant::now();
+        let mut last = base;
+        let mut acc = 0.004;
+        for key in [KeyCode::Enter, KeyCode::KpEnter, KeyCode::R, KeyCode::Space] {
+            handle_live_key(&mut game, &mut movement, &gate, key, true, &mut acc, &mut last, base + Duration::from_secs(1));
+            assert_eq!((acc, last), (0.004, base), "repeated {key:?} reset clock");
+        }
+        gate.on_loss(true);
+        handle_live_key(&mut game, &mut movement, &gate, KeyCode::R, false, &mut acc, &mut last, base + Duration::from_secs(2));
+        assert_eq!((acc, last), (0.004, base));
+        gate.on_restore();
+        game.state = State::Over;
+        handle_live_key(&mut game, &mut movement, &gate, KeyCode::Space, false, &mut acc, &mut last, base + Duration::from_secs(3));
+        assert_eq!(game.state, State::Over);
+        assert_eq!((acc, last), (0.004, base));
+        handle_live_key(&mut game, &mut movement, &gate, KeyCode::W, false, &mut acc, &mut last, base + Duration::from_secs(4));
+        assert_eq!((acc, last), (0.004, base));
+        assert!(handle_live_key(&mut game, &mut movement, &gate, KeyCode::Escape, false, &mut acc, &mut last, base + Duration::from_secs(5)));
+        assert_eq!((acc, last), (0.004, base));
+    }
+    #[test]
+    fn action_transitions_discard_pretransition_time() {
+        use std::time::Duration;
+        let mut game=Game::new(42);let mut movement=MovementInput::default();let mut gate=FocusGate::default();
+        let base=Instant::now();let mut last=base;let mut acc=0.007;let start=base+Duration::from_secs(1);
+        handle_live_key(&mut game,&mut movement,&gate,KeyCode::Enter,false,&mut acc,&mut last,start);
+        assert_eq!(game.state,State::Playing);assert_eq!(acc,0.);assert_eq!(last,start);
+        acc=0.007;let pause=start+Duration::from_millis(10);
+        handle_live_key(&mut game,&mut movement,&gate,KeyCode::Space,false,&mut acc,&mut last,pause);
+        assert_eq!(game.state,State::Paused);assert_eq!(acc,0.);assert_eq!(last,pause);
+        acc=0.006;let resume=pause+Duration::from_secs(2);
+        handle_live_key(&mut game,&mut movement,&gate,KeyCode::Space,false,&mut acc,&mut last,resume);
+        assert_eq!(game.state,State::Playing);assert_eq!(acc,0.);assert_eq!(last,resume);
+        acc=0.006;let restart=resume+Duration::from_millis(10);
+        handle_live_key(&mut game,&mut movement,&gate,KeyCode::KpEnter,false,&mut acc,&mut last,restart);
+        assert_eq!(acc,0.);assert_eq!(last,restart);
+        acc=0.004;gate.on_loss(true);
+        handle_live_key(&mut game,&mut movement,&gate,KeyCode::R,false,&mut acc,&mut last,restart+Duration::from_millis(1));
+        assert_eq!(acc,0.004);assert_eq!(last,restart,"unfocused actions must not reset the clock");
+        let regained=restart+Duration::from_secs(5);
+        reset_live_clock(&mut acc,&mut last,regained);
+        assert_eq!(acc,0.);assert_eq!(last,regained);
+    }
+    #[test]
+    fn input_controls_pause_full_match_and_keypad_restart() {
+        let mut game = Game::new(42);
+        let mut movement = MovementInput::default();
+        assert!(!handle_key_down(&mut game, &mut movement, KeyCode::Enter, false));
+        assert_eq!(game.state, State::Playing);
+        for _ in 0..300 { game.step(1. / 120., movement.axis()); }
+        assert!(!handle_key_down(&mut game, &mut movement, KeyCode::Space, false));
+        assert_eq!(game.state, State::Paused);
+        let before = (game.player, game.cpu, game.ball.x, game.ball.y, game.scores);
+        for _ in 0..120 { game.step(1. / 120., movement.axis()); }
+        assert_eq!((game.player, game.cpu, game.ball.x, game.ball.y, game.scores), before, "paused game must remain still");
+        handle_key_down(&mut game, &mut movement, KeyCode::Space, false);
+        assert_eq!(game.state, State::Playing);
+        let mut steps = 0;
+        while game.state != State::Over && steps < 60_000 { game.step(1. / 120., movement.axis()); steps += 1; }
+        assert_eq!(game.state, State::Over, "unattended match must finish");
+        let scores = game.scores;
+        assert!(scores.iter().any(|score| *score == 7));
+        handle_key_down(&mut game, &mut movement, KeyCode::KpEnter, false);
+        assert_eq!(game.state, State::Playing);
+        assert_eq!(game.scores, [0, 0]);
+        println!("PASS Miniquad model match {scores:?} in {steps} fixed steps; keypad reset");
     }
     #[test]
     fn repeat_and_unknown_do_not_start_or_pause() {
