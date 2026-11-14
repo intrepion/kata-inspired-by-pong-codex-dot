@@ -36,17 +36,59 @@ fn winner_label(game: &Game) -> Option<&'static str> {
 }
 fn result_glyph(ch: u8) -> [u8; 7] {
     match ch {
+        b'A' => [14, 17, 17, 31, 17, 17, 17],
         b'C' => [14, 17, 16, 16, 16, 17, 14],
+        b'E' => [31, 16, 16, 30, 16, 16, 31],
         b'I' => [14, 4, 4, 4, 4, 4, 14],
+        b'M' => [17, 27, 21, 21, 17, 17, 17],
         b'N' => [17, 25, 21, 19, 17, 17, 17],
         b'O' => [14, 17, 17, 17, 17, 17, 14],
         b'P' => [30, 17, 17, 30, 16, 16, 16],
+        b'R' => [30, 17, 17, 30, 20, 18, 17],
         b'S' => [15, 16, 16, 14, 1, 1, 30],
+        b'T' => [31, 4, 4, 4, 4, 4, 4],
         b'U' => [17, 17, 17, 17, 17, 17, 14],
         b'W' => [17, 17, 17, 21, 21, 21, 10],
         b'Y' => [17, 17, 10, 4, 4, 4, 4],
         _ => [0; 7],
     }
+}
+fn text_cells(message: &str, left: f64, top: f64, cell: f64) -> Vec<[f64; 4]> {
+    let mut result = Vec::new();
+    for (i, ch) in message.bytes().enumerate() {
+        for (row, bits) in result_glyph(ch).iter().enumerate() {
+            for col in 0..5 {
+                if bits & (1 << (4 - col)) != 0 {
+                    result.push([left + i as f64 * 6. * cell + col as f64 * cell, top + row as f64 * cell, cell, cell]);
+                }
+            }
+        }
+    }
+    result
+}
+fn score_owner_cells() -> Vec<[f64; 4]> {
+    text_cells("YOU", 330., 45., 2.).into_iter()
+        .chain(text_cells("CPU", 500., 45., 2.))
+        .collect()
+}
+fn court_hint(state: State) -> Option<&'static str> {
+    match state {
+        State::Ready => Some("ENTER TO START"),
+        State::Paused => Some("SPACE TO RESUME"),
+        State::Over => Some("ENTER TO RESTART"),
+        State::Playing => None,
+    }
+}
+fn hint_backing(state: State) -> Option<[f64; 4]> {
+    court_hint(state).map(|text| {
+        let width = text.len() as f64 * 12.;
+        [(W as f64 - width) / 2. - 5., 282., width + 10., 24.]
+    })
+}
+fn hint_cells(state: State) -> Vec<[f64; 4]> {
+    court_hint(state).map_or_else(Vec::new, |text| {
+        text_cells(text, (W as f64 - text.len() as f64 * 12.) / 2., 287., 2.)
+    })
 }
 fn winner_cells(game: &Game) -> Vec<[f64; 4]> {
     let Some(message) = winner_label(game) else {
@@ -152,6 +194,28 @@ fn key_release(held: &mut [bool; 4], pressed: &mut std::collections::HashSet<Key
 #[cfg(test)]
 mod control_tests {
     use super::*;
+    #[test]
+    fn court_labels_identify_scores_and_actions_without_title() {
+        assert_eq!(court_hint(State::Ready), Some("ENTER TO START"));
+        assert_eq!(court_hint(State::Paused), Some("SPACE TO RESUME"));
+        assert_eq!(court_hint(State::Over), Some("ENTER TO RESTART"));
+        assert_eq!(court_hint(State::Playing), None);
+        for text in ["YOU", "CPU", "ENTER TO START", "SPACE TO RESUME", "ENTER TO RESTART"] {
+            for ch in text.bytes().filter(|ch| *ch != b' ') {
+                assert!(result_glyph(ch).iter().any(|r| *r != 0), "missing {}", ch as char);
+            }
+        }
+        assert!(!score_owner_cells().is_empty());
+        assert!(hint_cells(State::Playing).is_empty());
+        for state in [State::Ready, State::Paused, State::Over] {
+            let panel = hint_backing(state).unwrap();
+            let cells = hint_cells(state);
+            assert!(!cells.is_empty());
+            for [x, y, w, h] in cells {
+                assert!(x >= panel[0] && y >= panel[1] && x + w <= panel[0] + panel[2] && y + h <= panel[1] + panel[3]);
+            }
+        }
+    }
     #[test]
     fn keypad_enter_matches_return_without_repeats_or_unfocused_actions() {
         let mut game = Game::new(42);
@@ -516,13 +580,20 @@ fn draw_scene<G: piston_window::graphics::Graphics>(
             );
         }
     }
+    for cell in score_owner_cells() {
+        rectangle([0.85, 1., 0.68, 1.], cell, t, g);
+    }
     // Cover the ball and net before drawing the state, preserving legibility.
     if let Some(panel) = indicator_backing(game) {
+        rectangle([0.047, 0.129, 0.118, 1.], panel, t, g);
+    }
+    if let Some(panel) = hint_backing(game.state) {
         rectangle([0.047, 0.129, 0.118, 1.], panel, t, g);
     }
     for cell in state_indicator_cells(game.state)
         .into_iter()
         .chain(winner_cells(game))
+        .chain(hint_cells(game.state))
     {
         rectangle([0.85, 1., 0.68, 1.], cell, t, g);
     }
