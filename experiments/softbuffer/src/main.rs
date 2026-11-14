@@ -37,6 +37,7 @@ impl Frontend {
     fn clear_movement(&mut self) {
         self.movement_held = [false; 4];
         self.app.blur();
+        self.last = None;
     }
     fn handle_focused_key(
         &mut self,
@@ -65,6 +66,9 @@ impl Frontend {
             }
             KeyCode::Space if pressed && !repeat => {
                 let was_playing = self.app.game.state == pong_low_level_common::State::Playing;
+                if !was_playing {
+                    self.clear_movement();
+                }
                 self.app.action();
                 if was_playing && self.app.game.state == pong_low_level_common::State::Paused {
                     self.clear_movement();
@@ -72,7 +76,7 @@ impl Frontend {
             }
             KeyCode::KeyR if pressed && !repeat => {
                 self.clear_movement();
-                self.app.game.start();
+                self.app.restart();
             }
             KeyCode::Escape if pressed => return true,
             _ => {}
@@ -400,5 +404,81 @@ mod movement_tests {
             !f.app.up && !f.app.down,
             "blur must also clear alias storage"
         );
+    }
+}
+
+#[cfg(test)]
+mod transition_clock_adapter_test {
+    use super::*;
+    #[test]
+    fn focused_restart_discards_stale_frame_then_advances() {
+        let mut f=Frontend::default();
+        f.handle_focused_key(true,KeyCode::KeyR,true,false);
+        f.handle_focused_key(true,KeyCode::KeyS,true,false);
+        assert!(f.app.down);
+        f.app.tick(0.1);
+        assert_eq!(f.app.game.player,250.);
+        f.app.tick(1./60.);
+        assert!(f.app.game.player>250.);
+    }
+}
+
+#[cfg(test)]
+mod combined_clock_candidate_tests {
+    use super::*;
+    use pong_low_level_common::State;
+    fn redraw(f: &mut Frontend, elapsed: f32) {
+        let elapsed = if f.last.replace(Instant::now()).is_some() { elapsed } else { 0. };
+        f.app.tick(elapsed);
+    }
+    #[test]
+    fn fractional_ready_and_paused_elapsed_does_not_advance_after_start_or_resume() {
+        let mut f = Frontend::default();
+        for entering in [true, false] {
+            if !entering {
+                f.handle_focused_key(true, KeyCode::Space, true, false);
+                assert_eq!(f.app.game.state, State::Paused);
+            }
+            f.app.tick(0.004);
+            f.last = Some(Instant::now());
+            f.handle_focused_key(true, KeyCode::Space, true, false);
+            assert_eq!(f.app.game.state, State::Playing);
+            redraw(&mut f, 0.1);
+            f.handle_focused_key(true, KeyCode::KeyS, true, false);
+            let before = f.app.game.player;
+            redraw(&mut f, 0.005);
+            assert_eq!(f.app.game.player, before);
+            redraw(&mut f, 0.005);
+            assert!(f.app.game.player > before);
+        }
+    }
+    #[test]
+    fn escape_and_repeated_actions_keep_existing_behavior() {
+        let mut f = Frontend::default();
+        assert!(!f.handle_focused_key(true, KeyCode::Space, true, true));
+        assert_eq!(f.app.game.state, State::Ready);
+        assert!(!f.handle_focused_key(true, KeyCode::KeyR, true, true));
+        assert_eq!(f.app.game.state, State::Ready);
+        assert!(f.handle_focused_key(true, KeyCode::Escape, true, false));
+        assert!(f.handle_focused_key(true, KeyCode::Escape, true, true));
+        assert!(!f.handle_focused_key(true, KeyCode::Escape, false, false));
+        assert!(!f.handle_focused_key(false, KeyCode::Escape, true, false));
+    }
+    #[test]
+    fn stale_time_is_discarded_once_for_start_resume_and_restart() {
+        let mut f = Frontend::default();
+        for key in [KeyCode::Space, KeyCode::Space, KeyCode::Space, KeyCode::KeyR] {
+            f.last = Some(Instant::now());
+            f.handle_focused_key(true, key, true, false);
+            assert!(f.last.is_none());
+            let before = f.app.game.player;
+            redraw(&mut f, 0.1);
+            assert_eq!(f.app.game.player, before);
+            if f.app.game.state == State::Playing {
+                f.handle_focused_key(true, KeyCode::KeyS, true, false);
+                redraw(&mut f, 1. / 60.);
+                assert!(f.app.game.player > before);
+            }
+        }
     }
 }

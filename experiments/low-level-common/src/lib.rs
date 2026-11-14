@@ -34,6 +34,7 @@ pub struct App {
     pub up: bool,
     pub down: bool,
     acc: f32,
+    discard_next_elapsed: bool,
 }
 impl Default for App {
     fn default() -> Self {
@@ -42,12 +43,18 @@ impl Default for App {
             up: false,
             down: false,
             acc: 0.,
+            discard_next_elapsed: false,
         }
     }
 }
 impl App {
     pub fn tick(&mut self, seconds: f32) {
         if !seconds.is_finite() {
+            return;
+        }
+        if self.discard_next_elapsed {
+            self.discard_next_elapsed = false;
+            self.acc = 0.;
             return;
         }
         self.acc += seconds.clamp(0., 0.1);
@@ -62,12 +69,21 @@ impl App {
             State::Ready | State::Over => self.game.start(),
             _ => self.game.toggle_pause(),
         }
+        self.reset_clock();
+    }
+    pub fn restart(&mut self) {
+        self.game.start();
+        self.reset_clock();
+    }
+    fn reset_clock(&mut self) {
+        self.acc = 0.;
+        self.discard_next_elapsed = true;
     }
     pub fn blur(&mut self) {
         self.up = false;
         self.down = false;
         self.game.pause();
-        self.acc = 0.;
+        self.reset_clock();
     }
     pub fn title(&self, backend: &str) -> String {
         let status: String = match self.game.state {
@@ -296,6 +312,7 @@ mod tests {
         a.action();
         assert_eq!(a.game.state, State::Playing);
         a.up = true;
+        a.tick(0.);
         a.tick(0.1);
         assert!(a.game.player < 250.);
         a.blur();
@@ -319,5 +336,57 @@ mod tests {
         assert!(a.game.player > 200.);
         a.tick(f32::NAN);
         assert!(a.game.player.is_finite());
+    }
+}
+
+#[cfg(test)]
+mod transition_clock_regression {
+    use super::*;
+    #[test]
+    fn start_and_resume_discard_elapsed_before_transition() {
+        let mut app=App::default();
+        app.action();
+        app.down=true;
+        let initial=app.game.player;
+        app.tick(0.1);
+        assert_eq!(app.game.player,initial,"start consumed time before action");
+        app.tick(1./60.);
+        assert!(app.game.player>initial,"fresh elapsed must progress");
+        app.action();
+        assert_eq!(app.game.state,State::Paused);
+        app.tick(0.1);
+        app.action();
+        assert_eq!(app.game.state,State::Playing);
+        let resumed=app.game.player;
+        app.tick(0.1);
+        assert_eq!(app.game.player,resumed,"resume consumed time before action");
+        app.tick(1./60.);
+        assert!(app.game.player>resumed,"fresh elapsed must progress after resume");
+    }
+}
+
+#[cfg(test)]
+mod restart_clock_regression {
+    use super::*;
+    #[test]
+    fn restart_and_blur_preserve_discard_across_nonfinite_elapsed() {
+        let mut app=App::default();
+        app.restart();
+        app.down=true;
+        app.tick(f32::NAN);
+        app.tick(0.1);
+        assert_eq!(app.game.player,250.);
+        app.tick(1./60.);
+        assert!(app.game.player>250.);
+        app.blur();
+        assert_eq!(app.game.state,State::Paused);
+        app.action();
+        app.down=true;
+        let before=app.game.player;
+        app.tick(f32::INFINITY);
+        app.tick(0.1);
+        assert_eq!(app.game.player,before);
+        app.tick(1./60.);
+        assert!(app.game.player>before);
     }
 }

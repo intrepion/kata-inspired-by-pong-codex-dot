@@ -44,7 +44,7 @@ fn sample_movement(
 }
 fn restart(app: &mut App, gate: &mut MovementGate) {
     gate.was_playing = false;
-    app.game.start();
+    app.restart();
 }
 fn lose_focus(app: &mut App, gate: &mut MovementGate) {
     gate.was_playing = false;
@@ -446,5 +446,21 @@ mod tests {
     #[should_panic(expected = "benchmark and replay/capture modes are distinct")]
     fn rejects_capture_mixing() {
         benchmark_args(&["--benchmark".into(), "--scripted-captures".into()]);
+    }
+}
+
+#[cfg(test)]
+mod transition_clock_adapter_test {
+    use super::*;
+    #[test]
+    fn focused_restart_discards_stale_frame_then_advances() {
+        let mut app=App::default();
+        let mut gate=MovementGate::default();
+        live_action(&mut app,&mut gate,true,LiveAction::Restart);
+        app.down=true;
+        app.tick(0.1);
+        assert_eq!(app.game.player,250.);
+        app.tick(1./60.);
+        assert!(app.game.player>250.);
     }
 }

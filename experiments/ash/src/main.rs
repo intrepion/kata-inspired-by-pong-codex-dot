@@ -77,7 +77,7 @@ impl Frontend {
             }
             KeyCode::KeyR if pressed && !repeat => {
                 self.clear_movement();
-                self.app.game.start();
+                self.app.restart();
             }
             KeyCode::Escape if pressed => return true,
             _ => {}
@@ -440,5 +440,42 @@ mod movement_tests {
             !f.app.up && !f.app.down,
             "blur must also clear alias storage"
         );
+    }
+}
+
+#[cfg(test)]
+mod transition_clock_adapter_test {
+    use super::*;
+    use pong_low_level_common::State;
+    #[test]
+    fn start_pause_resume_and_restart_discard_stale_time() {
+        let mut f=Frontend::default();
+        f.handle_focused_key(true,KeyCode::Space,true,false);
+        assert_eq!(f.app.game.state,State::Playing);
+        f.handle_focused_key(true,KeyCode::KeyS,true,false);
+        assert!(f.app.down);
+        f.app.tick(0.1);
+        assert_eq!(f.app.game.player,250.);
+        f.app.tick(1./60.);
+        assert!(f.app.game.player>250.);
+        f.handle_focused_key(true,KeyCode::Space,true,false);
+        assert_eq!(f.app.game.state,State::Paused);
+        assert!(!f.app.down);
+        f.handle_focused_key(true,KeyCode::Space,true,false);
+        assert_eq!(f.app.game.state,State::Playing);
+        f.handle_focused_key(true,KeyCode::KeyS,true,false);
+        let before=f.app.game.player;
+        f.app.tick(0.1);
+        assert_eq!(f.app.game.player,before);
+        f.app.tick(1./60.);
+        assert!(f.app.game.player>before);
+        f.handle_focused_key(true,KeyCode::KeyR,true,false);
+        assert_eq!(f.app.game.player,250.);
+        assert!(!f.app.down);
+        f.handle_focused_key(true,KeyCode::KeyS,true,false);
+        f.app.tick(0.1);
+        assert_eq!(f.app.game.player,250.);
+        f.app.tick(1./60.);
+        assert!(f.app.game.player>250.);
     }
 }
