@@ -1,10 +1,12 @@
 // Shared bounded pilot runner. Node built-ins only. Run an already-built binary.
 import {spawnSync} from 'node:child_process';
-import {writeFileSync, readFileSync, existsSync} from 'node:fs';
+import {writeFileSync, readFileSync, existsSync, realpathSync} from 'node:fs';
+import {relative} from 'node:path';
 import {createHash} from 'node:crypto';
 import os from 'node:os';
 import {parseArguments} from './adapters.mjs';
-import {pathToFileURL} from 'node:url';
+import {fileURLToPath, pathToFileURL} from 'node:url';
+const repositoryRoot = fileURLToPath(new URL('../..', import.meta.url));
 export function validSample(s) {
   const timings=['mean_ms','p50_ms','p95_ms','p99_ms','max_ms'];
   const shape=s?.schema===1 && s.metric==='frame_callback_interval_ms' &&
@@ -27,8 +29,11 @@ export function runPilot(options, binaryArguments = ['--benchmark']) {
   if(!['release','debug','unverified'].includes(profile)) throw Error('Unsupported benchmark profile');
   if (existsSync(output)) throw Error('Refusing to overwrite results');
   const command = (exe,args) => { const r=spawnSync(exe,args,{encoding:'utf8',timeout:5000}); return r.status===0?r.stdout.trim():null; };
+  const discoveredRoot=command('git',['-C',repositoryRoot,'rev-parse','--show-toplevel']);
+  let sameRepository=false;
+  try { sameRepository=!!discoveredRoot && relative(realpathSync(repositoryRoot),realpathSync(discoveredRoot))===''; } catch {}
   const result = {schema:1, started_utc:new Date().toISOString(), protocol:'pong-frame-callback-v1', adapter, presentation, renderer, pacing, backend, notes,
-    git_revision:command('git',['rev-parse','HEAD']), working_tree:command('git',['status','--porcelain']), rustc:command('rustc',['-Vv']),
+    git_revision:sameRepository?command('git',['-C',repositoryRoot,'rev-parse','HEAD']):null, working_tree:sameRepository?command('git',['-C',repositoryRoot,'status','--porcelain']):null, rustc:command('rustc',['-Vv']),
     profile, provenance_limit:'Profile is caller supplied or unverified; checkout revision does not prove binary source.', binary_sha256:createHash('sha256').update(readFileSync(binary)).digest('hex'),
     host:{hostname:os.hostname(),os:os.type(),release:os.release(),architecture:os.arch(),cpu:os.cpus()[0]?.model,cpu_count:os.cpus().length,memory_bytes:os.totalmem()},
     environment:{DISPLAY:process.env.DISPLAY??null,WAYLAND_DISPLAY:process.env.WAYLAND_DISPLAY??null},
