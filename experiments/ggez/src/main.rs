@@ -73,6 +73,22 @@ fn handle_focused_key_down(
         handle_key_down(game, held, key, repeated);
     }
 }
+fn handle_live_key(game: &mut Game, held: &mut [bool; 4], focused: bool, key: KeyCode, repeated: bool, accumulator: &mut f32, last: &mut Instant, now: Instant) {
+    let before = game.state;
+    handle_focused_key_down(game, held, focused, key, repeated);
+    if game.state != before || (focused && !repeated && key == KeyCode::KeyR) {
+        *accumulator = 0.;
+        *last = now;
+    }
+}
+fn handle_live_focus(game: &mut Game, held: &mut [bool; 4], gained: bool, accumulator: &mut f32, last: &mut Instant, now: Instant) {
+    if !gained {
+        game.pause();
+        *held = [false; 4];
+    }
+    *accumulator = 0.;
+    *last = now;
+}
 struct App {
     focused: bool,
     benchmarking: bool,
@@ -225,7 +241,7 @@ impl event::EventHandler for App {
             return Ok(());
         }
         if let ggez::winit::keyboard::PhysicalKey::Code(key) = input.event.physical_key {
-            handle_focused_key_down(&mut self.game, &mut self.held, self.focused, key, repeated);
+            handle_live_key(&mut self.game, &mut self.held, self.focused, key, repeated, &mut self.accumulator, &mut self.last_update, Instant::now());
         }
         Ok(())
     }
@@ -250,17 +266,50 @@ impl event::EventHandler for App {
         if self.demo.is_some() || self.benchmarking {
             return Ok(());
         }
-        if !gained {
-            self.game.pause();
-            self.held = [false; 4];
-            self.accumulator = 0.;
-        }
+        handle_live_focus(&mut self.game, &mut self.held, gained, &mut self.accumulator, &mut self.last_update, Instant::now());
         Ok(())
     }
 }
 #[cfg(test)]
 mod control_tests {
     use super::*;
+    #[test]
+    fn action_transitions_discard_old_clock_time() {
+        let mut game = Game::new(42); let mut held = [false; 4]; let base = Instant::now();
+        let mut accumulator = 0.007; let mut last = base;
+        let start = base + Duration::from_secs(2);
+        handle_live_key(&mut game, &mut held, true, KeyCode::Enter, false, &mut accumulator, &mut last, start);
+        assert_eq!(game.state, State::Playing); assert_eq!(accumulator, 0.); assert_eq!(last, start);
+        accumulator = 0.007;
+        let pause = start + Duration::from_millis(30);
+        handle_live_key(&mut game, &mut held, true, KeyCode::Space, false, &mut accumulator, &mut last, pause);
+        assert_eq!(game.state, State::Paused); assert_eq!(accumulator, 0.); assert_eq!(last, pause);
+        accumulator = 0.006;
+        let resume = pause + Duration::from_secs(3);
+        handle_live_key(&mut game, &mut held, true, KeyCode::Enter, false, &mut accumulator, &mut last, resume);
+        assert_eq!(game.state, State::Playing); assert_eq!(accumulator, 0.); assert_eq!(last, resume);
+        accumulator = 0.006;
+        let restart = resume + Duration::from_millis(10);
+        handle_live_key(&mut game, &mut held, true, KeyCode::KeyR, false, &mut accumulator, &mut last, restart);
+        assert_eq!(accumulator, 0.); assert_eq!(last, restart);
+        accumulator = 0.004;
+        handle_live_key(&mut game, &mut held, true, KeyCode::KeyW, false, &mut accumulator, &mut last, restart + Duration::from_millis(1));
+        assert_eq!(accumulator, 0.004); assert_eq!(last, restart);
+        handle_live_key(&mut game, &mut held, false, KeyCode::KeyR, false, &mut accumulator, &mut last, restart + Duration::from_millis(2));
+        handle_live_key(&mut game, &mut held, true, KeyCode::KeyR, true, &mut accumulator, &mut last, restart + Duration::from_millis(3));
+        assert_eq!(accumulator, 0.004); assert_eq!(last, restart, "ignored input must not reset clock");
+    }
+    #[test]
+    fn focus_changes_discard_stalled_time_and_clear_movement() {
+        let mut game = Game::new(42); game.start(); let mut held = [true, false, false, false];
+        let base = Instant::now(); let mut last = base; let mut accumulator = 0.007;
+        let lost = base + Duration::from_millis(100);
+        handle_live_focus(&mut game, &mut held, false, &mut accumulator, &mut last, lost);
+        assert_eq!(game.state, State::Paused); assert_eq!(held, [false; 4]); assert_eq!(last, lost); assert_eq!(accumulator, 0.);
+        let gained = lost + Duration::from_secs(4);
+        handle_live_focus(&mut game, &mut held, true, &mut accumulator, &mut last, gained);
+        assert_eq!(game.state, State::Paused); assert_eq!(last, gained); assert_eq!(accumulator, 0.);
+    }
     #[test]
     fn unfocused_key_actions_do_not_resume_or_restart() {
         let mut game = Game::new(42);
