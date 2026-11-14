@@ -5,8 +5,6 @@ export const adapters = Object.freeze({
   bevy: {presentation:'native window', renderer:'Bevy renderer (runtime driver unqueried)', pacing:'existing defaults; main-world Last callback before render-subapp, not GPU timing'},
   'bracket-lib': {presentation:'graphical tile window, not terminal', renderer:'bracket-lib OpenGL CP437 tiles (runtime driver unqueried)', pacing:'existing 60fps cap; sampled after tick tile recording before framework rendering'},
   wgpu: {presentation:'native window', renderer:'raw wgpu surface (runtime driver unqueried)', pacing:'existing winit Poll/default surface config; sampled after successful surface present request only'},
-  nannou: {presentation:'native window', renderer:'nannou Bevy/wgpu (runtime driver unqueried)', pacing:'existing 120Hz update limit; sampled at end of view command recording before rendering'},
-  ggez: {presentation:'native window', renderer:'ggez wgpu canvas (runtime driver unqueried)', pacing:'existing 120Hz remainder sleep; sampled after Canvas.finish, before framework end_frame'},
   piston: {presentation:'native window', renderer:'Piston wgpu draw submission (driver unqueried)', pacing:'existing 120UPS/default render pacing; sampled after draw_2d on render events only'},
   miniquad: {presentation:'native window', renderer:'Miniquad GPU (backend enum reported; driver unqueried)', pacing:'existing Miniquad defaults; sampled after commit_frame in draw callback'},
   pixels: {presentation:'native window', renderer:'pixels CPU raster plus wgpu presentation (runtime driver unqueried)', pacing:'existing winit Poll; sampled after successful pixels.render returns'},
@@ -31,7 +29,7 @@ export function parseArguments(args) {
     if(!['debug','release'].includes(profile)) throw Error('Unsupported benchmark profile');
   }
   if(!Object.hasOwn(adapters, adapter)) throw Error('Unsupported benchmark adapter');
-  if(positional.length !== 4 || positional.some(x=>!x || x.startsWith('--'))) throw Error('usage: run.mjs BINARY NEW.json BACKEND NOTES [--adapter macroquad|softbuffer|sdl3|raylib|pixels|miniquad|piston|ggez|nannou|wgpu|bracket-lib|bevy|blue-engine|ash] [--profile release|debug]');
+  if(positional.length !== 4 || positional.some(x=>!x || x.startsWith('--'))) throw Error('usage: run.mjs BINARY NEW.json BACKEND NOTES [--adapter macroquad|softbuffer|sdl3|raylib|pixels|miniquad|piston|wgpu|bracket-lib|bevy|blue-engine|ash] [--profile release|debug]');
   const [binary, output, backend, notes] = positional;
   return {binary, output, backend, notes, adapter, profile, ...adapters[adapter]};
 }

@@ -4,7 +4,7 @@ import {dirname,join,resolve} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 import {spawnSync} from 'node:child_process';
-const adapters=Object.freeze({'dioxus-desktop':'pong-dioxus',miniquad:'pong-miniquad',pixels:'pong-pixels',wgpu:'pong-wgpu',raylib:'pong-raylib-rs',piston:'pong-piston',ggez:'pong-ggez',nannou:'pong-nannou','bracket-lib':'pong-bracket-lib',bevy:'pong-bevy','blue-engine':'pong-blue-engine',softbuffer:'pong-softbuffer',ash:'pong-ash',sdl3:'pong-sdl3',ratatui:'pong-ratatui',gtk:'pong-gtk',slint:'pong-slint'});
+const adapters=Object.freeze({'dioxus-desktop':'pong-dioxus',miniquad:'pong-miniquad',pixels:'pong-pixels',wgpu:'pong-wgpu',raylib:'pong-raylib-rs',piston:'pong-piston','bracket-lib':'pong-bracket-lib',bevy:'pong-bevy','blue-engine':'pong-blue-engine',softbuffer:'pong-softbuffer',ash:'pong-ash',sdl3:'pong-sdl3',ratatui:'pong-ratatui',gtk:'pong-gtk',slint:'pong-slint'});
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
 const digest=p=>createHash('sha256').update(readFileSync(p)).digest('hex');
 // The archive is labeled with the host architecture; do not silently mislabel

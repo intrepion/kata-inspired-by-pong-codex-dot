@@ -4,8 +4,8 @@ import{tmpdir}from'node:os';import{join}from'node:path';import{spawnSync}from'no
 import{packagePortable}from'./linux-portable.mjs';
 const linux=process.platform==='linux',rev='a'.repeat(40);
 function sandbox(t){const p=mkdtempSync(join(tmpdir(),'pong-portable-unit-'));t.after(()=>rmSync(p,{recursive:true,force:true}));return p;}
-test('seventeen adapter fixtures package, verify and never overwrite',{skip:!linux},t=>{
- const root=sandbox(t);for(const adapter of ['dioxus-desktop','miniquad','pixels','wgpu','raylib','piston','ggez','nannou','bracket-lib','bevy','blue-engine','softbuffer','ash','sdl3','ratatui','gtk','slint']){
+test('fifteen adapter fixtures package, verify and never overwrite',{skip:!linux},t=>{
+ const root=sandbox(t);for(const adapter of ['dioxus-desktop','miniquad','pixels','wgpu','raylib','piston','bracket-lib','bevy','blue-engine','softbuffer','ash','sdl3','ratatui','gtk','slint']){
  const out=join(root,adapter),r=packagePortable(adapter,'/bin/true',out,rev);
  const initial=readFileSync(r.archive);assert.throws(()=>packagePortable(adapter,'/bin/true',out,rev),/already exists/);assert.deepEqual(readFileSync(r.archive),initial);
  const unpack=join(root,adapter+'-unpack');mkdirSync(unpack);assert.equal(spawnSync('tar',['-xzf',r.archive,'-C',unpack]).status,0);
@@ -15,7 +15,7 @@ test('seventeen adapter fixtures package, verify and never overwrite',{skip:!lin
  }});
 test('bad adapter/provenance/input refused before output creation',{skip:!linux},t=>{
  const root=sandbox(t),out=join(root,'output'),plain=join(root,'plain');writeFileSync(plain,'not executable',{mode:0o600});
- for(const args of [['no','/bin/true',out,rev],['wgpu','/bin/true',out,'bad'],['wgpu',root,out,rev],['wgpu',plain,out,rev]]){assert.throws(()=>packagePortable(...args));assert.equal(existsSync(out),false);}
+ for(const args of [['ggez','/bin/true',out,rev],['nannou','/bin/true',out,rev],['no','/bin/true',out,rev],['wgpu','/bin/true',out,'bad'],['wgpu',root,out,rev],['wgpu',plain,out,rev]]){assert.throws(()=>packagePortable(...args));assert.equal(existsSync(out),false);}
 });
 
 test('optional notice bundle hash checked before output; texts and index packaged',{skip:!linux},async t=>{

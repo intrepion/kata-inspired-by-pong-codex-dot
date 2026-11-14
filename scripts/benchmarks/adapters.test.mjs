@@ -51,9 +51,7 @@ test('Piston metadata distinguishes render callbacks from update rate', () => {
   assert.match(config.pacing, /120UPS/);
 });
 
-test('ggez metadata does not confuse Canvas finish with end-frame presentation',()=> { const config=parseArguments([...base,'--adapter','ggez']); assert.match(config.pacing,/before framework end_frame/); assert.match(config.pacing,/120Hz remainder sleep/); });
 
-test('nannou metadata states recording rather than presentation boundary',()=>{const config=parseArguments([...base,'--adapter','nannou']);assert.match(config.pacing,/before rendering/);assert.match(config.renderer,/Bevy/);});
 
 test('raw wgpu metadata excludes skipped surface frames',()=>{const config=parseArguments([...base,'--adapter','wgpu']);assert.match(config.pacing,/successful surface present request only/);assert.match(config.pacing,/default surface config/);});
 
@@ -156,3 +154,5 @@ test('runner rejects duplicate sample and backend markers',()=>{
     }
   } finally {rmSync(dir,{recursive:true,force:true});}
 });
+
+test('excluded adapters cannot be selected',()=>{for(const name of ['ggez','nannou'])assert.throws(()=>parseArguments([...base,'--adapter',name]),/adapter/i);});
