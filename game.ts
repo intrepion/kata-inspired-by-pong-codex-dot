@@ -285,6 +285,7 @@ if (typeof document !== 'undefined') {
         canvas.addEventListener(event, e => controls.dragUp(e.pointerId));
     canvas.addEventListener('pointermove', e => { if(demoRequested)return; if (e.buttons && e.pointerType !== 'mouse' && game.state === 'playing' && controls.dragAllowed(e.pointerId)) {
         const rect = canvas.getBoundingClientRect();
+        if (!Number.isFinite(rect.top) || !Number.isFinite(rect.height) || rect.height <= 0 || !Number.isFinite(e.clientY)) return;
         game.player = clamp((e.clientY - rect.top) / rect.height * H, PADDLE_H / 2, H - PADDLE_H / 2);
     } });
     function draw() { ctx.fillStyle = '#153f37'; ctx.fillRect(0, 0, W, H); ctx.strokeStyle = '#a8e6bb30'; ctx.lineWidth = 2; ctx.setLineDash([12, 16]); ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke(); ctx.setLineDash([]); ctx.strokeStyle = '#a8e6bb25'; ctx.beginPath(); ctx.arc(W / 2, H / 2, 70, 0, Math.PI * 2); ctx.stroke(); ctx.fillStyle = '#d9ffae'; ctx.fillRect(32, game.player - PADDLE_H / 2, PADDLE_W, PADDLE_H); ctx.fillStyle = '#e3f3e7'; ctx.fillRect(W - 44, game.cpu - PADDLE_H / 2, PADDLE_W, PADDLE_H); ctx.beginPath(); ctx.arc(game.ball.x, game.ball.y, BALL, 0, Math.PI * 2); ctx.fill(); }

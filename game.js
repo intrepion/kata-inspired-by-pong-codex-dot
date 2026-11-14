@@ -357,6 +357,8 @@ if (typeof document !== 'undefined') {
             return;
         if (e.buttons && e.pointerType !== 'mouse' && game.state === 'playing' && controls.dragAllowed(e.pointerId)) {
             const rect = canvas.getBoundingClientRect();
+            if (!Number.isFinite(rect.top) || !Number.isFinite(rect.height) || rect.height <= 0 || !Number.isFinite(e.clientY))
+                return;
             game.player = clamp((e.clientY - rect.top) / rect.height * H, PADDLE_H / 2, H - PADDLE_H / 2);
         }
     });
