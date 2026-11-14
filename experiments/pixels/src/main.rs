@@ -1,6 +1,13 @@
-use pixels::{Pixels, SurfaceTexture};
+use pixels::{Pixels, ScalingMode, SurfaceTexture};
 use pong_core::{Game, State, BALL, H, PADDLE_H, PADDLE_W, W};
 use std::{sync::Arc, time::Instant};
+fn scaling_mode(width: u32, height: u32) -> ScalingMode {
+    if width < W as u32 || height < H as u32 {
+        ScalingMode::Fill
+    } else {
+        ScalingMode::PixelPerfect
+    }
+}
 use winit::{
     application::ApplicationHandler,
     event::{ElementState, WindowEvent},
@@ -117,14 +124,15 @@ impl ApplicationHandler for App {
             .unwrap(),
         );
         let s = w.inner_size();
-        self.pixels = Some(
-            Pixels::new(
-                W as u32,
-                H as u32,
-                SurfaceTexture::new(s.width, s.height, w.clone()),
-            )
-            .unwrap(),
-        );
+        let mut pixels = Pixels::new(
+            W as u32,
+            H as u32,
+            SurfaceTexture::new(s.width, s.height, w.clone()),
+        ).unwrap();
+        pixels.set_scaling_mode(scaling_mode(s.width, s.height));
+        // Setting the mode alone does not recompute the pixels scaling matrix.
+        pixels.resize_surface(s.width, s.height).unwrap();
+        self.pixels = Some(pixels);
         if self.benchmarking {
             self.benchmark = Some(pong_benchmark::Frames::new(s.width, s.height));
         }
@@ -144,6 +152,7 @@ impl ApplicationHandler for App {
             WindowEvent::Resized(s) => {
                 if s.width > 0 && s.height > 0 {
                     if let Some(p) = self.pixels.as_mut() {
+                        p.set_scaling_mode(scaling_mode(s.width, s.height));
                         if let Err(err) = p.resize_surface(s.width, s.height) {
                             eprintln!("Resize: {err}");
                             e.exit();
@@ -414,6 +423,15 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn small_surfaces_use_aspect_preserving_downscale() {
+        for (width, height) in [(320, 240), (899, 500), (900, 499)] {
+            assert!(matches!(scaling_mode(width, height), ScalingMode::Fill), "{width}x{height} needs downscaling");
+        }
+        for (width, height) in [(900, 500), (1200, 800), (1800, 1000)] {
+            assert!(matches!(scaling_mode(width, height), ScalingMode::PixelPerfect), "{width}x{height} retains integer scaling");
+        }
+    }
     #[test]
     fn court_shows_state_and_distinguishes_winner() {
         let mut game = Game::new(42);
