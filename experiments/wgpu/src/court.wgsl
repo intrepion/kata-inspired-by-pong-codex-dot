@@ -48,11 +48,13 @@ fn glyph(ch: u32) -> array<u32, 7> {
         }
     }
     // Identify the two score groups in the court, including when the title is hidden.
+    // Aim for one device pixel per glyph cell, with a cap for tiny surfaces.
+    let label_cell = min(max(2., 1. / scale), 8.);
     for (var side=0u; side<2u; side++) {
-        let left = select(354., 510., side==1u);
-        if p.x >= left && p.x < left+36. && p.y >= 38. && p.y < 52. {
-            let x = u32((p.x-left)/2.);
-            let row = u32((p.y-38.)/2.);
+        let left = select(372., 528., side==1u) - 9. * label_cell;
+        if p.x >= left && p.x < left+18. * label_cell && p.y >= 38. && p.y < 38. + 7. * label_cell {
+            let x = u32((p.x-left)/label_cell);
+            let row = u32((p.y-38.)/label_cell);
             let col = x % 6u;
             var label = array<u32,3>(89,79,85);
             if side == 1u { label = array<u32,3>(67,80,85); }
