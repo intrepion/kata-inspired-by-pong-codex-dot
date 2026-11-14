@@ -12,7 +12,7 @@
   "profile": "release",
   "binary_sha256": "9e9b7303441347d127ce95c8aaa6b8a9d58aee576b304790c7d10f4531d5dd92",
   "host": {
-    "hostname": "alarm",
+    "hostname": "redacted-Linux-test-host",
     "os": "Linux",
     "release": "7.2.12-3-1-ARCH",
     "architecture": "arm64",
@@ -21,8 +21,8 @@
     "memory_bytes": 33439514624
   },
   "environment": {
-    "DISPLAY": ":0",
-    "WAYLAND_DISPLAY": "wayland-1"
+    "DISPLAY": "redacted",
+    "WAYLAND_DISPLAY": "redacted"
   },
   "unmeasured": [
     "GPU time",
