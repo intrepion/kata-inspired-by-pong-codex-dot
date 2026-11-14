@@ -255,9 +255,9 @@ impl Session {
         }
         output
     }
-    fn court_svg(&self) -> String {
+    pub fn state_label(&self) -> &'static str {
         let g = &self.game;
-        let status = match g.state {
+        match g.state {
             State::Ready => "Press Enter or Start",
             State::Playing => "First to seven",
             State::Paused => "Paused • Space to resume",
@@ -268,7 +268,14 @@ impl Session {
                     "CPU wins • Enter to play again"
                 }
             }
-        };
+        }
+    }
+    pub fn status_text(&self) -> String {
+        format!("You {} — {} CPU · {}", self.game.scores[0], self.game.scores[1], self.state_label())
+    }
+    fn court_svg(&self) -> String {
+        let g = &self.game;
+        let status = self.state_label();
         format!(
             r##"<svg viewBox="0 0 900 500" role="img" aria-label="Pong court" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="500" rx="10" fill="#101925"/><path d="M450 0V500" stroke="#52677d" stroke-width="3" stroke-dasharray="12 14"/><text x="365" y="64" text-anchor="middle" fill="white" font-size="42">{}</text><text x="535" y="64" text-anchor="middle" fill="white" font-size="42">{}</text><rect x="32" y="{}" width="12" height="90" rx="3" fill="#64e1cf"/><rect x="856" y="{}" width="12" height="90" rx="3" fill="#ffb86b"/><circle cx="{}" cy="{}" r="8" fill="white"/><text x="450" y="465" text-anchor="middle" fill="#e0e9f3" font-size="20">{status}</text></svg>"##,
             g.scores[0],
@@ -294,6 +301,21 @@ pub const CSS:&str="body{margin:0;background:#080f19;color:#eef6ff;font:16px sys
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn readable_status_tracks_scores_and_all_states() {
+        let mut s = Session::default();
+        assert_eq!(s.status_text(), "You 0 — 0 CPU · Press Enter or Start");
+        s.game.scores = [2, 3];
+        s.game.state = State::Playing;
+        assert_eq!(s.status_text(), "You 2 — 3 CPU · First to seven");
+        s.game.state = State::Paused;
+        assert_eq!(s.status_text(), "You 2 — 3 CPU · Paused • Space to resume");
+        s.game.state = State::Over;
+        s.game.scores = [2, 7];
+        assert_eq!(s.status_text(), "You 2 — 7 CPU · CPU wins • Enter to play again");
+        s.game.scores = [7, 2];
+        assert_eq!(s.status_text(), "You 7 — 2 CPU · You win! Enter to play again");
+    }
     #[test]
     fn non_pointer_button_activation_moves_once_only_while_playing_and_clamps() {
         let mut s = Session::default();

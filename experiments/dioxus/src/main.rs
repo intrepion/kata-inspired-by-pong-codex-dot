@@ -38,6 +38,7 @@ fn App() -> Element {
         }
     });
     let svg = session.read().svg();
+    let status = session.read().status_text();
     rsx! {style { "{CSS}" }
     main { id: "pong-dioxus-root", tabindex: "0", autofocus: true,
     onkeydown: move |event: KeyboardEvent| {if pong_web_ui_common::handled_key(&event.key().to_string()){event.prevent_default();}session.write().key(&event.key().to_string(),true,event.is_auto_repeating());},
@@ -55,6 +56,7 @@ fn App() -> Element {
         });
     },
     h1 {"Pong • Dioxus"} p {"Rust shared simulation · Dioxus native desktop / WASM web"}
+    p { role: "status", "{status}" }
     div { dangerous_inner_html: svg }
     button {onkeydown: preserve_activation, onclick:move |_| session.write().start(),"Start / Restart"}
     button {onkeydown: preserve_activation, onclick:move |_| session.write().toggle_pause(),"Pause / Resume"}

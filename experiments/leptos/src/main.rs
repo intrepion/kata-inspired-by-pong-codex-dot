@@ -12,6 +12,7 @@ fn main() {
 #[component]
 fn App() -> impl IntoView {
     let session = RwSignal::new(Session::default());
+    let status = Memo::new(move |_| session.with(|s| s.status_text()));
     let game_root = NodeRef::<leptos::html::Main>::new();
     let mut last = web_time::Instant::now();
     let interval = gloo_timers::callback::Interval::new(16, move || {
@@ -31,6 +32,7 @@ fn App() -> impl IntoView {
         session.update(|s|s.focus_left(next_inside));
     }>
     <h1>"Pong • Leptos"</h1><p>"Rust shared simulation · Leptos CSR / WASM"</p>
+    <p role="status">{move || status.get()}</p>
     <div inner_html=move || session.with(|s|s.svg())></div>
     <button on:keydown=preserve_activation on:click=move |_|session.update(|s|s.start())>"Start / Restart"</button>
     <button on:keydown=preserve_activation on:click=move |_|session.update(|s|s.toggle_pause())>"Pause / Resume"</button>

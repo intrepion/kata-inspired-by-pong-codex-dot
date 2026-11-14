@@ -6,9 +6,11 @@ fn app() -> Html {
     let session = use_mut_ref(Session::default);
     let game_root = use_node_ref();
     let frame = use_state(|| Session::default().svg());
+    let status = use_state_eq(|| Session::default().status_text());
     {
         let session = session.clone();
         let frame = frame.clone();
+        let status = status.clone();
         use_effect_with((), move |_| {
             let mut last = web_time::Instant::now();
             let interval = gloo_timers::callback::Interval::new(16, move || {
@@ -17,6 +19,7 @@ fn app() -> Html {
                 s.tick(now.duration_since(last).as_secs_f64());
                 last = now;
                 frame.set(s.svg());
+                status.set(s.status_text());
             });
             move || drop(interval)
         });
@@ -94,6 +97,7 @@ fn app() -> Html {
     };
     html! {<><style>{CSS}</style><main ref={game_root} tabindex="0" autofocus=true onkeydown={down} onkeyup={up} onfocusout={blur}>
     <h1>{"Pong • Yew"}</h1><p>{"Rust shared simulation · Yew / WASM"}</p>
+    <p role="status">{(*status).clone()}</p>
     {Html::from_html_unchecked(AttrValue::from((*frame).clone()))}
     <button onkeydown={preserve_activation.clone()} onclick={start}>{"Start / Restart"}</button><button onkeydown={preserve_activation.clone()} onclick={pause}>{"Pause / Resume"}</button>
     <button onkeydown={button_key(pong_web_ui_common::Direction::Up,true)} onkeyup={button_key(pong_web_ui_common::Direction::Up,false)} onblur={button_blur(pong_web_ui_common::Direction::Up)} onclick={activate(pong_web_ui_common::Direction::Up)} onpointerdown={touch(pong_web_ui_common::Direction::Up,true)} onpointerup={touch(pong_web_ui_common::Direction::Up,false)} onpointerleave={touch(pong_web_ui_common::Direction::Up,false)} onpointercancel={touch(pong_web_ui_common::Direction::Up,false)}>{"▲ Hold"}</button>
