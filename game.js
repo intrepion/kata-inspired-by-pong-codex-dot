@@ -9,6 +9,7 @@ function createPointerButtons() {
         press(id, dir) { held.set(id, dir); },
         release(id) { held.delete(id); },
         clear() { held.clear(); },
+        has(dir) { return [...held.values()].includes(dir); },
         axis() {
             const directions = [...held.values()];
             return Number(directions.includes(1)) - Number(directions.includes(-1));
@@ -31,7 +32,7 @@ function createControls() {
             dragOwner = null; },
         dragAllowed(id) { return dragOwner === id; },
         suspend() { keys.clear(); buttons.clear(); dragOwner = null; },
-        axis() { return buttons.axis() + Number(keys.has('arrowdown') || keys.has('s')) - Number(keys.has('arrowup') || keys.has('w')); }
+        axis() { return Number(buttons.has(1) || keys.has('arrowdown') || keys.has('s')) - Number(buttons.has(-1) || keys.has('arrowup') || keys.has('w')); }
     };
 }
 function createGame(random = Math.random) {

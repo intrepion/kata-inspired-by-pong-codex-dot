@@ -41,6 +41,7 @@ function createPointerButtons() {
         press(id: number | string, dir: -1 | 1) { held.set(id, dir); },
         release(id: number | string) { held.delete(id); },
         clear() { held.clear(); },
+        has(dir: -1 | 1) { return [...held.values()].includes(dir); },
         axis() {
             const directions = [...held.values()];
             return Number(directions.includes(1)) - Number(directions.includes(-1));
@@ -60,7 +61,7 @@ function createControls() {
         dragUp(id: number) { if (dragOwner === id) dragOwner = null; },
         dragAllowed(id: number) { return dragOwner === id; },
         suspend() { keys.clear(); buttons.clear(); dragOwner = null; },
-        axis() { return buttons.axis() + Number(keys.has('arrowdown') || keys.has('s')) - Number(keys.has('arrowup') || keys.has('w')); }
+        axis() { return Number(buttons.has(1) || keys.has('arrowdown') || keys.has('s')) - Number(buttons.has(-1) || keys.has('arrowup') || keys.has('w')); }
     };
 }
 function createGame(random: () => number = Math.random): Game {
