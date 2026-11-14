@@ -296,7 +296,7 @@ if (typeof document !== 'undefined') {
             if(!exported) { exported=true; const evidence={kind:'original TS state and own Canvas2D; not Rust-identical or desktop QA',reports:replay.reports,actions:replay.actions,captures};
                 const a=document.createElement('a');a.textContent='Download original TypeScript demo evidence';a.download='pong-original-ts-demo.json';a.href=URL.createObjectURL(new Blob([JSON.stringify(evidence)],{type:'application/json'}));document.body.append(a);
             }
-        } else requestAnimationFrame(frame);
+        } else if (demoError === undefined) requestAnimationFrame(frame);
     }
     sync();
     requestAnimationFrame(frame);

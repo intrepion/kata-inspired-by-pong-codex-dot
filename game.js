@@ -384,7 +384,7 @@ if (typeof document !== 'undefined') {
                 document.body.append(a);
             }
         }
-        else
+        else if (demoError === undefined)
             requestAnimationFrame(frame);
     }
     sync();
