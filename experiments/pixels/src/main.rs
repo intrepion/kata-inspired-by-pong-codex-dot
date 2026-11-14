@@ -1,6 +1,18 @@
 use pixels::{Pixels, ScalingMode, SurfaceTexture};
 use pong_core::{Game, State, BALL, H, PADDLE_H, PADDLE_W, W};
 use std::{sync::Arc, time::Instant};
+fn exit_status(failed: bool) -> std::process::ExitCode {
+    if failed { std::process::ExitCode::FAILURE } else { std::process::ExitCode::SUCCESS }
+}
+fn operation_failed<E: std::fmt::Display>(failed: &mut bool, operation: &str, result: Result<(), E>) -> bool {
+    if let Err(err) = result {
+        eprintln!("{operation}: {err}");
+        *failed = true;
+        true
+    } else {
+        false
+    }
+}
 fn scaling_mode(width: u32, height: u32) -> ScalingMode {
     if width < W as u32 || height < H as u32 {
         ScalingMode::Fill
@@ -98,6 +110,7 @@ fn handle_live_focus(game: &mut Game, movement: &mut MovementInput, focused: boo
 }
 
 struct App {
+    failed: bool,
     focused: bool,
     window: Option<Arc<Window>>,
     pixels: Option<Pixels<'static>>,
@@ -153,8 +166,7 @@ impl ApplicationHandler for App {
                 if s.width > 0 && s.height > 0 {
                     if let Some(p) = self.pixels.as_mut() {
                         p.set_scaling_mode(scaling_mode(s.width, s.height));
-                        if let Err(err) = p.resize_surface(s.width, s.height) {
-                            eprintln!("Resize: {err}");
+                        if operation_failed(&mut self.failed, "Resize", p.resize_surface(s.width, s.height)) {
                             e.exit();
                         }
                     }
@@ -215,8 +227,7 @@ impl ApplicationHandler for App {
                             .collect();
                         pong_scenario::Demo::save_rgb(&path, &rgb, W as u32, H as u32);
                     }
-                    if let Err(err) = p.render() {
-                        eprintln!("Render: {err}");
+                    if operation_failed(&mut self.failed, "Render", p.render()) {
                         e.exit();
                         return;
                     }
@@ -400,11 +411,12 @@ fn benchmark_args(args: &[String]) -> bool {
     enabled
 }
 
-fn main() {
+fn main() -> std::process::ExitCode {
     let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     let e = EventLoop::new().unwrap();
     e.set_control_flow(ControlFlow::Poll);
     let mut a = App {
+        failed: false,
         focused: false,
         window: None,
         pixels: None,
@@ -418,11 +430,25 @@ fn main() {
         acc: 0.0,
     };
     e.run_app(&mut a).unwrap();
+    exit_status(a.failed)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn runtime_renderer_failures_are_not_successful_process_exits() {
+        let mut failed = false;
+        assert!(!operation_failed(&mut failed, "Render", Ok::<(), pixels::Error>(())));
+        assert_eq!(exit_status(failed), std::process::ExitCode::SUCCESS);
+        assert!(operation_failed(&mut failed, "Render", Err::<(), _>(pixels::Error::Validation)));
+        assert_eq!(exit_status(failed), std::process::ExitCode::FAILURE);
+        assert!(!operation_failed(&mut failed, "Render", Ok::<(), pixels::Error>(())));
+        assert_eq!(exit_status(failed), std::process::ExitCode::FAILURE);
+        let mut resize_failed = false;
+        assert!(operation_failed(&mut resize_failed, "Resize", Err::<(), _>(pixels::TextureError::TextureWidth(u32::MAX))));
+        assert_eq!(exit_status(resize_failed), std::process::ExitCode::FAILURE);
+    }
     #[test]
     fn small_surfaces_use_aspect_preserving_downscale() {
         for (width, height) in [(320, 240), (899, 500), (900, 499)] {
