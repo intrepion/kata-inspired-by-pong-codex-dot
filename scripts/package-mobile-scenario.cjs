@@ -1,6 +1,11 @@
 // Derived resources only. Keep the declarative timeline in scenarios/smoke-v1.txt.
 const fs = require('node:fs');
 const path = require('node:path');
+const args = process.argv.slice(2);
+if (args.length > 1 || (args.length === 1 && args[0] !== '--check')) {
+  throw new Error('Usage: node package-mobile-scenario.cjs [--check]');
+}
+const checking = args[0] === '--check';
 const root = path.resolve(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'scenarios/smoke-v1.txt'));
 const destinations = [
@@ -11,10 +16,10 @@ const destinations = [
 ];
 for (const name of destinations) {
   const file = path.join(root, name);
-  if (process.argv.includes('--check')) {
+  if (checking) {
     if (!fs.existsSync(file) || !fs.readFileSync(file).equals(source)) throw new Error(`Stale scenario resource: ${name}`);
   } else {
     fs.mkdirSync(path.dirname(file), {recursive:true}); fs.writeFileSync(file, source);
   }
 }
-console.log(`Scenario resources ${process.argv.includes('--check') ? 'verified' : 'generated'}: ${destinations.length}`);
+console.log(`Scenario resources ${checking ? 'verified' : 'generated'}: ${destinations.length}`);
