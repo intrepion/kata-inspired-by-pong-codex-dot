@@ -94,6 +94,7 @@ impl Model {
         self.down = ["s", "down"]
             .iter()
             .any(|key| self.held.contains(*key) && !self.suppressed.contains(*key));
+        let previous_state = self.game.state;
         match key {
             "enter" if pressed => {
                 if self.game.state == State::Paused {
@@ -114,6 +115,10 @@ impl Model {
             }
             "escape" if pressed => self.blur(),
             _ => {}
+        }
+        if previous_state != self.game.state || (key == "r" && pressed) {
+            self.accumulator = 0.;
+            self.last = Instant::now();
         }
     }
     pub fn status(&self) -> String {
@@ -391,5 +396,67 @@ mod key_identity_tests {
         model.key("R", false);
         model.key("r", true);
         assert_eq!(model.game.scores, [0, 0]);
+    }
+}
+
+#[cfg(test)]
+mod transition_clock_regression {
+    use super::*;
+    use std::time::Duration;
+    #[test]
+    fn start_and_resume_discard_pretransition_wall_time() {
+        let mut model=Model::default();
+        model.last=Instant::now()-Duration::from_secs(1);
+        model.accumulator=0.007;
+        let before_action=Instant::now();
+        model.key("Enter",true);
+        assert!(model.last >= before_action, "start clock was not reset");
+        assert_eq!(model.accumulator,0.);
+        model.key("w",true);
+        let before=model.game.player;
+        model.advance(1./60.);
+        assert!(model.game.player<before);
+        model.key("w",false);
+        model.key("space",true);
+        model.key("space",false);
+        assert_eq!(model.game.state,State::Paused);
+        model.last=Instant::now()-Duration::from_secs(1);
+        model.accumulator=0.007;
+        let before_action=Instant::now();
+        model.key("space",true);
+        assert!(model.last >= before_action, "resume clock was not reset");
+        assert_eq!(model.accumulator,0.);
+        model.key("w",true);
+        let before=model.game.player;
+        model.advance(1./60.);
+        assert!(model.game.player<before);
+    }
+}
+
+#[cfg(test)]
+mod restart_clock_regression {
+    use super::*;
+    use std::time::Duration;
+    #[test]
+    fn restart_resets_clock_but_movement_and_repeat_do_not() {
+        let mut m=Model::default();
+        m.key("Enter",true);
+        let old=Instant::now()-Duration::from_secs(1);
+        m.last=old;
+        m.accumulator=0.004;
+        m.key("w",true);
+        assert_eq!(m.last,old);
+        assert_eq!(m.accumulator,0.004);
+        let before_restart=Instant::now();
+        m.key("r",true);
+        assert!(m.last>=before_restart);
+        assert_eq!(m.accumulator,0.);
+        assert_eq!(m.game.player,250.);
+        assert!(!m.up);
+        m.last=old;
+        m.accumulator=0.004;
+        m.key("r",true);
+        assert_eq!(m.last,old,"held restart must not reset clock again");
+        assert_eq!(m.accumulator,0.004);
     }
 }
