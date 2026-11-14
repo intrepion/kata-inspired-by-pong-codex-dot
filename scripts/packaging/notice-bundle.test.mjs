@@ -4,6 +4,12 @@ import{tmpdir}from'node:os';import{join}from'node:path';import{createHash}from'n
 import{buildNoticeBundle}from'./notice-bundle.mjs';
 function fixture(t){const root=realpathSync(mkdtempSync(join(tmpdir(),'pong-notice-unit-')));t.after(()=>rmSync(root,{recursive:true,force:true}));writeFileSync(join(root,'LICENSE'),'MIT root\n');const pkg=join(root,'crate');mkdirSync(pkg);writeFileSync(join(pkg,'Cargo.toml'),'');return{root,pkg};}
 function meta(pkg,extra={}){return{packages:[{id:'x',name:'fixture',version:'1.0.0',source:'registry+fixture',license:'MIT',manifest_path:join(pkg,'Cargo.toml'),...extra}],resolve:{nodes:[{id:'x',deps:[],dependencies:[]}]}};}
+test('first-party project license is not replaced by nested vendor notice',t=>{
+ const {root,pkg}=fixture(t);mkdirSync(join(pkg,'vendor'));writeFileSync(join(pkg,'vendor','LICENSE'),'Vendor Zlib text\n');
+ const b=buildNoticeBundle(meta(pkg,{name:'pong-fixture',source:null}),root);
+ assert.equal(b.index.packages[0].root_mit_fallback,true);assert.deepEqual(b.index.packages[0].notices.map(n=>n.source),['LICENSE','vendor/LICENSE']);
+ assert.equal(b.index.packages[0].notices[1].supplemental,true);assert(b.text.includes('MIT root\n'));assert(b.text.includes('Vendor Zlib text'));
+});
 test('nannou Fira notice is retained but cannot replace a crate notice',t=>{
  const{root,pkg}=fixture(t);mkdirSync(join(pkg,'assets'));writeFileSync(join(pkg,'assets','LICENSE-FiraSans-OFL.txt'),'Fira font notice\n');
  const input=meta(pkg,{name:'nannou_draw',version:'0.20.0',source:null,license:'MIT OR Apache-2.0'});
@@ -175,3 +181,4 @@ test('a genuine project notice still counts beside an empty file',t=>{
  assert.deepEqual(result.index.missing_notice_files,[]);
  assert.equal(result.index.packages[0].notices.length,2);
 });
+

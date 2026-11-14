@@ -12,3 +12,6 @@ pong-low-level-common = { path = "../low-level-common" }
 sdl3 = "0.22.1"
 pong-scenario = { path = "../../crates/pong-scenario" }
 pong-benchmark = { path = "../../crates/pong-benchmark" }
+
+[patch.crates-io]
+sdl3-sys = { path = "vendor/sdl3-sys" }

@@ -157,15 +157,18 @@ export function buildNoticeBundle(metadata,repoRoot,options={}) {
  for(const pkg of metadata.packages.filter(p=>wanted.has(p.id)).sort((a,b)=>a.name.localeCompare(b.name)||a.version.localeCompare(b.version))) {
   if(!/^[a-zA-Z0-9_-]+$/.test(pkg.name)||!pkg.version||!pkg.manifest_path) throw Error('Invalid package metadata');
   const dir=realpathSync(dirname(pkg.manifest_path));let files=candidates(dir);
+  if(pkg.license_file){const rel=relative(dir,resolve(dir,pkg.license_file));if(isAbsolute(rel)||rel==='..'||rel.startsWith('../')||rel.startsWith('..\\'))throw Error('License file escapes package root');}
   if(pkg.license_file)files.push(resolve(dir,pkg.license_file));
   files=[...new Set(files)].sort();
   let fallback=false;
-  if(!files.length&&!pkg.source&&pkg.name.startsWith('pong-')&&pkg.license==='MIT'){
+  if(!pkg.source&&pkg.name.startsWith('pong-')&&pkg.license==='MIT'){
    const rel=relative(root,dir);if(rel==='..'||rel.startsWith('../')||rel.startsWith('..\\')||isAbsolute(rel))throw Error('First-party fallback outside repository');
-   files=[join(root,'LICENSE')];fallback=true;
+   files=[...new Set([join(root,'LICENSE'),...files])];fallback=true;
   }
   const notices=files.map(f=>{
-   const notice=safeFile(fallback?root:dir,f);
+   const projectNotice=fallback&&f===join(root,'LICENSE');
+   const notice=safeFile(projectNotice?root:dir,f);
+   if(fallback&&!projectNotice)return {...notice,supplemental:true};
    return pkg.name==='nannou_draw'&&pkg.version==='0.20.0'&&pkg.source===null&&notice.source==='assets/LICENSE-FiraSans-OFL.txt'?{...notice,asset_notice:true}:notice;
   });
   const upstream=upstreamRules[pkg.name+'@'+pkg.version];
@@ -186,3 +189,4 @@ export function buildNoticeBundle(metadata,repoRoot,options={}) {
  const index={schema:1,scope:'Resolved Cargo metadata, not linked-binary attribution',missing_notice_files:missing,bundle_sha256:digest(Buffer.from(text)),packages:packages.map(p=>({...p,notices:p.notices.map(({text,...f})=>f)}))};
  return {text,index};
 }
+
