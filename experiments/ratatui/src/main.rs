@@ -15,7 +15,7 @@ use ratatui::{
     symbols::Marker,
     widgets::{
         canvas::{Canvas, Line, Rectangle},
-        Block, Borders, Paragraph,
+        Block, Borders, Paragraph, Wrap,
     },
     Frame, Terminal,
 };
@@ -48,7 +48,6 @@ impl Input {
         }
     }
     fn key(&mut self, key: KeyEvent, releases: bool) {
-        let down = key.kind != KeyEventKind::Release;
         let binding = match key.code {
             KeyCode::Up => Some(0),
             KeyCode::Char('w' | 'W') => Some(1),
@@ -67,7 +66,7 @@ impl Input {
                     KeyEventKind::Release => self.held[binding] = false,
                     KeyEventKind::Repeat => {} // A repeat cannot re-arm a cleared binding.
                 }
-            } else if down {
+            } else if key.kind == KeyEventKind::Press {
                 self.latched = if binding < 2 { -1. } else { 1. };
             }
         }
@@ -98,6 +97,10 @@ fn restore(enhanced: bool) {
     let _ = terminal::disable_raw_mode();
 }
 fn too_small(width: u16, height: u16) -> bool { width < 50 || height < 18 }
+// Time preceding a start, pause, focus loss, or resize belongs to the old state.
+fn add_frame_elapsed(acc: &mut f32, elapsed: f32, transitioned: bool) {
+    if transitioned { *acc = 0.; } else { *acc += elapsed.min(0.1); }
+}
 fn draw(f: &mut Frame, g: &Game, releases: bool) {
     let a = f.area();
     if too_small(a.width, a.height) {
@@ -110,9 +113,9 @@ fn draw(f: &mut Frame, g: &Game, releases: bool) {
         return;
     }
     let help = if releases {
-        "Hold ↑/↓ or W/S · X stop · Space pause/start · R restart · Q quit"
+        "Hold ↑/↓ or W/S · X stop · Space pause/start\nR restart · Q quit"
     } else {
-        "LATCHED INPUT: ↑/W up · ↓/S down · X STOP · Space pause · R restart · Q quit"
+        "LATCHED INPUT: ↑/W up · ↓/S down · X STOP\nSpace pause/start · R restart · Q quit"
     };
     let status = match g.state {
         State::Ready => "Ready",
@@ -126,7 +129,7 @@ fn draw(f: &mut Frame, g: &Game, releases: bool) {
         Paragraph::new(format!(
             "PONG / RATATUI     YOU {} : {} CPU     {}\n{}",
             g.scores[0], g.scores[1], status, help
-        )),
+        )).wrap(Wrap { trim: true }),
         Rect::new(a.x, a.y, a.width, 3),
     );
     // Terminal cells are approximately twice as tall as wide.
@@ -259,6 +262,7 @@ fn main() -> io::Result<()> {
     'game: loop {
         let size = term.size()?;
         let mut blocked_by_size = too_small(size.width, size.height);
+        let mut transitioned = false;
         // Bound event processing so autorepeat cannot starve simulation/rendering.
         for _ in 0..128 {
             if !event::poll(Duration::ZERO)? {
@@ -280,11 +284,13 @@ fn main() -> io::Result<()> {
                                 }
                                 input.clear();
                                 acc = 0.;
+                                transitioned = true;
                             }
                             KeyCode::Char('r') if !blocked_by_size => {
                                 g.start();
                                 input.clear();
                                 acc = 0.;
+                                transitioned = true;
                             }
                             _ => {}
                         }
@@ -298,6 +304,7 @@ fn main() -> io::Result<()> {
                     g.pause();
                     input.clear();
                     acc = 0.;
+                    transitioned = true;
                 }
                 Event::FocusGained => focused = true,
                 Event::Resize(width, height) => {
@@ -305,12 +312,13 @@ fn main() -> io::Result<()> {
                     g.pause();
                     input.clear();
                     acc = 0.;
+                    transitioned = true;
                 }
                 _ => {}
             }
         }
         let now = Instant::now();
-        acc += (now - prev).as_secs_f32().min(0.1);
+        add_frame_elapsed(&mut acc, (now - prev).as_secs_f32(), transitioned);
         prev = now;
         let size = term.size()?;
         if too_small(size.width, size.height) {
@@ -383,6 +391,22 @@ mod tests {
         input.key(key(KeyCode::Char('w'), KeyEventKind::Press), true);
         input.key(key(KeyCode::Char('W'), KeyEventKind::Release), true);
         assert_eq!(input.axis(true), 0.);
+    }
+    #[test]
+    fn fallback_repeat_cannot_rearm_after_stop_or_clear() {
+        for (binding, axis) in [(KeyCode::Up,-1.),(KeyCode::Char('w'),-1.),(KeyCode::Down,1.),(KeyCode::Char('s'),1.)] {
+            for stop in [true,false] {
+                let mut input=Input::default();
+                input.key(key(binding,KeyEventKind::Press),false);
+                assert_eq!(input.axis(false),axis);
+                if stop { input.key(key(KeyCode::Char('x'),KeyEventKind::Press),false); } else { input.clear(); }
+                assert_eq!(input.axis(false),0.);
+                input.key(key(binding,KeyEventKind::Repeat),false);
+                assert_eq!(input.axis(false),0.,"repeat rearmed {binding:?} after stop={stop}");
+                input.key(key(binding,KeyEventKind::Press),false);
+                assert_eq!(input.axis(false),axis,"fresh press failed for {binding:?}");
+            }
+        }
     }
     #[test]
     fn fallback_explicit_stop() {
@@ -496,5 +520,45 @@ mod scripted_tests {
             .as_str()
             .unwrap()
             .contains("NOT a screenshot"));
+    }
+}
+
+
+#[cfg(test)]
+mod minimum_help_test {
+    use super::*;
+    #[test]
+    fn minimum_terminal_shows_restart_and_quit_in_both_keyboard_modes() {
+        for releases in [false, true] {
+            for state in [State::Ready, State::Playing, State::Paused, State::Over] {
+                let mut game = Game::new(42);
+                game.state = state;
+                game.scores = [7, 2];
+                let mut term = Terminal::new(ratatui::backend::TestBackend::new(50,18)).unwrap();
+                term.draw(|frame| draw(frame, &game, releases)).unwrap();
+                let text = cell_text(term.backend().buffer()).to_ascii_lowercase();
+                for label in ["x stop", "space pause/start", "r restart", "q quit"] {
+                    assert!(text.contains(label), "{label} missing in release mode {releases}, state {state:?}:\n{text}");
+                }
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod transition_clock_test {
+    use super::*;
+    #[test]
+    fn resume_does_not_simulate_elapsed_time_from_before_the_action() {
+        let mut game=Game::new(42); game.start(); game.pause();
+        let mut acc=0.004f32;
+        game.toggle_pause();
+        let before=game.player;
+        add_frame_elapsed(&mut acc, 0.1, true);
+        while acc >= 1./120. { game.step(1./120., 1.); acc -= 1./120.; }
+        assert_eq!(game.player, before, "resume consumed elapsed time from before transition");
+        add_frame_elapsed(&mut acc, 1./60., false);
+        while acc >= 1./120. { game.step(1./120., 1.); acc -= 1./120.; }
+        assert!(game.player > before, "subsequent fresh elapsed time must progress");
     }
 }
