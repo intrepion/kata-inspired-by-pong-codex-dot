@@ -1,6 +1,6 @@
 # Scripted application-input smoke tests
 
-Historical ggez and Nannou results below refer to earlier revisions; those implementations are excluded from the active comparison and packaging.
+Historical ggez, Nannou and Slint results below refer to earlier revisions; those implementations are excluded from the active comparison and packaging.
 
 Macroquad, softbuffer, raylib-rs, Pixels and SDL3 support the shared demo. This is **not** desktop automation
 or a replacement for interactive/visual QA. The shared `pong-scenario` crate feeds

@@ -8,6 +8,8 @@ Godot's Rust GDExtension, the Tauri desktop/mobile client and Yew/Leptos native 
 
 Their [source and historical results](https://github.com/intrepion/kata-inspired-by-pong-codex-dot/tree/265a13eaff0ba638c49f10946b0633ed79d3f405) remain in Git history; detailed reports under `docs/` are preserved as evidence, not current build instructions.
 
+Slint is also excluded by the owner's license preference. Its adapter, standalone dependency lockfile and package support have been removed; [Slint source and license at the last included checkpoint](https://github.com/intrepion/kata-inspired-by-pong-codex-dot/tree/2a2d678635ec19ef4bd2496bd949b0dee00331ae/experiments/gui-slint) remain in Git history. Slint rows below are historical evidence, not an available implementation.
+
 ## Play
 
 [Play Rallylight online](https://intrepion.github.io/kata-inspired-by-pong-codex-dot/).
@@ -71,7 +73,7 @@ Each desktop cell is **build / runtime evidence**:
 | softbuffer + winit | Fresh `f40c9a5` B / native automated full match and restart; shell replay incomplete ([details](docs/SOFTBUFFER-MAC-CONTACT-TIMING-RECHECK.md)); prior focus/resize checks are historical | B / I | Fresh `cf3bff1` B, 4 frontend tests; relocated package replay and six app-owned PNGs, exact model match; physical input unverified ([details](docs/packaging/SOFTBUFFER-C77-OMARCHY-REPLAY.md)) |
 | SDL3 | Fresh `082327b` B / native automated full match and restart; shell replay blocked ([details](docs/SDL3-MAC-CONTACT-TIMING-RECHECK.md)); prior focus/resize checks are historical | B / I; LNK4098 linker warning remains | Fresh `49f2c2f` B, 2 frontend + 3 shared tests; relocated package replay and six app-owned PNGs, exact model match; physical input unverified ([details](docs/packaging/SDL3-C77-OMARCHY-REPLAY.md)) |
 | Vulkan via ash | B / blocked: missing Vulkan loader/MoltenVK | B / I (simple clear-attachment renderer only) | Fresh `0cd6a1c` B, 6 frontend tests; relocated package replay and six app-owned PNGs, exact model match; physical input unverified ([details](docs/packaging/ASH-C77-OMARCHY-REPLAY.md)) |
-| Slint | `9195b63` cached debug B / automated full match and reset; shell replay timed out ([details](docs/SLINT-MAC-CONTACT-TIMING-RECHECK.md)) | B / I: start, scoring, pause/resume, reset | `ccd3783` B, 10 shared tests; relocated replay and six component PNGs match model; physical input unverified ([details](docs/packaging/SLINT-GPUI-PAUSE-OMARCHY-PILOT.md)) |
+| Slint (removed; historical) | `9195b63` cached debug B / automated full match and reset; shell replay timed out ([details](docs/SLINT-MAC-CONTACT-TIMING-RECHECK.md)) | B / I: start, scoring, pause/resume, reset | `ccd3783` B, 10 shared tests; relocated replay and six component PNGs match model; physical input unverified ([details](docs/packaging/SLINT-GPUI-PAUSE-OMARCHY-PILOT.md)) |
 | GTK4 | Blocked: native dependencies missing / U | U / U | `59957bb` B, 1 frontend + 10 shared model tests; relocated replay and six app-owned Cairo PNGs match model; physical input unverified ([details](docs/packaging/GTK-GUI-PAUSE-OMARCHY-PILOT.md)) |
 | Ratatui | B / pseudo-terminal checks; enhanced-terminal interaction unverified | B / blocked: direct launch has no targetable window; Windows Terminal access blocked by product policy | Fresh repeat-fix release B, 10 tests; relocated package replay and synthetic enhanced-key PTY pause/repeat check; real-terminal and physical input unverified ([details](docs/packaging/RATATUI-REPEAT-OMARCHY-PACKAGE.md); [earlier run](docs/packaging/RATATUI-C77-OMARCHY-REPLAY.md)) |
 
@@ -129,7 +131,7 @@ The following rollout table is retained as historical evidence, not a claim that
 | Blue Engine | Passed (headless) | Six saved; pause/reset inspected | Supported headless renderer only; window capture unsupported |
 | Vulkan via ash | Passed | Six saved; all inspected | Acquired swapchain image copied before present |
 | Ratatui | Passed (TestBackend) | No PNG: six text + six cell/style JSON exports | Cell-buffer evidence only, not terminal screenshots |
-| Slint | Passed | Six saved; pause/reset inspected | Supported software-renderer component snapshot |
+| Slint (removed; historical) | Passed | Six saved; pause/reset inspected | Supported software-renderer component snapshot |
 | GTK4 | Passed | Six saved; pause/reset inspected | Same Cairo scene on separate app-owned surface |
 | Raw web-WASM | Implemented; ABI tests passed | Canvas export implemented; Windows completion verified, bundle files unverified | Not counted among nineteen verified render adapters |
 | Yew / Leptos / Dioxus web | Shared replay tests/builds pass; Windows Chrome demos reached tick 1440 with 13 identical states | Six SVG links per app and final courts inspected on Windows; data-URL download blocked | SVG source is not screenshot evidence; downloaded files unverified; no Omarchy browser pass |
@@ -193,6 +195,6 @@ Packaging stays alongside each application until repeated common steps justify s
 | Blue Engine, softbuffer | [Blue held-fix relocated replay and desktop smoke](docs/packaging/BLUE-HELD-MAC-RELOCATED.md); [softbuffer held-fix relocated check](docs/packaging/SOFTBUFFER-HELD-MAC-RELOCATED.md); [earlier pilot](docs/packaging/MAC-SOFTBUFFER-BLUE-PILOT.md) | [Blue state-only](docs/packaging/WINDOWS-PORTABLE-BATCH3.md); [softbuffer replay/capture](docs/packaging/WINDOWS-PORTABLE-BATCH.md) | [Final two local pilots](docs/packaging/LINUX-PORTABLE-BATCH3.md); Blue native captures unsupported |
 | Ratatui | [Release archive, replay and synthetic PTY checks](docs/packaging/RATATUI-MAC-RELEASE-PILOT.md); [earlier debug pilot](docs/packaging/RATATUI-MAC-DEBUG-PILOT.md) | [Local ZIP/cell replay only](docs/packaging/RATATUI-WINDOWS-PILOT.md) | [Terminal local pilot](docs/packaging/RATATUI-LINUX-PILOT.md); cells + bounded PTY, not screenshots |
 | GTK4 | Not recorded | Not recorded | [Local package pilot](docs/packaging/GTK-LINUX-PILOT.md); existing GTK4 libraries required |
-| Slint | [Local debug archive and desktop smoke](docs/packaging/SLINT-MAC-DEBUG-PILOT.md) | [Local ZIP/own-window snapshots](docs/packaging/SLINT-WINDOWS-PILOT.md) | [Local package pilot](docs/packaging/SLINT-LINUX-PILOT.md); own-window snapshots, license text included |
+| Slint (removed; historical) | [Local debug archive and desktop smoke](docs/packaging/SLINT-MAC-DEBUG-PILOT.md) | [Local ZIP/own-window snapshots](docs/packaging/SLINT-WINDOWS-PILOT.md) | [Local package pilot](docs/packaging/SLINT-LINUX-PILOT.md); own-window snapshots, license text included |
 | Dioxus Desktop | Not recorded | Not recorded | [Local debug archive/relocated replay](docs/packaging/DIOXUS-PAUSE-OMARCHY-PILOT.md); WebKitGTK and libxdo required, notices pending |
 | Other adapters | Not recorded | Not recorded | Not recorded |

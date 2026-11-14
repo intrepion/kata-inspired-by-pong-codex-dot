@@ -1,4 +1,4 @@
-> Historical validation record. GPUI is excluded from the current build tree under the dependency-license policy. Its source and the original instructions remain in [checkpoint history](https://github.com/intrepion/kata-inspired-by-pong-codex-dot/tree/265a13eaff0ba638c49f10946b0633ed79d3f405). Results below describe earlier builds, not current availability.
+> Historical validation record. GPUI and Slint are excluded from the current build tree under the dependency-license policy. Their source and original instructions remain in checkpoint history: [GPUI](https://github.com/intrepion/kata-inspired-by-pong-codex-dot/tree/265a13eaff0ba638c49f10946b0633ed79d3f405/experiments/gui-gpui) and [Slint](https://github.com/intrepion/kata-inspired-by-pong-codex-dot/tree/2a2d678635ec19ef4bd2496bd949b0dee00331ae/experiments/gui-slint). Results below describe earlier builds, not current availability. Slint was removed by the owner's license preference; do not use the historical Slint build or packaging instructions against the current tree.
 
 # Native GUI-toolkit Pong comparisons
 
