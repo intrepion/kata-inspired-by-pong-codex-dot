@@ -21,7 +21,7 @@ jobs:
           echo 'Linux tests run; Windows junction tests skip. Dioxus xdo tests skip on non-ARM64; its archive test also skips when the verified local archive is absent.'
       - name: Run packaging suites
         run: |
-          for suite in fyrox-state dioxus-local-xdo linux-portable notice-bundle; do
+          for suite in dioxus-local-xdo linux-portable notice-bundle; do
             node "scripts/packaging/$suite.test.mjs" || exit $?
           done
           node experiments/sdl3/packaging/linux-portable.test.cjs

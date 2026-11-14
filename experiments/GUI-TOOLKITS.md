@@ -1,3 +1,5 @@
+> Historical validation record. GPUI is excluded from the current build tree under the dependency-license policy. Its source and the original instructions remain in [checkpoint history](https://github.com/intrepion/kata-inspired-by-pong-codex-dot/tree/265a13eaff0ba638c49f10946b0633ed79d3f405). Results below describe earlier builds, not current availability.
+
 # Native GUI-toolkit Pong comparisons
 
 These standalone Cargo projects intentionally sit outside the root workspace so GUI dependencies and lockfiles cannot disturb the game-engine comparison. They share the existing deterministic game core through a small adapter with key-release/focus-loss tests. These are GUI experiments, not claims that a widget toolkit replaces a game engine.

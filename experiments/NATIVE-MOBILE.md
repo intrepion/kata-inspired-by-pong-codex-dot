@@ -2,7 +2,7 @@
 These are deliberately independent implementations, not Rust FFI wrappers:
 - `native-kotlin`: Kotlin model + Android Activity/custom Canvas View, Gradle/Android SDK.
 - `native-swift`: Swift value-type model + SwiftUI Canvas, Swift Package tests and XcodeGen project.
-- Existing `clients/tauri`: shared Rust/WASM gameplay inside a mobile WebView.
+- The former Tauri mobile WebView implementation is excluded under the dependency-license policy; its source and historical results remain in Git history.
 
 Compare `crates/pong-core/src/lib.rs` with Kotlin `Game.kt` and Swift `Game.swift`. Each keeps 900x500 coordinates, 90-unit paddles, 470 player speed, first-to-seven, .65-second serves, .3-second CPU reaction, 190/130 CPU speed, angle shots, 1.055 acceleration and 720 ball-speed cap. The same xorshift64 seed algorithm is ported. Floating-point trig/rounding can differ by platform: these are rule-equivalent, not certified bit-identical replays.
 

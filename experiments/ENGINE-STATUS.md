@@ -1,3 +1,5 @@
+> Historical validation record. Fyrox is excluded from the current build tree under the dependency-license policy. Its source and the original instructions remain in [checkpoint history](https://github.com/intrepion/kata-inspired-by-pong-codex-dot/tree/265a13eaff0ba638c49f10946b0633ed79d3f405). Results below describe earlier builds, not current availability.
+
 # Additional engine experiments
 
 These isolated Cargo workspaces share `../../crates/pong-core`; they are not root workspace members. Comfy and rend3 were excluded at the user's request. No changes here have been published.

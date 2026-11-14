@@ -2,13 +2,15 @@
 
 These are isolated prototypes in the existing Pong repository, not separate game implementations. All three use `pong-core` physics and `web-ui-common` fixed-step input/presentation (120 Hz). SVG is deliberately shared so the comparison measures framework/WebView integration, not different games. It is not a native GPU-engine benchmark.
 
+The Yew and Leptos Tauri desktop wrappers have been removed from this candidate. References to those wrappers and their past results below are historical; the browser experiments remain.
+
 | Variant | Browser | Desktop route | Current status |
 |---|---|---|---|
 | Dioxus | Rust/WASM + Dioxus Web | Dioxus Desktop, native Rust and OS WebView | macOS WASM build + localhost Chrome controls passed; native pending |
-| Leptos | CSR Rust/WASM | Tauri wrapper in `experiments/leptos/desktop` | macOS WASM + native wrapper builds passed; localhost Chrome controls passed; native gameplay pending |
-| Yew | Rust/WASM | Tauri wrapper in `experiments/yew/desktop` | macOS WASM + native wrapper builds passed; localhost Chrome controls passed; native gameplay pending |
+| Leptos | CSR Rust/WASM | Removed Tauri wrapper (historical) | macOS WASM + localhost Chrome controls passed; earlier wrapper results are historical |
+| Yew | Rust/WASM | Removed Tauri wrapper (historical) | macOS WASM + localhost Chrome controls passed; earlier wrapper results are historical |
 
-Dioxus Desktop is **not** wrapped in Tauri and is **not** Dioxus Native/Blitz. Leptos deliberately avoids SSR, authentication, and server infrastructure. Tauri wrappers grant no IPC capabilities. Comfy/rend3 are excluded as requested.
+Dioxus Desktop is **not** wrapped in Tauri and is **not** Dioxus Native/Blitz. Leptos deliberately avoids SSR, authentication, and server infrastructure. The removed Tauri wrappers granted no IPC capabilities. Comfy/rend3 are excluded as requested.
 
 ## Build and run
 
@@ -23,11 +25,10 @@ Open `http://127.0.0.1:5191`. Never test with a file URL. The helper supports an
 
 ```sh
 cargo run --manifest-path experiments/dioxus/Cargo.toml
-# Build corresponding WASM dist first:
-cargo run --manifest-path experiments/yew/desktop/Cargo.toml
-cargo run --manifest-path experiments/leptos/desktop/Cargo.toml
 cargo test --manifest-path experiments/web-ui-common/Cargo.toml
 ```
+
+The former `cargo run --manifest-path experiments/yew/desktop/Cargo.toml` and `cargo run --manifest-path experiments/leptos/desktop/Cargo.toml` commands are historical and no longer work in this candidate.
 
 All manifests declare their own workspace and own lockfile to avoid interfering with the main four-client workspace. Native WebView prerequisites still apply (WebView2 on Windows, WebKitGTK development packages on Linux, system WebKit on macOS). Use `-j 1` on memory-constrained systems and do not run all builds concurrently.
 
@@ -39,7 +40,7 @@ Validation checklist per platform: build, visible launch, start, movement/releas
 
 ## Mobile
 
-Touch controls are included but mobile packaging/testing is not yet complete. Dioxus mobile needs its mobile feature/CLI setup; the desktop default does not constitute an iOS/Android build. Tauri mobile similarly needs generated platform projects and signing/emulator setup. Mac inspection found Xcode 27.2 and available iOS 18.4 simulators (iPhone 16 family), all shutdown. No iOS or Android runtime success is claimed.
+Touch controls are included but mobile packaging/testing is not yet complete. Dioxus mobile needs its mobile feature/CLI setup; the desktop default does not constitute an iOS/Android build. The former Tauri mobile route is historical because its client was removed. Mac inspection found Xcode 27.2 and available iOS 18.4 simulators (iPhone 16 family), all shutdown. No iOS or Android runtime success is claimed.
 
 ## Verification log
 
