@@ -44,6 +44,33 @@ export function auditedSourceHeaders(root,entries) {
   return {source:f.source+' (leading comment)',sha256:digest(Buffer.from(text)),bytes:Buffer.byteLength(text),text};
  });
 }
+// Explicitly audited comment blocks from const_soft_float 0.1.4; not a general comment scan.
+const constSoftFloatHeaders=Object.freeze([
+ ['src/soft_f32/cos.rs','759278573251d0336f0feef20b7cf4416a39a55eb505070e4b9536450e95d1fb','0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05',168,547],
+ ['src/soft_f32/helpers/k_cosf.rs','68103e3ec418131191b6229844a3df867db7d4b6bb8038d0d51b0f23caf677c9','0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05',181,560],
+ ['src/soft_f32/helpers/rem_pio2f.rs','23df431316bf70904c147f8077417a5eb05b28c5dcdf5f95aa1137c022216d0e','0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05',186,565],
+ ['src/soft_f32/sin.rs','43fcd1b09588fbdf1c993a7fe2b2400b01388e0da5b2fb8a8a6c7b26d4b0dc27','0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05',168,547],
+ ['src/soft_f64/cos.rs','9a4fd04ae87044255a013a86a68e8ec485e7368370c55618d7b49000b81261c5','44d9aabf6e914b85fde530b8ecde0c5e0fd077e67f645767d57551d7d20ca3a3',0,528],
+ ['src/soft_f64/helpers/k_cos.rs','704b9c6ac2626ba20753759b1eb0505e341aedd8f78d2fc0b2eed3010dbcf8dc','a3655b5fbbdd8b90bdb6fba0bc132bdff4f82fa70181d5c82769e4201e43b34d',0,528],
+ ['src/soft_f64/helpers/k_sin.rs','7fde68b4384fd1a081c867bbc3d4562222b496a20f334031270926d7430a551b','274fba85b079bf6eb3337aff5494ee2f25eeda037c69f8d275f7ccb9145053fb',0,528],
+ ['src/soft_f64/helpers/rem_pio2.rs','434482facfbf9da484d594a2537537f01c1f4ae36434953f4541a285bd995d93','da28bd93659d512cba362af000b10121e71e63ef135f3ba398a05f376e90bc7e',46,514],
+ ['src/soft_f64/helpers/rem_pio2_large.rs','e6caafc05e7def0a3bf1beaee4615a83d94a29794eb419ef8de97808380d68a9','74344ebf347f27ca446e00f1c1921f705546f4b20e0fb31c183cd2c8464b1bc5',82,462],
+ ['src/soft_f64/sin.rs','ad5f8c1156e8a61cee67691ec833d7f55e012d771c5f406b55a3f0b243b96813','2fed8cd67086f037fee678d0be8b4602e1eedf7413652c7d870ff929ed9dc8f6',0,525],
+ ['src/soft_f64/sqrt.rs','a94f30bee2a07cc746b012c65ff0e1db2e65d90b6c914e61a9eafc672fc22872','74344ebf347f27ca446e00f1c1921f705546f4b20e0fb31c183cd2c8464b1bc5',53,433],
+]);
+export function auditedSourceComments(root,entries) {
+ return entries.map(([path,sourceHash,commentHash,start,end])=>{
+  const f=safeFile(root,resolve(root,path));
+  if(f.sha256!==sourceHash)throw Error('Audited source hash mismatch: '+path);
+  if(!Number.isSafeInteger(start)||!Number.isSafeInteger(end)||start<0||end<=start||end>f.text.length)throw Error('Invalid audited comment bounds: '+path);
+  const text=f.text.slice(start,end);
+  const block=text.startsWith('/*')&&text.endsWith('*/');
+  const lines=text.split('\n').every(line=>line===''||line.trimStart().startsWith('//'));
+  if(!block&&!lines)throw Error('Missing audited source comment: '+path);
+  if(digest(Buffer.from(text))!==commentHash)throw Error('Audited source comment hash mismatch: '+path);
+  return {source:f.source+' (audited comment)',sha256:commentHash,bytes:Buffer.byteLength(text),text,supplemental:true,source_notice:true};
+ });
+}
 // Exact upstream or source-referenced license texts; each rule is bound to the published crate's
 // recorded VCS revision and a source file independently matched to upstream.
 const gpuDescriptorFiles=Object.freeze([['gpu-descriptor-COPYING.txt','f72143f7e9d9fb8bd336b139fa22f825a299591c29f2f7338c5566347b137613','COPYING'],['gpu-descriptor-APACHE.txt','6bec8c944a6d4251be50ac86bb4ca360bcce5aea472505dee2800e160bf1cdbf','license/APACHE'],['gpu-descriptor-MIT.txt','5226e27d5fbc683db56c52853cdb9d15b69abadb525a60f95c862c2dbd77cdc8','license/MIT']]);
@@ -145,12 +172,16 @@ export function buildNoticeBundle(metadata,repoRoot,options={}) {
   if(upstream&&pkg.source==='registry+https://github.com/rust-lang/crates.io-index')notices.push(...auditedUpstreamNotices(dir,resolve(root,'scripts/packaging/audited-notices'),upstream));
   if(pkg.name==='hexf-parse'&&pkg.version==='0.2.1'&&pkg.source==='registry+https://github.com/rust-lang/crates.io-index'&&pkg.license==='CC0-1.0')notices.push(...auditedUpstreamNotices(dir,resolve(root,'scripts/packaging/audited-notices'),hexfTerms).map(f=>({...f,supplemental:true})));
   if(pkg.name==='raylib'&&pkg.version==='6.0.0'&&pkg.source==='registry+https://github.com/rust-lang/crates.io-index')notices.push(...auditedSourceHeaders(dir,raylibHeaders));
+  if(pkg.name==='const_soft_float'&&pkg.version==='0.1.4'&&pkg.source==='registry+https://github.com/rust-lang/crates.io-index'){
+   auditedUpstreamNotices(dir,resolve(root,'scripts/packaging/audited-notices'),{rev:'723b63e489c55359012b0c5c793b897c494c0bfa',path:'',sourceHash:'7d4983173c4f65fb99f651a4a32d07e0232e9760e830e3b03c307f80f1c3d866',files:[]});
+   notices.push(...auditedSourceComments(dir,constSoftFloatHeaders));
+  }
   if(pkg.name==='zune-inflate'&&pkg.version==='0.2.54'&&pkg.source==='registry+https://github.com/rust-lang/crates.io-index')notices.push(...auditedSourceHeaders(dir,[['src/lib.rs','ee2b5b58f48ee36835bd4e312a26dace36be39d1c4af956f4e2e04d0620667f9']]));
   packages.push({name:pkg.name,version:pkg.version,license:pkg.license??null,origin:pkg.source?.startsWith('registry+')?'registry':pkg.source?'external':'local',root_mit_fallback:fallback,notices});
  }
  const missing=packages.filter(p=>!hasProjectNotice(p.notices)).map(p=>p.name+'@'+p.version);
  let text='Pong '+platform+' dependency notice preparation\n\nResolved Cargo graph; may include build/optional packages. All discovered license choices are retained without choosing one. This is not legal clearance or a system-library inventory. Nested source comments and unlabelled bundled code require separate review.\n';
- for(const p of packages)for(const f of p.notices)text+='\n===== '+p.name+' '+p.version+' | '+(f.supplemental?'SUPPLEMENTAL STANDARD TERMS; NOT A PROJECT NOTICE | ':f.asset_notice?'FONT ASSET NOTICE; NOT A CRATE NOTICE | ':'')+f.source+' | '+(f.asset_notice?'crate declared ':'declared ')+p.license+' =====\n'+f.text+'\n';
+ for(const p of packages)for(const f of p.notices)text+='\n===== '+p.name+' '+p.version+' | '+(f.source_notice?'SUPPLEMENTAL AUDITED SOURCE NOTICE; NOT A PROJECT NOTICE | ':f.supplemental?'SUPPLEMENTAL STANDARD TERMS; NOT A PROJECT NOTICE | ':f.asset_notice?'FONT ASSET NOTICE; NOT A CRATE NOTICE | ':'')+f.source+' | '+(f.asset_notice?'crate declared ':'declared ')+p.license+' =====\n'+f.text+'\n';
  if(Buffer.byteLength(text)>32*1024*1024)throw Error('Notice bundle too large');
  const index={schema:1,scope:'Resolved Cargo metadata, not linked-binary attribution',missing_notice_files:missing,bundle_sha256:digest(Buffer.from(text)),packages:packages.map(p=>({...p,notices:p.notices.map(({text,...f})=>f)}))};
  return {text,index};

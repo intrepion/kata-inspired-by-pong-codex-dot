@@ -47,6 +47,29 @@ test('audited headers preserve source bytes and reject changed or escaping files
  const noHeader='code';writeFileSync(file,noHeader);assert.throws(()=>auditedSourceHeaders(pkg,[['source.rs',createHash('sha256').update(noHeader).digest('hex')]]),/Missing audited/);
 });
 
+test('audited source comments preserve exact text and reject changes',async t=>{
+ const {auditedSourceComments}=await import('./notice-bundle.mjs');const{root,pkg}=fixture(t);
+ const hash=s=>createHash('sha256').update(s).digest('hex');
+ const header='// Copyright holder\n// Original permission\n',source='use crate::x;\n\n'+header+'use crate::y;\n';
+ const start=source.indexOf(header),end=start+header.length;
+ writeFileSync(join(pkg,'source.rs'),source);
+ const [notice]=auditedSourceComments(pkg,[['source.rs',hash(source),hash(header),start,end]]);
+ assert.equal(notice.text,header);assert.equal(notice.supplemental,true);assert.equal(notice.source_notice,true);
+ assert.equal(notice.source,'source.rs (audited comment)');
+ assert.throws(()=>auditedSourceComments(pkg,[['source.rs',hash(source),'wrong',start,end]]),/comment hash mismatch/);
+ assert.throws(()=>auditedSourceComments(pkg,[['source.rs',hash(source),hash(header),-1,end]]),/comment bounds/);
+ writeFileSync(join(pkg,'source.rs'),source+'modified');assert.throws(()=>auditedSourceComments(pkg,[['source.rs',hash(source),hash(header),start,end]]),/source hash mismatch/);
+ assert.throws(()=>auditedSourceComments(pkg,[['../LICENSE',hash('MIT root\n'),hash(header),0,1]]),/escapes/);
+ if(process.platform!=='win32'){symlinkSync(join(root,'LICENSE'),join(pkg,'link.rs'));assert.throws(()=>auditedSourceComments(pkg,[['link.rs',hash('MIT root\n'),hash(header),0,1]]),/Symlink/);}
+});
+
+test('const soft float source audit applies only to the exact registry version',t=>{
+ const{root,pkg}=fixture(t);const base={name:'const_soft_float',version:'0.1.4',source:'registry+https://github.com/rust-lang/crates.io-index'};
+ assert.throws(()=>buildNoticeBundle(meta(pkg,base),root),/ENOENT/);
+ assert.deepEqual(buildNoticeBundle(meta(pkg,{...base,version:'0.1.5'}),root).index.missing_notice_files,['const_soft_float@0.1.5']);
+ assert.deepEqual(buildNoticeBundle(meta(pkg,{...base,source:'git+https://example.invalid/const_soft_float'}),root).index.missing_notice_files,['const_soft_float@0.1.4']);
+});
+
 test('raylib source audit applies only to the exact registry version',t=>{
  const{root,pkg}=fixture(t);const base={name:'raylib',version:'6.0.0',source:'registry+https://github.com/rust-lang/crates.io-index'};
  assert.throws(()=>buildNoticeBundle(meta(pkg,base),root),/ENOENT/);
