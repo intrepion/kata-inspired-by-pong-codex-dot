@@ -4,6 +4,31 @@ import{tmpdir}from'node:os';import{join}from'node:path';import{createHash}from'n
 import{buildNoticeBundle}from'./notice-bundle.mjs';
 function fixture(t){const root=realpathSync(mkdtempSync(join(tmpdir(),'pong-notice-unit-')));t.after(()=>rmSync(root,{recursive:true,force:true}));writeFileSync(join(root,'LICENSE'),'MIT root\n');const pkg=join(root,'crate');mkdirSync(pkg);writeFileSync(join(pkg,'Cargo.toml'),'');return{root,pkg};}
 function meta(pkg,extra={}){return{packages:[{id:'x',name:'fixture',version:'1.0.0',source:'registry+fixture',license:'MIT',manifest_path:join(pkg,'Cargo.toml'),...extra}],resolve:{nodes:[{id:'x',deps:[],dependencies:[]}]}};}
+test('nannou Fira notice is retained but cannot replace a crate notice',t=>{
+ const{root,pkg}=fixture(t);mkdirSync(join(pkg,'assets'));writeFileSync(join(pkg,'assets','LICENSE-FiraSans-OFL.txt'),'Fira font notice\n');
+ const input=meta(pkg,{name:'nannou_draw',version:'0.20.0',source:null,license:'MIT OR Apache-2.0'});
+ const onlyFont=buildNoticeBundle(input,root);
+ assert.deepEqual(onlyFont.index.missing_notice_files,['nannou_draw@0.20.0']);
+ assert.equal(onlyFont.index.packages[0].notices[0].asset_notice,true);
+ assert(onlyFont.text.includes('FONT ASSET NOTICE; NOT A CRATE NOTICE | assets/LICENSE-FiraSans-OFL.txt | crate declared MIT OR Apache-2.0'));
+ assert(onlyFont.text.includes('Fira font notice\n'));
+ writeFileSync(join(pkg,'LICENSE'),' \n\t');
+ assert.deepEqual(buildNoticeBundle(input,root).index.missing_notice_files,['nannou_draw@0.20.0']);
+ writeFileSync(join(pkg,'LICENSE'),'Crate license\n');
+ const withCrate=buildNoticeBundle(input,root);
+ assert.deepEqual(withCrate.index.missing_notice_files,[]);
+ assert(withCrate.text.includes('Crate license\n'));
+ assert(withCrate.text.includes('Fira font notice\n'));
+});
+test('font notice exception does not reclassify unrelated packages or versions',t=>{
+ const{root,pkg}=fixture(t);mkdirSync(join(pkg,'assets'));writeFileSync(join(pkg,'assets','LICENSE-FiraSans-OFL.txt'),'Other notice\n');
+ for(const extra of [{name:'other',version:'0.20.0',source:null},{name:'nannou_draw',version:'0.20.1',source:null},{name:'nannou_draw',version:'0.20.0',source:'registry+fixture'}]){
+  const result=buildNoticeBundle(meta(pkg,extra),root);
+  assert.deepEqual(result.index.missing_notice_files,[]);
+  assert.equal(result.index.packages[0].notices[0].asset_notice,undefined);
+  assert(!result.text.includes('FONT ASSET NOTICE; NOT A CRATE NOTICE'));
+ }
+});
 test('preserves exact texts, nested notices and hashes without host paths',t=>{const{root,pkg}=fixture(t);writeFileSync(join(pkg,'LICENSE'),'MIT text\r\n');mkdirSync(join(pkg,'vendor'));writeFileSync(join(pkg,'vendor','NOTICE'),'Attribution\n');const b=buildNoticeBundle(meta(pkg),root);assert.equal(b.index.packages[0].notices.length,2);assert.equal(b.index.packages[0].notices[0].sha256,createHash('sha256').update('MIT text\r\n').digest('hex'));assert(b.text.includes('MIT text\r\n'));assert(!JSON.stringify(b).includes(root));assert.equal(b.index.bundle_sha256,createHash('sha256').update(b.text).digest('hex'));});
 test('first-party fallback is constrained; missing external notices remain explicit',t=>{const{root,pkg}=fixture(t);assert.deepEqual(buildNoticeBundle(meta(pkg),root).index.missing_notice_files,['fixture@1.0.0']);const b=buildNoticeBundle(meta(pkg,{name:'pong-fixture',source:null}),root);assert.equal(b.index.packages[0].root_mit_fallback,true);assert.equal(b.index.packages[0].notices[0].source,'LICENSE');assert.throws(()=>buildNoticeBundle(meta(pkg,{license_file:'../LICENSE'}),root),/escapes/);});
 test('symlink notice sources rejected', {skip:process.platform==='win32'},t=>{const{root,pkg}=fixture(t);symlinkSync(join(root,'LICENSE'),join(pkg,'LICENSE'));assert.throws(()=>buildNoticeBundle(meta(pkg),root),/Symlink/);});
