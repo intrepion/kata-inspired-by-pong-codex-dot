@@ -5,8 +5,8 @@ import {validSample} from './run.mjs';
 const sampleNumbers = ['schema','warmup_seconds','nominal_measure_seconds','samples','sampled_seconds','mean_ms','p50_ms','p95_ms','p99_ms','max_ms','width','height'];
 export function publicReport(raw) {
   if(raw?.schema!==1 || raw.protocol!=='pong-frame-callback-v1' || !Array.isArray(raw.runs)) throw Error('Unsupported benchmark report');
-  if(!/^[a-z0-9-]+$/.test(raw.adapter)) throw Error('Invalid adapter identifier');
-  if(!/^[a-f0-9]{40}$/.test(raw.git_revision) || !/^[a-f0-9]{64}$/.test(raw.binary_sha256)) throw Error('Source and binary hashes required');
+  if(typeof raw.adapter!=='string' || !/^[a-z0-9-]+$/.test(raw.adapter)) throw Error('Invalid adapter identifier');
+  if(typeof raw.git_revision!=='string' || typeof raw.binary_sha256!=='string' || !/^[a-f0-9]{40}$/.test(raw.git_revision) || !/^[a-f0-9]{64}$/.test(raw.binary_sha256)) throw Error('Source and binary hashes required');
   if(!['release','debug','unverified'].includes(raw.profile)) throw Error('Known build profile required');
   if(raw.runs.length<1 || raw.runs.length>3 || raw.runs.some((run,index)=>run?.iteration!==index+1)) throw Error('Invalid benchmark run sequence');
   const result={profile:raw.profile,schema:1,protocol:'pong-frame-callback-v1',adapter:raw.adapter,git_revision:raw.git_revision,binary_sha256:raw.binary_sha256,

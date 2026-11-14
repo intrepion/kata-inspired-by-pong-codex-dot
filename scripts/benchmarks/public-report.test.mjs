@@ -29,3 +29,9 @@ test('run numbers must be a nonempty ordered prefix of the three-run protocol',(
   assert.deepEqual(publicReport(raw).runs.map(run=>run.iteration),ids);
  }
 });
+
+test('provenance fields must be strings, without regex coercion',()=>{
+ for(const mutate of [r=>delete r.adapter,r=>r.adapter=null,r=>r.adapter=['raylib'],r=>r.git_revision=['a'.repeat(40)],r=>r.binary_sha256=['b'.repeat(64)]]){
+  const raw=fixture();mutate(raw);assert.throws(()=>publicReport(raw));
+ }
+});
