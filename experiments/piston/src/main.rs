@@ -66,9 +66,13 @@ fn text_cells(message: &str, left: f64, top: f64, cell: f64) -> Vec<[f64; 4]> {
     }
     result
 }
-fn score_owner_cells() -> Vec<[f64; 4]> {
-    text_cells("YOU", 330., 45., 2.).into_iter()
-        .chain(text_cells("CPU", 500., 45., 2.))
+fn small_text_cell(scale: f64) -> f64 {
+    if scale > 0.0 { (1.0 / scale).clamp(2.0, 8.0) } else { 2.0 }
+}
+fn score_owner_cells(scale: f64) -> Vec<[f64; 4]> {
+    let cell = small_text_cell(scale);
+    text_cells("YOU", 348. - 9. * cell, 45., cell).into_iter()
+        .chain(text_cells("CPU", 518. - 9. * cell, 45., cell))
         .collect()
 }
 fn court_hint(state: State) -> Option<&'static str> {
@@ -79,15 +83,17 @@ fn court_hint(state: State) -> Option<&'static str> {
         State::Playing => None,
     }
 }
-fn hint_backing(state: State) -> Option<[f64; 4]> {
+fn hint_backing(state: State, scale: f64) -> Option<[f64; 4]> {
     court_hint(state).map(|text| {
-        let width = text.len() as f64 * 12.;
-        [(W as f64 - width) / 2. - 5., 282., width + 10., 24.]
+        let cell = small_text_cell(scale);
+        let width = text.len() as f64 * 6. * cell;
+        [(W as f64 - width) / 2. - 5., 282., width + 10., 7. * cell + 10.]
     })
 }
-fn hint_cells(state: State) -> Vec<[f64; 4]> {
+fn hint_cells(state: State, scale: f64) -> Vec<[f64; 4]> {
     court_hint(state).map_or_else(Vec::new, |text| {
-        text_cells(text, (W as f64 - text.len() as f64 * 12.) / 2., 287., 2.)
+        let cell = small_text_cell(scale);
+        text_cells(text, (W as f64 - text.len() as f64 * 6. * cell) / 2., 287., cell)
     })
 }
 fn winner_cells(game: &Game) -> Vec<[f64; 4]> {
@@ -195,6 +201,13 @@ fn key_release(held: &mut [bool; 4], pressed: &mut std::collections::HashSet<Key
 mod control_tests {
     use super::*;
     #[test]
+    fn score_owner_glyph_cells_cover_a_pixel_at_small_surface() {
+        let scale = 320.0 / 900.0;
+        let cells = score_owner_cells(scale);
+        assert!(!cells.is_empty());
+        assert!(cells.iter().all(|cell| cell[2] * scale >= 1.0 && cell[3] * scale >= 1.0));
+    }
+    #[test]
     fn court_labels_identify_scores_and_actions_without_title() {
         assert_eq!(court_hint(State::Ready), Some("ENTER TO START"));
         assert_eq!(court_hint(State::Paused), Some("SPACE TO RESUME"));
@@ -205,11 +218,11 @@ mod control_tests {
                 assert!(result_glyph(ch).iter().any(|r| *r != 0), "missing {}", ch as char);
             }
         }
-        assert!(!score_owner_cells().is_empty());
-        assert!(hint_cells(State::Playing).is_empty());
+        assert!(!score_owner_cells(1.0).is_empty());
+        assert!(hint_cells(State::Playing, 1.0).is_empty());
         for state in [State::Ready, State::Paused, State::Over] {
-            let panel = hint_backing(state).unwrap();
-            let cells = hint_cells(state);
+            let panel = hint_backing(state, 1.0).unwrap();
+            let cells = hint_cells(state, 1.0);
             assert!(!cells.is_empty());
             for [x, y, w, h] in cells {
                 assert!(x >= panel[0] && y >= panel[1] && x + w <= panel[0] + panel[2] && y + h <= panel[1] + panel[3]);
@@ -580,20 +593,20 @@ fn draw_scene<G: piston_window::graphics::Graphics>(
             );
         }
     }
-    for cell in score_owner_cells() {
+    for cell in score_owner_cells(s) {
         rectangle([0.85, 1., 0.68, 1.], cell, t, g);
     }
     // Cover the ball and net before drawing the state, preserving legibility.
     if let Some(panel) = indicator_backing(game) {
         rectangle([0.047, 0.129, 0.118, 1.], panel, t, g);
     }
-    if let Some(panel) = hint_backing(game.state) {
+    if let Some(panel) = hint_backing(game.state, s) {
         rectangle([0.047, 0.129, 0.118, 1.], panel, t, g);
     }
     for cell in state_indicator_cells(game.state)
         .into_iter()
         .chain(winner_cells(game))
-        .chain(hint_cells(game.state))
+        .chain(hint_cells(game.state, s))
     {
         rectangle([0.85, 1., 0.68, 1.], cell, t, g);
     }
