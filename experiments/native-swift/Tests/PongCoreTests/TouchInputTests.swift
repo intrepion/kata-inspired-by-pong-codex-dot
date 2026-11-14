@@ -61,6 +61,32 @@ final class TouchInputTests: XCTestCase {
         }
     }
 
+    func testNonFiniteCoordinatesClearTargetAndPreserveGestureSuppression() {
+        for invalid in [Float.nan, Float.infinity, -Float.infinity] {
+            var game = Game(); game.start()
+            var touch = TouchInput()
+            touch.update(invalid, playing: true)
+            XCTAssertEqual(touch.axis(player: game.player), 0)
+            touch.update(100, playing: true)
+            XCTAssertEqual(touch.axis(player: game.player), -1)
+            touch.update(invalid, playing: true)
+            XCTAssertEqual(touch.axis(player: game.player), 0, "invalid coordinate must clear stale target")
+            let before = game.player
+            game.step(0.033, input: touch.axis(player: game.player))
+            XCTAssertEqual(game.player, before)
+            touch.update(100, playing: true)
+            XCTAssertEqual(touch.axis(player: game.player), -1, "valid coordinate can recover")
+
+            touch.end()
+            touch.update(invalid, playing: false)
+            touch.update(100, playing: true)
+            XCTAssertEqual(touch.axis(player: game.player), 0, "drag begun while paused stays suppressed")
+            touch.end()
+            touch.update(100, playing: true)
+            XCTAssertEqual(touch.axis(player: game.player), -1, "fresh drag works")
+        }
+    }
+
     func testPauseWithoutActiveGestureAllowsNextDrag() {
         var touch = TouchInput()
         touch.suppressActive()

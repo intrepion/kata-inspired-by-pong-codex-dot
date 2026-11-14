@@ -9,6 +9,11 @@ public struct TouchInput {
     public mutating func update(_ y: Float, playing: Bool) {
         active = true
         if !playing { suppressed = true }
+        guard y.isFinite else {
+            // Discard any previous target so invalid geometry cannot keep a paddle moving.
+            target = nil
+            return
+        }
         if !suppressed { target = y }
     }
 
