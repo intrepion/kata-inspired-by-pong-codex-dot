@@ -1,0 +1,27 @@
+name: Linux packaging tests
+on:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  packaging:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+      - name: Check prerequisites
+        run: |
+          command -v tar
+          command -v sha256sum
+          echo 'Linux tests run; Windows junction tests skip. Dioxus xdo tests skip on non-ARM64; its archive test also skips when the verified local archive is absent.'
+      - name: Run packaging suites
+        run: |
+          for suite in fyrox-state dioxus-local-xdo linux-portable notice-bundle; do
+            node "scripts/packaging/$suite.test.mjs" || exit $?
+          done
+          node experiments/sdl3/packaging/linux-portable.test.cjs
