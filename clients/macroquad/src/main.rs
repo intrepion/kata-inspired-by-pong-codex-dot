@@ -24,6 +24,26 @@ fn status_message(game: &Game) -> Option<&'static str> {
         State::Over => Some("Match over - Enter to restart"),
     }
 }
+fn apply_frame_actions(game: &mut Game, movement: &mut MovementGate, lost_focus: bool, actions: [bool; 5]) {
+    if lost_focus { return; }
+    if actions[0] || actions[4] {
+        if game.state == State::Paused { game.toggle_pause(); }
+        else if game.state != State::Playing { restart_game(game, movement); }
+    }
+    if actions[1] { restart_game(game, movement); }
+    if actions[2] { game.toggle_pause(); }
+    if actions[3] { game.pause(); }
+}
+fn apply_timed_actions(game: &mut Game, movement: &mut MovementGate, lost_focus: bool, actions: [bool; 5], accumulator: &mut f32, elapsed: f32) -> f32 {
+    let before = game.state;
+    apply_frame_actions(game, movement, lost_focus, actions);
+    if lost_focus || before != game.state || actions[1] {
+        *accumulator = 0.;
+        0.
+    } else {
+        elapsed.min(0.1)
+    }
+}
 fn movement_axis(game: &Game, gate: &mut MovementGate, held: [bool; 4], lost_focus: bool) -> f32 {
     let playing = game.state == State::Playing;
     let suppress = lost_focus || !playing || !gate.was_playing;
@@ -78,28 +98,18 @@ async fn main() {
     loop {
         macroquad::input::utils::repeat_all_miniquad_input(&mut focus, subscriber);
         let lost_focus = focus.lost;
+        let mut live_elapsed = 0.;
         if !scripted {
             if focus.lost {
                 g.pause();
                 accumulator = 0.;
                 focus.lost = false;
             }
-            if is_key_pressed(KeyCode::Enter) {
-                if g.state == State::Paused {
-                    g.toggle_pause()
-                } else if g.state != State::Playing {
-                    restart_game(&mut g, &mut movement)
-                }
-            }
-            if is_key_pressed(KeyCode::R) {
-                restart_game(&mut g, &mut movement)
-            }
-            if is_key_pressed(KeyCode::Space) {
-                g.toggle_pause()
-            }
-            if is_key_pressed(KeyCode::Escape) {
-                g.pause()
-            }
+            live_elapsed = apply_timed_actions(&mut g, &mut movement, lost_focus, [
+                is_key_pressed(KeyCode::Enter), is_key_pressed(KeyCode::R),
+                is_key_pressed(KeyCode::Space), is_key_pressed(KeyCode::Escape),
+                is_key_pressed(KeyCode::KpEnter),
+            ], &mut accumulator, get_frame_time());
         }
         let input = movement_axis(
             &g,
@@ -125,7 +135,7 @@ async fn main() {
         } else if let Some(demo) = &mut demo {
             demo.advance(&mut g, get_frame_time());
         } else {
-            accumulator += get_frame_time().min(0.1);
+            accumulator += live_elapsed;
             while accumulator >= 1. / 120. {
                 g.step(1. / 120., input);
                 accumulator -= 1. / 120.;
@@ -221,6 +231,57 @@ async fn main() {
 #[cfg(test)]
 mod movement_tests {
     use super::*;
+    #[test]
+    fn actions_discard_pretransition_time_and_partial_step() {
+        let mut game = Game::new(42); let mut gate = MovementGate::default(); let mut acc = 0.007;
+        for (actions, expected) in [
+            ([true,false,false,false,false], State::Playing),
+            ([false,false,true,false,false], State::Paused),
+            ([false,false,false,false,true], State::Playing),
+            ([false,true,false,false,false], State::Playing),
+        ] {
+            let elapsed = apply_timed_actions(&mut game, &mut gate, false, actions, &mut acc, 0.09);
+            assert_eq!(game.state, expected); assert_eq!(acc, 0., "old partial time survived");
+            assert_eq!(elapsed, 0., "pre-transition time survived"); acc = 0.007;
+        }
+        let elapsed = apply_timed_actions(&mut game, &mut gate, false, [false; 5], &mut acc, 0.02);
+        assert_eq!(acc, 0.007); assert_eq!(elapsed, 0.02);
+        let elapsed = apply_timed_actions(&mut game, &mut gate, false, [true,false,false,false,false], &mut acc, 0.02);
+        assert_eq!(acc, 0.007); assert_eq!(elapsed, 0.02, "Enter while playing does not restart");
+        let elapsed = apply_timed_actions(&mut game, &mut gate, true, [false,true,false,false,false], &mut acc, 0.09);
+        assert_eq!(acc, 0.); assert_eq!(elapsed, 0., "focus loss must discard elapsed time");
+    }
+    #[test]
+    fn both_enter_keys_start_resume_and_restart_once() {
+        for (main,keypad) in [(true,false),(false,true),(true,true)] {
+            let mut game=Game::new(42);let mut gate=MovementGate::default();let actions=[main,false,false,false,keypad];
+            apply_frame_actions(&mut game,&mut gate,false,actions);assert_eq!(game.state,State::Playing);
+            game.pause();apply_frame_actions(&mut game,&mut gate,false,actions);assert_eq!(game.state,State::Playing);
+            game.state=State::Over;game.scores=[7,2];apply_frame_actions(&mut game,&mut gate,false,actions);assert_eq!(game.state,State::Playing);assert_eq!(game.scores,[0,0]);
+        }
+    }
+    #[test]
+    fn keypad_resume_keeps_held_movement_blocked_until_release() {
+        for i in 0..4 {
+            let mut game=Game::new(42);let mut gate=MovementGate::default();
+            apply_frame_actions(&mut game,&mut gate,false,[false,false,false,false,true]);
+            let mut held=[false;4];movement_axis(&game,&mut gate,held,false);held[i]=true;assert_ne!(movement_axis(&game,&mut gate,held,false),0.);
+            game.pause();assert_eq!(movement_axis(&game,&mut gate,held,false),0.);
+            apply_frame_actions(&mut game,&mut gate,false,[false,false,false,false,true]);assert_eq!(movement_axis(&game,&mut gate,held,false),0.);
+            held[i]=false;movement_axis(&game,&mut gate,held,false);held[i]=true;assert_ne!(movement_axis(&game,&mut gate,held,false),0.);
+        }
+    }
+    #[test]
+    fn focus_loss_frame_cannot_restart_or_resume_from_queued_actions() {
+        for i in [0,1,2,4] {
+            let mut game=Game::new(42);game.start();game.pause();let mut gate=MovementGate::default();
+            let mut actions=[false;5];actions[i]=true;
+            apply_frame_actions(&mut game,&mut gate,true,actions);
+            assert_eq!(game.state,State::Paused,"action {i} resumed on focus-loss frame");
+            apply_frame_actions(&mut game,&mut gate,false,actions);
+            assert_eq!(game.state,State::Playing,"fresh action {i} should work on a later frame");
+        }
+    }
     #[test]
     fn status_names_winner_and_clears_after_restart() {
         let mut game = Game::new(42);
