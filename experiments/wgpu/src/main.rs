@@ -95,6 +95,19 @@ fn handle_focused_key(
     focused && handle_key(game, movement, key, pressed, repeat)
 }
 
+fn handle_live_key(game: &mut Game, movement: &mut MovementInput, focused: bool, key: KeyCode, pressed: bool, repeated: bool, acc: &mut f32, last: &mut Instant, now: Instant) -> bool {
+    let before = game.state;
+    let quit = handle_focused_key(game, movement, focused, key, pressed, repeated);
+    let restart = focused && pressed && !repeated && matches!(key, KeyCode::Enter | KeyCode::NumpadEnter | KeyCode::KeyR);
+    if before != game.state || restart { *acc = 0.; *last = now; }
+    quit
+}
+fn handle_live_focus(game: &mut Game, movement: &mut MovementInput, focused: bool, acc: &mut f32, last: &mut Instant, now: Instant) {
+    if !focused { movement.clear(); game.pause(); }
+    *acc = 0.;
+    *last = now;
+}
+
 struct App {
     focused: bool,
     benchmarking: bool,
@@ -132,10 +145,8 @@ impl ApplicationHandler for App {
             WindowEvent::CloseRequested => e.exit(),
             WindowEvent::Focused(focused) => {
                 self.focused = focused;
-                if !focused && self.demo.is_none() && !self.benchmarking {
-                    self.movement.clear();
-                    self.game.pause();
-                    self.acc = 0.0;
+                if self.demo.is_none() && !self.benchmarking {
+                    handle_live_focus(&mut self.game, &mut self.movement, focused, &mut self.acc, &mut self.last, Instant::now());
                 }
             }
             WindowEvent::Resized(s) => {
@@ -153,13 +164,16 @@ impl ApplicationHandler for App {
             {
                 let pressed = event.state == ElementState::Pressed;
                 if let PhysicalKey::Code(k) = event.physical_key {
-                    if handle_focused_key(
+                    if handle_live_key(
                         &mut self.game,
                         &mut self.movement,
                         self.focused,
                         k,
                         pressed,
                         event.repeat,
+                        &mut self.acc,
+                        &mut self.last,
+                        Instant::now(),
                     ) {
                         e.exit();
                     }
@@ -266,6 +280,61 @@ mod benchmark_tests {
 #[cfg(test)]
 mod movement_tests {
     use super::*;
+    #[test]
+    fn focus_changes_discard_stalled_time_and_clear_movement() {
+        use std::time::Duration;
+        let mut game=Game::new(42);game.start();let mut movement=MovementInput::default();movement.key(KeyCode::KeyW,true);
+        let base=Instant::now();let mut last=base;let mut acc=0.007;let lost=base+Duration::from_millis(50);
+        handle_live_focus(&mut game,&mut movement,false,&mut acc,&mut last,lost);
+        assert_eq!(game.state,State::Paused);assert_eq!(movement.axis(),0.);assert_eq!(acc,0.);assert_eq!(last,lost);
+        let regained=lost+Duration::from_secs(4);
+        handle_live_focus(&mut game,&mut movement,true,&mut acc,&mut last,regained);
+        assert_eq!(game.state,State::Paused);assert_eq!(acc,0.);assert_eq!(last,regained);
+    }
+    #[test]
+    fn action_transitions_discard_old_clock_time() {
+        use std::time::Duration;
+        let mut game=Game::new(42);let mut movement=MovementInput::default();let base=Instant::now();let mut last=base;let mut acc=0.007;
+        let start=base+Duration::from_secs(1);
+        handle_live_key(&mut game,&mut movement,true,KeyCode::Enter,true,false,&mut acc,&mut last,start);
+        assert_eq!(game.state,State::Playing);assert_eq!(acc,0.);assert_eq!(last,start);
+        acc=0.007;let pause=start+Duration::from_millis(20);
+        handle_live_key(&mut game,&mut movement,true,KeyCode::Space,true,false,&mut acc,&mut last,pause);
+        assert_eq!(game.state,State::Paused);assert_eq!(acc,0.);assert_eq!(last,pause);
+        acc=0.006;let resume=pause+Duration::from_secs(3);
+        handle_live_key(&mut game,&mut movement,true,KeyCode::Space,true,false,&mut acc,&mut last,resume);
+        assert_eq!(game.state,State::Playing);assert_eq!(acc,0.);assert_eq!(last,resume);
+        acc=0.006;let restart=resume+Duration::from_millis(10);
+        handle_live_key(&mut game,&mut movement,true,KeyCode::NumpadEnter,true,false,&mut acc,&mut last,restart);
+        assert_eq!(acc,0.);assert_eq!(last,restart);
+        acc=0.004;
+        handle_live_key(&mut game,&mut movement,true,KeyCode::KeyW,true,false,&mut acc,&mut last,restart+Duration::from_millis(1));
+        handle_live_key(&mut game,&mut movement,false,KeyCode::KeyR,true,false,&mut acc,&mut last,restart+Duration::from_millis(2));
+        handle_live_key(&mut game,&mut movement,true,KeyCode::KeyR,true,true,&mut acc,&mut last,restart+Duration::from_millis(3));
+        assert_eq!(acc,0.004);assert_eq!(last,restart,"ignored or movement input must not reset timing");
+    }
+    #[test]
+    fn escape_repeat_behavior_is_preserved() {
+        let mut game = Game::new(42);
+        let mut movement = MovementInput::default();
+        assert!(!handle_focused_key(&mut game, &mut movement, false, KeyCode::Escape, true, false));
+        assert!(handle_focused_key(&mut game, &mut movement, true, KeyCode::Escape, true, true));
+        assert!(!handle_focused_key(&mut game, &mut movement, true, KeyCode::Escape, false, false));
+        assert!(handle_focused_key(&mut game, &mut movement, true, KeyCode::Escape, true, false));
+    }
+    #[test]
+    fn repeated_movement_after_focus_loss_cannot_rearm() {
+        for key in [KeyCode::KeyW,KeyCode::ArrowUp,KeyCode::KeyS,KeyCode::ArrowDown] {
+            let mut game=Game::new(42);game.start();let mut movement=MovementInput::default();
+            handle_focused_key(&mut game,&mut movement,true,key,true,false);assert_ne!(movement.axis(),0.);
+            game.pause();movement.clear();
+            handle_focused_key(&mut game,&mut movement,false,key,true,true);assert_eq!(movement.axis(),0.);
+            handle_focused_key(&mut game,&mut movement,true,KeyCode::Space,true,false);assert_eq!(game.state,State::Playing);
+            handle_focused_key(&mut game,&mut movement,true,key,true,true);assert_eq!(movement.axis(),0.,"repeat {key:?}");
+            handle_focused_key(&mut game,&mut movement,true,key,false,false);
+            handle_focused_key(&mut game,&mut movement,true,key,true,false);assert_ne!(movement.axis(),0.);
+        }
+    }
     #[test]
     fn title_identifies_winner_and_resets() {
         use pong_core::BALL;
