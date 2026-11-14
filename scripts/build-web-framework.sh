@@ -7,7 +7,7 @@ bindgen="${WASM_BINDGEN:-wasm-bindgen}"
 target="${CARGO_TARGET_DIR:-$root/experiments/yew/target}"
 args=()
 if [[ "$name" == dioxus ]]; then args+=(--no-default-features --features web); fi
-cargo build --manifest-path "$root/experiments/$name/Cargo.toml" --target wasm32-unknown-unknown --target-dir "$target" -j 1 "${args[@]}"
+cargo build --locked --manifest-path "$root/experiments/$name/Cargo.toml" --target wasm32-unknown-unknown --target-dir "$target" -j 1 "${args[@]}"
 mkdir -p "$root/experiments/$name/dist"
 "$bindgen" "$target/wasm32-unknown-unknown/debug/pong-${name}.wasm" --target web --out-dir "$root/experiments/$name/dist" --out-name app
 cp "$root/clients/web-wasm/favicon.svg" "$root/experiments/$name/dist/favicon.svg"
