@@ -1,0 +1,9 @@
+# Blue Engine held-fix Mac relocated package check
+
+On 2026-11-13, the existing local macOS ARM64 Release pilot archive from the [held-input recheck](../BLUE-HELD-PAUSE-FIX.md) was extracted into a separate directory. The archive SHA-256 was `1a04c380fa5d0b0715bc8490f742dbc501a495e0985c65d70f964fdb51f42d76`; the extracted executable SHA-256 `0afe7fd41d98f0faba4e5e99a0e60ef2534e77d6716d6fcb0751c18efc0e5397` matched its manifest and the historical tested binary. The extracted Info.plist passed `plutil -lint`.
+
+The extracted binary's bounded scripted run produced 13 telemetry lines matching the contact-timing model reference byte-for-byte and reached tick 1440 with `finished: true`. Blue's native scripted capture remains unsupported; this is state/model replay, not image evidence.
+
+Separately, supported desktop automation opened the extracted app, sent Return and observed Playing, then Space and observed Paused. R was followed by Playing with a 0–1 score when observed; the delay means a 0–0 reset was not observed. The test window was closed, and the app no longer appeared in the running-app inventory. These are sequential automated actions, not physical input, held-across-pause or a full-match qualification.
+
+The historical build source was `f680d1075e6ee6575be107273a8ee8758711a7a3`. Its Blue frontend source, manifest and lockfile, shared core and scenario source, and smoke scenario have identical Git blobs at checkpoint `174ae810dcabbe67034fc9bc3006b10ed7c3f08b`; this is not a new build or a guarantee that every build input and dependency is unchanged. Extracted files and replay remain at `/tmp/pong-blue-held-relocated-20261113-v1`; prior archives were preserved. Signing, notarization, complete dependency notices, downloaded/quarantined behavior, clean-machine operation and distribution remain open.

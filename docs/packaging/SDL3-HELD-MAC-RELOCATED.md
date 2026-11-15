@@ -1,0 +1,9 @@
+# SDL3 held-fix Mac relocated package check
+
+On 2026-11-13, the existing macOS ARM64 Release pilot archive from the [held-input recheck](../SDL3-PAUSE-HELD-INPUT-FIX.md) was extracted into a separate directory. Archive SHA-256: `e4b1a36f2040085609b6ba898491949881fe7b8c909cec55386c7b343ecd2e80`. The extracted executable SHA-256 `86b03c3e482d42e073f0e136010be620ac831f32e96079e863640cad8cc8ef7b` matched its manifest and historical tested binary; its Info.plist passed `plutil -lint`.
+
+The extracted binary's bounded scripted run exited 0, produced 13 telemetry records matching the contact-timing model reference byte-for-byte, and exported six app-owned PNGs. The inspected tick-480 image shows the score, court, paddles, ball and pause bars. This is scripted state/model and app-owned capture evidence, not physical input.
+
+Separately, supported desktop automation opened the extracted app and used 300 ms key presses: Space produced Playing, Space produced Paused, R produced 0–0 Playing, and Escape closed the app. These are sequential automated actions, not physical keyboard input, held-across-pause or a full-match qualification.
+
+The historical build source was `765075a7b68097a82d33f6364e61cda3dd5411e8`. Its SDL3 frontend source and lockfile, shared low-level controller source, shared core and scenario source, and smoke scenario have identical Git blobs at checkpoint `13afb89655f462bf879b94877f4fc308496700b5`. The current SDL3 manifest differs by a subsequently added MIT license declaration; no dependency changes were found in that manifest comparison. This is not a new build or a guarantee that every build input and dependency is unchanged. Extracted files and replay remain at `/tmp/pong-sdl3-pause-relocated-20261113-v1`; earlier archives and artifacts were preserved. Signing, notarization, complete dependency notices, downloaded/quarantined behavior, clean-machine operation and distribution remain open.

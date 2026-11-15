@@ -1,0 +1,50 @@
+# Tauri Linux ARM64 notice feasibility
+
+On 2026-11-13, Omarchy generated offline, locked Cargo metadata at revision `83ab151f854db9c6ddd076c688b12603a328a09b`, filtered to `aarch64-unknown-linux-gnu`. Traversing the resolved node dependencies from `pong-tauri` yielded 291 packages. The existing collector found no conventional notice file or declared `license-file` for five resolved packages:
+
+| Package | Manifest declaration |
+| --- | --- |
+| `alloc-stdlib` 0.3.0 | BSD-3-Clause |
+| `dlopen2` 0.8.2 | MIT |
+| `dlopen2_derive` 0.4.3 | MIT |
+| `libappindicator-sys` 0.9.0 | Apache-2.0 OR MIT |
+| `selectors` 0.38.0 | MPL-2.0 |
+
+These are missing-file findings, not determinations that notices do not exist or that redistribution is unlawful. Cargo metadata covers the resolved dependency graph, including build dependencies and potentially workspace-unified features; it does not establish which code is in the binary or inventory system libraries. The workspace lockfile SHA-256 was `660e386ac75417f47920c4809c755550e997bbbb3d9ae6178ae23b7971f57d06`. The lockfile and Tauri/core/scenario source paths were unchanged from the [previously qualified binary's source](../OMARCHY-TAURI-CONTACT-TIMING.md). The prepared notice text SHA-256 is `434bc1483f35d9221cff1fdddf591684594d6e9eb1a9a2224f34d48018c1b935`, with index SHA-256 `fe072dcf903a24ccd1919f69f601b9192b09455632d6b143d232e382a3e2f2a9`; the local files remain under `/tmp/pong-tauri-notices-*arm64-20261113.*`.
+
+Passing this incomplete real bundle to the Linux packager was rejected before output-directory creation; the notice and portable-package test files also passed. The existing [portable pilot](TAURI-LINUX-PILOT.md) was not changed or overwritten. Review exact-version upstream sources and any embedded notices for the five gaps, as well as native and system libraries, before preparing a notice-bearing package. This scan is not legal clearance, a complete attribution review, a clean-machine install or a release qualification.
+
+## Exact-version source follow-up
+
+The cached `.crate` archives for all five package versions match their checksums in `Cargo.lock`. Each crate's `.cargo_vcs_info.json` identifies a revision and package path. The connected GitHub app retrieved the corresponding upstream `lib.rs` for each package at that revision; each matched the cached crate's file byte-for-byte. This checks one source file per crate, not the entire archive or every notice.
+
+| Package | Recorded upstream revision and verified notice evidence |
+| --- | --- |
+| `alloc-stdlib` 0.3.0 | [`0a81fd6928ea3b33c8cd484aa4575d50ffb98012`](https://github.com/dropbox/rust-alloc-no-stdlib/tree/0a81fd6928ea3b33c8cd484aa4575d50ffb98012); the upstream root [LICENSE](https://github.com/dropbox/rust-alloc-no-stdlib/blob/0a81fd6928ea3b33c8cd484aa4575d50ffb98012/LICENSE) was retrieved. Its package manifest also matches the archive's original manifest. |
+| `dlopen2` 0.8.2 and `dlopen2_derive` 0.4.3 | Both record [`cc80e4a0a90d499b677fdf7743699b4b3a43a989`](https://github.com/OpenByteDev/dlopen2/tree/cc80e4a0a90d499b677fdf7743699b4b3a43a989); the common upstream root [LICENSE](https://github.com/OpenByteDev/dlopen2/blob/cc80e4a0a90d499b677fdf7743699b4b3a43a989/LICENSE) was retrieved. Their upstream manifests differ from the packaged `Cargo.toml.orig`, so only the corresponding source files are asserted byte-identical. |
+| `libappindicator-sys` 0.9.0 | The matching upstream `sys/Cargo.toml` and `sys/src/lib.rs` identify [`eafd1e3682a1247f595410266091e9684021cb6f`](https://github.com/tauri-apps/libappindicator-rs/tree/eafd1e3682a1247f595410266091e9684021cb6f). Root [MIT](https://github.com/tauri-apps/libappindicator-rs/blob/eafd1e3682a1247f595410266091e9684021cb6f/LICENSE-MIT) and [Apache](https://github.com/tauri-apps/libappindicator-rs/blob/eafd1e3682a1247f595410266091e9684021cb6f/LICENSE-APACHE) texts were retrieved. The published manifest does not itself specify a repository URL. |
+| `selectors` 0.38.0 | The matching manifest and `selectors/lib.rs` identify [`572ecba2d1600e7c3d490586692a209faf703baa`](https://github.com/servo/stylo/tree/572ecba2d1600e7c3d490586692a209faf703baa). Its source header refers to MPL 2.0. A request for root `LICENSE` at that revision returned 404; the web tree view was restricted, so this does not prove that no license text exists elsewhere. |
+
+The collector still reports all five: it only reads notice files contained in package roots and has not been changed to import upstream files. These upstream texts are leads for a separately reviewed, hash-pinned inclusion approach, not a complete audit or legal clearance. Source-level MPL obligations, bundled/native code, system libraries and all other distribution requirements remain open.
+
+## Pinned upstream notice preparation
+
+The collector now includes the four retrieved upstream files for the exact four registry package/version pairs above. The original text and copyright notices are preserved under `scripts/packaging/audited-notices/`; the notice index records each exact upstream URL and SHA-256. Each rule checks the crate's recorded VCS revision and subdirectory and hashes the `lib.rs` previously compared against that upstream revision; it also hashes the local notice file. Containment and symlink checks apply to both sources. These checks verify the identified source file, not every byte in the extracted crate. Changed source, revision or notice text fails collection rather than substituting guessed text. Both libappindicator license alternatives are retained.
+
+The four local notice files were compared byte-for-byte again with the retrieved exact-revision upstream files. Focused synthetic tests passed for changed revisions, source and notice hashes, path escapes, symlinks, and package/version/source selection; the portable and notice test files passed. Applying the updated collector to the same 291-node ARM64 graph leaves only `selectors@0.38.0` without a discovered notice. Notice bundle SHA-256 is `9d7bea2179840e95f559a999ea2cb397351b7ec2921d2b5c60a32796ff13665e`; index SHA-256 is `43d59fb9d628230ba093482adabe3b07fb7ebe9e3cc851533ed4456fa2b4837c`. Local outputs remain at `/tmp/pong-tauri-pinned-notices-20261113.txt` and `/tmp/pong-tauri-pinned-index-20261113.json`. The packager rejected this still-incomplete real bundle before creating an output directory.
+
+The selector finding and separate source, native and system-library obligations remain unresolved. This is preparation evidence, not legal clearance or release qualification; no new release package was produced.
+
+## Selectors MPL text and local archive
+
+The published `selectors` 0.38.0 `lib.rs` header points to Mozilla's MPL 2.0. The collector now includes a byte-for-byte copy of the MPL 2.0 text from Mozilla's [openbadges-bakery repository at revision `3057b06f75997c22ad4f039960dd2688578c3d32`](https://github.com/mozilla/openbadges-bakery/blob/3057b06f75997c22ad4f039960dd2688578c3d32/LICENSE-MPL-2.0). This is Mozilla's copy of the source-referenced license text, not a claim that it was found in the Stylo repository or published selectors crate. The collector requires the exact registry package/version, its recorded selectors VCS revision/subdirectory, and the previously upstream-matched root `lib.rs` SHA-256 `d54c6e13e9e952dac17d209171df8657e3cae93beaddace4906150cdec8d02e9`; it checks the local MPL copy SHA-256 `fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85` and containment. A source-path override is checked by the same containment rules. The copied text matched the pinned Mozilla file byte-for-byte. Notice and portable tests passed, including the override path and package/version selection checks.
+
+The same filtered 291-package ARM64 metadata graph now has zero missing discovered notice files; this is not an all-platform graph or a complete legal inventory. The generated notice text SHA-256 is `228e3b98d0d91002d3df1fc945f238c1c4e487241b68fad9246cbe1298829dec`, and index SHA-256 is `31bc3d1d0581ff0786850b23fbd5cff7b4824ed5c2dcc38b56a52bcd192016b6`. A local notice-bearing archive using the previously qualified binary was created with SHA-256 `a3d4f3918072ec56830ed87915dd733dda3ee12d16db3e242577362afd14081e` (3,006,017 bytes). Archive checksum and all six extracted manifest entries passed. The existing binary's earlier relocated replay was not repeated. Local artifacts remain in `/tmp/pong-tauri-mpl-*20261113*`.
+
+Zero missing files does not establish compliance, linked-code attribution, clean-machine compatibility, source availability or a public release. MPL source-distribution obligations and all other bundled/native/system-library requirements still require review; no legal clearance is claimed.
+
+## Selectors source-reference pilot
+
+On 2026-11-13, a local source-reference archive was prepared containing the original cached `selectors-0.38.0.crate` (SHA-256 `8adfa1c298912827b8a28b223b3b874357397ae706e6190acd9bf28cee99114d`, matching `Cargo.lock`), the pinned Mozilla MPL 2.0 text described above, a scope README and `SHA256SUMS`. Inspection of the crate found 22 regular files with paths confined under `selectors-0.38.0/`; its `lib.rs` SHA-256 matched the previously verified upstream source hash. The outer tar.gz SHA-256 is `a62a7704ba11277457aec3e98a1d9d8755bd4b786e66cfa563b9bc4280f5a0b5` (75,855 bytes). All three listed checksums passed both in the staging directory and after separate extraction. Artifacts remain under `/tmp/pong-tauri-selectors-source-20261113*` and `/tmp/pong-tauri-selectors-source-extracted-20261113/`.
+
+This demonstrates local possession and integrity of the original published source archive for one dependency. It is not a complete corresponding-source package for the application and its dependencies, a public source offer, proof that MPL or other distribution obligations are satisfied, legal clearance or release qualification. No release was published and no prior artifacts were removed. Before distribution, review the source, changes, availability and notice obligations for all applicable dependencies and native/system components.

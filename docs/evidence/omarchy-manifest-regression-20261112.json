@@ -1,0 +1,114 @@
+{
+  "testedCommit": "0cbe38f8da6f57173c5a53e692eedbf5b01ed573",
+  "date": "2026-11-12",
+  "host": "Omarchy ARM64",
+  "sharedTestsPassed": 16,
+  "adapters": {
+    "macroquad": {
+      "lockedOfflineBuild": "pass",
+      "strictClippy": "pass",
+      "nativeExit": 0,
+      "baselineRecords": 13,
+      "baselineByteIdentical": true,
+      "inspectedTicks": [
+        480,
+        1440
+      ],
+      "images": [
+        {
+          "file": "tick-0120.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "c63d692330fdc1c46af761800c6dc465a1e5d991c26e9e7bb29810b25e3d2399"
+        },
+        {
+          "file": "tick-0240.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "4f5a41d5885edb663a0b4421bcff019d578a12fe78265c39cb1e9c3eed19916e"
+        },
+        {
+          "file": "tick-0480.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "0e86c21fe7866208f670061bca7c98aed0e134451a7ec13a588bb46019781db8"
+        },
+        {
+          "file": "tick-0600.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "fd6f113a771c50440af6774976b369e981d593bb6e25c00969b1f0ea5e3cb603"
+        },
+        {
+          "file": "tick-1320.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "355678a75026fd484f9efbd98f09a48c5481990af318c83e38d25327355294ca"
+        },
+        {
+          "file": "tick-1440.png",
+          "width": 1474,
+          "height": 918,
+          "sha256": "e44c4711c7f852eda1ee6e5ce7b6ec67e4fa12e8f974f008401e83a930f2b3d8"
+        }
+      ]
+    },
+    "piston": {
+      "lockedOfflineBuild": "pass",
+      "strictClippy": "pass",
+      "nativeExit": 0,
+      "baselineRecords": 13,
+      "baselineByteIdentical": true,
+      "inspectedTicks": [
+        480,
+        1440
+      ],
+      "images": [
+        {
+          "file": "tick-0120.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "6fbffee273dd2b45594e952a1ae67d6e88a0061348f415d1fdb4ef32375b2019"
+        },
+        {
+          "file": "tick-0240.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "f1f58a0f403690035a619fd5a1c66f2c383c832c2e11f629daee49834cadd82d"
+        },
+        {
+          "file": "tick-0480.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "b05c66504b17badc42652a59c657b94b62957e8583e120030565adecbc68f592"
+        },
+        {
+          "file": "tick-0600.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "44183cbe6c96958c84b0f8fc95640f846c8bea090352786f7037b680868a3bf2"
+        },
+        {
+          "file": "tick-1320.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "bb8cf47397e7afb69756d026b94283b62c5dbf03c79d0a2fa98c4904c0bcb96e"
+        },
+        {
+          "file": "tick-1440.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "d7b510db3b4279468f513fa233784542619494edab53ec23e7781b1a86bd1226"
+        }
+      ]
+    }
+  },
+  "limits": [
+    "No real keyboard/focus/touch/smooth-motion or compositor verification",
+    "Piston PNG is the same scene rendered into its own offscreen target, not swapchain",
+    "Macroquad uses supported application framebuffer export",
+    "No benchmark results or packaging changes"
+  ],
+  "wasm32TargetCheck": "locked/offline pass",
+  "bevyLockedOfflineBuild": "pass; no new native run in this batch"
+}

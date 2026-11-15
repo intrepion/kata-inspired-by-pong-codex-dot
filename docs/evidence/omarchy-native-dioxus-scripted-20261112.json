@@ -1,0 +1,52 @@
+{
+  "source_base": "a8ad64a",
+  "platform": "Omarchy ARM64",
+  "exit_code": 0,
+  "records": 13,
+  "baseline_identical": true,
+  "final_tick": 1440,
+  "build": "pass",
+  "strict_clippy": "pass",
+  "common_tests": 4,
+  "evidence_kind": "Own SVG source only, no screenshot or presentation claim",
+  "visual_or_real_input_QA": false,
+  "local_link_dependency": {
+    "package": "official Arch Linux ARM xdotool4.20260303.1-1",
+    "extracted": "usr/lib/libxdo.so* only",
+    "package_sha256": "0f8e61d3aa5c89e18b589fecfea2da1ff11defef8ca17b8ed237e5f5b8723268",
+    "signature": "verified Arch Linux ARM Build System, fingerprint68B3537F39A313B3E574D06777193F152BDBE6A6",
+    "system_install_or_input_tool_used": false
+  },
+  "artifacts": [
+    {
+      "file": "tick-0120.svg",
+      "sha256": "e7350e6fe31e45c48d94392ed42d3b02c4bcfe51abe5f6399e0debf32519728b",
+      "geometry_and_scores_match_state": true
+    },
+    {
+      "file": "tick-0240.svg",
+      "sha256": "7ccf7ce2541d42b45bd0e5cdccf0611a032016b699331ed00cd70acdab57f6e8",
+      "geometry_and_scores_match_state": true
+    },
+    {
+      "file": "tick-0480.svg",
+      "sha256": "32ab90f0eb7b464425436a6ab1e2ae29bf8f688199eac1328a7125be51d0e64d",
+      "geometry_and_scores_match_state": true
+    },
+    {
+      "file": "tick-0600.svg",
+      "sha256": "4910adff5f62ee04b8b1d2ccf88eb50eb3ae5d53dec2259b6006eb4c3f4ae53f",
+      "geometry_and_scores_match_state": true
+    },
+    {
+      "file": "tick-1320.svg",
+      "sha256": "bb21c5f8316f7a7c71d98bbc37f259fd485c6a6142085f199cf4637b46d1dfda",
+      "geometry_and_scores_match_state": true
+    },
+    {
+      "file": "tick-1440.svg",
+      "sha256": "1e8717d1f5549c274240e0f0779c9858f6178c09eab5e5fba898977903df03c6",
+      "geometry_and_scores_match_state": true
+    }
+  ]
+}

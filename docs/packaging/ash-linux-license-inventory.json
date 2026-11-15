@@ -1,0 +1,678 @@
+{
+  "schema": 1,
+  "scope": "Cargo resolved metadata graph; may include build/optional dependencies; not a linked-binary inventory",
+  "limitations": [
+    "SPDX declarations are not verified license texts",
+    "Bundled native sources and their third-party notices need separate inspection",
+    "Platform runtime libraries are not inventoried",
+    "No redistribution clearance implied"
+  ],
+  "packages": [
+    {
+      "name": "ab_glyph",
+      "version": "0.2.32",
+      "license": "Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "ab_glyph_rasterizer",
+      "version": "0.1.10",
+      "license": "Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "adler2",
+      "version": "2.0.1",
+      "license": "0BSD OR MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "ahash",
+      "version": "0.8.12",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "arrayref",
+      "version": "0.3.9",
+      "license": "BSD-2-Clause",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "arrayvec",
+      "version": "0.7.8",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "as-raw-xcb-connection",
+      "version": "1.0.1",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "ash",
+      "version": "0.38.0+1.3.281",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "ash-window",
+      "version": "0.13.0",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "bitflags",
+      "version": "1.3.2",
+      "license": "MIT/Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "bitflags",
+      "version": "2.13.2",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "bytemuck",
+      "version": "1.25.2",
+      "license": "Zlib OR Apache-2.0 OR MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "calloop",
+      "version": "0.13.0",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "calloop-wayland-source",
+      "version": "0.3.0",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "cc",
+      "version": "1.11.1",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "cfg_aliases",
+      "version": "0.2.2",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "cfg-if",
+      "version": "1.0.5",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "crc32fast",
+      "version": "1.5.5",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "cursor-icon",
+      "version": "1.2.0",
+      "license": "MIT OR Apache-2.0 OR Zlib",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "dlib",
+      "version": "0.5.3",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "downcast-rs",
+      "version": "1.2.1",
+      "license": "MIT/Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "dpi",
+      "version": "0.1.2",
+      "license": "Apache-2.0 AND MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "errno",
+      "version": "0.3.14",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "fdeflate",
+      "version": "0.3.7",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "find-msvc-tools",
+      "version": "0.1.15",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "flate2",
+      "version": "1.1.11",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "gethostname",
+      "version": "1.1.0",
+      "license": "Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "getrandom",
+      "version": "0.3.4",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "jobserver",
+      "version": "0.1.35",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "libc",
+      "version": "0.2.191",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "libloading",
+      "version": "0.8.9",
+      "license": "ISC",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "linux-raw-sys",
+      "version": "0.12.1",
+      "license": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "linux-raw-sys",
+      "version": "0.4.15",
+      "license": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "log",
+      "version": "0.4.35",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "memchr",
+      "version": "2.8.3",
+      "license": "Unlicense OR MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "memmap2",
+      "version": "0.9.12",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "miniz_oxide",
+      "version": "0.8.9",
+      "license": "MIT OR Zlib OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "miniz_oxide",
+      "version": "0.9.1",
+      "license": "MIT OR Zlib OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "once_cell",
+      "version": "1.21.4",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "owned_ttf_parser",
+      "version": "0.25.1",
+      "license": "Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "percent-encoding",
+      "version": "2.3.2",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "pin-project-lite",
+      "version": "0.2.17",
+      "license": "Apache-2.0 OR MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "pkg-config",
+      "version": "0.3.34",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "png",
+      "version": "0.17.16",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "polling",
+      "version": "3.11.0",
+      "license": "Apache-2.0 OR MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "pong-ash",
+      "version": "0.1.0",
+      "license": "MIT",
+      "origin": "local",
+      "has_license_file": false
+    },
+    {
+      "name": "pong-benchmark",
+      "version": "0.1.0",
+      "license": "MIT",
+      "origin": "local",
+      "has_license_file": false
+    },
+    {
+      "name": "pong-core",
+      "version": "0.1.0",
+      "license": "MIT",
+      "origin": "local",
+      "has_license_file": false
+    },
+    {
+      "name": "pong-low-level-common",
+      "version": "0.1.0",
+      "license": "MIT",
+      "origin": "local",
+      "has_license_file": false
+    },
+    {
+      "name": "pong-scenario",
+      "version": "0.1.0",
+      "license": "MIT",
+      "origin": "local",
+      "has_license_file": false
+    },
+    {
+      "name": "proc-macro2",
+      "version": "1.0.107",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "quick-xml",
+      "version": "0.41.0",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "quote",
+      "version": "1.0.47",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "raw-window-handle",
+      "version": "0.6.2",
+      "license": "MIT OR Apache-2.0 OR Zlib",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "rustix",
+      "version": "0.38.44",
+      "license": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "rustix",
+      "version": "1.1.6",
+      "license": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "scoped-tls",
+      "version": "1.0.1",
+      "license": "MIT/Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "sctk-adwaita",
+      "version": "0.10.1",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "serde",
+      "version": "1.0.229",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "serde_core",
+      "version": "1.0.229",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "shlex",
+      "version": "2.0.1",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "simd-adler32",
+      "version": "0.3.10",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "slab",
+      "version": "0.4.12",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "smallvec",
+      "version": "1.16.5",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "smithay-client-toolkit",
+      "version": "0.19.2",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "smol_str",
+      "version": "0.2.2",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "strict-num",
+      "version": "0.1.1",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "syn",
+      "version": "2.0.119",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "thiserror",
+      "version": "1.0.69",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "thiserror-impl",
+      "version": "1.0.69",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "tiny-skia",
+      "version": "0.11.4",
+      "license": "BSD-3-Clause",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "tiny-skia-path",
+      "version": "0.11.4",
+      "license": "BSD-3-Clause",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "tracing",
+      "version": "0.1.44",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "tracing-core",
+      "version": "0.1.36",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "ttf-parser",
+      "version": "0.25.1",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "unicode-ident",
+      "version": "1.0.27",
+      "license": "(MIT OR Apache-2.0) AND Unicode-3.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "version_check",
+      "version": "0.9.5",
+      "license": "MIT/Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "wayland-backend",
+      "version": "0.3.17",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "wayland-client",
+      "version": "0.31.15",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "wayland-csd-frame",
+      "version": "0.3.0",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "wayland-cursor",
+      "version": "0.31.14",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "wayland-protocols",
+      "version": "0.32.13",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "wayland-protocols-plasma",
+      "version": "0.3.12",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "wayland-protocols-wlr",
+      "version": "0.3.12",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "wayland-scanner",
+      "version": "0.31.11",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "wayland-sys",
+      "version": "0.31.11",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "winit",
+      "version": "0.30.13",
+      "license": "Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "x11-dl",
+      "version": "2.21.0",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "x11rb",
+      "version": "0.13.2",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "x11rb-protocol",
+      "version": "0.13.2",
+      "license": "MIT OR Apache-2.0",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "xcursor",
+      "version": "0.3.11",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "xkbcommon-dl",
+      "version": "0.4.2",
+      "license": "MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "xkeysym",
+      "version": "0.2.1",
+      "license": "MIT OR Apache-2.0 OR Zlib",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "zerocopy",
+      "version": "0.8.63",
+      "license": "BSD-2-Clause OR Apache-2.0 OR MIT",
+      "origin": "registry",
+      "has_license_file": false
+    },
+    {
+      "name": "zlib-rs",
+      "version": "0.6.8",
+      "license": "Zlib",
+      "origin": "registry",
+      "has_license_file": false
+    }
+  ],
+  "missing_license_declarations": []
+}

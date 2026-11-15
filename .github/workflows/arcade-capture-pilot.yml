@@ -28,6 +28,7 @@ jobs:
           node --test tests/game.test.js
           mkdir capture-site
           cp index.html style.css game.js capture-site/
+          cp -R scenarios capture-site/
       - name: Capture real gameplay
         env:
           CAPTURE_OUTPUT: capture-output

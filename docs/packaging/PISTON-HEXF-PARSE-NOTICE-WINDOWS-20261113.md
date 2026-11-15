@@ -1,0 +1,7 @@
+# Piston Windows notice follow-up: hexf-parse
+
+The retained Windows Piston resolved-graph inventory flags `hexf-parse@0.2.1` for having no conventional notice file. Its cached published crate declares `CC0-1.0` in `Cargo.toml.orig`, points to `lifthrasiir/hexf`, and records upstream revision `4225763d744183d720f575ae96d04161b4d08ea0` in `.cargo_vcs_info.json`.
+
+The exact [upstream recursive tree](https://api.github.com/repos/lifthrasiir/hexf/git/trees/4225763d744183d720f575ae96d04161b4d08ea0?recursive=1) returned `truncated: false` and has no standalone license or notice file. The cached crate's `Cargo.toml.orig` Git blob `2833f557b25322ab20cc78254e057f132c6e6a0e` matches upstream `parse/Cargo.toml`; its `src/lib.rs` Git blob `60439bb5beadd6823330d0293cc3d74e2790171f` matches upstream `parse/src/lib.rs`. This establishes those two file matches, not a byte-for-byte comparison of the entire package or an independent legal determination.
+
+On Windows, locked offline `cargo tree --target x86_64-pc-windows-msvc -e normal,build -i hexf-parse@0.2.1` showed the path through `naga` and `wgpu` to `pong-piston`. A resolved dependency path does not prove final binary inclusion. The notice collector's missing-file flag remains open: no unverified upstream notice was substituted, and the existing incomplete pilot package and bundle were not changed. Other flagged packages, bundled sources, system libraries, legal review and release readiness remain unresolved.

@@ -1,0 +1,7 @@
+# raylib narrow footer: macOS check (2026-11-13)
+
+At checkpoint `f737478b9ce912fd1cd6027ed48b06e14b0946d8`, the raylib Ready screen's single-line control footer clipped on the right in a window approximately 506 × 606 screenshot pixels. The court score remained visible and centered. The adapter now divides the footer into two lines, measures their widths and reduces the requested font size when needed. The line spacing accounts for the renderer's minimum displayed glyph height.
+
+The revised offline, locked release build succeeded and all 18 existing frontend tests passed. A native desktop window resized by automated drag to approximately 506 × 606 screenshot pixels visibly showed both control lines separately and without right-edge clipping on the Ready screen. The candidate source SHA-256 was `1ef604c6bfd0bb1a06c56b602d35d76cb3ed29af9ed0a2bf45f89a368c5a3da9` and executable SHA-256 was `78508c74a9a749c68ab85650a7ff88fec79ddfb1b3a2ce1f3480092aa1918ecf`. The build used an isolated mixed source tree: the adapter matches the checkpoint blob plus this footer edit, but the entire tree was not established as that checkpoint. The native window was closed after inspection.
+
+This is a bounded Ready-screen visual check and automated unit suite, not physical input or gameplay evidence. Extremely small windows, other states and platforms, clean-machine packaging, and release qualification remain unverified. The raylib native/system license screen is incomplete; see [prior screen](RAYLIB-MAC-LICENSE-SCREEN.md).

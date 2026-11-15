@@ -1,0 +1,11 @@
+# Softbuffer Windows held-input release portable pilot
+
+At checkpoint `a2e825d8a498fd0da49969fb7fcc99a830e09afc`, including held-input pause fix `81a8667`, the Softbuffer adapter was built offline and locked for Windows MSVC release with Rust 1.99.1. All six optimized action/model and frontend tests passed. Source blob `2d20d034bcff1de3826d49f511e367b8fac574e8`; executable SHA-256 `63426c6027dac9aebfb882bf85198384be321a0323e5a493d5d7ea66bb3ecad1`.
+
+A fresh Windows-filtered locked Cargo metadata inventory using the corrected notice scanner found 35 resolved packages and 68 conventional notice files, with no package flagged missing. The bundle SHA-256 was `da5ff4eeb02f2f6bbc14be3419b7c16a4aa5283f7a34a7b4ddcda44de97ab77c`; its index SHA-256 `7ac7c7b2e629083d97a9586e0c9cd7aa9fc1a833d48359612b5e06fe992eb820`. This resolved graph can include build or optional packages; it is not exact binary attribution, complete notice review or legal clearance.
+
+The new unsigned 392,810-byte local ZIP SHA-256 is `7206fd00704af442f3b9c5fea58b0933386df8995581df3977c8bf93c655599c`. It contains the executable, root license, notice text, index, incomplete-pilot note and SHA-256 manifest. Extraction to a separate path containing a space preserved all five payload hashes; manifest SHA-256 `142603491d7ee5f5618e5cddbfb4a8ee7eaed53594556a00ba7f239fd5ec5194`. The index's notice-text digest matched.
+
+The relocated executable exited 0 with empty stderr; all 13 scripted telemetry lines matched `../evidence/rust-core-contact-timing-model-20261112.jsonl` through finished tick 1440. Six app-owned PNGs were exported. The inspected tick-480 image shows the court, score, paddles, ball and pause marker. The extracted package retained only its six staged files. Archive, extraction, raw logs and captures remain in task workspace `softbuffer-held-release-package-20261113`; notice metadata and bundle remain in `softbuffer-windows-held-notices-20261113`. Prior packages, binaries and the partial SDL3 release target are preserved.
+
+This is same-host portable extraction and scripted rendering, not a desktop screenshot or actual OS-key delivery. Physical input, accessibility, full match, focus/resize, clean-machine installation, system dependencies, signing, notice completeness and release distribution remain open.

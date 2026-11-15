@@ -1,0 +1,58 @@
+{
+  "exit_code": 0,
+  "records": 13,
+  "baseline_semantically_identical": true,
+  "capture_kind": "app Canvas2D only",
+  "inspected_tick": 480,
+  "result": "pause label moved to top; ball unobscured",
+  "images": [
+    {
+      "file": "tick-0120.png",
+      "sha256": "d06f3680c76490634970f9a31b48957a96223e17f2f5111a9377368ee28c4693",
+      "dimensions": [
+        900,
+        500
+      ]
+    },
+    {
+      "file": "tick-0240.png",
+      "sha256": "c8fb92ecede7308866f4a91cddaefa50ff3ad23772be39279a7ce294f36befeb",
+      "dimensions": [
+        900,
+        500
+      ]
+    },
+    {
+      "file": "tick-0480.png",
+      "sha256": "8130e5ce32b4c3d0c9ba61b12f044e11415b32812599927806960d3728e4c378",
+      "dimensions": [
+        900,
+        500
+      ]
+    },
+    {
+      "file": "tick-0600.png",
+      "sha256": "2e55f28626481fe603dfed388414dd6ee4c3b8b0939f123dfa8b76100c5f556f",
+      "dimensions": [
+        900,
+        500
+      ]
+    },
+    {
+      "file": "tick-1320.png",
+      "sha256": "891bcbfcec701e4294ed7bdb36becf8a80d04ecf1d0bf0c62c704fc2ebcf5935",
+      "dimensions": [
+        900,
+        500
+      ]
+    },
+    {
+      "file": "tick-1440.png",
+      "sha256": "7c888604dbc7b74e7e56b8b72914e52ab8387b383ff45d1575c7e68b1f9df885",
+      "dimensions": [
+        900,
+        500
+      ]
+    }
+  ]
+}

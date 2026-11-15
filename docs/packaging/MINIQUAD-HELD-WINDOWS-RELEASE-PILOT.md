@@ -1,0 +1,11 @@
+# Miniquad Windows held-input release portable pilot
+
+At checkpoint `2434c4cc639b1cf4f4c863dcf735f9960b581a23`, including held-input pause fix `7aaf468`, the Miniquad adapter was built offline and locked for Windows MSVC release using Rust 1.99.1. All ten optimized action/model and frontend tests passed. Source blob `2ebbcfb3d3f8593dcfd050038cd284f68f5736b4`; executable SHA-256 `8eeba2582bbe29eef75d4cfd8516d27b52029d7b39c41804d7f98941e8a05d84`.
+
+A fresh Windows-filtered locked Cargo metadata inventory found 17 resolved packages and 33 conventional notice files, with no package flagged missing. The bundle SHA-256 was `6128c162f605030e7beaf1269611ba3cf7a89e4c7b207617ec597cb4c4ef2daa`; its index SHA-256 `0467bcfd0fb3436c89d6d20886e4a797e63a836ed7a97d1b1be530a7fddcdd6f`. This is a resolved graph, potentially including build/optional dependencies, not exact linked-binary attribution or legal clearance.
+
+The new unsigned 281,379-byte local ZIP SHA-256 is `c8b23fefe21c19f5e82cc0bba3e0ed13a68a11536cbf2426ea299c1c183461cd`. It contains the executable, root license, notice text, index, incomplete-pilot note and SHA-256 manifest. Extraction into a separate path with a space preserved all five payload hashes; manifest SHA-256 `7750e89c2cde4456117d1c930d707597a881a37fd98bd3d0a35980a3012cad2d`. The included index's notice-text digest matched.
+
+The relocated executable exited 0 with empty stderr; all 13 scripted telemetry lines matched `../evidence/rust-core-contact-timing-model-20261112.jsonl` through finished tick 1440. Six app-owned PNGs were exported. The inspected tick-480 image shows court, paddles and ball; no visible pause label is claimed. The extracted package retained only its six staged files. Archive, extraction, raw logs and captures remain in task workspace `miniquad-held-release-package-20261113`; notice metadata and bundle remain in `miniquad-windows-held-notices-20261113`. Prior packages and binaries are preserved.
+
+This is same-host portable extraction and scripted rendering, not a desktop screenshot or actual keyboard event test. The earlier supported-automation `Unknown` key observation remains unresolved. Physical input, accessibility, full match, focus/resize, clean-machine installation, system dependencies, signing, notice completeness and release distribution remain open.

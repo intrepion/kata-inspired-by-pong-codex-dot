@@ -1,0 +1,162 @@
+[
+  {
+    "name": "ADVAPI32.dll",
+    "location": "system32",
+    "version": "10.0.26100.3624 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "apphelp.dll",
+    "location": "system32",
+    "version": "10.0.26100.9549 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "bcryptprimitives.dll",
+    "location": "system32",
+    "version": "10.0.26100.9974 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "combase.dll",
+    "location": "system32",
+    "version": "10.0.26100.7705 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "dataexchange.dll",
+    "location": "system32",
+    "version": "10.0.26100.9818 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "dwmapi.dll",
+    "location": "system32",
+    "version": "10.0.26100.1 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "explorerframe.dll",
+    "location": "system32",
+    "version": "10.0.26100.8972 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "GDI32.dll",
+    "location": "system32",
+    "version": "10.0.26100.8328 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "gdi32full.dll",
+    "location": "system32",
+    "version": "10.0.26100.9974 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "imm32.dll",
+    "location": "system32",
+    "version": "10.0.26100.9818 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "kernel.appcore.dll",
+    "location": "system32",
+    "version": "10.0.26100.9818 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "KERNEL32.DLL",
+    "location": "system32",
+    "version": "10.0.26100.9974 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "KERNELBASE.dll",
+    "location": "system32",
+    "version": "10.0.26100.9974 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "MSCTF.dll",
+    "location": "system32",
+    "version": "10.0.26100.1 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "msvcp_win.dll",
+    "location": "system32",
+    "version": "10.0.26100.9711 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "msvcrt.dll",
+    "location": "system32",
+    "version": "7.0.26100.9711 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "ntdll.dll",
+    "location": "system32",
+    "version": "10.0.26100.9974 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "ole32.dll",
+    "location": "system32",
+    "version": "10.0.26100.6725 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "pong-softbuffer.exe",
+    "location": "executable",
+    "version": null
+  },
+  {
+    "name": "powrprof.dll",
+    "location": "system32",
+    "version": "10.0.26100.8117 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "RPCRT4.dll",
+    "location": "system32",
+    "version": "10.0.26100.1 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "sechost.dll",
+    "location": "system32",
+    "version": "10.0.26100.1 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "SHCORE.dll",
+    "location": "system32",
+    "version": "10.0.26100.8117 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "shell32.dll",
+    "location": "system32",
+    "version": "10.0.26100.9549 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "SHLWAPI.dll",
+    "location": "system32",
+    "version": "10.0.26100.8117 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "twinapi.appcore.dll",
+    "location": "system32",
+    "version": "10.0.26100.1 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "ucrtbase.dll",
+    "location": "system32",
+    "version": "10.0.26100.9711 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "UMPDC.dll",
+    "location": "system32",
+    "version": "10.0.26100.9818 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "user32.dll",
+    "location": "system32",
+    "version": "10.0.26100.8117 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "uxtheme.dll",
+    "location": "system32",
+    "version": "10.0.26100.7019 (WinBuild.160101.0800)"
+  },
+  {
+    "name": "VCRUNTIME140.dll",
+    "location": "system32",
+    "version": "14.50.35719.0"
+  },
+  {
+    "name": "win32u.dll",
+    "location": "system32",
+    "version": "10.0.26100.9974 (WinBuild.160101.0800)"
+  }
+]

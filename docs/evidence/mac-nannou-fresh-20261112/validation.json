@@ -1,0 +1,74 @@
+{
+  "source": "0cbe38f",
+  "platform": "macOS Apple Silicon",
+  "buildSeconds": 11.76,
+  "binarySha256": "1aafae4c2b7964b316da700880afdc0a8405ee3674e34f73add2bb516bbe5594",
+  "replayExit": 0,
+  "reports": 13,
+  "last": {
+    "scenario": "smoke-v1",
+    "seed": 42,
+    "tick": 1440,
+    "state": "Playing",
+    "player": 250,
+    "cpu": 250,
+    "ball": [
+      89.02103,
+      136.44139,
+      185.1054,
+      -322.69702
+    ],
+    "scores": [
+      0,
+      0
+    ],
+    "finished": true
+  },
+  "captureKind": "framework-owned app-frame PNG",
+  "visualSample": 480,
+  "nativeUI": [
+    "Enter start",
+    "W/S movement",
+    "Space pause/resume",
+    "CPU score0:1",
+    "Enter restart0:0"
+  ],
+  "performanceClaim": "none; behavioral requalification of pacing build, not benchmark",
+  "files": [
+    {
+      "name": "telemetry.jsonl",
+      "bytes": 2126,
+      "sha256": "17cbe3c7299c64e6d12bbfcb292cdb7ea9a8e9821c92fa512c027df5285242bf"
+    },
+    {
+      "name": "tick-0120.png",
+      "bytes": 33589,
+      "sha256": "7f8ed4e75495b21932182d9bc62a73969fc9f25d45ef0fd5319edb7c02498e89"
+    },
+    {
+      "name": "tick-0240.png",
+      "bytes": 31956,
+      "sha256": "47efc1c8419285e3d10637a41975435bf1ca7aa9e24b1391cd73e0d7e6c5035e"
+    },
+    {
+      "name": "tick-0480.png",
+      "bytes": 31972,
+      "sha256": "7b7cee3bab309490ea1b0947116ff798a300f2ad084f3d1c142f370ee14a00bf"
+    },
+    {
+      "name": "tick-0600.png",
+      "bytes": 31958,
+      "sha256": "1e0bcf9570e6f1a3085d629ba4a7d81d27e6acc9bdac1eaccfd12ebea0116674"
+    },
+    {
+      "name": "tick-1320.png",
+      "bytes": 33673,
+      "sha256": "4a3a6af5acaa34cdee60ae5be3735e59badbf03497fa8483a636909d0787a462"
+    },
+    {
+      "name": "tick-1440.png",
+      "bytes": 33676,
+      "sha256": "0f216369b18ac17a4009a0f397e6612cbf59f0afcbe81f2c229529d043c4cb9f"
+    }
+  ]
+}

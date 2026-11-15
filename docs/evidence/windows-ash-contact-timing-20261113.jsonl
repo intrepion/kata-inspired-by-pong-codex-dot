@@ -1,0 +1,13 @@
+{"scenario":"smoke-v1","seed":42,"tick":0,"state":"Ready","player":250,"cpu":250,"ball":[450,250,0,0],"scores":[0,0],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":120,"state":"Playing","player":45,"cpu":250,"ball":[330.41708,257.6975,-350,22.52929],"scores":[0,0],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":240,"state":"Playing","player":455,"cpu":250,"ball":[450,250,350,7.7871714],"scores":[0,1],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":360,"state":"Playing","player":455,"cpu":254.1791,"ball":[578.33356,252.85541,350,7.7871714],"scores":[0,1],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":480,"state":"Paused","player":455,"cpu":254.1791,"ball":[578.33356,252.85541,350,7.7871714],"scores":[0,1],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":600,"state":"Playing","player":455,"cpu":266.15198,"ball":[763.3317,254.59479,-368.87476,-18.559149],"scores":[0,1],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":720,"state":"Playing","player":455,"cpu":250,"ball":[394.45596,236.03522,-368.87476,-18.559149],"scores":[0,1],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":840,"state":"Playing","player":455,"cpu":250,"ball":[25.581577,217.47565,-368.87476,-18.559149],"scores":[0,1],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":960,"state":"Playing","player":455,"cpu":262.2746,"ball":[537.49994,242.88223,350,-28.47197],"scores":[0,2],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":1080,"state":"Playing","player":455,"cpu":223.64714,"ball":[811.0924,197.97519,-327.01352,-174.0976],"scores":[0,2],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":1200,"state":"Playing","player":455,"cpu":250,"ball":[484.0807,23.877228,-327.01352,-174.0976],"scores":[0,2],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":1320,"state":"Playing","player":250,"cpu":250,"ball":[330.41708,235.33006,-350,-42.935654],"scores":[0,0],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":1440,"state":"Playing","player":250,"cpu":250,"ball":[89.85815,135.17621,185.1054,-322.69702],"scores":[0,0],"finished":true}

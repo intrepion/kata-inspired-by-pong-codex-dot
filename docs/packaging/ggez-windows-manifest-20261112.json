@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "adapter": "ggez",
+  "platform": "win32",
+  "architecture": "x64",
+  "binary_sha256": "37637f0bfc7578efebe0e67a3492bac157768add5583fd1aed8ddc7b9e94bdc8",
+  "archive_sha256": "eec0481c661a8ad58f09544d172c788677f2e9900c1896900bc43a464ed17ed1",
+  "archive_bytes": 7390201,
+  "extracted_binary_matches": true
+}

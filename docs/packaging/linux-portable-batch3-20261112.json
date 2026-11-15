@@ -1,0 +1,30 @@
+[
+  {
+    "adapter": "blue-engine",
+    "archive_bytes": 5572328,
+    "archive_sha256": "2238ccbcee7293cd57110116f2061de9d654eb53507b183f2a2c48fa86917adb",
+    "binary_sha256": "470fcfb2b495fa0a9b4c956110f4d2c82a37140d6fcf4f418d35b36d5a2bc513",
+    "matches_previous_timing_binary": true,
+    "exit": 0,
+    "states": 13,
+    "final_tick": 1440,
+    "finished": true,
+    "captures": "native unsupported",
+    "tick600_inspected": false,
+    "exact_uninstall_and_neighbor_preserved": true
+  },
+  {
+    "adapter": "softbuffer",
+    "archive_bytes": 1687814,
+    "archive_sha256": "19a06f7ed9c4a80607fdeb60159a46193e008ec566d1b0643cbc7d7791f8b62d",
+    "binary_sha256": "8effd53992892ee09d7a35b65df68a8c25dd6f88b7f166b9983e4e81524c1b83",
+    "matches_previous_timing_binary": true,
+    "exit": 0,
+    "states": 13,
+    "final_tick": 1440,
+    "finished": true,
+    "captures": 6,
+    "tick600_inspected": true,
+    "exact_uninstall_and_neighbor_preserved": true
+  }
+]

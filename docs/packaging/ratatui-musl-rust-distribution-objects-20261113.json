@@ -1,0 +1,97 @@
+{
+  "scope": "Rust target archive members named by linker map; byte comparison only, no source build attestation",
+  "distribution_sha256": "2f3eb0d0610e2b7f6b2121d106e2490ac648decfa0c09b30873bdfc60de6c1ab",
+  "rust_commit": "58cf8f9c35b355199727627d07ae34a4e2846d67",
+  "members": [
+    {
+      "member": "libaddr2line-fbc53bd7e939c40a.rlib",
+      "sha256": "a7d2da7d5f4d8722e74114c10002249f4d6f8550f67a99c242cfcff1262636a5",
+      "installed_matches_distribution": true
+    },
+    {
+      "member": "libadler2-ea504e6f0bf199e3.rlib",
+      "sha256": "1a571cfa03e919f38746a3719c934f46c9b3d8bf4b9e2a0ce7382395b9694c33",
+      "installed_matches_distribution": true
+    },
+    {
+      "member": "liballoc-2a15898a1908f5f8.rlib",
+      "sha256": "19bac89f8b28101103e2773b096fc4b63ecb82ecd915ed8a658504425406c885",
+      "installed_matches_distribution": true
+    },
+    {
+      "member": "libcompiler_builtins-29674cca14587d3c.rlib",
+      "sha256": "d696daeff228aef6460e3ebcf6355e5a8b2545e937a4e20c6db296acc4278e5e",
+      "installed_matches_distribution": true
+    },
+    {
+      "member": "libcore-449a01f40d1a104f.rlib",
+      "sha256": "3d1a2607e484e7e1e987a2a2a20e6964da66c6ffc4057128f04e09fa43d85bb5",
+      "installed_matches_distribution": true
+    },
+    {
+      "member": "libgimli-e3b7dec0551dc03e.rlib",
+      "sha256": "3c870c6efd5c804ebe2cf88dd006ce3509271e832f2cdf080506d94ce8f1f5a8",
+      "installed_matches_distribution": true
+    },
+    {
+      "member": "libminiz_oxide-64f68d4ec41595bd.rlib",
+      "sha256": "11a4cb22808f50927901da0ab21a849530c51893d2cdd472646ac6e4eca5237d",
+      "installed_matches_distribution": true
+    },
+    {
+      "member": "libobject-c14ca92ccb7c8149.rlib",
+      "sha256": "5789823eec9544dbb59cd2241d1e23a95f578c7f338e031bb237a37f89b68fcc",
+      "installed_matches_distribution": true
+    },
+    {
+      "member": "libpanic_unwind-792f49a867dfa2d6.rlib",
+      "sha256": "e4b4037059000d1d898988ad5b2cdb9708025360cea4db6ae08f5c73f0de1ddc",
+      "installed_matches_distribution": true
+    },
+    {
+      "member": "librustc_demangle-0cc128964db6791d.rlib",
+      "sha256": "7d9c94e2e519b2b1239cda27325270cad784583472ca397496ab13e58feb4b8b",
+      "installed_matches_distribution": true
+    },
+    {
+      "member": "libstd-11eee8f7a063bd8a.rlib",
+      "sha256": "4a34dff4863cf57a2f5a0dd275770ae508e35b257aa1dd696cd1fd085c2487fc",
+      "installed_matches_distribution": true
+    },
+    {
+      "member": "libstd_detect-855cfcb660b3bf4c.rlib",
+      "sha256": "c06e70fec68d56b8c096f891ee93de6a60523b2192f4f40ccdd4d9d38f9e2904",
+      "installed_matches_distribution": true
+    },
+    {
+      "member": "self-contained/libc.a",
+      "sha256": "b03473b6f1efb72f700f561b4407a88885b37e0edb5cdb2a64de0df5499e813f",
+      "installed_matches_distribution": true
+    },
+    {
+      "member": "self-contained/libunwind.a",
+      "sha256": "3ff5dcd17b4fe703ac91edf8ed0434ffa66c9ccd33701e940cfb8daab1dfda23",
+      "installed_matches_distribution": true
+    },
+    {
+      "member": "self-contained/crt1.o",
+      "sha256": "2c8595cff75b182ad59c0278d5f81bed2cf1e51b5bf9324db52142c89dd6479f",
+      "installed_matches_distribution": true
+    },
+    {
+      "member": "self-contained/crtbegin.o",
+      "sha256": "522c4ac7628b80df407f1873be18b6b9b398db5be7f9f5586835cdfd189f6a9e",
+      "installed_matches_distribution": true
+    },
+    {
+      "member": "self-contained/crti.o",
+      "sha256": "b49a67e2e36eed4836023fc26ff9da617e2020a2317aadfeb7971e4cbe612bf7",
+      "installed_matches_distribution": true
+    },
+    {
+      "member": "self-contained/crtn.o",
+      "sha256": "b2f52a98df83f38814f34f7477aeb629d5e1fb1c1379ef2739cad91ab9ab8734",
+      "installed_matches_distribution": true
+    }
+  ]
+}

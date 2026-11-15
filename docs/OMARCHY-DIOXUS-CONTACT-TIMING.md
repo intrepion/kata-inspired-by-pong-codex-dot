@@ -1,0 +1,7 @@
+# Omarchy Dioxus Desktop contact-timing replay
+
+On 2026-11-13, Omarchy ARM64 built the native Dioxus Desktop adapter from revision `48fffc8beee11b99fb5a6e2ed48673d5e2a2d456` with `cargo build --offline --locked --manifest-path experiments/dioxus/Cargo.toml --jobs 2` (debug profile). The binary SHA-256 was `959921b5c74faa8ea1ebe32786ac0d67730905513dde1fdaeb142a8312500e35`. Linking and execution used the previously documented local `libxdo` dependency in `docs/SCRIPTED-DIOXUS-NATIVE.md`; no system installation or input injection was used.
+
+The native adapter's locked test command passed with zero adapter tests; the shared web UI model's locked test command passed all 11 tests, including pointer ownership and bounded demo coverage. The bounded native `--scripted-test --scripted-scenes` run exited successfully. Its 13 parsed telemetry records exactly matched `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`. Six generated SVG sources (ticks 120, 240, 480, 600, 1320 and 1440) parsed as XML; their score and status text was inspected, including the pause label at tick 480. Local outputs remain at `/tmp/pong-dioxus-c77-scenes-20261113/` and `/tmp/pong-dioxus-c77-output-20261113.txt`.
+
+These are scripted model and generated SVG-source checks, not screenshots or proof of webview presentation. Real input, focus, resizing, complete gameplay, portable installation and release qualification were not checked. Earlier evidence remains historical.

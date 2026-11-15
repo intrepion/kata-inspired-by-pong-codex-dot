@@ -1,0 +1,20 @@
+# Pong portable scenario. Ticks are zero-based; actions precede that tick's step.
+schema 1
+id smoke-v1
+seed 42
+step_hz 120
+end_tick 1440
+report_every 120
+event 0 start
+event 360 pause
+event 480 toggle_pause
+event 1200 start
+# Input ranges are half-open [start,end). Outside them input is zero.
+input 0 120 -1
+input 120 240 1
+capture 120
+capture 240
+capture 480
+capture 600
+capture 1320
+capture 1440

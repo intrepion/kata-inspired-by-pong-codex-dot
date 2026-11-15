@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "adapter": "ratatui",
+  "platform": "win32",
+  "architecture": "x64",
+  "binary_sha256": "4b58ca1bd542493de4a10b66234ce6ec1b9dcdc882be21e327cb8576fb1bd23a",
+  "archive_sha256": "9749b159341a7ad87a17cbca4c40695a3246be7be09e0b1294fd469adf86455d",
+  "archive_bytes": 1141803,
+  "extracted_binary_matches": true
+}

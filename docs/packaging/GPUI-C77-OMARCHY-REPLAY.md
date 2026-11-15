@@ -1,0 +1,7 @@
+# GPUI contact-timing replay on Omarchy
+
+2026-11-13, Omarchy ARM64; source `134f9855564440dfcbbb751d318a30efa0ebf9f1` includes contact-timing physics `c77bf3a`. A fresh offline locked release build and the single GPUI frontend geometry test passed, as did eight shared GUI-model tests. The build repeated the existing future-incompatibility warning for `proc-macro-error2`. The local Linux portable pilot archive was extracted into a separate directory; its archive digest and all five extracted manifest entries verified, including the separate GPUI license. Archive size: 7,824,195 bytes; archive SHA-256: `70cc88993ff30cbe1a9b4fd1841fae55838c695e327ae0108643397205e9c813`; binary SHA-256: `060b89a212922d29e308e6d8060ee89c0ec9769608b7bc37028412f809abf0c5`.
+
+With approved host-display access, the relocated binary completed `--scripted-test` with exit 0. Its 13 telemetry records exactly match the revised contact-timing model reference through finished tick 1440. This is state-only; the adapter explicitly rejects unsupported pixel export. No visual result is claimed. Archive, extraction and telemetry remain under distinct `/tmp/pong-gpui-c77-*` paths; historical artifacts were preserved.
+
+This is a local package extraction and scripted state replay check. Window presentation, physical input, focus/resize, full-match interaction, clean-machine installation, complete dependency notices and public distribution remain unverified.

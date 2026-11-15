@@ -95,3 +95,17 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Rust comparison build outputs
+/target/
+/clients/web-wasm/pong_wasm.wasm
+
+# Local web-framework build tooling and outputs
+/target-web-frameworks/
+/tools-local/
+
+# Original TypeScript game development dependencies
+/node_modules/
+
+# Native browser-demo bridge build artifacts
+/experiments/native-web-demo/target/

@@ -1,0 +1,9 @@
+# Raylib action keys on focus return — Omarchy, 2026-11-13
+
+Raylib already paused and gated live actions while unfocused, but could accept an action reported on the first focused poll. After focus loss, the live adapter now resamples Enter, R, Space and Escape independently and suppresses any held or newly pressed on that first focused sample until release. A genuine new press reported on that first sample is intentionally treated as potentially held; after a clear sample or release, fresh presses work. Movement retains its existing separate gate. Scripted and benchmark Escape handling remains as before.
+
+The synthetic action-gate regression failed before suppression and passed afterward for all four keys, continued holds, release/repress, a clear first sample and independent Enter/R bindings. All 16 offline locked debug tests passed. The debug build SHA-256 is `79518b675c473d1d1d17655a6472feb9fd5c7e0baac86f96df89a68be7eab587`; tested adapter blob `06067d05a4d7f4b626077bd6ab644fd5eee88055` was based on checkpoint `c047a2d9fc03697a449fbe13df2e86a87047c9c5`. The previous target executable was copied to `/tmp/pong-raylib-focus-held-actions-20261113-a/preexisting-debug-binary` before rebuilding.
+
+With host-display access, the app-owned scripted replay exited 0 with empty stderr and 13 JSON telemetry records extracted from informational stdout byte-matched `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`. Raw logs remain under `/tmp/pong-raylib-focus-held-actions-20261113-a`.
+
+These are synthetic polling tests and scripted replay, not native focus delivery, physical input or proof of platform key-state ordering. Other platforms, full gameplay, clean-machine installation, dependency notices and release qualification remain open. Prior artifacts and evidence are retained.

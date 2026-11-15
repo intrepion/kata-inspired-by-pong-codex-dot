@@ -1,0 +1,52 @@
+{
+  "date": "2026-11-12",
+  "platform": "Windows x64 GNU",
+  "scope": "Local notice-bearing ZIP/runtime preparation, not legal clearance",
+  "results": [
+    {
+      "adapter": "softbuffer",
+      "binary_sha256": "76db135154e831321a4f2bb74ccc81c0a27378fbbe6037c6be0da6d0b34a600a",
+      "archive_sha256": "4be73aeeec1c042044b7860e29e5a21c4a014c81b879fb478e27cc5ce7bf359f",
+      "archive_bytes": 959654,
+      "packages": 35,
+      "notice_files": 68,
+      "missing_notice_files": 0,
+      "notice_bundle_sha256": "e5cfdab7b5f90442e3cbbcab69ed0331bbbc416d4af222e4b82da4923caf7195",
+      "all_five_extracted_files_match": true,
+      "exit_code": 0,
+      "state_records": 13,
+      "final_tick": 1440,
+      "capture_count": 6
+    },
+    {
+      "adapter": "sdl3",
+      "binary_sha256": "3044282093a2352663737034aa33e886825db2715613488b66f1b3df732f7ba5",
+      "archive_sha256": "e413fa4d39c27650e6e3509de71d1652b3f3e1ef2ddf465d961939acbf51a9f4",
+      "archive_bytes": 2963055,
+      "packages": 34,
+      "notice_files": 113,
+      "missing_notice_files": 0,
+      "notice_bundle_sha256": "8b164d240c86422b1b64e134814417db324d64dc8942f4bcbe71faaf321e2ea6",
+      "all_five_extracted_files_match": true,
+      "exit_code": 0,
+      "state_records": 13,
+      "final_tick": 1440,
+      "capture_count": 6
+    },
+    {
+      "adapter": "ash",
+      "binary_sha256": "0e6795d299cd2f1a2ecd3ea1d175db61e1e07f2031e1499318a1be24b4dcbb6d",
+      "archive_sha256": "9cfe121ba6d86610135d97e5e12cc10924668612605fcc4d454e2dd700a7467e",
+      "archive_bytes": 1090980,
+      "packages": 36,
+      "notice_files": 69,
+      "missing_notice_files": 0,
+      "notice_bundle_sha256": "e2fc646f102c2335a0afc8b58bcde61337e4d3693d985a3e121005588d15d7f4",
+      "all_five_extracted_files_match": true,
+      "exit_code": 0,
+      "state_records": 13,
+      "final_tick": 1440,
+      "capture_count": 6
+    }
+  ]
+}

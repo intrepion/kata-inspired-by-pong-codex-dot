@@ -1,0 +1,7 @@
+# Mac Macroquad contact timing recheck
+
+macOS ARM64. Source checkpoint `7495366fa4e1401337798da3393d2920fdd4f379` includes physics fix `c77bf3ac147e41f67d88962f5c615fcc113d6465`. Offline locked release build reused a copy-on-write, timestamp-preserved copy of the benchmark dependency cache; Cargo rebuilt only four local Pong crates. Binary SHA-256: `51b2f5d77ac4058fc8db69692b66c7aab370203941f7f5fdd1614eb53ee93949`. A first attempt with a different cache was interrupted when it began recompiling third-party dependencies; both original caches remain intact.
+
+The exact binary was packaged locally and opened through the supported desktop tool. Enter started play; held W/S moved the player paddle in opposite directions; Space displayed Paused; R reset to 0–0 with play continuing. A subsequent match reached 0–7 Over. Enter resumed play and the next observation showed 0–1; the immediate reset frame was not observed. Window close exited the pilot app according to desktop inventory. Screens were visually inspected, not saved. This is native desktop automation, not physical keyboard input or verification of a specific collision trajectory.
+
+Direct shell launch with `--scripted-test --scripted-captures` exited 101 before replay because the macOS OpenGL pixel-format assertion failed. No fresh scripted replay or app-owned captures are claimed. Normal app-bundle launch worked. Historical evidence and binaries remain unchanged; no signing or clean-machine qualification is inferred.

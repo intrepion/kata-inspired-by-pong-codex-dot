@@ -1,0 +1,36 @@
+[
+  {
+    "adapter": "pixels",
+    "schema": 1,
+    "platform": "darwin",
+    "architecture": "arm64",
+    "binary_sha256": "d4f5f86d5e475e727758186487055c3fb5736192c1dbe15b06fbf123105fe613",
+    "archive_sha256": "9260f8a3dd15017f476ee0d2f724b952c978eb3713ed84eb29a0a6ebbebc7467",
+    "archive_bytes": 2210801,
+    "status": 0,
+    "signal": null,
+    "elapsed_seconds": 13.931,
+    "states": 13,
+    "final_tick": 1440,
+    "finished": true,
+    "captures": 6,
+    "scoped_removal": true
+  },
+  {
+    "adapter": "wgpu",
+    "schema": 1,
+    "platform": "darwin",
+    "architecture": "arm64",
+    "binary_sha256": "482e402d4509e4466892b37f019f2934998efb9f581c4712dad578995593a1ea",
+    "archive_sha256": "456c878a317a290a45f7fe19e4261dd4bae08339da6729f5f2264eefb6c005af",
+    "archive_bytes": 2188026,
+    "status": 0,
+    "signal": null,
+    "elapsed_seconds": 12.704,
+    "states": 13,
+    "final_tick": 1440,
+    "finished": true,
+    "captures": 6,
+    "scoped_removal": true
+  }
+]

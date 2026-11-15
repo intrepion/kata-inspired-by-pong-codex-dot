@@ -1,0 +1,68 @@
+[
+  {
+    "adapter": "miniquad",
+    "schema": 1,
+    "platform": "darwin",
+    "architecture": "arm64",
+    "binary_sha256": "6a4de542ce3db89f62c906d6b2de54782a4f788c98eefbccfaf26a2aa59b8ce1",
+    "archive_sha256": "0f2e8df03dee8d744fb72439b50bfe3449bcbd95878833b9cfd7a8649ba0cd1d",
+    "archive_bytes": 367663,
+    "status": 0,
+    "signal": null,
+    "elapsed_seconds": 14.707,
+    "states": 13,
+    "final_tick": 1440,
+    "finished": true,
+    "captures": 6,
+    "app_bundle_removed": true,
+    "sentinel_preserved": true,
+    "remaining_entries": [
+      "PILOT-NOTICE.txt",
+      "sentinel.txt"
+    ]
+  },
+  {
+    "adapter": "pixels",
+    "schema": 1,
+    "platform": "darwin",
+    "architecture": "arm64",
+    "binary_sha256": "0bf4d162950eb5aa83d64ca3fc7fba45617dbdf1b939845e6986252093311f47",
+    "archive_sha256": "5838e0bf5866e127c477dc3ee599888d4e4f9f2857a83e40901226f01a4f331e",
+    "archive_bytes": 2211294,
+    "status": 0,
+    "signal": null,
+    "elapsed_seconds": 15.629,
+    "states": 13,
+    "final_tick": 1440,
+    "finished": true,
+    "captures": 6,
+    "app_bundle_removed": true,
+    "sentinel_preserved": true,
+    "remaining_entries": [
+      "PILOT-NOTICE.txt",
+      "sentinel.txt"
+    ]
+  },
+  {
+    "adapter": "wgpu",
+    "schema": 1,
+    "platform": "darwin",
+    "architecture": "arm64",
+    "binary_sha256": "c85d872d74442945ed605d13ea5101f9269a9f90052549e5ad96685f85fd171e",
+    "archive_sha256": "7d5cce2bb4e8b499d861ff410fcbc8dd19cccba0182b6f617c44bbc431f480fd",
+    "archive_bytes": 2188419,
+    "status": 0,
+    "signal": null,
+    "elapsed_seconds": 12.95,
+    "states": 13,
+    "final_tick": 1440,
+    "finished": true,
+    "captures": 6,
+    "app_bundle_removed": true,
+    "sentinel_preserved": true,
+    "remaining_entries": [
+      "PILOT-NOTICE.txt",
+      "sentinel.txt"
+    ]
+  }
+]

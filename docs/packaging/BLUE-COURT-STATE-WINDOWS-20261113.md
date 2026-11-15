@@ -1,0 +1,7 @@
+# Blue Engine in-court state: Windows check
+
+At checkpoint `1aef743b343b8fc5359b7a64da0f7f8137ac6d13`, Blue Engine source blob `fe4c4783f354fe5020437cc35785855b51d02465` was tested with Windows stable MSVC Rust. The locked offline default-feature test suite passed all ten tests, including state messages, winner selection and glyph runs. A locked offline windowed debug build succeeded; Cargo reported incremental-cache hard-link failure and copied files instead.
+
+The resulting executable SHA-256 was `490af71877ee9fa02b4ba26f306d482b63e1873a5c6f0e6bb0ee9da9c3d21cf8`. Its `--scripted-test` exited 0 and all 13 JSON telemetry records matched `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`. Stderr contained graphics-loader diagnostics, including a missing Vulkan validation-layer warning. No capture was requested. Previous windowed and headless executables and local logs are preserved in sibling workspace directory `blue-court-windows-20261113`.
+
+The headless capture build began rebuilding its dependency graph and was stopped to bound disk and build use; partial target files were retained. No Windows visual check of the new panel was performed. These tests and replay do not establish physical input, a complete interactive match, clean-machine operation, dependency-license clearance or release qualification. The separately documented Omarchy headless capture is not Windows evidence.

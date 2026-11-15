@@ -1,0 +1,106 @@
+{
+  "platform": "Omarchy ARM64",
+  "date": "2026-11-12",
+  "runs": [
+    {
+      "adapter": "piston",
+      "exit": 0,
+      "finalTick": 1440,
+      "telemetryRecords": 13,
+      "baselineIdentical": true,
+      "inspectedTicks": [
+        480,
+        1440
+      ],
+      "frames": [
+        {
+          "file": "tick-0120.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "6fbffee273dd2b45594e952a1ae67d6e88a0061348f415d1fdb4ef32375b2019"
+        },
+        {
+          "file": "tick-0240.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "f1f58a0f403690035a619fd5a1c66f2c383c832c2e11f629daee49834cadd82d"
+        },
+        {
+          "file": "tick-0480.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "b05c66504b17badc42652a59c657b94b62957e8583e120030565adecbc68f592"
+        },
+        {
+          "file": "tick-0600.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "44183cbe6c96958c84b0f8fc95640f846c8bea090352786f7037b680868a3bf2"
+        },
+        {
+          "file": "tick-1320.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "bb8cf47397e7afb69756d026b94283b62c5dbf03c79d0a2fa98c4904c0bcb96e"
+        },
+        {
+          "file": "tick-1440.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "d7b510db3b4279468f513fa233784542619494edab53ec23e7781b1a86bd1226"
+        }
+      ]
+    },
+    {
+      "adapter": "bracket-lib",
+      "exit": 0,
+      "finalTick": 1440,
+      "telemetryRecords": 13,
+      "baselineIdentical": true,
+      "inspectedTicks": [
+        480,
+        1440
+      ],
+      "frames": [
+        {
+          "file": "tick-0120.png",
+          "width": 1920,
+          "height": 1280,
+          "sha256": "deb55212307cd82cad376124e8c3902bcf0e0bc5ca12b5d2517fb0e6a04006cc"
+        },
+        {
+          "file": "tick-0240.png",
+          "width": 1920,
+          "height": 1280,
+          "sha256": "2074324a5e44e38c1bf385123652a61e898c8bbd3cb7c8239bef49dbddb8443e"
+        },
+        {
+          "file": "tick-0480.png",
+          "width": 1920,
+          "height": 1280,
+          "sha256": "83337df707124a1a5edec87c0baa03c4fb487c992d3195edb327dabb252dd6af"
+        },
+        {
+          "file": "tick-0600.png",
+          "width": 1920,
+          "height": 1280,
+          "sha256": "a1bc5cf1a8cda2c0a17eb0942c87331c36b3d3292f6934be110a9ea018d85e17"
+        },
+        {
+          "file": "tick-1320.png",
+          "width": 1920,
+          "height": 1280,
+          "sha256": "c9f8f5574990bcbb77ba7e62f946ce509d008d10495598c98cd1a58414975be0"
+        },
+        {
+          "file": "tick-1440.png",
+          "width": 1920,
+          "height": 1280,
+          "sha256": "9a8e8500aa8a43a3e94f688c65030c8315a8e0387efb646aff0491dd160e78df"
+        }
+      ]
+    }
+  ],
+  "checks": "Build and strict Clippy passed for both adapters. Six bracket-lib tests plus nine core and five scenario tests passed.",
+  "boundary": "Application-owned render evidence only, no native keyboard/compositor/smooth-motion QA."
+}

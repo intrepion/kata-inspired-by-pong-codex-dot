@@ -1,0 +1,9 @@
+# Windows web explicit-pause recheck
+
+On 2026-11-13, source `173c0ef1ea933479159e561a97028a4aa1118f67` includes the shared web-controller pause fix `9811948669e76b6e07886590f5924b306c280e79`. Twelve shared controller tests passed on Windows MSVC, including the regression for clearing held keyboard and pointer sources during explicit pause and requiring a new press after resume. These are model tests, not browser or physical-input evidence.
+
+Yew, Leptos and Dioxus (web-only features) were built from an isolated source snapshot with locked offline dependencies for `wasm32-unknown-unknown`; wasm-bindgen CLI 0.2.130 generated the browser assets. Their `app_bg.wasm` SHA-256 values are respectively `ed10fe83988ea5c550a5e8e788183ca418897d720db7ef49fa7e90a30dd4cd17`, `aae126b5bdb78535b8087c1f3e50e4cfb131e5d61bcd3e20a65edc8259ec6d95`, and `39e3d9d923eedde1f33c1548c5688b624a80e609af162d8a8b6de6f8f75e18a1`. The local CLI build emitted existing future-compatibility warnings for `buf_redux` and `multipart`.
+
+Each app was served on localhost and opened in Chrome. Supported browser automation clicked Start and Pause, observed the paused label, resumed, and then performed a fresh approximately 200 ms mouse hold on the Up control with visible upward paddle movement. This is a bounded normal-browser smoke check. The automation did not hold an input across the pause action; that exact behavior is only model-tested here. Simultaneous key/pointer input, pointer cancellation, physical touch, full match and native-wrapper/package qualification remain open. Generated assets and build directories remain in the isolated local `web-pause-windows-c77` directory; the localhost server was stopped.
+
+Separately, an attempt to inspect the previously built normal Tauri window was blocked by a desktop app-approval timeout; the owned test process was stopped. No Tauri native interaction pass or conclusion about the earlier WebView2 exit diagnostic is claimed.

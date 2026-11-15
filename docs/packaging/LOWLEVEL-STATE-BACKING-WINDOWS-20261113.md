@@ -1,0 +1,9 @@
+# Low-level state-indicator backing: Windows SDL3
+
+Ready and Paused symbols and match-winner text in the shared low-level renderer were drawn over the center net and ball. Opaque court-background backing now separates those indicators from court objects; Playing has no backing. This shared rectangle list is used by SDL3, softbuffer and ash. No physics or input behavior changed.
+
+Two shared raster regressions failed before the change because the center net remained visible and passed afterward, covering Ready, Paused, Playing and actual winning points for both sides. All five existing shared tests and both new tests passed on Windows stable MSVC Rust with locked offline dependencies. All 12 SDL3 adapter tests passed. Cargo fell back to copying incremental files; ordinary SDL3 test and build still emitted the known `LNK4098` CRT warning.
+
+The rebuilt SDL3 debug executable SHA-256 was `a3a5bf928a099f79de1b06f855b7f71781397e9fb7d2dde949f815ae6d1e9475`; shared source Git blob `1fc3274dbddde875f075d49dd90adeabc426b4d4`. The app-owned scripted run exited 0 with empty stderr and all 13 telemetry records matched `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`. Six framebuffer captures were produced; the inspected [tick-480 paused capture](../evidence/sdl3-paused-backing-windows-20261113.png), SHA-256 `7d444505e3924cdfadf9b27d20c585c59132ca3c6b4ac11ed0fb03c4be5fe200`, shows the separated pause bars. Previous executable, logs and captures remain in sibling workspace directory `lowlevel-backing-windows-20261113`.
+
+The replay does not visually verify Ready or winner rendering. Softbuffer and ash were not rebuilt for this change. This is shared raster and SDL3 app-owned scripted evidence, not physical input, a complete interactive match, clean-machine operation, dependency-license clearance or release qualification.

@@ -1,0 +1,7 @@
+# Bevy contact-timing replay on Omarchy
+
+2026-11-13, Omarchy ARM64; source `5168fdd15930d59b57f19bf8945e5a38cd63b6d1` includes contact-timing physics `c77bf3a`. A fresh offline locked release build and both release-mode Bevy frontend tests passed. The local Linux portable pilot archive was extracted into a separate directory; its archive digest and all four extracted manifest entries verified. Archive size: 29,239,960 bytes; archive SHA-256: `a1dc540350fa6d56bb3d414a8cd0febe9f41cae843890726fe6a0431a84b8133`; binary SHA-256: `649507714d0557de48b0bb92a49690c20e82cb8083438713580e6795dc9054d9`.
+
+With approved host-display access, the relocated binary completed `--scripted-test --scripted-captures` with exit 0. Its 13 telemetry records exactly match the revised contact-timing model reference through finished tick 1440. Six application-requested Bevy window-frame PNGs were produced; tick 480 was inspected and showed pause status, score, court, paddles and ball. These are application-requested frame exports, not desktop/compositor screenshots. Archive, extraction, captures and telemetry remain under distinct `/tmp/pong-bevy-c77-*` paths; historical artifacts were preserved.
+
+This is a local package extraction and scripted rendering/replay check on the available Vulkan device. Physical input, focus/resize, full-match interaction, clean-machine installation, complete dependency notices and public distribution remain unverified.

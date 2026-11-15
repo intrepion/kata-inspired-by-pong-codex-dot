@@ -1,0 +1,13 @@
+# ggez Fira Mono candidate: macOS review
+
+2026-11-13. This is a local experiment, not an adopted font substitution or a release package. Original repository and Liberation font remain unchanged.
+
+The Fira Mono subset tested is from Bevy bevy_text 0.20.1, matching upstream Bevy revision a0577b5c6a7b208719dd761c5c6a7a539e472a97, Git blob 6989c2e4835006627b2daf6660f65b40cfa5edc4, SHA-256 45131c5e913a5c7b4311101303e3c320a97b93a27a64b7262b533ee0d31ae03c. The exact Bevy FiraMono-LICENSE file (OFL) was copied into the candidate app Resources; its upstream Git blob is 5e4608f24a4b050232daa61b2d0d13cfe10317b6 and SHA-256 587dd9548304fd421cd254f7550bd101c1250ffc95417f2f7f92d55b44ecbe53. Other dependencies and notices have not been cleared.
+
+In an isolated checkout at b4019e81189ef91d105b6c8d603893d6081d522a, the font bytes alone were temporarily substituted at the existing Liberation-named resource path. This is misleading for production and must be corrected in any future implementation. The existing font was preserved elsewhere. A locked, offline macOS release build and five ggez tests passed. The executable SHA-256 is 9d2ecd5f101d5f7ce777c0926597fc743ca2d990beafc2f1bb215cef8978e37d. The candidate font byte sequence occurs in it and the old full Liberation font byte sequence does not.
+
+A cmap inspection found glyph mappings for every printable ASCII character, covering the current ggez labels, state names and score digits; this is not a general Unicode coverage claim. A scripted replay produced 13 telemetry records matching its reference, plus six app-owned captures. A 1000-by-680 paused capture showed readable score, controls and pause label without obvious clipping. This is a visual check at one size, not a complete layout qualification.
+
+A separately named local app bundle with the executable and exact OFL notice was opened on macOS. Desktop automation sent Return and observed play and a changing score, then Space and observed the paused label. The ready, playing and paused layouts were readable at the observed window size. After automated R, play resumed, but the observed screenshot showed 0:1 after time elapsed, so it does not independently prove an immediate zero score. These are automated desktop inputs, not physical key tests. The replay is model-driven, not physical gameplay. No signed/notarized or clean-machine package, multiple display sizes, full match, accessible text, or release qualification was established. This binary predates later checkpoint input fixes; results apply only to the specified candidate and revision.
+
+Local experimental bundle: /tmp/pong-ggez-fira-candidate-20261113-v1/Pong ggez Fira Pilot.app. Replay captures: /tmp/pong-ggez-fira-replay-20261113-v1/captures. No public release was made.

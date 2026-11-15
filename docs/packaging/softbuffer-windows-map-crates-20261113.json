@@ -1,0 +1,93 @@
+[
+  {
+    "package": "crc32fast",
+    "version": "1.5.5",
+    "archive_sha256": "2b929dd2a135771f40afabd1073f85eed59c800b7c61901e5c254270497dad64",
+    "lock_and_cached_members_match": true,
+    "regular_members": 21
+  },
+  {
+    "package": "fdeflate",
+    "version": "0.3.7",
+    "archive_sha256": "1e6853b52649d4ac5c0bd02320cddc5ba956bdb407c4b75a2c6b75bf51500f8c",
+    "lock_and_cached_members_match": true,
+    "regular_members": 16
+  },
+  {
+    "package": "flate2",
+    "version": "1.1.11",
+    "archive_sha256": "626d4928326b646e70f65ed36fc7cf9f206bdb68a0019ee7c6b4709da4e084c4",
+    "lock_and_cached_members_match": true,
+    "regular_members": 69
+  },
+  {
+    "package": "miniz_oxide",
+    "version": "0.9.1",
+    "archive_sha256": "b63fbc4a50860e98e7b2aa7804ded1db5cbc3aff9193adaff57a6931bf7c4b4c",
+    "lock_and_cached_members_match": true,
+    "regular_members": 23
+  },
+  {
+    "package": "png",
+    "version": "0.17.16",
+    "archive_sha256": "82151a2fc869e011c153adc57cf2789ccb8d9906ce52c0b39a6b5697749d7526",
+    "lock_and_cached_members_match": true,
+    "regular_members": 36
+  },
+  {
+    "package": "simd-adler32",
+    "version": "0.3.10",
+    "archive_sha256": "3a219298ac11a56ea9a6d2120044824d6f01aeb034955e7af7bc16858527deea",
+    "lock_and_cached_members_match": true,
+    "regular_members": 22
+  },
+  {
+    "package": "smol_str",
+    "version": "0.2.2",
+    "archive_sha256": "dd538fb6910ac1099850255cf94a94df6551fbdd602454387d0adb2d1ca6dead",
+    "lock_and_cached_members_match": true,
+    "regular_members": 13
+  },
+  {
+    "package": "softbuffer",
+    "version": "0.4.8",
+    "archive_sha256": "aac18da81ebbf05109ab275b157c22a653bb3c12cf884450179942f81bcbf6c3",
+    "lock_and_cached_members_match": true,
+    "regular_members": 30
+  },
+  {
+    "package": "tracing-core",
+    "version": "0.1.36",
+    "archive_sha256": "db97caf9d906fbde555dd62fa95ddba9eecfd14cb388e4f491a66d74cd5fb79a",
+    "lock_and_cached_members_match": true,
+    "regular_members": 28
+  },
+  {
+    "package": "tracing",
+    "version": "0.1.44",
+    "archive_sha256": "63e71662fa4b2a2c3a26f570f037eb95bb1f85397f3cd8076caed2f026a6d100",
+    "lock_and_cached_members_match": true,
+    "regular_members": 93
+  },
+  {
+    "package": "unicode-segmentation",
+    "version": "1.13.3",
+    "archive_sha256": "c6f5d3c3b1bf09027a88a6bc961fc00497d651009560b5463668dc81b0fa87a8",
+    "lock_and_cached_members_match": true,
+    "regular_members": 19
+  },
+  {
+    "package": "windows-sys",
+    "version": "0.61.2",
+    "archive_sha256": "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc",
+    "lock_and_cached_members_match": true,
+    "regular_members": 257
+  },
+  {
+    "package": "winit",
+    "version": "0.30.13",
+    "archive_sha256": "a6755fa58a9f8350bd1e472d4c3fcc25f824ec358933bba33306d0b63df5978d",
+    "lock_and_cached_members_match": true,
+    "regular_members": 217
+  }
+]

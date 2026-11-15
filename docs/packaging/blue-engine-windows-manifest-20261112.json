@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "adapter": "blue-engine",
+  "platform": "win32",
+  "architecture": "x64",
+  "binary_sha256": "3a5b90663e8f99c84bc0ef8b5b343b7d1e2c0dd91107824b564efd23f3536e06",
+  "archive_sha256": "1d52d6fd87049842866e129165e19af261e6d36dba0a2b24ff3b4c25e1af5486",
+  "archive_bytes": 8361421,
+  "extracted_binary_matches": true
+}

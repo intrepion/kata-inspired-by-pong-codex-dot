@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "adapter": "slint",
+  "platform": "win32",
+  "architecture": "x64",
+  "binary_sha256": "3efc5d37666495a2c5bd21adc53a5fa3fa40e70af9c9eac87d17717ab91ddfae",
+  "archive_sha256": "e093cd263e5a5491c905908d0b552c3d5ec07ee2c7c0faa3c99d25bd2586c3bc",
+  "archive_bytes": 10589613,
+  "extracted_binary_matches": true
+}

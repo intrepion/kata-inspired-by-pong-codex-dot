@@ -1,0 +1,13 @@
+{
+  "kind": "source-and-resource-consistency-only",
+  "base": "05d9e269dbcf235b81bf2cf0f9604880857317eb",
+  "manifestSHA256": "00735a448a82d1864485a6b72b10beeab825501f18711c282a87295dacd5a5d0",
+  "resourceCopies": 4,
+  "resourceCheck": "passed",
+  "swiftCompile": "not-run-toolchain-unavailable",
+  "kotlinCompile": "not-run-toolchain-unavailable",
+  "nativeTests": "added-not-run",
+  "mobileRuntime": "not-run",
+  "screenshots": "none",
+  "normalAppEntryPoints": "unchanged"
+}

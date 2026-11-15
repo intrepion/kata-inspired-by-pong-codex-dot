@@ -1,0 +1,39 @@
+{
+  "adapter": "gpui",
+  "platform": "Linux ARM64",
+  "source_commit": "114c4a757f6cac53a58c49210060d326392266e4",
+  "binary_sha256": "353e3b8ead9f5cde173dcca34d45b4bab1b2049f1e7cd8fe94961a8316dedd61",
+  "archive_sha256": "7ce8155e17b4e3ccfb16e83c59b93a48f0ded65116e2e9d84a471dd232ec85a0",
+  "archive_bytes": 7810943,
+  "build_profile": "release",
+  "gui_model_tests": 8,
+  "packaging_tests": {
+    "passed": 16,
+    "windows_only_skipped": 2
+  },
+  "native_replay": {
+    "exit": 0,
+    "states": 13,
+    "final_tick": 1440,
+    "finished": true
+  },
+  "capture_rejection": {
+    "exit": 2,
+    "output_directory_created": false
+  },
+  "uninstall": {
+    "manifest_files_removed": 6,
+    "empty_directory_removed": true,
+    "neighbor_preserved": true
+  },
+  "primary_dependency_license": {
+    "name": "GPUI 0.2.2 Apache",
+    "sha256": "752daf2fb234ca4a1fa372c073fe127f44b7b90fd2529ae44273a64f9d53da7a"
+  },
+  "limitations": [
+    "State-only; no visual or real-input verification",
+    "Full transitive notice review pending",
+    "Not clean-distro or public release qualification",
+    "Existing proc-macro-error2 future incompatibility warning"
+  ]
+}

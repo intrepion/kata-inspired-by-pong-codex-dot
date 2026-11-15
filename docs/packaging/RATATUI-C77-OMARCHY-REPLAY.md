@@ -1,0 +1,7 @@
+# Ratatui contact-timing replay and package follow-up
+
+2026-11-12, Omarchy ARM64; source checkpoint `c77bf3ac147e41f67d88962f5c615fcc113d6465`. A fresh offline locked release build and all eight Ratatui frontend tests passed. The Linux portable pilot packager produced a 413,932-byte archive; its archive digest and four extracted manifest entries verified. Archive SHA-256: `26213fc9948c4eb9eee64ed1de84f84b9925482b400ef8169232cd4c1801dc78`. Binary SHA-256: `ca2c8a89f6e3cce1452aed5a014c0df80541c27cb6878725d470a70e3bd2d0ec`.
+
+A relocated extracted binary ran `--scripted-test --scripted-cells` to exit 0. Its 13 telemetry records match the revised contact-timing model reference exactly through finished tick 1440. Six app-owned TestBackend cell JSON/text pairs were generated; tick 600 text contained score, state, fallback controls and court. These cells are not screenshots or compositor output. The archive, extracted pilot, cell files and telemetry remain in distinct `/tmp/pong-ratatui-c77-*` paths; no previous artifacts were replaced.
+
+This qualifies only an Omarchy local extraction and scripted replay of this source revision. It does not establish physical keyboard input, native terminal rendering, focus/resize behavior, clean-machine installation, full dependency notice review or public distribution. Historical package evidence remains in [the earlier pilot](RATATUI-LINUX-PILOT.md).

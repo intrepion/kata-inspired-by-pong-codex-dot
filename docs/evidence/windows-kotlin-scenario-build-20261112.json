@@ -1,0 +1,17 @@
+{
+  "sourceCommit": "71c513ad31b82fd56c6f26f40b13c6b8d6372726",
+  "verifiedAtUtc": "2026-11-12T04:49:27.8142890Z",
+  "host": "Windows DESKTOP-HEL7V0H",
+  "command": "gradlew.bat --no-daemon --max-workers=2 testDebugUnitTest assembleDebug",
+  "result": "BUILD SUCCESSFUL",
+  "gameTests": 9,
+  "scenarioTests": 2,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "apkBytes": 887693,
+  "apkSha256": "12FCCDA5A47649659C8AE12ECEAB9F825A56C550EC0059CE71FDC4DC592A7C5B",
+  "canonicalAndApkScenarioSha256": "00735A448A82D1864485A6B72B10BEEAB825501F18711C282A87295DACD5A5D0",
+  "packagedAsset": "assets/scenarios/smoke-v1.txt",
+  "limits": "Host JVM tests and APK resource inspection only. No new emulator install/replay/capture; UI wiring absent."
+}

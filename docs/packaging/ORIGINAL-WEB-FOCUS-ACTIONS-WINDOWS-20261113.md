@@ -1,0 +1,5 @@
+# Original browser focus gate: Windows Node cross-check
+
+At checkpoint `6da030bd0e9e8a61a5ff4b93d2cde9114689c642`, Windows Node v24.20.0 ran `node --test tests/game.test.js tests/cpu-contact-target.test.js`: all 26 tests passed, including the synthetic DOM-handler blur, focus and visibility regression. Tested SHA-256 values were `game.ts` `26860db65480e0f07cf94846a37e791029f0186f58d997571cc349ec7baff624`, checked-in `game.js` `26bd21597f042682ce7d191be3b7d646e9351372f3a1051611a52d6b19ba55a1`, and `tests/game.test.js` `7d5c4899d31c4ed66e29798c541ebe837e8851c1a1a50b697bd8359842503c17`. These match the separately documented Omarchy TypeScript build inputs and output.
+
+This checkout has no available TypeScript compiler, so no independent Windows TypeScript build was run. The regression invokes synthetic DOM events, not browser-delivered focus or visibility events. No Windows browser interaction, physical input, mobile accessibility, clean-machine operation or release qualification is claimed. The Omarchy browser focus attempt and its limits are documented separately in `ORIGINAL-WEB-FOCUS-ACTIONS-OMARCHY.md`.
