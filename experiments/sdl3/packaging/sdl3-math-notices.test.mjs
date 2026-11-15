@@ -1,0 +1,42 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {mkdtempSync, mkdirSync, realpathSync, rmSync, writeFileSync} from 'node:fs';
+import {join} from 'node:path';
+import {tmpdir} from 'node:os';
+import {createHash} from 'node:crypto';
+import {appendSdlMathNotices, collectSdlMathNotices, SDL_3_4_20_MATH_NOTICES} from './sdl3-math-notices.mjs';
+
+const hash = s => createHash('sha256').update(s).digest('hex');
+test('SDL 3.4.20 manifest covers compiled math sources and shared header', () => {
+  assert.equal(SDL_3_4_20_MATH_NOTICES.length, 27);
+  assert.equal(new Set(SDL_3_4_20_MATH_NOTICES.map(x => x[0])).size, 26);
+  assert(SDL_3_4_20_MATH_NOTICES.some(x => x[0] === 'SDL/src/libm/e_sqrt.c'));
+  assert(SDL_3_4_20_MATH_NOTICES.some(x => x[0] === 'SDL/src/libm/math_private.h'));
+  assert.equal(SDL_3_4_20_MATH_NOTICES.filter(x => x[0] === 'SDL/src/libm/s_isnanf.c').length, 2);
+});
+test('exact math source and notice bytes are verified; alterations fail closed', t => {
+  const root = realpathSync(mkdtempSync(join(tmpdir(), 'sdl-math-notice-')));
+  t.after(() => rmSync(root, {recursive:true, force:true}));
+  mkdirSync(join(root, 'src'));
+  const comment = '/* Sun notice: preserve this text. */';
+  const contents = 'prefix\n'+comment+'\ncode\n';
+  const file = join(root, 'src', 'math.c');
+  writeFileSync(file, contents);
+  const entry = ['src/math.c', hash(contents), hash(comment), 7, 7+comment.length];
+  const [result] = collectSdlMathNotices(root, [entry]);
+  assert.equal(result.text, comment);
+  assert.equal(result.sha256, hash(comment));
+  assert.equal(result.supplemental, true);
+  const bundle = {text:'original\n',index:{packages:[{name:'sdl3-src',version:'3.4.20',notices:[]}],missing_notice_files:['other@1']}};
+  appendSdlMathNotices(bundle, root, [entry]);
+  assert(bundle.text.includes(comment));
+  assert.deepEqual(bundle.index.missing_notice_files, ['other@1']);
+  assert.equal(bundle.index.packages[0].notices[0].source_sha256, hash(contents));
+  assert.equal(bundle.index.packages[0].notices[0].link_status, 'compiled intermediate; final linkage unverified');
+  assert.throws(() => appendSdlMathNotices({text:'',index:{packages:[]}},root,[entry]), /Expected one/);
+  writeFileSync(file, contents+'changed');
+  assert.throws(() => collectSdlMathNotices(root, [entry]), /source hash mismatch/i);
+  writeFileSync(file, contents);
+  assert.throws(() => collectSdlMathNotices(root, [[...entry.slice(0,2), hash('wrong'), ...entry.slice(3)]]), /comment hash mismatch/i);
+  assert.throws(() => collectSdlMathNotices(root, [['../outside', ...entry.slice(1)]]), /escapes/i);
+});
