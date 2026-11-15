@@ -5,6 +5,7 @@ import {fileURLToPath} from 'node:url';
 import {auditedSourceComments, buildNoticeBundle} from '../../../scripts/packaging/notice-bundle.mjs';
 import {selectCargoMetadata} from './selected-cargo-metadata.mjs';
 import {appendSdlMathNotices} from './sdl3-math-notices.mjs';
+import {appendSdlKhronosNotices} from './sdl3-khronos-notices.mjs';
 
 const root = resolve(fileURLToPath(new URL('../../..', import.meta.url)));
 const input = JSON.parse(readFileSync(0, 'utf8'));
@@ -25,10 +26,14 @@ result.index.packages.find(p => p.name === 'sdl3-src' && p.version === '3.4.20')
 // These notices cover compiled SDL static-archive sources. They are
 // supplemental even when an object is not retained in the final executable.
 appendSdlMathNotices(result, dirname(source[0].manifest_path));
+// Header dependency records document compilation, not final-binary linkage.
+appendSdlKhronosNotices(result, dirname(source[0].manifest_path),
+  resolve(root, 'scripts/packaging/audited-notices/gl-rs-LICENSE.txt'));
 result.index.bundle_sha256 = createHash('sha256').update(result.text).digest('hex');
 result.index.unresolved_findings = [
   'Cargo metadata is not linked-binary attribution; independently review SDL native source and bundled component notices.',
   'SDL math source notices cover compiled intermediate objects; final linkage and other native notices remain unverified.',
+  'Khronos header notices cover compiled-object dependencies; final linkage remains unverified.',
   'HIDAPI offers BSD-style, original, or GPLv3 terms; the BSD-style option is intended for this pilot and physical controller compatibility is unverified.',
   'Downloaded, signed, notarized, clean-machine, and other-platform packages are not qualified.',
   'Preinstalled macOS frameworks and system libraries are runtime requirements and are not bundled here.'
