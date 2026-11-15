@@ -4,6 +4,9 @@ const path = require('node:path');
 const os = require('node:os');
 const cp = require('node:child_process');
 const crypto = require('node:crypto');
+const {writePilotResources, verifyPilotResources} = require('./pilot-resources.cjs');
+const {verifySourceManifest} = require('./source-provenance.cjs');
+const {verifyGeneratedManifest} = require('./generate-source-manifest.cjs');
 const root = path.resolve(__dirname, '../../..');
 const manifest = path.join(root, 'experiments/sdl3/Cargo.toml');
 const vendored = path.join(root, 'experiments/sdl3/vendor/sdl3-sys/Cargo.toml');
@@ -13,6 +16,8 @@ if (process.platform !== 'darwin' || process.arch !== 'arm64') throw Error('requ
 const out = path.resolve(outputArg);
 if (fs.existsSync(out)) throw Error('output directory must not already exist');
 if (Object.keys(process.env).some(k => k.startsWith('CMAKE_TOOLCHAIN_FILE'))) throw Error('external CMake toolchain overrides are not supported');
+const source = verifySourceManifest(root, path.join(root, 'SOURCE-MANIFEST.json'));
+verifyGeneratedManifest(root, source.bytes);
 const metadata = JSON.parse(cp.execFileSync('cargo', ['metadata', '--format-version=1', '--offline', '--locked', '--manifest-path', manifest], {encoding:'utf8', maxBuffer:16*1024*1024}));
 const tree = cp.execFileSync('cargo', ['tree','--offline','--locked','--manifest-path',manifest,'--target','aarch64-apple-darwin','--edges','normal,build','--prefix','none','--format','{p}'], {encoding:'utf8',maxBuffer:16*1024*1024});
 const notices = JSON.parse(cp.execFileSync(process.execPath, [path.join(__dirname, 'create-macos-notices.mjs')], {input:JSON.stringify({metadata,tree}), encoding:'utf8', maxBuffer:64*1024*1024}));
@@ -21,6 +26,9 @@ if (selected.length !== 1 || fs.realpathSync(selected[0].manifest_path) !== fs.r
 const target = fs.mkdtempSync(path.join(os.tmpdir(), 'pong-sdl3-macos-build-'));
 const env = {...process.env, CARGO_TARGET_DIR:target};
 cp.execFileSync('cargo', ['build', '--release', '--offline', '--locked', '--target', 'aarch64-apple-darwin', '--manifest-path', manifest], {env, stdio:'inherit'});
+const sourceAfterBuild = verifySourceManifest(root, path.join(root, 'SOURCE-MANIFEST.json'));
+if (!sourceAfterBuild.bytes.equals(source.bytes)) throw Error('Source manifest changed during build');
+verifyGeneratedManifest(root, sourceAfterBuild.bytes);
 const release = path.join(target, 'aarch64-apple-darwin/release');
 const build = path.join(release, 'build');
 const caches = fs.readdirSync(build).filter(n => n.startsWith('sdl3-sys-')).map(n => path.join(build,n,'out/build/CMakeCache.txt')).filter(fs.existsSync);
@@ -35,6 +43,7 @@ const strings = cp.execFileSync('strings', [binary], {encoding:'utf8', maxBuffer
 if (!symbols.includes('PLATFORM_hid_') || /LIBUSB_hid_|SDL_InitLibUSB/.test(symbols) || /libusb-1\.0\.dylib|libusb_init/.test(strings)) throw Error('unexpected HID backend in built binary');
 const hash = p => crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
 const binaryHash = hash(binary);
+const provenance = {schema:2, target:'aarch64-apple-darwin', sdl_hidapi_libusb:false, native_hidapi:true, joystick:true, binary_sha256:binaryHash, cargo_lock_sha256:hash(path.join(root,'experiments/sdl3/Cargo.lock')), sdl_sys_build_sha256:hash(path.join(root,'experiments/sdl3/vendor/sdl3-sys/build.rs')), source:source.source};
 // This function has no caller-supplied binary argument: it packages only the
 // build from the fresh target created above.
 fs.mkdirSync(out);
@@ -56,14 +65,13 @@ fs.writeFileSync(path.join(contents, 'Info.plist'), `<?xml version="1.0" encodin
 <key>NSHighResolutionCapable</key><true/>
 </dict></plist>\n`);
 fs.writeFileSync(path.join(out, 'PILOT-NOTICE.txt'), 'Local packaging experiment only. Not signed for distribution or notarized. Third-party license inventory, downloaded/quarantined Gatekeeper behavior, clean-machine installation and upgrades have NOT been qualified. Do not disable Gatekeeper to run it.\n');
-fs.writeFileSync(path.join(out, 'THIRD-PARTY-NOTICES.txt'), notices.text);
-fs.writeFileSync(path.join(out, 'NOTICE-INDEX.json'), JSON.stringify(notices.index,null,2)+'\n');
+const resources = writePilotResources(out, notices, provenance, binaryHash, source.bytes);
 cp.execFileSync('plutil', ['-lint', path.join(contents, 'Info.plist')], {stdio:'inherit'});
 const archive = path.join(out, 'pong-sdl3-macos-arm64-pilot.tar.gz');
-cp.execFileSync('tar', ['-czf', archive, '-C', out, 'Pong SDL3.app', 'PILOT-NOTICE.txt', 'THIRD-PARTY-NOTICES.txt', 'NOTICE-INDEX.json']);
+cp.execFileSync('tar', ['-czf', archive, '-C', out, 'Pong SDL3.app', 'PILOT-NOTICE.txt', 'THIRD-PARTY-NOTICES.txt', 'NOTICE-INDEX.json', 'BUILD-PROVENANCE.json', 'SOURCE-MANIFEST.json']);
 require('./verify-packaged-binary.cjs')(binaryHash, packed, archive);
+verifyPilotResources(out, archive, resources);
 const packageManifest = {schema:1, platform:process.platform, architecture:process.arch, binary_sha256:binaryHash, archive_sha256:hash(archive), archive_bytes:fs.statSync(archive).size, notices_sha256:hash(path.join(out,'THIRD-PARTY-NOTICES.txt')), missing_notice_files:notices.index.missing_notice_files};
 fs.writeFileSync(path.join(out,'manifest.json'), JSON.stringify(packageManifest,null,2)+'\n');
-fs.writeFileSync(path.join(out,'BUILD-PROVENANCE.json'), JSON.stringify({schema:1, target:'aarch64-apple-darwin', sdl_hidapi_libusb:false, native_hidapi:true, joystick:true, binary_sha256:binaryHash, cargo_lock_sha256:hash(path.join(root,'experiments/sdl3/Cargo.lock')), sdl_sys_build_sha256:hash(path.join(root,'experiments/sdl3/vendor/sdl3-sys/build.rs')), build_target:target},null,2)+'\n');
 console.log(JSON.stringify(packageManifest));
 console.log('Verified local build target: '+target);
