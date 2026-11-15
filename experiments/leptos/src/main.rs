@@ -1,6 +1,6 @@
 use leptos::prelude::*;
 use pong_web_ui_common::{Session, CSS};
-use wasm_bindgen::JsCast;
+use wasm_bindgen::{closure::Closure, JsCast};
 fn preserve_activation(ev: web_sys::KeyboardEvent) {
     if pong_web_ui_common::native_activation_key(&ev.key()) {
         ev.stop_propagation();
@@ -22,6 +22,30 @@ fn App() -> impl IntoView {
     });
     let interval = send_wrapper::SendWrapper::new(interval);
     on_cleanup(move || drop(interval));
+    // Element focusout is not guaranteed when switching browser tabs or apps.
+    let window = web_sys::window().expect("browser window");
+    let document = window.document().expect("browser document");
+    let blur = Closure::<dyn FnMut(web_sys::Event)>::new(move |_| {
+        session.update(|s| s.focus_left(false));
+    });
+    let visibility_document = document.clone();
+    let visibility = Closure::<dyn FnMut(web_sys::Event)>::new(move |_| {
+        if visibility_document.hidden() {
+            session.update(|s| s.focus_left(false));
+        }
+    });
+    window.add_event_listener_with_callback("blur", blur.as_ref().unchecked_ref())
+        .expect("register window blur");
+    document.add_event_listener_with_callback("visibilitychange", visibility.as_ref().unchecked_ref())
+        .expect("register document visibility");
+    let listeners = send_wrapper::SendWrapper::new((window, document, blur, visibility));
+    on_cleanup(move || {
+        let (window, document, blur, visibility) = &*listeners;
+        let _ = window.remove_event_listener_with_callback("blur", blur.as_ref().unchecked_ref());
+        let _ = document.remove_event_listener_with_callback("visibilitychange", visibility.as_ref().unchecked_ref());
+        // Drop closures only after removing their listeners.
+        drop(listeners);
+    });
     view! {<style>{CSS}</style><main node_ref=game_root tabindex="0" autofocus=true
     on:keydown=move |ev:web_sys::KeyboardEvent|{if pong_web_ui_common::handled_key(&ev.key()){ev.prevent_default();}session.update(|s|s.key(&ev.key(),true,ev.repeat()));}
     on:keyup=move |ev:web_sys::KeyboardEvent|session.update(|s|s.key(&ev.key(),false,false))

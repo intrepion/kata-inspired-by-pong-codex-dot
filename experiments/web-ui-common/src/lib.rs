@@ -693,6 +693,33 @@ fn download(name: &str, mime: &str, text: &str) -> String {
 mod focus_tests {
     use super::*;
     #[test]
+    fn repeated_external_focus_loss_clears_all_inputs_without_resuming() {
+        let mut session = Session::default();
+        session.start();
+        session.key("w", true, false);
+        session.movement_button(Direction::Up, 42, true);
+        session.movement_button_key(Direction::Down, " ", true, false);
+
+        // A tab switch can deliver both window blur and document hidden.
+        session.focus_left(false);
+        session.focus_left(false);
+        assert_eq!(session.game.state, State::Paused);
+        assert_eq!(session.held, [false; 4]);
+        assert_eq!(session.button_keys, [[false; 2]; 2]);
+        assert!(session.pointers.iter().all(HashSet::is_empty));
+        let stopped = session.game.player;
+        session.tick(0.05);
+        assert_eq!(session.game.player, stopped);
+
+        // Returning focus is not a request to resume.
+        session.focus_left(true);
+        assert_eq!(session.game.state, State::Paused);
+        session.toggle_pause();
+        session.tick(0.05);
+        assert_eq!(session.game.player, stopped, "no stale movement after resume");
+    }
+
+    #[test]
     fn focusing_an_internal_button_does_not_cancel_its_pause_click() {
         let mut session = Session::default();
         session.start();

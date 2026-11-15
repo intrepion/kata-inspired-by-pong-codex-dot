@@ -1,5 +1,5 @@
 use pong_web_ui_common::{Session, CSS};
-use wasm_bindgen::JsCast;
+use wasm_bindgen::{closure::Closure, JsCast};
 use yew::prelude::*;
 #[function_component(App)]
 fn app() -> Html {
@@ -22,6 +22,34 @@ fn app() -> Html {
                 status.set(s.status_text());
             });
             move || drop(interval)
+        });
+    }
+    // Element focusout is not guaranteed when switching browser tabs or apps.
+    {
+        let session = session.clone();
+        use_effect_with((), move |_| {
+            let window = web_sys::window().expect("browser window");
+            let document = window.document().expect("browser document");
+            let blur_session = session.clone();
+            let blur = Closure::<dyn FnMut(web_sys::Event)>::new(move |_| {
+                blur_session.borrow_mut().focus_left(false);
+            });
+            let visibility_document = document.clone();
+            let visibility = Closure::<dyn FnMut(web_sys::Event)>::new(move |_| {
+                if visibility_document.hidden() {
+                    session.borrow_mut().focus_left(false);
+                }
+            });
+            window.add_event_listener_with_callback("blur", blur.as_ref().unchecked_ref())
+                .expect("register window blur");
+            document.add_event_listener_with_callback("visibilitychange", visibility.as_ref().unchecked_ref())
+                .expect("register document visibility");
+            move || {
+                let _ = window.remove_event_listener_with_callback("blur", blur.as_ref().unchecked_ref());
+                let _ = document.remove_event_listener_with_callback("visibilitychange", visibility.as_ref().unchecked_ref());
+                // Drop closures only after removing their listeners.
+                drop((blur, visibility));
+            }
         });
     }
     let down = {
