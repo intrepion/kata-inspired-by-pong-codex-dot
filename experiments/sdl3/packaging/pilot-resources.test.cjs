@@ -17,7 +17,7 @@ test('app and archive retain exact notices, index and provenance', t => {
   const notice = 'Sun notice\nKhronos copyright and permission\n';
   const notices = {text:notice, index:{bundle_sha256:hash(Buffer.from(notice)), missing_notice_files:[]}};
   const source = Buffer.from('{"base_commit":"1044299"}\n');
-  const provenance = {schema:2,binary_sha256:'binary-hash',target:'aarch64-apple-darwin',source:{base_commit:'1044299',source_manifest_sha256:hash(source)}};
+  const provenance = {schema:3,build_binary_sha256:'binary-hash',target:'aarch64-apple-darwin',source:{base_commit:'1044299',source_manifest_sha256:hash(source)}};
   const expected = writePilotResources(out, notices, provenance, 'binary-hash', source);
   const archive = path.join(out, 'pilot.tar.gz');
   const makeArchive = () => cp.execFileSync('tar', ['-czf',archive,'-C',out,'Pong SDL3.app',...files]);
@@ -30,7 +30,7 @@ test('app and archive retain exact notices, index and provenance', t => {
     assert.equal(hash(inside),hash(expected[name]));
   }
   assert.equal(JSON.parse(expected['NOTICE-INDEX.json']).bundle_sha256, hash(expected['THIRD-PARTY-NOTICES.txt']));
-  assert.equal(JSON.parse(expected['BUILD-PROVENANCE.json']).binary_sha256, 'binary-hash');
+  assert.equal(JSON.parse(expected['BUILD-PROVENANCE.json']).build_binary_sha256, 'binary-hash');
   assert.equal(JSON.parse(expected['BUILD-PROVENANCE.json']).source.source_manifest_sha256,hash(expected['SOURCE-MANIFEST.json']));
   assert(!expected['BUILD-PROVENANCE.json'].toString().includes(out));
   assert(!expected['SOURCE-MANIFEST.json'].toString().includes(out));
@@ -52,8 +52,8 @@ test('inconsistent notice index and binary provenance fail closed', t => {
   t.after(() => fs.rmSync(out, {recursive:true, force:true}));
   fs.mkdirSync(path.join(out, resources), {recursive:true});
   const source = Buffer.from('{}');
-  assert.throws(() => writePilotResources(out, {text:'a',index:{bundle_sha256:'wrong'}}, {binary_sha256:'x'}, 'x', source), /notice index hash mismatch/);
-  assert.throws(() => writePilotResources(out, {text:'a',index:{bundle_sha256:hash(Buffer.from('a'))}}, {binary_sha256:'wrong'}, 'x', source), /provenance binary hash mismatch/);
-  assert.throws(() => writePilotResources(out, {text:'a',index:{bundle_sha256:hash(Buffer.from('a'))}}, {binary_sha256:'x',source:{source_manifest_sha256:'wrong'}}, 'x', source), /source manifest hash mismatch/);
+  assert.throws(() => writePilotResources(out, {text:'a',index:{bundle_sha256:'wrong'}}, {build_binary_sha256:'x'}, 'x', source), /notice index hash mismatch/);
+  assert.throws(() => writePilotResources(out, {text:'a',index:{bundle_sha256:hash(Buffer.from('a'))}}, {build_binary_sha256:'wrong'}, 'x', source), /provenance binary hash mismatch/);
+  assert.throws(() => writePilotResources(out, {text:'a',index:{bundle_sha256:hash(Buffer.from('a'))}}, {build_binary_sha256:'x',source:{source_manifest_sha256:'wrong'}}, 'x', source), /source manifest hash mismatch/);
   assert.equal(fs.existsSync(path.join(out, files[0])), false);
 });
