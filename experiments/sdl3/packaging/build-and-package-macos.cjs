@@ -43,7 +43,7 @@ const strings = cp.execFileSync('strings', [binary], {encoding:'utf8', maxBuffer
 if (!symbols.includes('PLATFORM_hid_') || /LIBUSB_hid_|SDL_InitLibUSB/.test(symbols) || /libusb-1\.0\.dylib|libusb_init/.test(strings)) throw Error('unexpected HID backend in built binary');
 const hash = p => crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
 const binaryHash = hash(binary);
-const provenance = {schema:2, target:'aarch64-apple-darwin', sdl_hidapi_libusb:false, native_hidapi:true, joystick:true, binary_sha256:binaryHash, cargo_lock_sha256:hash(path.join(root,'experiments/sdl3/Cargo.lock')), sdl_sys_build_sha256:hash(path.join(root,'experiments/sdl3/vendor/sdl3-sys/build.rs')), source:source.source};
+const provenance = {schema:3, target:'aarch64-apple-darwin', sdl_hidapi_libusb:false, native_hidapi:true, joystick:true, build_binary_sha256:binaryHash, signing:'ad-hoc bundle signature; signed binary hash is in archive-level SIGNED-BINARY-SHA256.txt', cargo_lock_sha256:hash(path.join(root,'experiments/sdl3/Cargo.lock')), sdl_sys_build_sha256:hash(path.join(root,'experiments/sdl3/vendor/sdl3-sys/build.rs')), source:source.source};
 // This function has no caller-supplied binary argument: it packages only the
 // build from the fresh target created above.
 fs.mkdirSync(out);
@@ -67,11 +67,23 @@ fs.writeFileSync(path.join(contents, 'Info.plist'), `<?xml version="1.0" encodin
 fs.writeFileSync(path.join(out, 'PILOT-NOTICE.txt'), 'Local packaging experiment only. Not signed for distribution or notarized. Third-party license inventory, downloaded/quarantined Gatekeeper behavior, clean-machine installation and upgrades have NOT been qualified. Do not disable Gatekeeper to run it.\n');
 const resources = writePilotResources(out, notices, provenance, binaryHash, source.bytes);
 cp.execFileSync('plutil', ['-lint', path.join(contents, 'Info.plist')], {stdio:'inherit'});
+const app = path.join(out, 'Pong SDL3.app');
+// Seal the finished bundle after writing resources; signing changes the executable.
+cp.execFileSync('codesign', ['--force','--sign','-','--timestamp=none',app], {stdio:'inherit'});
+cp.execFileSync('codesign', ['--verify','--verbose=2',app], {stdio:'inherit'});
+if (hash(binary) !== binaryHash) throw Error('source build binary changed during packaging');
+const signedBinaryHash = hash(packed);
+fs.writeFileSync(path.join(out, 'SIGNED-BINARY-SHA256.txt'), signedBinaryHash+'  Pong SDL3.app/Contents/MacOS/pong-sdl3\n');
 const archive = path.join(out, 'pong-sdl3-macos-arm64-pilot.tar.gz');
-cp.execFileSync('tar', ['-czf', archive, '-C', out, 'Pong SDL3.app', 'PILOT-NOTICE.txt', 'THIRD-PARTY-NOTICES.txt', 'NOTICE-INDEX.json', 'BUILD-PROVENANCE.json', 'SOURCE-MANIFEST.json']);
-require('./verify-packaged-binary.cjs')(binaryHash, packed, archive);
+cp.execFileSync('tar', ['-czf', archive, '-C', out, 'Pong SDL3.app', 'PILOT-NOTICE.txt', 'THIRD-PARTY-NOTICES.txt', 'NOTICE-INDEX.json', 'BUILD-PROVENANCE.json', 'SOURCE-MANIFEST.json', 'SIGNED-BINARY-SHA256.txt']);
+require('./verify-packaged-binary.cjs')(signedBinaryHash, packed, archive);
+const archivedHashList = cp.execFileSync('tar', ['-xOf', archive, 'SIGNED-BINARY-SHA256.txt'], {encoding:'utf8'});
+if (archivedHashList !== signedBinaryHash+'  Pong SDL3.app/Contents/MacOS/pong-sdl3\n') throw Error('signed binary hash list mismatch');
+const extracted = fs.mkdtempSync(path.join(os.tmpdir(), 'pong-sdl3-signed-verify-'));
+cp.execFileSync('tar', ['-xzf', archive, '-C', extracted]);
+cp.execFileSync('codesign', ['--verify','--verbose=2',path.join(extracted,'Pong SDL3.app')], {stdio:'inherit'});
 verifyPilotResources(out, archive, resources);
-const packageManifest = {schema:1, platform:process.platform, architecture:process.arch, binary_sha256:binaryHash, archive_sha256:hash(archive), archive_bytes:fs.statSync(archive).size, notices_sha256:hash(path.join(out,'THIRD-PARTY-NOTICES.txt')), missing_notice_files:notices.index.missing_notice_files};
+const packageManifest = {schema:1, platform:process.platform, architecture:process.arch, binary_sha256:signedBinaryHash, build_binary_sha256:binaryHash, signing:'adhoc', archive_sha256:hash(archive), archive_bytes:fs.statSync(archive).size, notices_sha256:hash(path.join(out,'THIRD-PARTY-NOTICES.txt')), missing_notice_files:notices.index.missing_notice_files};
 fs.writeFileSync(path.join(out,'manifest.json'), JSON.stringify(packageManifest,null,2)+'\n');
 console.log(JSON.stringify(packageManifest));
 console.log('Verified local build target: '+target);

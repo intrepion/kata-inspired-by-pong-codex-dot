@@ -9,7 +9,7 @@ const resources = 'Pong SDL3.app/Contents/Resources';
 function writePilotResources(out, notices, provenance, binaryHash, sourceManifest) {
   const noticeBytes = Buffer.from(notices.text, 'utf8');
   if (notices.index.bundle_sha256 !== hash(noticeBytes)) throw Error('notice index hash mismatch');
-  if (provenance.binary_sha256 !== binaryHash) throw Error('provenance binary hash mismatch');
+  if (provenance.build_binary_sha256 !== binaryHash) throw Error('provenance binary hash mismatch');
   if (!Buffer.isBuffer(sourceManifest) || provenance.source?.source_manifest_sha256 !== hash(sourceManifest))
     throw Error('provenance source manifest hash mismatch');
   const files = {
