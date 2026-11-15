@@ -1,0 +1,9 @@
+# Piston held-fix Mac relocated package check
+
+On 2026-11-13, the existing macOS ARM64 Release pilot archive from the [held-input recheck](../PISTON-PAUSE-HELD-INPUT-FIX.md) was extracted into a separate directory. Archive SHA-256: `2f2fee83b949a983054832de1c276e27aa11e341364d133abbe21e99cd6392b4`. The extracted executable SHA-256 `b9c2fdd66398dc933f74b1a677bc0f53cedc95d1f646b25054c6243803bc16f6` matched its manifest and the historical tested binary; the extracted Info.plist passed `plutil -lint`.
+
+The extracted binary's bounded scripted run exited 0, produced 13 telemetry records matching the contact-timing model reference byte-for-byte and exported six app-owned PNGs. The tick-480 image was inspected: court, paddles, ball and divider are visible; the image itself does not show a pause label. This is scripted state/model and app-owned capture evidence, not physical input.
+
+Separately, supported desktop automation opened the extracted app, sent Return and observed Playing, sent Space and observed Paused, then sent R and observed 0–0 Playing. The test window was closed and the app no longer appeared in the running-app inventory. These are sequential automated actions, not physical keyboard input, held-across-pause or a full-match qualification.
+
+The historical build source was `8ce3d0fbe034b5ea278e12d1694e1301addddbd1`. Its Piston frontend source, manifest and lockfile, shared core and scenario source, and smoke scenario have identical Git blobs at checkpoint `2cca8e3582902ad072b7ee18739b94a6732878e5`; this is not a new build or a guarantee that every build input and dependency is unchanged. Extracted files and replay remain at `/tmp/pong-piston-pause-relocated-20261113-v1`; earlier archives and artifacts were preserved. Signing, notarization, complete dependency notices, downloaded/quarantined behavior, clean-machine operation and distribution remain open.

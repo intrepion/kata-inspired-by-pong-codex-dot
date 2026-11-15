@@ -1,0 +1,7 @@
+# Shared Rust web-controller explicit pause fix
+
+The Yew, Leptos and Dioxus controllers share `pong-web-ui-common::Session`. Blur calls `Session::pause`, which clears held keyboard and on-screen pointer input. Previously the Pause button and Space/Escape handlers called the game's toggle directly, leaving held input active across pause and resume. A model regression reproduced the consequence: with Down held, a pause/resume followed by a tick moved the paddle from approximately 273.5 to 297 without a new input.
+
+The explicit toggle now routes entry into pause through the existing clearing method; resume still toggles normally. Held controls must be pressed again after explicit pause. The test covers Pause-button-style toggle, Space and Escape with keyboard and pointer input, verifies no movement after resume, and verifies a fresh press moves again. Twelve shared controller tests pass, including the bounded scripted model demo; Yew, Leptos and Dioxus web adapters pass locked offline wasm32 checks, and Dioxus desktop passes a locked offline check on Omarchy. The new regression failed before the fix and passed afterward.
+
+These are model and compilation checks. Browser or native interaction, physical touch, rebuilt wrapper binaries, package replay and cross-platform requalification after this change remain unverified. Previous published captures and package evidence are historical; the shared core physics and replay baseline were not changed.

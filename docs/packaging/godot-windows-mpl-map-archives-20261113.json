@@ -1,0 +1,20 @@
+[
+  {
+    "archive": "libgodot_cell-246987463bbeefb7",
+    "package": "godot-cell",
+    "version": "0.4.5",
+    "license": "MPL-2.0"
+  },
+  {
+    "archive": "libgodot_core-c6ae10fa6848b138",
+    "package": "godot-core",
+    "version": "0.4.5",
+    "license": "MPL-2.0"
+  },
+  {
+    "archive": "libgodot_ffi-173aa9f5b3c5af51",
+    "package": "godot-ffi",
+    "version": "0.4.5",
+    "license": "MPL-2.0"
+  }
+]

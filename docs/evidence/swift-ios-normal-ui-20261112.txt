@@ -1,0 +1,155 @@
+Test Case '-[PongUITests.PongUITests testTouchReleaseBackgroundAndFullMatch]' started.
+    t =     0.01s Start Test at 2026-11-11 21:39:19.784
+    t =     0.70s Set Up
+    t =     0.79s Open com.intrepion.pong.native.swift
+    t =     0.79s     Launch com.intrepion.pong.native.swift
+2026-11-11 21:39:21.467 xcodebuild[97705:1253814] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-11-11 21:39:21.468 xcodebuild[97705:1253814] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     5.96s         Setting up automation session
+    t =     8.42s         Wait for com.intrepion.pong.native.swift to idle
+    t =     9.95s Waiting 15.0s for "Start" Button to exist
+    t =    10.95s     Checking `Expect predicate `existsNoRetry == 1` for object "Start" Button`
+    t =    10.95s         Checking existence of `"Start" Button`
+    t =    11.15s Tap "Start" Button
+    t =    11.15s     Wait for com.intrepion.pong.native.swift to idle
+    t =    11.17s     Find the "Start" Button
+    t =    11.23s     Check for interrupting elements affecting "Start" Button
+    t =    11.38s     Synthesize event
+    t =    11.92s     Wait for com.intrepion.pong.native.swift to idle
+    t =    11.95s Waiting 10.0s for "pong-court" Other to exist
+    t =    12.97s     Checking `Expect predicate `existsNoRetry == 1` for object "pong-court" Other`
+    t =    12.97s         Checking existence of `"pong-court" Other`
+    t =    13.01s Find the "pong-court" Other
+    t =    13.03s Press "pong-court" Other[0.30, 0.50] for 0.1 seconds, then drag to "pong-court" Other[0.30, 0.97] with velocity of 250.00 pixels per second, and then hold for 1.0 seconds 
+    t =    13.03s     Wait for com.intrepion.pong.native.swift to idle
+    t =    13.05s     Find the "pong-court" Other
+    t =    13.08s     Check for interrupting elements affecting "pong-court" Other
+    t =    13.22s     Synthesize event
+    t =    13.38s         Find the "pong-court" Other
+    t =    13.41s         Find the "pong-court" Other
+    t =    13.45s         Find the "pong-court" Other
+    t =    13.47s         Find the "pong-court" Other
+    t =    13.51s         Find the "pong-court" Other
+    t =    15.30s     Wait for com.intrepion.pong.native.swift to idle
+    t =    15.32s Find the "pong-court" Other
+    t =    16.38s Find the "pong-court" Other
+    t =    16.40s Pressing Home button
+    t =    16.88s Open com.intrepion.pong.native.swift
+    t =    16.88s     Activate com.intrepion.pong.native.swift
+    t =    17.83s         Wait for com.intrepion.pong.native.swift to idle
+    t =    17.88s Waiting 10.0s for "Paused" StaticText to exist
+    t =    18.88s     Checking `Expect predicate `existsNoRetry == 1` for object "Paused" StaticText`
+    t =    18.88s         Checking existence of `"Paused" StaticText`
+    t =    18.91s Find the "pong-court" Other
+    t =    18.93s Tap "Resume" Button
+    t =    18.93s     Wait for com.intrepion.pong.native.swift to idle
+    t =    18.96s     Find the "Resume" Button
+    t =    18.99s     Check for interrupting elements affecting "Resume" Button
+    t =    19.06s     Synthesize event
+    t =    19.41s     Wait for com.intrepion.pong.native.swift to idle
+    t =    20.53s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    20.53s     Checking existence of `"Start" Button`
+    t =    20.55s     Capturing element debug description
+    t =    21.51s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    21.51s     Checking existence of `"Start" Button`
+    t =    21.54s     Capturing element debug description
+    t =    22.51s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    22.51s     Checking existence of `"Start" Button`
+    t =    22.53s     Capturing element debug description
+    t =    23.52s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    23.52s     Checking existence of `"Start" Button`
+    t =    23.54s     Capturing element debug description
+    t =    24.51s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    24.51s     Checking existence of `"Start" Button`
+    t =    24.53s     Capturing element debug description
+    t =    25.49s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    25.49s     Checking existence of `"Start" Button`
+    t =    25.50s     Capturing element debug description
+    t =    26.46s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    26.46s     Checking existence of `"Start" Button`
+    t =    26.48s     Capturing element debug description
+    t =    27.48s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    27.48s     Checking existence of `"Start" Button`
+    t =    27.54s     Capturing element debug description
+    t =    28.51s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    28.51s     Checking existence of `"Start" Button`
+    t =    28.52s     Capturing element debug description
+    t =    29.50s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    29.50s     Checking existence of `"Start" Button`
+    t =    29.52s     Capturing element debug description
+    t =    30.48s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    30.48s     Checking existence of `"Start" Button`
+    t =    30.50s     Capturing element debug description
+    t =    31.46s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    31.46s     Checking existence of `"Start" Button`
+    t =    31.49s     Capturing element debug description
+    t =    32.46s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    32.47s     Checking existence of `"Start" Button`
+    t =    32.50s     Capturing element debug description
+    t =    33.47s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    33.47s     Checking existence of `"Start" Button`
+    t =    33.49s     Capturing element debug description
+    t =    34.49s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    34.49s     Checking existence of `"Start" Button`
+    t =    34.52s     Capturing element debug description
+    t =    35.49s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    35.50s     Checking existence of `"Start" Button`
+    t =    35.56s     Capturing element debug description
+    t =    36.46s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    36.46s     Checking existence of `"Start" Button`
+    t =    36.52s     Capturing element debug description
+    t =    37.52s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    37.52s     Checking existence of `"Start" Button`
+    t =    37.54s     Capturing element debug description
+    t =    38.51s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    38.51s     Checking existence of `"Start" Button`
+    t =    38.53s     Capturing element debug description
+    t =    39.50s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    39.52s     Checking existence of `"Start" Button`
+    t =    39.70s     Capturing element debug description
+    t =    40.47s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    40.47s     Checking existence of `"Start" Button`
+    t =    40.52s     Capturing element debug description
+    t =    41.48s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    41.48s     Checking existence of `"Start" Button`
+    t =    41.49s     Capturing element debug description
+    t =    42.54s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    42.54s     Checking existence of `"Start" Button`
+    t =    42.55s     Capturing element debug description
+    t =    43.50s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    43.51s     Checking existence of `"Start" Button`
+    t =    43.52s     Capturing element debug description
+    t =    44.47s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    44.48s     Checking existence of `"Start" Button`
+    t =    44.53s     Capturing element debug description
+    t =    45.50s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    45.50s     Checking existence of `"Start" Button`
+    t =    45.52s     Capturing element debug description
+    t =    46.48s Checking `Expect predicate `exists == 1` for object "Start" Button`
+    t =    46.48s     Checking existence of `"Start" Button`
+    t =    46.50s Checking existence of `"CPU wins" StaticText`
+    t =    46.51s Tap "Start" Button
+    t =    46.51s     Wait for com.intrepion.pong.native.swift to idle
+    t =    46.51s     Find the "Start" Button
+    t =    46.53s     Check for interrupting elements affecting "Start" Button
+    t =    46.63s     Synthesize event
+    t =    46.97s     Wait for com.intrepion.pong.native.swift to idle
+    t =    46.98s Checking existence of `"0     :     0" StaticText`
+    t =    46.99s Tear Down
+Test Case '-[PongUITests.PongUITests testTouchReleaseBackgroundAndFullMatch]' passed (47.349 seconds).
+Test Suite 'PongUITests' passed at 2026-11-11 21:40:07.122.
+	 Executed 1 test, with 0 failures (0 unexpected) in 47.349 (47.351) seconds
+Test Suite 'PongUITests.xctest' passed at 2026-11-11 21:40:07.123.
+	 Executed 1 test, with 0 failures (0 unexpected) in 47.349 (47.352) seconds
+Test Suite 'Selected tests' passed at 2026-11-11 21:40:07.123.
+	 Executed 1 test, with 0 failures (0 unexpected) in 47.349 (47.354) seconds
+2026-11-11 21:40:07.502 xcodebuild[97705:1253814] [MT] IDETestOperationsObserverDebug: 97.192 elapsed -- Testing started completed.
+2026-11-11 21:40:07.502 xcodebuild[97705:1253814] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-11 21:40:07.502 xcodebuild[97705:1253814] [MT] IDETestOperationsObserverDebug: 97.192 sec, +97.192 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/pong-swift-touch-tests-v2-20261112.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started

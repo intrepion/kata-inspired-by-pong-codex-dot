@@ -1,0 +1,9 @@
+# Shared GUI input held through match end
+
+2026-11-13, Omarchy ARM64. In the GTK/Slint/GPUI shared model, a movement key held when a match ended remained active after Enter or R restarted it. A focused regression reproduced the defect before the fix using the actual core scoring step from a controlled near-winning state. It checks all four direction bindings, both winners and both restart actions.
+
+On a Playing-to-Over simulation transition, the model now suppresses currently held movement, clears active directions and discards accumulated time. The key identities remain held so toolkit repeats cannot rearm movement; release and a fresh press restore it. The existing pause path uses the same suppression helper. All 12 locked offline shared-model tests passed; the tested source Git blob is `29921dbf08eebc76cfbe52465279ec4da42ab4de` (SHA-256 `6eafd56af68bd6f43276a87ff0c473a9a621f90a5cecbf3545254a2de491fd77`). These are model tests, not native or physical keyboard delivery.
+
+Separate copied targets produced locked offline release builds. GTK SHA-256 `fe60cdfa27d6821db1d0ff8053374c531e915fe2bd0da04173d8cd187d38ff1d`, Slint `8c41ad006dd26f0a4f7c651b662800086a2f7da7ef2eb578dcc7de91666af55d` and GPUI `876d92485d2524e8d0dabb027318a15586e6156bf60fb05188171ce2c37ced95` each exited 0 in a state-only scripted run with 13 model-matching telemetry records. The scripted scenario does not reach game over and does not exercise keys. GPUI still emits the `proc-macro-error2 2.0.1` future-incompatibility warning. No new visual capture is claimed.
+
+Copied targets, isolated working directories and logs remain under `/home/intrepion/Documents/Codex/2026-11-12/task/pong-gui-gameover-20261113-6fOb58`. Native/physical interaction, Mac/Windows verification, other adapter match-end input paths, dependency/notice review and release qualification remain open. Previous artifacts were preserved.

@@ -1,0 +1,7 @@
+# Softbuffer and ash in-court instructions: Windows cross-check
+
+At checkpoint `c2f554d7b3efdc07819005d25c2fcfa68471a49b`, both adapters were rebuilt against shared low-level source blob `a4da9a0a024b5d700403055f1dc069fe8e37fde7`. Windows stable MSVC Rust locked offline debug tests passed: softbuffer 10 and ash 12. Cargo reported incremental hard-link failures and copied files instead. Softbuffer executable SHA-256 was `d60a76d7c888c7aab33d494330a255a5468ffb7ec712f01fb082577dead042b6`; ash executable SHA-256 was `520cfa44785ac2ca5c34061a764ab44159b0c3e37c7b7af95349a658506c7dda`.
+
+Both app-owned scripted runs exited 0 and all 13 JSON records matched `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`. Softbuffer stderr was empty; ash reported Vulkan device Intel UHD Graphics 630. Each produced six captures. The inspected softbuffer tick-480 capture and ash's tick-480 Vulkan capture were byte-identical, SHA-256 `7659cb7173bd14e1d7ce1105af9367763d75e67d481e877924706fee407ca435`: [capture](../evidence/softbuffer-ash-pause-instruction-windows-20261113.png). It shows the complete `SPACE TO RESUME` instruction. Previous executables, logs and captures remain in sibling workspace directories `softbuffer-instructions-windows-20261113` and `ash-instructions-windows-20261113`.
+
+The replay does not visually verify Ready or winner rendering. These are adapter tests, scripted replays and app-owned captures, not OS key delivery, physical input, complete interactive matches, clean-machine operation, license clearance or release qualification.

@@ -1,0 +1,38 @@
+{
+  "platform": "Omarchy Linux ARM64",
+  "model_tests": 8,
+  "packaging_tests_pass": 16,
+  "platform_skips": 2,
+  "results": [
+    {
+      "adapter": "gtk",
+      "binary_sha256": "22081b9db12dddd859d8fbe2205729b78fee5534aba88c6a8a5c11d3525823b8",
+      "archive_sha256": "1f36fce85b16ed068a80e713276721ec99f2263ca5dd388d3c7fd6d8f192f49e",
+      "size": 335958,
+      "source_commit": "fca3d4dab8c166fab1397cbde38dd1b651e9e8f3",
+      "exit": 0,
+      "states": 13,
+      "final_tick": 1440,
+      "finished": true,
+      "captures": 6,
+      "capture_kind": "app-owned Cairo render output",
+      "tick600_sha256": "10dbae3069b45df5fc4250887df39b24bf1023e6a5e2148d04c2419b64bcf15d",
+      "staging_retained": true
+    },
+    {
+      "adapter": "slint",
+      "binary_sha256": "c230ae2657e8f4c6db7031dd2e1ed8f3b9784e2cb205bf30bacc888d3657a894",
+      "archive_sha256": "215ebc59c42cbd982879411de6ec5faac01f5a96588182803080ddf1c94011e1",
+      "size": 8875046,
+      "source_commit": "fca3d4dab8c166fab1397cbde38dd1b651e9e8f3",
+      "exit": 0,
+      "states": 13,
+      "final_tick": 1440,
+      "finished": true,
+      "captures": 6,
+      "capture_kind": "Slint own-window component snapshots",
+      "tick600_sha256": "c58e43b0d8cc4988f49af62761d70f45e97eb0f704a785779703ba9ed31f25ef",
+      "staging_retained": true
+    }
+  ]
+}

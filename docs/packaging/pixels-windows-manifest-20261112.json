@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "adapter": "pixels",
+  "platform": "win32",
+  "architecture": "x64",
+  "binary_sha256": "b9c8fae23674379f21547789976777ae67ff8e3da8a1bd3a9282dd5d152297e5",
+  "archive_sha256": "f54dc9f42ab5161f79fd0b22bc7505f00dcd87cd8708413cfd0c313552b11bae",
+  "archive_bytes": 4349499,
+  "extracted_binary_matches": true
+}

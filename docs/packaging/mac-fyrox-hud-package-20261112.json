@@ -1,0 +1,27 @@
+[
+  {
+    "adapter": "fyrox",
+    "schema": 1,
+    "platform": "darwin",
+    "architecture": "arm64",
+    "binary_sha256": "21880f7e337191f1dd9611f885a57acd044a89280eb5645c753be48bd1d9ce81",
+    "archive_sha256": "138bac4a8975f4f1484c86deab84ea38e012ff4b5e380dd795b06897db5906be",
+    "archive_bytes": 14701173,
+    "status": 0,
+    "signal": null,
+    "elapsed_seconds": 13.551,
+    "states": 13,
+    "final_tick": 1440,
+    "finished": true,
+    "captures": 6,
+    "scoped_removal": true,
+    "removal_scope": "extracted app bundle only",
+    "runtime_created_files_remaining": [
+      {
+        "path": "data/resources.registry",
+        "bytes": 2
+      }
+    ],
+    "complete_cleanup": false
+  }
+]

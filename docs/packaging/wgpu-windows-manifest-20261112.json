@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "adapter": "wgpu",
+  "platform": "win32",
+  "architecture": "x64",
+  "binary_sha256": "e325d47f8f1a5311b9bdf2e345b9d2f3a9dacf2677127e2c99605b2df872a17c",
+  "archive_sha256": "c2de4778dbe1697d321834ac313e627479bffa3623073f23a7d91f5ca1edef5e",
+  "archive_bytes": 4346467,
+  "extracted_binary_matches": true
+}

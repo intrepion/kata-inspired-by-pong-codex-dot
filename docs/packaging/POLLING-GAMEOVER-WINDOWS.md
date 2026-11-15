@@ -1,0 +1,5 @@
+# Windows polling match-end input recheck
+
+At checkpoint `fee4018cf875dee0db185a2d84a4ed1852871253`, Windows MSVC stable Rust 1.99.1 passed locked offline tests for four polling adapters: Blue Engine 7 in release mode, Macroquad 4, Nannou 9 and Bevy 5 in debug mode. Each suite includes `winning_score_keeps_held_movement_suppressed_on_restart`, which uses both winners and four movement bindings. The tested source Git blobs match [the Omarchy report](POLLING-MOBILE-GAMEOVER-OMARCHY.md). Copied targets preserve earlier artifacts; Cargo fell back to copying incremental files when hard-linking was unavailable.
+
+These are adapter tests, not native keyboard delivery or physical input. No new replay or capture was performed in this batch. Raylib and SDL3 Windows checks remain blocked by their native build paths described in [the polling recheck](POLLING-NONPLAYING-INPUT-WINDOWS.md). Bevy's earlier Windows scripted replay access violation remains unresolved. Clean-machine operation and release qualification remain open.

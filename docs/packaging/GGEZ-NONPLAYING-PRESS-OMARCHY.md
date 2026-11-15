@@ -1,0 +1,9 @@
+# ggez non-playing movement press fix on Omarchy
+
+2026-11-13, Omarchy ARM64. The ggez adapter recorded fresh movement presses regardless of game state. A regression test reproduced that pressing W while Paused then pressing Enter resumed with W still held, allowing unintended paddle movement without a fresh press. This was a direct adapter-function test, not a native key-delivery test.
+
+The adapter now accepts movement presses only while Playing. Existing release handling still clears bindings in any state. The regression covers W, Up, S and Down in Ready, Paused and Over: starting/resuming leaves movement clear, repeats cannot rearm it, and a fresh press during play does. The original W/Paused test failed before the fix; all five adapter tests pass afterward, as does `cargo fmt --check`. Tested adapter source Git blob `754f43a5b7b37fa4e6dd8b2db78fea3721e6b41e` (SHA-256 `3c2d84730c808899f2022145b34b94f62807daea97a1ebbaf11f628ce6fd4783`).
+
+A locked offline release build using a separate copied target produced executable SHA-256 `394cfc066914bd89cb17e1d27620d141de2635566c8fdd97fc4f166131ac7302`. Its scripted replay exited 0, matched all 13 current model telemetry records and produced six app-owned captures. The inspected tick 480 frame showed the paused label, court, paddles and ball; its SHA-256 is `3a810746724d43399d306e7464e54861c259bb21923fe39ce89d2dc0e58a9a7b`. Scripted replay does not exercise the physical or native keyboard path. The copied build target, logs and captures remain under `/home/intrepion/Documents/Codex/2026-11-12/task/pong-ggez-paused-press-20261113-YBTYUO`.
+
+Mac and Windows rebuilds, native/physical input, clean-machine installation, full dependency and notice review, and release qualification remain open. Previous evidence and binaries remain historical; no release was published.

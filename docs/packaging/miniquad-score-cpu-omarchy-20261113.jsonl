@@ -1,0 +1,13 @@
+{"scenario":"smoke-v1","seed":42,"tick":0,"state":"Ready","player":250,"cpu":250,"ball":[450,250,0,0],"scores":[0,0],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":120,"state":"Playing","player":45,"cpu":250,"ball":[330.41708,257.6975,-350,22.52929],"scores":[0,0],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":240,"state":"Over","player":48.916668,"cpu":250,"ball":[-9.916667,250,-350,0],"scores":[2,7],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":360,"state":"Over","player":48.916668,"cpu":250,"ball":[-9.916667,250,-350,0],"scores":[2,7],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":480,"state":"Over","player":48.916668,"cpu":250,"ball":[-9.916667,250,-350,0],"scores":[2,7],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":600,"state":"Over","player":48.916668,"cpu":250,"ball":[-9.916667,250,-350,0],"scores":[2,7],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":720,"state":"Over","player":48.916668,"cpu":250,"ball":[-9.916667,250,-350,0],"scores":[2,7],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":840,"state":"Over","player":48.916668,"cpu":250,"ball":[-9.916667,250,-350,0],"scores":[2,7],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":960,"state":"Over","player":48.916668,"cpu":250,"ball":[-9.916667,250,-350,0],"scores":[2,7],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":1080,"state":"Over","player":48.916668,"cpu":250,"ball":[-9.916667,250,-350,0],"scores":[2,7],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":1200,"state":"Over","player":48.916668,"cpu":250,"ball":[-9.916667,250,-350,0],"scores":[2,7],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":1320,"state":"Playing","player":250,"cpu":241.60867,"ball":[569.5835,228.91505,350,-61.711494],"scores":[0,0],"finished":false}
+{"scenario":"smoke-v1","seed":42,"tick":1440,"state":"Playing","player":250,"cpu":178.31694,"ball":[784.3431,137.05983,-311.23215,-209.0905],"scores":[0,0],"finished":true}

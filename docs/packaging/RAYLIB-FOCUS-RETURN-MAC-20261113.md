@@ -1,0 +1,7 @@
+# Raylib focus-return action gate — macOS, 2026-11-13
+
+A Mac cross-check of the action-key suppression added at `e9069dcad35d9b2cf1af71ddaf212dbee807be44`. An isolated mixed local tree used raylib adapter blob `06067d05a4d7f4b626077bd6ab644fd5eee88055` from checkpoint `0e62c3b0095a3f97da81b1f59f8f71efd0bb7a3d`; local core lib.rs blob `8a9a1f2ecdcbfefde4d67e3f4df0d5f1d2930dd3` also matched that checkpoint. Other inputs were not all compared, so this is not a complete-checkpoint build claim.
+
+`CARGO_TARGET_DIR=/tmp/pong-raylib-pause-mac-target cargo test --offline --locked --release --manifest-path experiments/raylib-rs/Cargo.toml` passed all 16 tests. In particular, `focus_return_requires_release_of_held_actions` exercised synthetic held/pressed samples for Enter, R, Space and Escape, release and fresh presses, a clear first sample, and independent bindings. The test executable SHA-256 was `62c3a12c531a107a42417cd7a7c9d63350beb026362824aa77153e90f5aa1f8a`; the adapter SHA-256 was `8ef91dcd996e0e56fba5af2b7abdcb70adade33964d7858c958cf5997b335438`. Previous local adapter and executable were preserved under `/tmp/pong-raylib-focus-return-mac-20261113-v1`.
+
+These are model-level polling tests, not native focus delivery or physical keyboard input. Earlier native raylib input automation remained inconclusive; this check does not resolve it. Full gameplay, other environments, dependency notice completion, clean-machine installation and release qualification remain open.

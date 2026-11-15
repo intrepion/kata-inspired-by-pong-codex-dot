@@ -1,0 +1,7 @@
+# Slint contact-timing replay on Omarchy
+
+2026-11-13, Omarchy ARM64; source `9023be98bf8cc08b91af7b4ec40a9aa183e508a0` includes contact-timing physics `c77bf3a`. A fresh offline locked release build passed; the Slint frontend test target contains zero tests. All eight shared GUI-model tests passed. The local Linux portable pilot archive was extracted into a separate directory; its archive digest and all five extracted manifest entries verified, including the Slint license text. Archive size: 8,875,168 bytes; archive SHA-256: `9d974971bf2114e294bae3f050fee2416fdb59e34d15fd1890fcdd9e636a0fdc`; binary SHA-256: `90724337a95b518b32d3702a31ea3b0eb06aaf95a4938535b2703833e89b0dcc`.
+
+With approved host-display access, the relocated binary completed `--scripted-test --scripted-captures` with exit 0. Its 13 telemetry records exactly match the revised contact-timing model reference through finished tick 1440. Six app-owned software-renderer component PNGs were produced; tick 600 was inspected and showed score, court, paddles, ball and Slint attribution. These component snapshots are not desktop/compositor screenshots. Archive, extraction, captures and telemetry remain under distinct `/tmp/pong-slint-c77-*` paths; historical artifacts were preserved.
+
+This is a local package extraction and scripted rendering/replay check. Physical input, focus/resize, full-match interaction, clean-machine installation, complete dependency notices and public distribution remain unverified.

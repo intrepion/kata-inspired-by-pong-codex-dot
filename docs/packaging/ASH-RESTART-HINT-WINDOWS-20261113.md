@@ -1,0 +1,7 @@
+# Vulkan/ash shared restart renderer: Windows check, 2026-11-13
+
+At checkpoint `485f5db931d0adde5ddf69ee42921f22f49c8a23`, Windows MSVC stable Rust 1.99.1 passed all 12 locked, offline ash release tests. Ash adapter Git blobs were main `4fa909f61c31e0036e3da0b267c287c4257a8bc4` and renderer `32e552de76f706d6aeb62911d3e8f99d67e6b523`; shared low-level renderer blob was `5c3d07376e7089a0cd84a6cb5ce9836a94f07c1e`. The [separate Windows shared-renderer check](LOWLEVEL-RESTART-HINT-WINDOWS-20261113.md) covers match-end hint pixels directly.
+
+A locked offline release build succeeded; executable SHA-256 was `c2e6749d83e30eb396be337b1e26c38ad680a39c2c4701c9d6ea9804d9a50736`. The app-owned scripted run exited 0 on Intel UHD Graphics 630 Vulkan and all 13 parsed telemetry records matched `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`. Six captures were generated; the inspected tick 480 paused image showed the court, score and resume prompt, SHA-256 `fdede478ed6af22eb32a50139a82abf6c097306a6d12089f503ae818fd8baa31`, matching the prior Windows Softbuffer capture. Logs, captures and copies of prior executable and test binaries remain in sibling workspace directory `ash-restart-hint-windows-20261113`.
+
+The replay does not reach game over, so this is not an ash match-end visual or native interaction check. Physical and accessibility input, Vulkan loader and driver dependencies, clean-machine installation, notice review and release qualification remain open. The previous Windows notice inventory is not complete license clearance.

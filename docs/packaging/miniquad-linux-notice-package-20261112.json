@@ -1,0 +1,10 @@
+{
+  "binary_sha256": "6525165093ab3ecea15e7fdaa7edbaf9cd44ad41d20e9dd4d88d962952c75ae5",
+  "archive_sha256": "38902fd5400667eb8cb4b1515fbeb8c4f35a573fd0bd6410796da787399d6d8e",
+  "size": 456131,
+  "exit": 0,
+  "states": 13,
+  "final_tick": 1440,
+  "captures": 6,
+  "exact_seven_file_uninstall": true
+}

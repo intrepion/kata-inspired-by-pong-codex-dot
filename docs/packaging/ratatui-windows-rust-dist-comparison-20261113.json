@@ -1,0 +1,32 @@
+[
+  {
+    "name": "liballoc-f9fd422e5eb593ae.rlib",
+    "distribution_sha256": "ef5df2b944db14679cc916d06ce7cb81968d741a5c10f5f5cf8f5b247c764d7a",
+    "installed_sha256": "ef5df2b944db14679cc916d06ce7cb81968d741a5c10f5f5cf8f5b247c764d7a",
+    "identical": true
+  },
+  {
+    "name": "libcore-f9527ed7f1165c0a.rlib",
+    "distribution_sha256": "9936159bb26e5ae403e680329382207b7f911bc8ebeeec41f6f68f2d43ed3f08",
+    "installed_sha256": "9936159bb26e5ae403e680329382207b7f911bc8ebeeec41f6f68f2d43ed3f08",
+    "identical": true
+  },
+  {
+    "name": "libpanic_unwind-4531eec6307bead5.rlib",
+    "distribution_sha256": "611f10423aa7c9ed6f22ed26bf0d374eb5566d990cae052b8cd0dbe444f7396c",
+    "installed_sha256": "611f10423aa7c9ed6f22ed26bf0d374eb5566d990cae052b8cd0dbe444f7396c",
+    "identical": true
+  },
+  {
+    "name": "librustc_demangle-16b50824155ae42c.rlib",
+    "distribution_sha256": "37084bbbea3abc816df31f32a23fe7dd0f9b9e19289441275560164a97f9fa98",
+    "installed_sha256": "37084bbbea3abc816df31f32a23fe7dd0f9b9e19289441275560164a97f9fa98",
+    "identical": true
+  },
+  {
+    "name": "libstd-3854312d46c17a37.rlib",
+    "distribution_sha256": "b16900f6d673b96b07e11f583aa13e176d66b922a15cddf5f3bea8c51d4d7537",
+    "installed_sha256": "b16900f6d673b96b07e11f583aa13e176d66b922a15cddf5f3bea8c51d4d7537",
+    "identical": true
+  }
+]

@@ -1,0 +1,13 @@
+{"ball":[450,250,0,0],"cpu":250,"finished":false,"player":250,"scenario":"smoke-v1","scores":[0,0],"seed":42,"state":"Ready","tick":0}
+{"ball":[330.41708,257.6975,-350,22.52929],"cpu":250,"finished":false,"player":45,"scenario":"smoke-v1","scores":[0,0],"seed":42,"state":"Playing","tick":120}
+{"ball":[450,250,350,7.7871714],"cpu":250,"finished":false,"player":455,"scenario":"smoke-v1","scores":[0,1],"seed":42,"state":"Playing","tick":240}
+{"ball":[578.33356,252.85541,350,7.7871714],"cpu":254.1791,"finished":false,"player":455,"scenario":"smoke-v1","scores":[0,1],"seed":42,"state":"Playing","tick":360}
+{"ball":[578.33356,252.85541,350,7.7871714],"cpu":254.1791,"finished":false,"player":455,"scenario":"smoke-v1","scores":[0,1],"seed":42,"state":"Paused","tick":480}
+{"ball":[763.3317,254.59479,-368.87476,-18.559149],"cpu":266.15198,"finished":false,"player":455,"scenario":"smoke-v1","scores":[0,1],"seed":42,"state":"Playing","tick":600}
+{"ball":[394.45596,236.03522,-368.87476,-18.559149],"cpu":250,"finished":false,"player":455,"scenario":"smoke-v1","scores":[0,1],"seed":42,"state":"Playing","tick":720}
+{"ball":[25.581577,217.47565,-368.87476,-18.559149],"cpu":250,"finished":false,"player":455,"scenario":"smoke-v1","scores":[0,1],"seed":42,"state":"Playing","tick":840}
+{"ball":[537.49994,242.88223,350,-28.47197],"cpu":262.2746,"finished":false,"player":455,"scenario":"smoke-v1","scores":[0,2],"seed":42,"state":"Playing","tick":960}
+{"ball":[811.0924,197.97519,-327.01352,-174.0976],"cpu":223.64714,"finished":false,"player":455,"scenario":"smoke-v1","scores":[0,2],"seed":42,"state":"Playing","tick":1080}
+{"ball":[484.0807,23.877228,-327.01352,-174.0976],"cpu":250,"finished":false,"player":455,"scenario":"smoke-v1","scores":[0,2],"seed":42,"state":"Playing","tick":1200}
+{"ball":[330.41708,235.33006,-350,-42.935654],"cpu":250,"finished":false,"player":250,"scenario":"smoke-v1","scores":[0,0],"seed":42,"state":"Playing","tick":1320}
+{"ball":[89.85815,135.17621,185.1054,-322.69702],"cpu":250,"finished":true,"player":250,"scenario":"smoke-v1","scores":[0,0],"seed":42,"state":"Playing","tick":1440}

@@ -1,0 +1,7 @@
+# Raw wgpu winner title — Omarchy, 2026-11-13
+
+The raw wgpu window title previously reported only `Over` and showed unlabeled scores, even though its in-court shader distinguishes winners. The title now labels the player and CPU scores and says `YOU WIN` or `CPU WINS`, with a tied-state fallback. Ready, Playing, Paused and existing controls remain in the title. The tested adapter blob was `04c081e6cdb9521ffd82028de0e5be1b51945096`, based on checkpoint `4473d9897547ef54cdd3ba8b89ef07beec8b3155`.
+
+The offline locked debug test suite passed all 12 tests. The new adapter regression drives a winning point on each side, checks the labeled score and winner, and checks restart; it also checks Ready, Playing, Paused and tie fallback. The debug build succeeded (SHA-256 `bfaa3e8643958fcde35d97a2869586ce51022e2f4773b6e2c74d2377d6b36445`). With host-display access, the rebuilt app's scripted replay exited 0 with empty stderr and all 13 telemetry records byte-matched `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`. Logs remain at `/tmp/pong-wgpu-title-20261113-a`.
+
+This is an adapter-state test and scripted model replay; the replay does not reach game over and does not prove the actual native title or physical interaction. A window manager may hide titles; the separately implemented in-court winner display remains available. Other platforms, full match, installation and release qualification remain open. Prior evidence is retained.

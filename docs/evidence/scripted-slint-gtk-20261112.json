@@ -1,0 +1,154 @@
+{
+  "date": "2026-11-12",
+  "platform": "Omarchy Linux ARM64",
+  "base": "56bdf1dd885475d8a5d9bcf300fed1b41dd6c287",
+  "real_keyboard_or_compositor_QA": false,
+  "runs": {
+    "slint": {
+      "exit_code": 0,
+      "telemetry_records": 13,
+      "baseline_identical": true,
+      "final_tick": 1440,
+      "capture_kind": "Slint own component software-renderer snapshot",
+      "images": [
+        {
+          "file": "tick-0120.png",
+          "width": 1920,
+          "height": 1300,
+          "sha256": "a12f49eaaaec58306962371bcfbb6c43597e2e99b89587edc14190446a2acb64"
+        },
+        {
+          "file": "tick-0240.png",
+          "width": 1920,
+          "height": 1300,
+          "sha256": "34ca93b3a30ca904c1eedf3e39d58ab427eb55605cb315bfe94175c9f8007d89"
+        },
+        {
+          "file": "tick-0480.png",
+          "width": 1920,
+          "height": 1300,
+          "sha256": "6f5e66bbf2b23d614b0891937ef30cd2a94868f6a2ba03d178057b16d3cfe45d"
+        },
+        {
+          "file": "tick-0600.png",
+          "width": 1920,
+          "height": 1300,
+          "sha256": "7b724a3cb44bc6c3e750f11ae933f84239c26346e149789b99e569d37231b271"
+        },
+        {
+          "file": "tick-1320.png",
+          "width": 1920,
+          "height": 1300,
+          "sha256": "83425f235ab9ec5705ea75bdfc75626a0571104caaa3a3aff50829e58b3da481"
+        },
+        {
+          "file": "tick-1440.png",
+          "width": 1920,
+          "height": 1300,
+          "sha256": "7b8e53e54a0cef576580e8959dbec95062c26b13895166222497fce6e1991033"
+        }
+      ],
+      "inspected_ticks": [
+        480,
+        1440
+      ]
+    },
+    "gtk": {
+      "exit_code": 0,
+      "telemetry_records": 13,
+      "baseline_identical": true,
+      "final_tick": 1440,
+      "capture_kind": "same Cairo draw_scene rendered to separate application ImageSurface",
+      "images": [
+        {
+          "file": "tick-0120.png",
+          "width": 960,
+          "height": 932,
+          "sha256": "e901bd3b4327381a553584ff90321902086b30be98098161d06cb02b76b9d725"
+        },
+        {
+          "file": "tick-0240.png",
+          "width": 960,
+          "height": 932,
+          "sha256": "5e750d548eac282c508b911762cbf78bdb879caf2dd3e6ed4c7b1ab49cfd1b1e"
+        },
+        {
+          "file": "tick-0480.png",
+          "width": 960,
+          "height": 932,
+          "sha256": "04896aa673a5452ca79e43c1acacda683c94f11c05b316c639601c2f138ff934"
+        },
+        {
+          "file": "tick-0600.png",
+          "width": 960,
+          "height": 932,
+          "sha256": "10dbae3069b45df5fc4250887df39b24bf1023e6a5e2148d04c2419b64bcf15d"
+        },
+        {
+          "file": "tick-1320.png",
+          "width": 960,
+          "height": 932,
+          "sha256": "7a714de74020813a2f13ff062f4024390c16242be95d8e95c7e547c4a54e6cc5"
+        },
+        {
+          "file": "tick-1440.png",
+          "width": 960,
+          "height": 932,
+          "sha256": "1c2d5d770e7b5e2ef3e84d2dca8a0f2f914c4c29689c49b54d3750e4bd7f5e77"
+        }
+      ],
+      "inspected_ticks": [
+        480,
+        1440
+      ]
+    },
+    "godot-pause-layout": {
+      "exit_code": 0,
+      "telemetry_records": 13,
+      "baseline_identical": true,
+      "final_tick": 1440,
+      "capture_kind": "normal scene viewport image after frame_post_draw",
+      "images": [
+        {
+          "file": "tick-0120.png",
+          "width": 1474,
+          "height": 949,
+          "sha256": "596fcb5ff63fcab82b9bd98af687a2d4400e95aaaa076161545e98c8bf866574"
+        },
+        {
+          "file": "tick-0240.png",
+          "width": 1474,
+          "height": 949,
+          "sha256": "2546b64b512455af37f66d6334c7507fed09cd1b88d817d71dac1327192f7f4f"
+        },
+        {
+          "file": "tick-0480.png",
+          "width": 1474,
+          "height": 949,
+          "sha256": "88b4016c2fb57df0a07829195d115b36840c73c6ce25fd4ddf640bf9fec7de2c"
+        },
+        {
+          "file": "tick-0600.png",
+          "width": 1474,
+          "height": 949,
+          "sha256": "b52682498b329626f34f0b3a59beb73609086fca47eabaf87267d2fd2fee3982"
+        },
+        {
+          "file": "tick-1320.png",
+          "width": 1474,
+          "height": 949,
+          "sha256": "dffdd5c9e0f3c390ae4fa4508eab9e97efd11c4fbd50fca8b4b8d8ffc27373d1"
+        },
+        {
+          "file": "tick-1440.png",
+          "width": 1474,
+          "height": 949,
+          "sha256": "6a98db9e1f85dd3a9fdb00121dfcb373392715df6a4409c8e2969915d71ca9d6"
+        }
+      ],
+      "inspected_ticks": [
+        480
+      ]
+    }
+  }
+}

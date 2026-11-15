@@ -1,0 +1,7 @@
+# Nannou keypad Enter: Windows check, 2026-11-13
+
+At checkpoint `53e0327936ba61ce3c678e48fde6413ae16c6689`, Nannou adapter source Git blob `c6469cb6e5a8665af9eead36f221f4e8a9421829` passed all 16 locked, offline release tests on Windows MSVC stable Rust 1.99.1. Synthetic polling tests include independent main and keypad Enter focus-return gates. These tests do not establish native or physical keypad delivery.
+
+A locked offline release build succeeded; executable SHA-256 was `116bc867137f38d7646ffaef06eaea13e1a1a5e14d8037945fece90f33d20d16`. Its app-owned scripted run exited 0 and all 13 parsed telemetry records matched `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`. Six captures were generated. The inspected tick 480 image shows the paused court, prompt, ball, paddles and 0–1 score; SHA-256 `ea15dc1f8ef13d4f48fef1bfc777cecad2035cec511e1ee67820066ec0c5106c`. Runtime logs identified Intel UHD Graphics 630 using Vulkan and a Mailbox-to-Immediate present-mode fallback. Logs, captures and copies of prior executable and test binary remain in sibling workspace directory `nannou-keypad-windows-20261113`.
+
+The scripted replay does not exercise keypad input. Native and physical keypad delivery, focus-return timing, accessibility input, full interactive gameplay, clean-machine installation, dependency notice review and release qualification remain unverified. This is not license clearance.

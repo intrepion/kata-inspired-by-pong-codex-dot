@@ -1,0 +1,50 @@
+{
+  "platform": "Omarchy ARM64",
+  "exit_code": 0,
+  "telemetry_records": 13,
+  "baseline_identical": true,
+  "final_tick": 1440,
+  "capture_kind": "Slint own component software-renderer snapshot",
+  "inspected_ticks": [
+    1440
+  ],
+  "finding": "Attribution version and complete URL now visible; court/ball/paddles/score visible",
+  "images": [
+    {
+      "file": "tick-0120.png",
+      "width": 1920,
+      "height": 1300,
+      "sha256": "7f3f75ea6f532ab21bbaa4123a553afcf637d1e0a17fd4cb8347ddd9e49f8b0b"
+    },
+    {
+      "file": "tick-0240.png",
+      "width": 1920,
+      "height": 1300,
+      "sha256": "e41efb7e2270b49181f603b85adf21280db8e84565095b0172f8839707691d4f"
+    },
+    {
+      "file": "tick-0480.png",
+      "width": 1920,
+      "height": 1300,
+      "sha256": "1f33c9dfa8944cbb6f8b2e62860f175c376727391cf3ba58427afd0dec7146c6"
+    },
+    {
+      "file": "tick-0600.png",
+      "width": 1920,
+      "height": 1300,
+      "sha256": "c58e43b0d8cc4988f49af62761d70f45e97eb0f704a785779703ba9ed31f25ef"
+    },
+    {
+      "file": "tick-1320.png",
+      "width": 1920,
+      "height": 1300,
+      "sha256": "f3173d43c38a3f94987fdf4fb8d800f6462b8e0de1b3ebb3c62c5c6dab3d6abe"
+    },
+    {
+      "file": "tick-1440.png",
+      "width": 1920,
+      "height": 1300,
+      "sha256": "2ebfabc8835a4aa62ffcee72167bf19f3b670ad734963323a339da221df7e0ff"
+    }
+  ]
+}

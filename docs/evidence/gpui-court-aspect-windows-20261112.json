@@ -1,0 +1,16 @@
+{
+  "source_commit": "512022054881ccc976ed6db3103e96bc4cf83abe",
+  "tested_checkout": "ccf6daf845b51d01506e024c0ef457527bc2f673",
+  "platform": "Windows x86_64 GNU",
+  "binary_sha256": "48314a4c671957235c0c1c6d115fe7b11114acfddc2c1e2503e758b79af02017",
+  "geometry_tests": 1,
+  "shared_model_tests": 8,
+  "clippy": "pass --release --all-targets -D warnings",
+  "native_replay_exit": 0,
+  "states": 13,
+  "final_tick": 1440,
+  "finished": true,
+  "visual_resize_verified": false,
+  "visual_blocker": "Computer Use app approval timed out; no retry",
+  "pixel_capture_supported": false
+}

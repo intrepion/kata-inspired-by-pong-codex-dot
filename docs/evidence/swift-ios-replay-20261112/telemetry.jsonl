@@ -1,0 +1,13 @@
+{"ball":[450,250,0,0],"cpu":250,"finished":false,"player":250,"scenario":"smoke-v1","scores":[0,0],"seed":42,"state":"ready","tick":0}
+{"ball":[330.41708374023438,257.697509765625,-350,22.529289245605469],"cpu":250,"finished":false,"player":45,"scenario":"smoke-v1","scores":[0,0],"seed":42,"state":"playing","tick":120}
+{"ball":[450,250,350,7.7871713638305664],"cpu":250,"finished":false,"player":455,"scenario":"smoke-v1","scores":[0,1],"seed":42,"state":"playing","tick":240}
+{"ball":[578.33355712890625,252.85540771484375,350,7.7871713638305664],"cpu":254.17909240722656,"finished":false,"player":455,"scenario":"smoke-v1","scores":[0,1],"seed":42,"state":"playing","tick":360}
+{"ball":[578.33355712890625,252.85540771484375,350,7.7871713638305664],"cpu":254.17909240722656,"finished":false,"player":455,"scenario":"smoke-v1","scores":[0,1],"seed":42,"state":"paused","tick":480}
+{"ball":[765.0982666015625,253.11642456054688,-368.44888305664062,-25.659889221191406],"cpu":266.1519775390625,"finished":false,"player":455,"scenario":"smoke-v1","scores":[0,1],"seed":42,"state":"playing","tick":600}
+{"ball":[396.64727783203125,227.45602416992188,-368.44888305664062,-25.659889221191406],"cpu":250,"finished":false,"player":455,"scenario":"smoke-v1","scores":[0,1],"seed":42,"state":"playing","tick":720}
+{"ball":[28.198745727539062,201.79562377929688,-368.44888305664062,-25.659889221191406],"cpu":250,"finished":false,"player":455,"scenario":"smoke-v1","scores":[0,1],"seed":42,"state":"playing","tick":840}
+{"ball":[534.583251953125,243.11949157714844,350,-28.471969604492188],"cpu":263.85794067382812,"finished":false,"player":455,"scenario":"smoke-v1","scores":[0,2],"seed":42,"state":"playing","tick":960}
+{"ball":[815.005859375,200.64653015136719,-329.93804931640625,-168.48947143554688],"cpu":224.73046875,"finished":false,"player":455,"scenario":"smoke-v1","scores":[0,2],"seed":42,"state":"playing","tick":1080}
+{"ball":[485.06475830078125,32.156978607177734,-329.93804931640625,-168.48947143554688],"cpu":250,"finished":false,"player":455,"scenario":"smoke-v1","scores":[0,2],"seed":42,"state":"playing","tick":1200}
+{"ball":[330.41708374023438,235.33006286621094,-350,-42.935653686523438],"cpu":250,"finished":false,"player":250,"scenario":"smoke-v1","scores":[0,0],"seed":42,"state":"playing","tick":1320}
+{"ball":[89.021026611328125,136.44139099121094,185.10539245605469,-322.697021484375],"cpu":250,"finished":true,"player":250,"scenario":"smoke-v1","scores":[0,0],"seed":42,"state":"playing","tick":1440}

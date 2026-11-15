@@ -1,0 +1,113 @@
+{
+  "date": "2026-11-12",
+  "platform": "Omarchy ARM64",
+  "runs": [
+    {
+      "adapter": "miniquad",
+      "exit": 0,
+      "telemetryLines": 13,
+      "baselineIdentical": true,
+      "inspectedTicks": [
+        480
+      ],
+      "frames": [
+        {
+          "file": "tick-0120.png",
+          "bytes": 34638,
+          "width": 1474,
+          "height": 918,
+          "sha256": "d1f408958a940a0a555eac466ab14702506a9c98e3a0720d0a942c79ced3a47a"
+        },
+        {
+          "file": "tick-0240.png",
+          "bytes": 34656,
+          "width": 1474,
+          "height": 918,
+          "sha256": "8fcb5dfab0c65edc5fd53cb75c7534417548306a2368a5065f5c5db45f12ad39"
+        },
+        {
+          "file": "tick-0480.png",
+          "bytes": 34887,
+          "width": 1474,
+          "height": 918,
+          "sha256": "6bb5d12ff57e2c6d10075b12d7b81c067111e15d855e68f6cb286b23ac85d611"
+        },
+        {
+          "file": "tick-0600.png",
+          "bytes": 34876,
+          "width": 1474,
+          "height": 918,
+          "sha256": "b0a579ac5e75fc0ec7453625ebfb941a699b9b48bc94a73553198cc3fb2a5fd2"
+        },
+        {
+          "file": "tick-1320.png",
+          "bytes": 34625,
+          "width": 1474,
+          "height": 918,
+          "sha256": "583c730ab262db7d7fcb1160f1bd81ca90f947dabec8b6f00d471504bf71501a"
+        },
+        {
+          "file": "tick-1440.png",
+          "bytes": 34627,
+          "width": 1474,
+          "height": 918,
+          "sha256": "5625a9373d284ba3fc16b31b94d49c93256a584d2c85ccbe06e755d051f9588e"
+        }
+      ]
+    },
+    {
+      "adapter": "wgpu",
+      "exit": 0,
+      "telemetryLines": 13,
+      "baselineIdentical": true,
+      "inspectedTicks": [
+        480
+      ],
+      "frames": [
+        {
+          "file": "tick-0120.png",
+          "bytes": 35990,
+          "width": 1474,
+          "height": 918,
+          "sha256": "5ef72677d5a5926c94199b41ee0664bd94688c5cfc90bda9b96bcc9454e8e74c"
+        },
+        {
+          "file": "tick-0240.png",
+          "bytes": 36153,
+          "width": 1474,
+          "height": 918,
+          "sha256": "e67a92d377d523dc93e815a3d9e12d41e3f220858a95e0a22d37503809a11aaf"
+        },
+        {
+          "file": "tick-0480.png",
+          "bytes": 36322,
+          "width": 1474,
+          "height": 918,
+          "sha256": "277ba9ed8ed074aa93b916f6b6064d037aeb9d5b6d696beedfca44004bbceced"
+        },
+        {
+          "file": "tick-0600.png",
+          "bytes": 36295,
+          "width": 1474,
+          "height": 918,
+          "sha256": "5f4530e9974b3926690d9b3ae7fa1ca97b3a43759c2981b2b974f588bd02ea75"
+        },
+        {
+          "file": "tick-1320.png",
+          "bytes": 35980,
+          "width": 1474,
+          "height": 918,
+          "sha256": "dd3f9605e75966e89c5874ea772bafd12c55997ca4bd8af16488d26ab85d2203"
+        },
+        {
+          "file": "tick-1440.png",
+          "bytes": 35974,
+          "width": 1474,
+          "height": 918,
+          "sha256": "17c1170e6fe4cc7c7a75fcdb7eb85c9245b306deaaed92850261dbdf56c18697"
+        }
+      ]
+    }
+  ],
+  "boundary": "App-owned framebuffer only; no real input, compositor or smooth-motion QA."
+}

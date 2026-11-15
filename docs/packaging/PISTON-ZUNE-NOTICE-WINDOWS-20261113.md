@@ -1,0 +1,9 @@
+# Piston Windows zune-inflate notice follow-up
+
+The Windows Piston graph includes `zune-inflate@0.2.54`, previously flagged because the published crate has no conventional notice file. Its cached VCS record identifies revision `69502ce83fdfecdd0beefd677e2abb3781b29d98` and path `zune-inflate`. Cached `Cargo.toml.orig` and `src/lib.rs` Git blobs (`882d8114f2611f0a631ec6fbb4c791f6457645c1` and `6edc58952cac4135e9cc5c4ab59c5b29d7f76f1a`) match the corresponding files in the [exact upstream tree](https://api.github.com/repos/etemesi254/zune-image/git/trees/69502ce83fdfecdd0beefd677e2abb3781b29d98?recursive=1), which declares MIT, Apache-2.0 or Zlib alternatives.
+
+The notice collector now retains the exact upstream `LICENSE.md` and `LICENSE-ZLIB` texts and the matching crate source's leading license comment, only for the exact registry version, revision, path, source hash and notice hashes. The upstream `LICENSE.md` references full MIT and Apache texts that are not present as separate files in that tree; retaining the short notice and Zlib text does not establish complete notices for every alternative. No license choice or legal conclusion was made.
+
+Windows Node collector tests passed 15 cases; one symlink test was skipped. A fresh locked offline Windows-filtered Piston inventory reported 213 packages, 379 recovered notice files and five remaining missing-file flags; local bundle SHA-256 `1f938d47dd792eee888f71a116fe839fca6fd6889fbc312e0dc95e466fab9566`. Metadata, index and incomplete bundle remain in sibling workspace directory `piston-zune-notices-windows-20261113`; prior packages and bundles were not replaced. The enabled dependency tree reaches the crate through `exr -> image -> piston2d-wgpu_graphics -> piston_window`; this does not prove final binary inclusion.
+
+Full MIT and Apache texts, remaining flags, bundled/system libraries, legal review, clean-machine operation and release qualification remain open. No public release was made.

@@ -1,0 +1,36 @@
+[
+  {
+    "adapter": "nannou",
+    "schema": 1,
+    "platform": "darwin",
+    "architecture": "arm64",
+    "binary_sha256": "c145c5721e6e7589b2e22bdab9c69250009f771246b87071bb6717bc1d0b6aea",
+    "archive_sha256": "778adfeae14d95081da5d5f5fd3c383deee6f5ceb459f0bf2a8623e32fcb59a4",
+    "archive_bytes": 24417764,
+    "status": 0,
+    "signal": null,
+    "elapsed_seconds": 22.564,
+    "states": 13,
+    "final_tick": 1440,
+    "finished": true,
+    "captures": 6,
+    "scoped_removal": true
+  },
+  {
+    "adapter": "bracket-lib",
+    "schema": 1,
+    "platform": "darwin",
+    "architecture": "arm64",
+    "binary_sha256": "93faebccfea3603ff2022974840c43ef28416b1722c5f25bb0b6ec922ad7bea0",
+    "archive_sha256": "52d424dea0e9df0fb163e885d2de200fe543edba168b7defaf8a4e395c4aede9",
+    "archive_bytes": 806173,
+    "status": 0,
+    "signal": null,
+    "elapsed_seconds": 13.83,
+    "states": 13,
+    "final_tick": 1440,
+    "finished": true,
+    "captures": 6,
+    "scoped_removal": true
+  }
+]

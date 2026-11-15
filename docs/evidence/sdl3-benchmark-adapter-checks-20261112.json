@@ -1,0 +1,14 @@
+{
+  "kind": "benchmark-adapter-build-and-unit-validation-only",
+  "base": "4088089",
+  "host": "Omarchy ARM64",
+  "lockedOfflineReleaseBuild": "pass",
+  "releaseBinarySHA256": "2c18942de6257c087d7002b3d0c88fd5ac616a03b8a25f437e236abc469a77a9",
+  "strictClippy": "pass",
+  "adapterTestsPassed": 2,
+  "nodeRunnerTestsPassed": 5,
+  "nativeBenchmarkLaunch": "not-run-awaiting-coordinated-quiet-window",
+  "performanceResults": null,
+  "nativeVisualQA": "not-run-in-this-batch",
+  "registryVersionChanges": false
+}

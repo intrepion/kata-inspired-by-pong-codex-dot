@@ -1,0 +1,28 @@
+{
+  "adapter": "bracket-lib",
+  "platform": "linux-arm64",
+  "scope": "local portable pilot, not public release",
+  "source_commit": "259412c49bb195ffd2c0204ac0ab790a0749785b",
+  "binary_sha256": "53ef4e1dcabe9e79230f1f370c0a98b2a285cb05be87064f7878411d60344f3b",
+  "archive_sha256": "bdb599edf62fc3b1af6c616de7627a7936a4400ae99d70d58c76160a12ccd641",
+  "archive_bytes": 1751311,
+  "rust_tests": 9,
+  "packaging_guard_tests": 3,
+  "replay": {
+    "exit": 0,
+    "states": 13,
+    "final_tick": 1440,
+    "captures": 6
+  },
+  "inspection": "tick0600 application-owned PNG: readable header and divider, no black divider-cell boxes; not compositor capture or OS input",
+  "uninstall": {
+    "files_removed": 5,
+    "neighbor_preserved": true
+  },
+  "limitations": [
+    "No new timing qualification",
+    "Existing package reports remain historical hashes",
+    "Existing vendored freetype warnings retained",
+    "Dependency notice and clean-machine release gates remain open"
+  ]
+}

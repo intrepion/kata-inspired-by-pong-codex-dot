@@ -1,0 +1,55 @@
+{
+  "source_commit": "55d0975",
+  "platform": "Omarchy ARM64 Linux",
+  "renderer": "Vulkan, Apple M1 Pro G13S C0, Honeykrisp Mesa26.2.6-arch1.1",
+  "build": "pass",
+  "strict_clippy": "pass",
+  "shared_tests_passed": 14,
+  "exit_code": 0,
+  "telemetry_records": 13,
+  "baseline_identical": true,
+  "inspected_ticks": [
+    480,
+    1440
+  ],
+  "capture_kind": "Bevy supported own application screenshot export",
+  "real_input_or_compositor_QA": false,
+  "images": [
+    {
+      "file": "tick-0120.png",
+      "width": 1474,
+      "height": 1864,
+      "sha256": "d90a4b989a44d9449b21fc847b869e4e5ec747089753d197b8ccfb2a26976526"
+    },
+    {
+      "file": "tick-0240.png",
+      "width": 1474,
+      "height": 1864,
+      "sha256": "dfdff49ce8bebd6f99e3f73eca09e4706881f838480867337f2a27dbc847d938"
+    },
+    {
+      "file": "tick-0480.png",
+      "width": 1474,
+      "height": 1864,
+      "sha256": "ca6490e641b89b8c5ede9523ae4a0907fe4b80ad86ba7e821e96abd80bbd7b54"
+    },
+    {
+      "file": "tick-0600.png",
+      "width": 1474,
+      "height": 1864,
+      "sha256": "b3f43a3540446220e5bc4400c22b7897c1de54e7a31df35571684b2e41854a10"
+    },
+    {
+      "file": "tick-1320.png",
+      "width": 1474,
+      "height": 1864,
+      "sha256": "7e854318160d8127516d617a66485b1e251be2d27c402c47dc02dcc91597dacf"
+    },
+    {
+      "file": "tick-1440.png",
+      "width": 1474,
+      "height": 1864,
+      "sha256": "ee7819e0c7e437d26924ceb3be5fdd11c7ec3143b7dca36b8bbc919710ccace1"
+    }
+  ]
+}

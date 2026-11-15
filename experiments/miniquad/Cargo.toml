@@ -1,0 +1,11 @@
+[package]
+license = "MIT"
+name = "pong-miniquad"
+version = "0.1.0"
+edition = "2021"
+[workspace]
+[dependencies]
+miniquad = "=0.4.11"
+pong-core = { path = "../../crates/pong-core" }
+pong-scenario = { path = "../../crates/pong-scenario" }
+pong-benchmark = { path = "../../crates/pong-benchmark" }

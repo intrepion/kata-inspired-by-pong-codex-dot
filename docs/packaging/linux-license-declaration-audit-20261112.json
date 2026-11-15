@@ -1,0 +1,65 @@
+{
+  "scope": "Linux ARM64 resolved Cargo metadata; may include build/optional dependencies; not linked-binary attribution",
+  "limitations": [
+    "Declarations are not verified license texts",
+    "Bundled native code and platform runtime notices need separate inspection",
+    "No redistribution clearance implied"
+  ],
+  "adapters": [
+    {
+      "adapter": "blue-engine",
+      "resolved_packages": 226,
+      "missing_license_declarations": []
+    },
+    {
+      "adapter": "softbuffer",
+      "resolved_packages": 105,
+      "missing_license_declarations": []
+    },
+    {
+      "adapter": "miniquad",
+      "resolved_packages": 17,
+      "missing_license_declarations": []
+    },
+    {
+      "adapter": "pixels",
+      "resolved_packages": 147,
+      "missing_license_declarations": []
+    },
+    {
+      "adapter": "wgpu",
+      "resolved_packages": 143,
+      "missing_license_declarations": []
+    },
+    {
+      "adapter": "raylib-rs",
+      "resolved_packages": 50,
+      "missing_license_declarations": []
+    },
+    {
+      "adapter": "piston",
+      "resolved_packages": 237,
+      "missing_license_declarations": []
+    },
+    {
+      "adapter": "ggez",
+      "resolved_packages": 195,
+      "missing_license_declarations": []
+    },
+    {
+      "adapter": "nannou",
+      "resolved_packages": 447,
+      "missing_license_declarations": []
+    },
+    {
+      "adapter": "bracket-lib",
+      "resolved_packages": 126,
+      "missing_license_declarations": []
+    },
+    {
+      "adapter": "fyrox",
+      "resolved_packages": 468,
+      "missing_license_declarations": []
+    }
+  ]
+}

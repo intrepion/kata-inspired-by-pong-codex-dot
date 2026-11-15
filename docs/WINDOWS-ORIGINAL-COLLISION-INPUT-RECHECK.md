@@ -1,0 +1,13 @@
+# Windows original browser collision and input recheck
+
+At checkpoint `8a76ecf018116a4ec769096bb6f04ba96b71189a`, including collision fix `d5ae9c0`, live-status fix `2c414fb` and canvas owner fix `6a0dc45`, source `game.ts` blob `a3460b06ee3b9a0ae160c0912327e91e003ff04d` and generated `game.js` blob `f42e0b0540b15cea9b3fa53ff87e8050154e2a5a` were checked. Node v24.20.0 ran all 24 checked-in JavaScript tests successfully, including four collision tests, mocked status/handler checks and drag-ownership tests; TypeScript was not rebuilt in this run.
+
+Independent source review found the crossing fraction, contact-time paddle interpolation, preceding wall reflection and residual-time travel consistent with the documented one-wall-crossing-per-bounded-step assumption. No substantive arithmetic concern was found within that scope. This is review and deterministic model evidence, not a proof of all trajectories or numerical equivalence with Rust.
+
+The repository server hosted the updated game on localhost `127.0.0.1:4199`. Supported Chrome automation started, paused and resumed; the accessibility tree showed Rally in progress, Paused and Rally in progress. A W key press was sent after resume. This smoke check did not measure live-region mutation counts, screen-reader announcements, a particular collision or canvas pointer ownership. The canvas intentionally excludes mouse drag input, and physical multi-touch, capture/cancellation ordering, screen-reader behavior and physical input remain open. The mocked status test—not the browser smoke—checks unchanged-frame write suppression.
+
+## Browser scripted-mode follow-up
+
+At checkpoint `5ff8db1e8a9f8ac342f2a68be3357173b8ab011d`, Chrome loaded `?scripted-test` from the repository localhost server. The visible application reached 0:1, Paused, resumed, 0:2 and then reset to 0:0; its generated `Download original TypeScript demo evidence` link appeared, which the app creates after replay completion. This demonstrates the scripted UI path reached its export stage, not that the output matched all reference values or that a particular collision was visually checked.
+
+The browser download-event wait timed out, and its supported `downloadMedia` action reported that blob downloads are unsupported; no telemetry file or capture was obtained or compared. The separate model tests and collision review above remain the numerical evidence. No physical input, screen-reader, multi-touch, or desktop capture qualification is implied. The local server was stopped after the check.

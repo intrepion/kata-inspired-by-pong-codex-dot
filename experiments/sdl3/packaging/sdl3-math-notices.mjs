@@ -1,0 +1,213 @@
+// Exact notices from the SDL 3.4.20 sources used by the reviewed macOS build.
+// Covers 25 compiled libm .c files and their Sun-noticed shared header. Static
+// archive membership does not prove that any object reached the final binary.
+import {auditedSourceComments} from '../../../scripts/packaging/notice-bundle.mjs';
+
+export const SDL_3_4_20_MATH_NOTICES = Object.freeze([
+  [
+    "SDL/src/libm/e_atan2.c",
+    "8a2d246e2090ba5b64a5cc146a6615c2ed13ec8414eb3070503a21c83dfb63fe",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/e_exp.c",
+    "674972ccb5ef13ad2680ce5f6a6f7bba910868c7e03e84ea1c77706bea6a5f31",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/e_fmod.c",
+    "f5a261b1920399f24922a2581c64a185d9ac07d56ea6bfd661c78df78d13e1f5",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/e_log.c",
+    "46e694952cfad1263b20e706f88ee0894d969a0a30b3c06b618572cebd1670e4",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/e_log10.c",
+    "be24b2773e1bf4d081928458631f84a40d4d0efa53d0b57fa3365cbba5e07b97",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/e_pow.c",
+    "578d56b5c8511c436368b2f370689c3bba78f77e5b7c54435737951bafcf95bf",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/e_rem_pio2.c",
+    "9cee3e1c5f452d484afa3791bd546f7998b6cd7d8604422dda05bae4e6db18d7",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/e_sqrt.c",
+    "db2ec3e18ef578f426986c68f15d67556b8685d9c15786c9dcef2ce8aa18b993",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/k_cos.c",
+    "812d7b768a5599b2735de255bfe87d8e5c4bc39cc7da4f9a44e182d845aa28f1",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/k_rem_pio2.c",
+    "f59983970ddf8b8c4d2307f4776801e28a33b5c9e03ec81cf4b2d7f52d31b7b8",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/k_sin.c",
+    "34ed2b1bb059c49ce91a76ca9a86de6f64533763e4f0b8356498af736dbe80a8",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/k_tan.c",
+    "bb3984d0446cef4e5c2669356f5de27d8462c0be6c4304847d60b07a6f22f577",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/s_atan.c",
+    "f2b83387b1a60ab5ae81118414ac7f7c5439d9093c6abef3086abed8a205dd75",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/s_copysign.c",
+    "774b72f76728be5296ade91592bb55d54154fa14d4d8f621a953dde8dc5fcc80",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/s_cos.c",
+    "035a03bfbcba98d0eed589ffa702d87faf4b496beeef636ec9395d04fcfd8df0",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/s_fabs.c",
+    "b9acaee6242eb61f8b56eb180fdc562e7863f82ea875f8eb5e2524b31d029a2a",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/s_floor.c",
+    "5a607cf49677bea1a1dee7e69ab015ba85b7e42e2389f5a0e3cbee1ccd410f64",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/s_isinf.c",
+    "7041710018b47bcbe82c92346ebcb368fadb9a81689e5eafc9e4244500ccc90e",
+    "e4e4fdedbc2e528a72672974003b7c25cb829d9b4f4cba9a5caf5e8c55b65d4c",
+    26,
+    168
+  ],
+  [
+    "SDL/src/libm/s_isinff.c",
+    "74603b1fb8cf0a2f865286882cb71eaa703962b49881fbac74380dc1291c2cbc",
+    "fea1a8fdda3dd044597945b295892865dbdde1ac4397014731dde4c8e3e85844",
+    26,
+    95
+  ],
+  [
+    "SDL/src/libm/s_isnan.c",
+    "1fd472f94e62583c58d997cb2189a44b26e0abcf6a70e94cd27520ea584a8aa8",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/s_isnanf.c",
+    "1763e39f70db8846d3d63cd16932b5ae4a0b696e9368ec767360ff5085457c07",
+    "7a81dd3eb186a5eb930828058910c5b867847fceaa6a8070c932b040d1ded0c6",
+    26,
+    150
+  ],
+  [
+    "SDL/src/libm/s_isnanf.c",
+    "1763e39f70db8846d3d63cd16932b5ae4a0b696e9368ec767360ff5085457c07",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    152,
+    531
+  ],
+  [
+    "SDL/src/libm/s_modf.c",
+    "2eda119771935b931c88c12ce3924853fba30bb4c8c4584748ced2781126a28e",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/s_scalbn.c",
+    "4b962d5e7d18e1e7b88135f988b87d8d94a227f9e0a96e13b5b1049ed3e56dd4",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/s_sin.c",
+    "765b8964025c9eaa98f7a5a495e37c0721f5bb97f52261d50327639cf3550d11",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/s_tan.c",
+    "7ff0875f6e7466861f52daeb3053f4b5a2600277cbfc9abf1b4ab0b0eb46ae96",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    26,
+    405
+  ],
+  [
+    "SDL/src/libm/math_private.h",
+    "272824bc6b5e66632e15cd9639250c33a2ab6c7868bd296c4d3233c3cd3d43b5",
+    "0c3d0381d2cd647be68590170490be5f624c962d9f95eb698489e578c1de8f05",
+    0,
+    379
+  ]
+]);
+
+export function collectSdlMathNotices(sourceRoot, entries = SDL_3_4_20_MATH_NOTICES) {
+  return auditedSourceComments(sourceRoot, entries);
+}
+
+export function appendSdlMathNotices(result, sourceRoot, entries = SDL_3_4_20_MATH_NOTICES) {
+  const packages = result.index.packages.filter(p => p.name === 'sdl3-src' && p.version === '3.4.20');
+  if (packages.length !== 1) throw Error('Expected one indexed SDL source package');
+  const notices = collectSdlMathNotices(sourceRoot, entries);
+  for (let i = 0; i < notices.length; i++) {
+    const notice = notices[i], sourceHash = entries[i][1];
+    result.text += '\n===== sdl3-src 3.4.20 | SUPPLEMENTAL AUDITED SOURCE NOTICE | '+notice.source+' | source sha256 '+sourceHash+' =====\n'+notice.text+'\n';
+    const {text: _noticeText, ...entry} = notice;
+    packages[0].notices.push({...entry,source_sha256:sourceHash,source_package:'sdl3-src@3.4.20',link_status:'compiled intermediate; final linkage unverified'});
+  }
+}
+

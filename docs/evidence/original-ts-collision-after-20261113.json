@@ -1,0 +1,282 @@
+{
+  "reports": [
+    {
+      "scenario": "smoke-v1",
+      "implementation": "original-typescript",
+      "seed": 42,
+      "tick": 0,
+      "state": "ready",
+      "player": 250,
+      "cpu": 250,
+      "ball": {
+        "x": 450,
+        "y": 250,
+        "vx": 0,
+        "vy": 0
+      },
+      "scores": [
+        0,
+        0
+      ],
+      "finished": false
+    },
+    {
+      "scenario": "smoke-v1",
+      "implementation": "original-typescript",
+      "seed": 42,
+      "tick": 120,
+      "state": "playing",
+      "player": 45,
+      "cpu": 250,
+      "ball": {
+        "x": 327.4999999999992,
+        "y": 224.0518778609112,
+        "vx": -350,
+        "vy": -74.13749182596803
+      },
+      "scores": [
+        0,
+        0
+      ],
+      "finished": false
+    },
+    {
+      "scenario": "smoke-v1",
+      "implementation": "original-typescript",
+      "seed": 42,
+      "tick": 240,
+      "state": "playing",
+      "player": 455,
+      "cpu": 250,
+      "ball": {
+        "x": 450,
+        "y": 250,
+        "vx": 350,
+        "vy": 13.910615681670606
+      },
+      "scores": [
+        0,
+        1
+      ],
+      "finished": false
+    },
+    {
+      "scenario": "smoke-v1",
+      "implementation": "original-typescript",
+      "seed": 42,
+      "tick": 360,
+      "state": "playing",
+      "player": 455,
+      "cpu": 229.64492736535612,
+      "ball": {
+        "x": 584.1666666666662,
+        "y": 255.33240267797373,
+        "vx": 350,
+        "vy": 13.910615681670606
+      },
+      "scores": [
+        0,
+        1
+      ],
+      "finished": false
+    },
+    {
+      "scenario": "smoke-v1",
+      "implementation": "original-typescript",
+      "seed": 42,
+      "tick": 480,
+      "state": "paused",
+      "player": 455,
+      "cpu": 229.64492736535612,
+      "ball": {
+        "x": 584.1666666666662,
+        "y": 255.33240267797373,
+        "vx": 350,
+        "vy": 13.910615681670606
+      },
+      "scores": [
+        0,
+        1
+      ],
+      "finished": false
+    },
+    {
+      "scenario": "smoke-v1",
+      "implementation": "original-typescript",
+      "seed": 42,
+      "tick": 600,
+      "state": "playing",
+      "player": 455,
+      "cpu": 250,
+      "ball": {
+        "x": 770.0162181130966,
+        "y": 312.67403132285915,
+        "vx": -316.7619767166468,
+        "vy": 190.32285402355913
+      },
+      "scores": [
+        0,
+        1
+      ],
+      "finished": false
+    },
+    {
+      "scenario": "smoke-v1",
+      "implementation": "original-typescript",
+      "seed": 42,
+      "tick": 720,
+      "state": "playing",
+      "player": 455,
+      "cpu": 250,
+      "ball": {
+        "x": 453.25424139645315,
+        "y": 481.003114653584,
+        "vx": -316.7619767166468,
+        "vy": -190.32285402355913
+      },
+      "scores": [
+        0,
+        1
+      ],
+      "finished": false
+    },
+    {
+      "scenario": "smoke-v1",
+      "implementation": "original-typescript",
+      "seed": 42,
+      "tick": 840,
+      "state": "playing",
+      "player": 455,
+      "cpu": 250,
+      "ball": {
+        "x": 136.49226467980844,
+        "y": 290.6802606300272,
+        "vx": -316.7619767166468,
+        "vy": -190.32285402355913
+      },
+      "scores": [
+        0,
+        1
+      ],
+      "finished": false
+    },
+    {
+      "scenario": "smoke-v1",
+      "implementation": "original-typescript",
+      "seed": 42,
+      "tick": 960,
+      "state": "playing",
+      "player": 455,
+      "cpu": 274.73171376623213,
+      "ball": {
+        "x": 450,
+        "y": 250,
+        "vx": 350,
+        "vy": 67.28646703530103
+      },
+      "scores": [
+        0,
+        2
+      ],
+      "finished": false
+    },
+    {
+      "scenario": "smoke-v1",
+      "implementation": "original-typescript",
+      "seed": 42,
+      "tick": 1080,
+      "state": "playing",
+      "player": 455,
+      "cpu": 303.04688363324374,
+      "ball": {
+        "x": 762.0833333333305,
+        "y": 309.9970997731434,
+        "vx": 350,
+        "vy": 67.28646703530103
+      },
+      "scores": [
+        0,
+        2
+      ],
+      "finished": false
+    },
+    {
+      "scenario": "smoke-v1",
+      "implementation": "original-typescript",
+      "seed": 42,
+      "tick": 1200,
+      "state": "playing",
+      "player": 455,
+      "cpu": 250,
+      "ball": {
+        "x": 564.5429003971851,
+        "y": 338.4844348975997,
+        "vx": -375.6768123483284,
+        "vy": 15.864455667187512
+      },
+      "scores": [
+        0,
+        2
+      ],
+      "finished": false
+    },
+    {
+      "scenario": "smoke-v1",
+      "implementation": "original-typescript",
+      "seed": 42,
+      "tick": 1320,
+      "state": "playing",
+      "player": 250,
+      "cpu": 253.42540409439243,
+      "ball": {
+        "x": 572.4999999999997,
+        "y": 224.21725985547528,
+        "vx": 350,
+        "vy": -73.66497184149921
+      },
+      "scores": [
+        0,
+        0
+      ],
+      "finished": false
+    },
+    {
+      "scenario": "smoke-v1",
+      "implementation": "original-typescript",
+      "seed": 42,
+      "tick": 1440,
+      "state": "playing",
+      "player": 250,
+      "cpu": 217.6074005296301,
+      "ball": {
+        "x": 780.240820458885,
+        "y": 123.10566439830609,
+        "vx": -318.33171596498477,
+        "vy": -202.60884117686786
+      },
+      "scores": [
+        0,
+        0
+      ],
+      "finished": true
+    }
+  ],
+  "actions": [
+    {
+      "tick": 0,
+      "action": "start"
+    },
+    {
+      "tick": 360,
+      "action": "pause"
+    },
+    {
+      "tick": 480,
+      "action": "toggle_pause"
+    },
+    {
+      "tick": 1200,
+      "action": "start"
+    }
+  ]
+}

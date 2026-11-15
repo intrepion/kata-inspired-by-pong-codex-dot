@@ -1,0 +1,9 @@
+# Piston keypad Enter: macOS model and backend review (2026-11-13)
+
+The checkpoint adapter blob `55fb3e016612b2e9652702953e01450f254a201f` (at `94e9af0412e372ec020ed77c86dc73e030122783`) was tested in an isolated mixed build tree. Its source SHA-256 was `30af4602ace83d4c660dc10d5e9c944d2011dfb0115f908001f42db8039f5e07`. The Piston lockfile matched checkpoint blob `19f115c2915eb8124726aeb8726b5955ee3b4065`; the rest of the tree was not established as that checkpoint.
+
+On Mac, `cargo test --offline --locked --release --manifest-path experiments/piston/Cargo.toml` passed all 17 tests, including the regression that injects distinct `Key::Return` and `Key::NumPadEnter` events and checks repeat and unfocused behavior. This is adapter/model coverage, not proof that the window backend delivers distinct keys.
+
+The locked `winit 0.30.13` macOS event mapping maps both physical Enter and NumpadEnter to `NamedKey::Enter`; the locked `pistoncore-winit_window 0.20.5` maps `Named(Enter)` to `Key::Return` without consulting key location. It includes the physical code as a separate scancode in button events. Inspected local source SHA-256 values: winit macOS event file `dd073f82f85c5950eebb45256521da675e216ec56eaacadb7b413b96f1e894d4`, piston window backend `92a0fea15d067046ee18df18b68f34b64e2e9ea2d1b3d45063adacd552945d91`.
+
+Thus the separate `NumPadEnter` branch is not demonstrated to receive distinct native Mac events through this backend. Simultaneous Enter keys may be conflated by its logical-key and repeat tracking; this is a source-based inference, not a reproduced physical-input failure. Native keypad behavior, simultaneous presses, full gameplay and release qualification remain unverified. No dependency or backend was changed; the [Mac Piston license screen](PISTON-MAC-LICENSE-SCREEN.md) remains incomplete.

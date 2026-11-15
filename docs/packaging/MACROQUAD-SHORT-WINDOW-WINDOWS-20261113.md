@@ -1,0 +1,7 @@
+# Macroquad short-window change: Windows build check
+
+At checkpoint `4e2796f04f189b2ea8f935b044f8e197ad71e4f4`, Macroquad source blob `fa91f3ee2e339bdf70b5936629365a87af3707a7` includes the short-window layout change. On Windows stable MSVC Rust, `cargo test --locked --offline -p pong-macroquad` passed all six tests and a locked offline debug build succeeded. Cargo reported incremental-cache hard-link failures and copied files instead.
+
+The debug executable SHA-256 was `45ed48dc1fc4eed763d5cb7e514da370f6bf867c98e17929bed7c84f37201d29`. Its scripted run exited 0 with empty stderr; all 13 JSON telemetry records matched `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`. Six app-owned captures were produced. The default-size tick-480 capture SHA-256 `e4b6caba848b0a3c11fae0741a69da46ed42aea51e77dbea33ea01c7e1cab62a` is identical to the previously inspected paused capture described in `MACROQUAD-FOOTER-WINDOWS-20261113.md`. Prior executable, logs and captures remain in sibling workspace directory `macroquad-short-windows-20261113`.
+
+This does not verify Windows short-window resizing: the computer-use skill's required guidance could not be loaded in this environment. It also does not establish physical input, a complete interactive match, clean-machine operation, dependency-license clearance or release qualification. The separate Mac short-window visual check is documented in `MACROQUAD-SHORT-WINDOW-MAC-20261113.md`.

@@ -1,0 +1,163 @@
+{
+  "date": "2026-11-12",
+  "platform": "Omarchy ARM64",
+  "boundary": "Application framebuffer or CPU presentation buffer only; no desktop capture/input",
+  "runs": [
+    {
+      "adapter": "softbuffer",
+      "exit": 0,
+      "frames": [
+        {
+          "file": "tick-0120.png",
+          "bytes": 65683,
+          "width": 1474,
+          "height": 1864,
+          "sha256": "6de25bfc0240f8ac08698bd141678548246658263dd9510b76cc3d32014cf5a8"
+        },
+        {
+          "file": "tick-0240.png",
+          "bytes": 64919,
+          "width": 1474,
+          "height": 1864,
+          "sha256": "02ba1d12134571195e6389c378f764a9fbfdcf7c6a7e91aff415e3394b1968e0"
+        },
+        {
+          "file": "tick-0480.png",
+          "bytes": 66972,
+          "width": 1474,
+          "height": 1864,
+          "sha256": "b625fb03c1f5663c353eed582800d6ffd267ed8025e86f81279088369a0d5ccb"
+        },
+        {
+          "file": "tick-0600.png",
+          "bytes": 65083,
+          "width": 1474,
+          "height": 1864,
+          "sha256": "a6ce96e6ddc7eaefd2e8b1044dfbce7c0bba26729ddf63ec4931e8282473916e"
+        },
+        {
+          "file": "tick-1320.png",
+          "bytes": 65689,
+          "width": 1474,
+          "height": 1864,
+          "sha256": "000242e250f148aa0f3a8504abbc5ed9bf01dabee6038eb18aa1ad8150d9ccef"
+        },
+        {
+          "file": "tick-1440.png",
+          "bytes": 65681,
+          "width": 1474,
+          "height": 1864,
+          "sha256": "96cb7c8590118f7501155590c8f42a178c5de3a258d82e07026a7cb9558e3305"
+        }
+      ],
+      "telemetryMatchesBaseline": true,
+      "visuallyInspectedTicks": [
+        480
+      ]
+    },
+    {
+      "adapter": "macroquad",
+      "exit": 0,
+      "frames": [
+        {
+          "file": "tick-0120.png",
+          "bytes": 76595,
+          "width": 1474,
+          "height": 1864,
+          "sha256": "c63d692330fdc1c46af761800c6dc465a1e5d991c26e9e7bb29810b25e3d2399"
+        },
+        {
+          "file": "tick-0240.png",
+          "bytes": 76598,
+          "width": 1474,
+          "height": 1864,
+          "sha256": "4f5a41d5885edb663a0b4421bcff019d578a12fe78265c39cb1e9c3eed19916e"
+        },
+        {
+          "file": "tick-0480.png",
+          "bytes": 80163,
+          "width": 1474,
+          "height": 1864,
+          "sha256": "0e86c21fe7866208f670061bca7c98aed0e134451a7ec13a588bb46019781db8"
+        },
+        {
+          "file": "tick-0600.png",
+          "bytes": 76549,
+          "width": 1474,
+          "height": 1864,
+          "sha256": "fd6f113a771c50440af6774976b369e981d593bb6e25c00969b1f0ea5e3cb603"
+        },
+        {
+          "file": "tick-1320.png",
+          "bytes": 76821,
+          "width": 1474,
+          "height": 1864,
+          "sha256": "355678a75026fd484f9efbd98f09a48c5481990af318c83e38d25327355294ca"
+        },
+        {
+          "file": "tick-1440.png",
+          "bytes": 76799,
+          "width": 1474,
+          "height": 1864,
+          "sha256": "80190fb7aab3fa708b9cc5bd075fc499fb4914dbe8afd45c4f3dc652afcaa948"
+        }
+      ],
+      "telemetryMatchesBaseline": true,
+      "visuallyInspectedTicks": [
+        480
+      ]
+    },
+    {
+      "adapter": "raylib",
+      "exit": 0,
+      "frames": [
+        {
+          "file": "tick-0120.png",
+          "bytes": 110998,
+          "width": 1474,
+          "height": 1864,
+          "sha256": "e60193e69f4372c717a22a7160499807d2bc93b9b47770a03c988af7c76c59da"
+        },
+        {
+          "file": "tick-0240.png",
+          "bytes": 111057,
+          "width": 1474,
+          "height": 1864,
+          "sha256": "3c4d7253158e0ff3e88eee11ceaaa7bcd3e6c36aedb06b9a12cb90b2db1e5fc1"
+        },
+        {
+          "file": "tick-0480.png",
+          "bytes": 111023,
+          "width": 1474,
+          "height": 1864,
+          "sha256": "3399f1bc51318efec6bae2e89f822d52c78eabbedf52842c4e7a7148578e33e9"
+        },
+        {
+          "file": "tick-0600.png",
+          "bytes": 111057,
+          "width": 1474,
+          "height": 1864,
+          "sha256": "94f6e1987ee26c6820381f8714d8429965d2a9e785ef90a7d7dc781cd2f813a5"
+        },
+        {
+          "file": "tick-1320.png",
+          "bytes": 110998,
+          "width": 1474,
+          "height": 1864,
+          "sha256": "986eab82bdde0b8f7c55898e309cf084dd29c301ad6fa0901625df5ab5283098"
+        },
+        {
+          "file": "tick-1440.png",
+          "bytes": 110985,
+          "width": 1474,
+          "height": 1864,
+          "sha256": "7ffd18994f258d7928274d5f9cf0b1ab23d0b3df0ff6bd543ddb1a693a8b0124"
+        }
+      ],
+      "telemetryMatchesBaseline": true,
+      "visuallyInspectedTicks": [
+        480
+      ]
+    }
+  ]
+}

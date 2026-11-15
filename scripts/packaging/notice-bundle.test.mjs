@@ -1,0 +1,184 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import{mkdtempSync,mkdirSync,writeFileSync,rmSync,symlinkSync,realpathSync}from'node:fs';
+import{tmpdir}from'node:os';import{join}from'node:path';import{createHash}from'node:crypto';
+import{buildNoticeBundle}from'./notice-bundle.mjs';
+function fixture(t){const root=realpathSync(mkdtempSync(join(tmpdir(),'pong-notice-unit-')));t.after(()=>rmSync(root,{recursive:true,force:true}));writeFileSync(join(root,'LICENSE'),'MIT root\n');const pkg=join(root,'crate');mkdirSync(pkg);writeFileSync(join(pkg,'Cargo.toml'),'');return{root,pkg};}
+function meta(pkg,extra={}){return{packages:[{id:'x',name:'fixture',version:'1.0.0',source:'registry+fixture',license:'MIT',manifest_path:join(pkg,'Cargo.toml'),...extra}],resolve:{nodes:[{id:'x',deps:[],dependencies:[]}]}};}
+test('first-party project license is not replaced by nested vendor notice',t=>{
+ const {root,pkg}=fixture(t);mkdirSync(join(pkg,'vendor'));writeFileSync(join(pkg,'vendor','LICENSE'),'Vendor Zlib text\n');
+ const b=buildNoticeBundle(meta(pkg,{name:'pong-fixture',source:null}),root);
+ assert.equal(b.index.packages[0].root_mit_fallback,true);assert.deepEqual(b.index.packages[0].notices.map(n=>n.source),['LICENSE','vendor/LICENSE']);
+ assert.equal(b.index.packages[0].notices[1].supplemental,true);assert(b.text.includes('MIT root\n'));assert(b.text.includes('Vendor Zlib text'));
+});
+test('nannou Fira notice is retained but cannot replace a crate notice',t=>{
+ const{root,pkg}=fixture(t);mkdirSync(join(pkg,'assets'));writeFileSync(join(pkg,'assets','LICENSE-FiraSans-OFL.txt'),'Fira font notice\n');
+ const input=meta(pkg,{name:'nannou_draw',version:'0.20.0',source:null,license:'MIT OR Apache-2.0'});
+ const onlyFont=buildNoticeBundle(input,root);
+ assert.deepEqual(onlyFont.index.missing_notice_files,['nannou_draw@0.20.0']);
+ assert.equal(onlyFont.index.packages[0].notices[0].asset_notice,true);
+ assert(onlyFont.text.includes('FONT ASSET NOTICE; NOT A CRATE NOTICE | assets/LICENSE-FiraSans-OFL.txt | crate declared MIT OR Apache-2.0'));
+ assert(onlyFont.text.includes('Fira font notice\n'));
+ writeFileSync(join(pkg,'LICENSE'),' \n\t');
+ assert.deepEqual(buildNoticeBundle(input,root).index.missing_notice_files,['nannou_draw@0.20.0']);
+ writeFileSync(join(pkg,'LICENSE'),'Crate license\n');
+ const withCrate=buildNoticeBundle(input,root);
+ assert.deepEqual(withCrate.index.missing_notice_files,[]);
+ assert(withCrate.text.includes('Crate license\n'));
+ assert(withCrate.text.includes('Fira font notice\n'));
+});
+test('font notice exception does not reclassify unrelated packages or versions',t=>{
+ const{root,pkg}=fixture(t);mkdirSync(join(pkg,'assets'));writeFileSync(join(pkg,'assets','LICENSE-FiraSans-OFL.txt'),'Other notice\n');
+ for(const extra of [{name:'other',version:'0.20.0',source:null},{name:'nannou_draw',version:'0.20.1',source:null},{name:'nannou_draw',version:'0.20.0',source:'registry+fixture'}]){
+  const result=buildNoticeBundle(meta(pkg,extra),root);
+  assert.deepEqual(result.index.missing_notice_files,[]);
+  assert.equal(result.index.packages[0].notices[0].asset_notice,undefined);
+  assert(!result.text.includes('FONT ASSET NOTICE; NOT A CRATE NOTICE'));
+ }
+});
+test('preserves exact texts, nested notices and hashes without host paths',t=>{const{root,pkg}=fixture(t);writeFileSync(join(pkg,'LICENSE'),'MIT text\r\n');mkdirSync(join(pkg,'vendor'));writeFileSync(join(pkg,'vendor','NOTICE'),'Attribution\n');const b=buildNoticeBundle(meta(pkg),root);assert.equal(b.index.packages[0].notices.length,2);assert.equal(b.index.packages[0].notices[0].sha256,createHash('sha256').update('MIT text\r\n').digest('hex'));assert(b.text.includes('MIT text\r\n'));assert(!JSON.stringify(b).includes(root));assert.equal(b.index.bundle_sha256,createHash('sha256').update(b.text).digest('hex'));});
+test('first-party fallback is constrained; missing external notices remain explicit',t=>{const{root,pkg}=fixture(t);assert.deepEqual(buildNoticeBundle(meta(pkg),root).index.missing_notice_files,['fixture@1.0.0']);const b=buildNoticeBundle(meta(pkg,{name:'pong-fixture',source:null}),root);assert.equal(b.index.packages[0].root_mit_fallback,true);assert.equal(b.index.packages[0].notices[0].source,'LICENSE');assert.throws(()=>buildNoticeBundle(meta(pkg,{license_file:'../LICENSE'}),root),/escapes/);});
+test('symlink notice sources rejected', {skip:process.platform==='win32'},t=>{const{root,pkg}=fixture(t);symlinkSync(join(root,'LICENSE'),join(pkg,'LICENSE'));assert.throws(()=>buildNoticeBundle(meta(pkg),root),/Symlink/);});
+
+test('platform title is explicit while existing Linux output remains unchanged',t=>{const{root,pkg}=fixture(t);writeFileSync(join(pkg,'LICENSE'),'MIT text');const implicit=buildNoticeBundle(meta(pkg),root);const linux=buildNoticeBundle(meta(pkg),root,{platform:'Linux'});assert.deepEqual(implicit,linux);const windows=buildNoticeBundle(meta(pkg),root,{platform:'Windows'});assert(windows.text.startsWith('Pong Windows dependency notice preparation\n'));assert.deepEqual(windows.index.packages,linux.index.packages);assert.equal(windows.index.bundle_sha256,createHash('sha256').update(windows.text).digest('hex'));assert.throws(()=>buildNoticeBundle(meta(pkg),root,{platform:'Windows\nApproved'}),/platform/);});
+
+test('first-party fallback rejects a sibling checkout on every platform',t=>{const a=fixture(t),b=fixture(t);assert.throws(()=>buildNoticeBundle(meta(b.pkg,{name:'pong-outside',source:null}),a.root),/outside repository/);});
+
+test('audited headers preserve source bytes and reject changed or escaping files',async t=>{
+ const {auditedSourceHeaders}=await import('./notice-bundle.mjs');const {root,pkg}=fixture(t),source='/* Original notice\r\nCopyright holder\r\n*/\ncode\n',file=join(pkg,'source.rs');writeFileSync(file,source);
+ const hash=createHash('sha256').update(source).digest('hex'),[notice]=auditedSourceHeaders(pkg,[['source.rs',hash]]);
+ assert.equal(notice.text,'/* Original notice\r\nCopyright holder\r\n*/');assert.equal(notice.sha256,createHash('sha256').update(notice.text).digest('hex'));assert.equal(notice.source,'source.rs (leading comment)');
+ writeFileSync(file,source+'changed');assert.throws(()=>auditedSourceHeaders(pkg,[['source.rs',hash]]),/hash mismatch/);
+ assert.throws(()=>auditedSourceHeaders(pkg,[['../LICENSE',hash]]),/escapes/);
+ if(process.platform!=='win32'){symlinkSync(join(root,'LICENSE'),join(pkg,'link.rs'));assert.throws(()=>auditedSourceHeaders(pkg,[['link.rs',hash]]),/Symlink/);}
+ const noHeader='code';writeFileSync(file,noHeader);assert.throws(()=>auditedSourceHeaders(pkg,[['source.rs',createHash('sha256').update(noHeader).digest('hex')]]),/Missing audited/);
+});
+
+test('audited source comments preserve exact text and reject changes',async t=>{
+ const {auditedSourceComments}=await import('./notice-bundle.mjs');const{root,pkg}=fixture(t);
+ const hash=s=>createHash('sha256').update(s).digest('hex');
+ const header='// Copyright holder\n// Original permission\n',source='use crate::x;\n\n'+header+'use crate::y;\n';
+ const start=source.indexOf(header),end=start+header.length;
+ writeFileSync(join(pkg,'source.rs'),source);
+ const [notice]=auditedSourceComments(pkg,[['source.rs',hash(source),hash(header),start,end]]);
+ assert.equal(notice.text,header);assert.equal(notice.supplemental,true);assert.equal(notice.source_notice,true);
+ assert.equal(notice.source,'source.rs (audited comment)');
+ assert.throws(()=>auditedSourceComments(pkg,[['source.rs',hash(source),'wrong',start,end]]),/comment hash mismatch/);
+ assert.throws(()=>auditedSourceComments(pkg,[['source.rs',hash(source),hash(header),-1,end]]),/comment bounds/);
+ writeFileSync(join(pkg,'source.rs'),source+'modified');assert.throws(()=>auditedSourceComments(pkg,[['source.rs',hash(source),hash(header),start,end]]),/source hash mismatch/);
+ assert.throws(()=>auditedSourceComments(pkg,[['../LICENSE',hash('MIT root\n'),hash(header),0,1]]),/escapes/);
+ if(process.platform!=='win32'){symlinkSync(join(root,'LICENSE'),join(pkg,'link.rs'));assert.throws(()=>auditedSourceComments(pkg,[['link.rs',hash('MIT root\n'),hash(header),0,1]]),/Symlink/);}
+});
+
+test('const soft float source audit applies only to the exact registry version',t=>{
+ const{root,pkg}=fixture(t);const base={name:'const_soft_float',version:'0.1.4',source:'registry+https://github.com/rust-lang/crates.io-index'};
+ assert.throws(()=>buildNoticeBundle(meta(pkg,base),root),/ENOENT/);
+ assert.deepEqual(buildNoticeBundle(meta(pkg,{...base,version:'0.1.5'}),root).index.missing_notice_files,['const_soft_float@0.1.5']);
+ assert.deepEqual(buildNoticeBundle(meta(pkg,{...base,source:'git+https://example.invalid/const_soft_float'}),root).index.missing_notice_files,['const_soft_float@0.1.4']);
+});
+
+test('raylib source audit applies only to the exact registry version',t=>{
+ const{root,pkg}=fixture(t);const base={name:'raylib',version:'6.0.0',source:'registry+https://github.com/rust-lang/crates.io-index'};
+ assert.throws(()=>buildNoticeBundle(meta(pkg,base),root),/ENOENT/);
+ assert.deepEqual(buildNoticeBundle(meta(pkg,{...base,version:'6.0.1'}),root).index.missing_notice_files,['raylib@6.0.1']);
+ assert.deepEqual(buildNoticeBundle(meta(pkg,{...base,source:'git+https://example.invalid/raylib'}),root).index.missing_notice_files,['raylib@6.0.0']);
+});
+
+test('audited upstream notices enforce revision, source and notice hashes and containment',async t=>{
+ const {auditedUpstreamNotices}=await import('./notice-bundle.mjs');const{root,pkg}=fixture(t),n=join(root,'notices');mkdirSync(n);mkdirSync(join(pkg,'src'));const hash=s=>createHash('sha256').update(s).digest('hex');
+ const code='source\n',notice='original notice\n';writeFileSync(join(pkg,'src','lib.rs'),code);writeFileSync(join(pkg,'.cargo_vcs_info.json'),JSON.stringify({git:{sha1:'revision'},path_in_vcs:'crate'}));writeFileSync(join(n,'LICENSE'),notice);
+ const rule={rev:'revision',path:'crate',sourceHash:hash(code),files:[['LICENSE',hash(notice),'https://example.org/exact/LICENSE']]};const [got]=auditedUpstreamNotices(pkg,n,rule);assert.equal(got.text,notice);assert.equal(got.source,rule.files[0][2]);
+ writeFileSync(join(pkg,'.cargo_vcs_info.json'),JSON.stringify({git:{sha1:'revision',dirty:true},path_in_vcs:'crate'}));assert.throws(()=>auditedUpstreamNotices(pkg,n,rule),/dirty source/);writeFileSync(join(pkg,'.cargo_vcs_info.json'),JSON.stringify({git:{sha1:'revision'},path_in_vcs:'crate'}));
+ assert.throws(()=>auditedUpstreamNotices(pkg,n,{...rule,rev:'wrong'}),/revision mismatch/);writeFileSync(join(pkg,'src','lib.rs'),'changed');assert.throws(()=>auditedUpstreamNotices(pkg,n,rule),/source hash mismatch/);writeFileSync(join(pkg,'src','lib.rs'),code);
+ writeFileSync(join(n,'LICENSE'),'changed');assert.throws(()=>auditedUpstreamNotices(pkg,n,rule),/notice hash mismatch/);assert.throws(()=>auditedUpstreamNotices(pkg,n,{...rule,files:[['../LICENSE',hash(notice),'url']]}),/escapes/);
+ if(process.platform!=='win32'){symlinkSync(join(root,'LICENSE'),join(n,'link'));assert.throws(()=>auditedUpstreamNotices(pkg,n,{...rule,files:[['link',hash(notice),'url']]}),/Symlink/);}
+});
+
+test('upstream rules require exact registry package and version',t=>{
+ const{root,pkg}=fixture(t),registry='registry+https://github.com/rust-lang/crates.io-index';
+ for(const[name,version]of [['clipboard-win','5.4.3'],['svg_fmt','0.4.5'],['bevy_scene_macros','0.19.1'],['taffy','0.10.1'],['encase_derive','0.12.1'],['encase_derive_impl','0.12.1'],['lyon','1.0.19'],['lyon_algorithms','1.0.22'],['lyon_geom','1.0.20'],['lyon_path','1.0.19'],['lyon_tessellation','1.0.23'],['accesskit','0.24.1'],['accesskit_consumer','0.35.0'],['accesskit_windows','0.32.1'],['accesskit_winit','0.32.2'],['spirv','0.4.0+sdk-1.4.341.0'],['profiling','1.0.18'],['profiling-procmacros','1.0.18'],['zune-inflate','0.2.54'],['gpu-descriptor','0.3.2'],['gpu-descriptor-types','0.2.0'],['gl_generator','0.14.0'],['khronos_api','3.1.0'],['blue_engine_core','0.10.0'],['blue_engine_dynamic','0.10.0'],['alloc-stdlib','0.3.0'],['dlopen2','0.8.2'],['dlopen2_derive','0.4.3'],['libappindicator-sys','0.9.0'],['selectors','0.38.0']]){
+  assert.throws(()=>buildNoticeBundle(meta(pkg,{name,version,source:registry}),root),/ENOENT/);
+  assert.deepEqual(buildNoticeBundle(meta(pkg,{name,version,source:'git+https://example.invalid/repo'}),root).index.missing_notice_files,[name+'@'+version]);
+  assert.deepEqual(buildNoticeBundle(meta(pkg,{name,version:'999.0.0',source:registry}),root).index.missing_notice_files,[name+'@999.0.0']);
+ }
+});
+
+test('audited source override is contained and hash checked',async t=>{
+ const {auditedUpstreamNotices}=await import('./notice-bundle.mjs');const{root,pkg}=fixture(t),n=join(root,'notices');mkdirSync(n);const hash=s=>createHash('sha256').update(s).digest('hex');writeFileSync(join(pkg,'.cargo_vcs_info.json'),JSON.stringify({git:{sha1:'r'},path_in_vcs:'p'}));writeFileSync(join(pkg,'lib.rs'),'source');writeFileSync(join(n,'LICENSE'),'notice');const rule={rev:'r',path:'p',sourcePath:'lib.rs',sourceHash:hash('source'),files:[['LICENSE',hash('notice'),'url']]};assert.equal(auditedUpstreamNotices(pkg,n,rule)[0].text,'notice');assert.throws(()=>auditedUpstreamNotices(pkg,n,{...rule,sourcePath:'../LICENSE'}),/escapes/);
+});
+
+test('resolved graph must have exactly one package per node',t=>{
+ const {root,pkg}=fixture(t);writeFileSync(join(pkg,'LICENSE'),'MIT text');
+ for(const mutate of [m=>m.resolve.nodes.push({id:'missing'}),m=>m.resolve.nodes.push({id:'x'}),m=>m.resolve.nodes=[],m=>m.resolve.nodes.push({id:''}),m=>m.packages.push({...m.packages[0]})]){
+  const input=meta(pkg);mutate(input);assert.throws(()=>buildNoticeBundle(input,root),/graph|package.*id/i);
+ }
+});
+
+test('resolved dependency references must point to represented nodes',t=>{
+ const {root,pkg}=fixture(t);writeFileSync(join(pkg,'LICENSE'),'MIT text');
+ for(const mutate of [m=>m.resolve.nodes[0].deps.push({pkg:'missing'}),m=>m.resolve.nodes[0].dependencies.push('missing'),m=>delete m.resolve.nodes[0].deps,m=>m.resolve.nodes[0].deps.push({}),m=>m.resolve.nodes[0].deps.push({pkg:'x'}),m=>m.resolve.root='missing']){
+  const input=meta(pkg);mutate(input);assert.throws(()=>buildNoticeBundle(input,root),/graph/i);
+ }
+});
+
+test('notice-named source and metadata files are not treated as notice texts',t=>{
+ const {root,pkg}=fixture(t);
+ for(const name of ['license-inventory.cjs','license-check.rs','NOTICE.json','copyright.py']) writeFileSync(join(pkg,name),'not a notice');
+ assert.deepEqual(buildNoticeBundle(meta(pkg),root).index.missing_notice_files,['fixture@1.0.0']);
+ writeFileSync(join(pkg,'LICENSE-MIT'),'actual notice');
+ assert.equal(buildNoticeBundle(meta(pkg),root).index.packages[0].notices.length,1);
+});
+
+test('rejects malformed platform options instead of silently defaulting',t=>{
+ const{root,pkg}=fixture(t);writeFileSync(join(pkg,'LICENSE'),'MIT text');
+ for(const options of ['Windows',null,[],{platfrom:'Windows'},{platform:undefined}]){
+  assert.throws(()=>buildNoticeBundle(meta(pkg),root,options),/options|platform/i);
+ }
+ assert(buildNoticeBundle(meta(pkg),root,{platform:'Windows'}).text.startsWith('Pong Windows dependency notice preparation\n'));
+ assert(buildNoticeBundle(meta(pkg),root).text.startsWith('Pong Linux dependency notice preparation\n'));
+});
+
+test('legacy registry metadata without path is accepted only when expected',async t=>{
+ const {auditedUpstreamNotices}=await import('./notice-bundle.mjs');const{root,pkg}=fixture(t),n=join(root,'notices');mkdirSync(n);mkdirSync(join(pkg,'src'));const hash=s=>createHash('sha256').update(s).digest('hex');
+ writeFileSync(join(pkg,'.cargo_vcs_info.json'),JSON.stringify({git:{sha1:'r'}}));writeFileSync(join(pkg,'src','lib.rs'),'source');writeFileSync(join(n,'LICENSE'),'notice');
+ const rule={rev:'r',path:undefined,sourceHash:hash('source'),files:[['LICENSE',hash('notice'),'url']]};assert.equal(auditedUpstreamNotices(pkg,n,rule)[0].text,'notice');
+ writeFileSync(join(pkg,'.cargo_vcs_info.json'),JSON.stringify({git:{sha1:'r'},path_in_vcs:'other'}));assert.throws(()=>auditedUpstreamNotices(pkg,n,rule),/revision mismatch/);
+});
+
+test('audited source accepts only listed exact line-ending variants',async t=>{
+ const {auditedUpstreamNotices}=await import('./notice-bundle.mjs');const {root,pkg}=fixture(t),n=join(root,'notices');mkdirSync(n);mkdirSync(join(pkg,'src'));const hash=s=>createHash('sha256').update(s).digest('hex');
+ writeFileSync(join(pkg,'.cargo_vcs_info.json'),JSON.stringify({git:{sha1:'r'},path_in_vcs:'p'}));writeFileSync(join(n,'LICENSE'),'notice');
+ const rule={rev:'r',path:'p',sourceHashes:[hash('a\nb\n'),hash('a\r\nb\r\n')],files:[['LICENSE',hash('notice'),'url']]};
+ for(const code of ['a\nb\n','a\r\nb\r\n']){writeFileSync(join(pkg,'src','lib.rs'),code);assert.equal(auditedUpstreamNotices(pkg,n,rule)[0].text,'notice');}
+ writeFileSync(join(pkg,'src','lib.rs'),'a\r\nb\n');assert.throws(()=>auditedUpstreamNotices(pkg,n,rule),/source hash mismatch/);
+});
+
+test('audited additional source must match and remain inside the crate',async t=>{
+ const {auditedUpstreamNotices}=await import('./notice-bundle.mjs');const{root,pkg}=fixture(t),n=join(root,'notices');mkdirSync(n);mkdirSync(join(pkg,'src'));const hash=s=>createHash('sha256').update(s).digest('hex');
+ writeFileSync(join(pkg,'.cargo_vcs_info.json'),JSON.stringify({git:{sha1:'r'},path_in_vcs:'p'}));writeFileSync(join(pkg,'src','lib.rs'),'source');writeFileSync(join(pkg,'generated.rs'),'generated');writeFileSync(join(n,'LICENSE'),'notice');
+ const rule={rev:'r',path:'p',sourceHash:hash('source'),additionalSources:[['generated.rs',hash('generated')]],files:[['LICENSE',hash('notice'),'url']]};assert.equal(auditedUpstreamNotices(pkg,n,rule)[0].text,'notice');
+ writeFileSync(join(pkg,'generated.rs'),'changed');assert.throws(()=>auditedUpstreamNotices(pkg,n,rule),/source hash mismatch/);
+ assert.throws(()=>auditedUpstreamNotices(pkg,n,{...rule,additionalSources:[['../LICENSE',hash('MIT root\n')]]}),/escapes/);
+});
+
+test('supplemental standard terms do not clear a missing project notice',async()=>{
+ const {hasProjectNotice}=await import('./notice-bundle.mjs');
+ assert.equal(hasProjectNotice([]),false);
+ assert.equal(hasProjectNotice([{supplemental:true}]),false);
+ assert.equal(hasProjectNotice([{supplemental:true},{source:'LICENSE',text:'license text'}]),true);
+});
+
+test('empty and whitespace-only license texts remain missing',t=>{
+ const {root,pkg}=fixture(t);
+ for(const content of ['', ' \r\n\t']) {
+  writeFileSync(join(pkg,'LICENSE'),content);
+  assert.deepEqual(buildNoticeBundle(meta(pkg),root).index.missing_notice_files,['fixture@1.0.0']);
+ }
+});
+test('a genuine project notice still counts beside an empty file',t=>{
+ const {root,pkg}=fixture(t);
+ writeFileSync(join(pkg,'LICENSE'),'  \n');writeFileSync(join(pkg,'NOTICE'),'Copyright holder\n');
+ const result=buildNoticeBundle(meta(pkg),root);
+ assert.deepEqual(result.index.missing_notice_files,[]);
+ assert.equal(result.index.packages[0].notices.length,2);
+});
+

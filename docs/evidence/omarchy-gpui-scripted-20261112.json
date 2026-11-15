@@ -1,0 +1,20 @@
+{
+  "platform": "Omarchy ARM64 Linux",
+  "base_commit": "2645d9d",
+  "exit_code": 0,
+  "records": 13,
+  "baseline_identical": true,
+  "final_tick": 1440,
+  "telemetry_sha256": "17cbe3c7299c64e6d12bbfcb292cdb7ea9a8e9821c92fa512c027df5285242bf",
+  "build": "pass",
+  "strict_clippy": "pass",
+  "shared_core_scenario_tests": 14,
+  "gui_model_tests": 4,
+  "xattr_integration_tests": 4,
+  "xattr_doctests": 1,
+  "capture_flag_exit_code": 2,
+  "capture_flag_creates_directory": false,
+  "image_export": false,
+  "visual_inspection": false,
+  "real_input_QA": false
+}

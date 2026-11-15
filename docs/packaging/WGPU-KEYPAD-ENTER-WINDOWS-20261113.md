@@ -1,0 +1,7 @@
+# Raw wgpu keypad Enter: Windows check, 2026-11-13
+
+At checkpoint `87c60b87e4529d53f4d552fe6e7b28e3f0c1bf67`, the raw wgpu adapter source Git blob `cc1c49ff555f8e0ef650f8614f9886eaf9673d8f` passed all 13 locked, offline debug tests on Windows MSVC stable Rust 1.99.1. The keypad regression injects winit key codes and checks start, repeat, release and unfocused input; it does not establish operating-system or physical keypad delivery.
+
+The locked offline debug build succeeded; executable SHA-256 was `e943db7f8279029f52cfa52a1897b3ca4db3d38bfdec7d86ba8c7aa97ae7c87d`. Its app-owned scripted run exited 0 with empty stderr and all 13 parsed telemetry records matching `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`. Six captures were produced. The inspected tick 480 image shows the paused court, resume prompt, paddles and ball; SHA-256 `53242fd34fc1d6a08f34a35b4984c0181a011b8841f5e283346d4c3cfb4a176e`. Logs, captures and copies of the prior executable artifacts remain in sibling workspace directory `wgpu-keypad-windows-20261113`.
+
+The scripted replay does not exercise keypad input. Native and physical keypad delivery, accessibility input, full interactive gameplay, clean-machine installation, dependency notice review and release qualification remain unverified. The earlier Windows Cargo metadata audit found no MPL declaration in this experiment's resolved graph, but that is not a complete linked, system-library or license review.

@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "platform": "win32",
+  "architecture": "x64",
+  "binary_sha256": "389fceb9532b585d7c99966b3fa050bd2eed1032d0e172c72d91d78d6ff00e33",
+  "archive_sha256": "dc3d0f551b08924e83d0ab9c375209c7c2181fab475e4c472d0068dac5331b5d",
+  "archive_bytes": 760358,
+  "extracted_binary_matches": true
+}

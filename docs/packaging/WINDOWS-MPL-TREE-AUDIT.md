@@ -1,0 +1,13 @@
+# Windows MPL declaration and enabled-tree audit
+
+On 2026-11-13, the 23 successfully resolved Windows MSVC metadata graphs from the [copyleft discovery pass](WINDOWS-COPYLEFT-DISCOVERY.md) were searched for `MPL` in Cargo license expressions. The experiment manifests and lockfiles were unchanged between that scan's checkpoint `741589a35df30c49f2126b6d4274526129dca09a` and this follow-up. Godot and GTK remained unavailable in the offline cache; this does not assess their Windows dependencies. These are package declarations, not a complete audit of bundled native sources, system libraries, actual compiled code or linked binaries.
+
+Three graphs contained MPL-2.0 declarations:
+
+- `ggez`: `option-ext@0.2.0`. The current default Windows normal/build tree reaches it through `pong-ggez -> ggez -> directories@6.0.0 -> dirs-sys@0.5.0 -> option-ext`. The previously tested release target contains an `option_ext` rlib, confirming that crate was compiled for that build; no claim is made that its code survives final linking.
+- `fyrox`: `option-ext@0.2.0` through `fyrox-ui -> directories@5.0.1 -> dirs-sys@0.4.1`, and `symphonia@0.5.5` through `fyrox-sound`. The enabled normal/build tree also contains the MPL-2.0 Symphonia `core`, `metadata`, `utils-xiph`, FLAC and MP3 bundles, AAC, ADPCM, ALAC, PCM and Vorbis codecs, and MKV, Ogg and RIFF formats, all `0.5.5`. A dependency-tree path alone does not establish final binary inclusion.
+- `native-web-demo`: `option-ext@0.2.0` occurs through both a normal `tauri -> dirs` path and a `tauri-build` path. `cssparser@0.37.0`, `cssparser-macros@0.7.1`, `dtoa-short@0.3.5`, and `selectors@0.38.0` are reached via `dom_query -> tauri-utils` and build/procedural macro paths; `cssparser-macros` is explicitly a proc macro. These build-time paths do not prove those packages' code appears in the shipped executable.
+
+The inverse paths were checked with offline locked `cargo tree --target x86_64-pc-windows-msvc -e normal,build -i` against each manifest; normal-only queries also showed the native-web-demo option-ext path and the parser paths through a proc macro. Outputs, including one corrected ambiguous `selectors` query, remain locally under `windows-mpl-tree-audit-20261113`. No code, features, packages, notices or binaries were altered by the audit.
+
+Under the owner's strict no-MPL direction, these are concrete candidates for further target-specific linkage and replacement review; do not assume a package is eligible for distribution merely because its use may be build-only or dead-stripped. No replacement, license conclusion, clean-machine pass or release is claimed. Absence of a matching Cargo declaration elsewhere is not proof of an MPL-free package or system runtime.

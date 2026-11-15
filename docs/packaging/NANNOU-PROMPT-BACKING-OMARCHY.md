@@ -1,0 +1,7 @@
+# Nannou prompt backing — Omarchy, 2026-11-13
+
+The Ready, pause and winner prompts were drawn directly over the net and ball. Nannou now draws an opaque court-colored rectangle behind each existing prompt to keep those elements from merging with its text. No gameplay or prompt wording changed. Tested source blob `84e6bd80c66800e72b973d63f74073e7f36b3ada` was based on checkpoint `059bd3036919267d500fd145ecf837d882f93795`.
+
+The offline locked debug test suite passed all 13 tests and the debug build succeeded (binary SHA-256 `974a7ff4b594ed50981d84d0cf60e31c37fd7b04e8eeac6c3f6b7cd7cac67f69`). With host-display access, its app-owned scripted replay exited 0 and all 13 telemetry records matched `docs/evidence/rust-core-contact-timing-model-20261112.jsonl` byte for byte. Six application captures were produced. The tick-480 paused [capture](../evidence/nannou-paused-backing-omarchy-20261113.png), SHA-256 `1f30daa82b22eb844d2daa28ff4e28c687df4843e6500bc767dd1f166223c566`, was visually inspected: the complete prompt is visible and the center net is masked behind it. Renderer informational logs appeared on stderr. Raw output and captures remain in `/tmp/pong-nannou-backing-20261113-a`.
+
+This is app-owned replay rendering, not a desktop screenshot or physical-input test. The replay does not reach a winner screen; Ready and winner backing visuals and actual overlap with the ball remain unverified. Other platforms, full gameplay, clean-machine installation, notices and release readiness remain open. Historical evidence is preserved.

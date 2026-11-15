@@ -1,0 +1,36 @@
+[
+  {
+    "adapter": "piston",
+    "schema": 1,
+    "platform": "darwin",
+    "architecture": "arm64",
+    "binary_sha256": "9ea7bd078b870d7bf66fd19242f74561c9fb0b1aaddcf7ecf3bd4e15ddbb8f2f",
+    "archive_sha256": "417dd41df9123cd1f789b7840bc288fd4a71f4eda6e4a8ad7dc0e33d31512f0e",
+    "archive_bytes": 2202283,
+    "status": 0,
+    "signal": null,
+    "elapsed_seconds": 14.544,
+    "states": 13,
+    "final_tick": 1440,
+    "finished": true,
+    "captures": 6,
+    "scoped_removal": true
+  },
+  {
+    "adapter": "ggez",
+    "schema": 1,
+    "platform": "darwin",
+    "architecture": "arm64",
+    "binary_sha256": "6254ac6bcae55b5e6e468f2f64921e474c2e46dee90331f99681b18f50c786fb",
+    "archive_sha256": "8e00d83c96dedcfaaf7dd66ca648be2fc65d3d06f34685185083e67e8dd141a6",
+    "archive_bytes": 3130956,
+    "status": 0,
+    "signal": null,
+    "elapsed_seconds": 13.894,
+    "states": 13,
+    "final_tick": 1440,
+    "finished": true,
+    "captures": 6,
+    "scoped_removal": true
+  }
+]

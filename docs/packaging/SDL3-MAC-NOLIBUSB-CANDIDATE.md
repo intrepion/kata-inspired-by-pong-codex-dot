@@ -1,0 +1,15 @@
+# Mac SDL3 libusb-disabled build candidate
+
+On 2026-11-13, an isolated copy of the SDL3 and shared crate paths from checkpoint 5d6eea2095ca8252ed86ab4624da4882f34bc431 was built on macOS ARM64. SDL 3.4.20 exposes the CMake option SDL_HIDAPI_LIBUSB separately from SDL_HIDAPI and SDL_HIDAPI_JOYSTICK. The sdl3-sys wrapper does not expose the narrower switch as a Cargo feature. For this experiment, a separate CMake toolchain file supplied only:
+
+```cmake
+set(SDL_HIDAPI_LIBUSB OFF CACHE BOOL "Disable optional libusb backend")
+```
+
+A locked offline Release build with CMAKE_TOOLCHAIN_FILE set to that file and a fresh Cargo target completed in 2m18s. Its CMake cache recorded SDL_HIDAPI=ON, SDL_HIDAPI_JOYSTICK=ON, SDL_HIDAPI_LIBUSB=OFF and the intended toolchain file. A first build using a copy-on-write target reused the old SDL native cache and was not accepted as evidence for the switch; the fresh build resolved that ambiguity. Fresh target size was about 159 MB. Toolchain file SHA-256 4e7c7117e0d8c667023fd9f8113f02cde3b15c27d2f60352799ccd21ff845c59.
+
+The new executable SHA-256 is 974b2b57a431a79adc361f29b7e6beb551ef019f22314d6d4acb3474357688f9. Its symbol listing retained PLATFORM_hid_init and PLATFORM_hid_enumerate, with no LIBUSB_hid_* symbol found; strings found no libusb-1.0.dylib name. These bounded checks support removal of the identified backend, not a complete dynamic-load or license audit. Four frontend tests passed. A local app bundle containing the identical binary passed Info.plist lint. Its scripted replay exited 0 and all 13 records matched the contact-timing reference; six app-owned PNGs were produced but not visually inspected. Stderr reported a sandbox_extension_issue_file_to_process failure despite completion.
+
+Supported desktop automation separately opened the candidate and observed Space start, W upward movement, Space pause, Space resume, S downward movement, R reset to 0–0 Playing, and Escape exit. These are sequential synthetic desktop actions, not physical-key or held-through-pause verification. Native HIDAPI being enabled and symbols being present do not prove controller compatibility. The disabled libusb backend may serve particular controllers, including devices for which SDL prefers libusb; no controller was connected or tested.
+
+This is a Mac-only local candidate, not an adopted build change or release. The toolchain file carries only this CMake cache setting and was used to exercise SDL's option, not to change compilers or system settings. A durable build configuration, other platforms, actual controller behavior, physical input, complete native/system licenses, notices, signing and distribution remain open. No functionality should be silently declared equivalent. Artifacts remain in /tmp/pong-sdl3-nolibusb-review-20261113-v1, /tmp/pong-sdl3-nolibusb-fresh-target-20261113-v1, /tmp/pong-sdl3-nolibusb-app-20261113-v1 and /tmp/pong-sdl3-nolibusb-run-20261113-v1. Earlier targets, bundles and evidence were preserved. Checkpoint when recorded: ffb5c3ac0010584ced133b54a1429e03bf1809bf.

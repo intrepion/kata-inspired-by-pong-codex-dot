@@ -1,0 +1,27 @@
+{
+  "binary_sha256": "414baf9973f6ff8ae10d7ed80f0cc1254dd68eacf4852e5243bc78aea7b7f66d",
+  "archive_sha256": "c69f730340b20c50e71e9faac1ae87c5b36acb7631a7bea1a2ec410c481397bb",
+  "size": 335725,
+  "source_commit": "906fe039bd9b24e19ad5281846d3c1ce50f451de",
+  "gtk_runtime_version": "4.24.1",
+  "direct_elf_needed": [
+    "libgtk-4.so.1",
+    "libpango-1.0.so.0",
+    "libgdk_pixbuf-2.0.so.0",
+    "libcairo-gobject.so.2",
+    "libcairo.so.2",
+    "libgio-2.0.so.0",
+    "libgobject-2.0.so.0",
+    "libglib-2.0.so.0",
+    "libgcc_s.so.1",
+    "libm.so.6",
+    "libc.so.6"
+  ],
+  "exit": 0,
+  "states": 13,
+  "final_tick": 1440,
+  "captures": 6,
+  "capture_kind": "app-owned Cairo rerender from model, not compositor screenshot",
+  "exact_uninstall_neighbor_preserved": true,
+  "tick600_sha256": "10dbae3069b45df5fc4250887df39b24bf1023e6a5e2148d04c2419b64bcf15d"
+}

@@ -1,0 +1,7 @@
+# Softbuffer and ash score labels: Windows cross-check
+
+At checkpoint `bb44fbb1e560089ab56d8f016bc9b631ecadc442`, both adapters were rebuilt against shared low-level source blob `dcb11dadcc350bb43655a760ced8c42d0128b3dd`. Windows stable MSVC Rust locked offline debug tests passed: softbuffer 10 and ash 12. Cargo reported incremental hard-link failures and copied files instead. Softbuffer executable SHA-256 was `fc7125b7c2f0141bf31c4da227ee7d155e966e400fb84e9f3282553ebc698fbb`; ash executable SHA-256 was `92c4fc22d1941b6878e3e1c7b965a704050cb18322a46360357efb5a85d82a7f`.
+
+Both app-owned scripted runs exited 0 and all 13 JSON records matched `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`. Softbuffer stderr was empty; ash reported Vulkan device Intel UHD Graphics 630. Each produced six captures. The inspected softbuffer tick-480 capture and ash's tick-480 Vulkan capture were byte-identical, SHA-256 `fdede478ed6af22eb32a50139a82abf6c097306a6d12089f503ae818fd8baa31`: [capture](../evidence/softbuffer-ash-score-labels-windows-20261113.png). It shows `YOU 0` and `CPU 1` above the pause instruction. Previous executables, logs and captures remain in sibling workspace directories `softbuffer-score-labels-windows-20261113` and `ash-score-labels-windows-20261113`.
+
+These are adapter tests, scripted replays and app-owned captures at one size, not OS key delivery or physical input. Other window sizes, complete interactive matches, clean-machine operation, license clearance and release qualification remain open.

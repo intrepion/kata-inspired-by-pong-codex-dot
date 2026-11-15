@@ -1,0 +1,91 @@
+{
+  "platform": "Omarchy ARM64 Linux",
+  "webkitgtk": "2.54.2",
+  "source_base": "b412be1",
+  "evidence_kind": "Application-generated SVG markup only; not raster/webview/OS screenshots",
+  "visual_or_real_input_QA": false,
+  "bridge_tests": 2,
+  "common_tests": 4,
+  "runs": {
+    "yew": {
+      "build": "pass",
+      "strict_clippy": "pass",
+      "exit_code": 0,
+      "records": 13,
+      "baseline_identical": true,
+      "final_tick": 1440,
+      "artifacts": [
+        {
+          "file": "tick-0120.svg",
+          "sha256": "e7350e6fe31e45c48d94392ed42d3b02c4bcfe51abe5f6399e0debf32519728b",
+          "scene_geometry_matches_state": true
+        },
+        {
+          "file": "tick-0240.svg",
+          "sha256": "7ccf7ce2541d42b45bd0e5cdccf0611a032016b699331ed00cd70acdab57f6e8",
+          "scene_geometry_matches_state": true
+        },
+        {
+          "file": "tick-0480.svg",
+          "sha256": "32ab90f0eb7b464425436a6ab1e2ae29bf8f688199eac1328a7125be51d0e64d",
+          "scene_geometry_matches_state": true
+        },
+        {
+          "file": "tick-0600.svg",
+          "sha256": "4910adff5f62ee04b8b1d2ccf88eb50eb3ae5d53dec2259b6006eb4c3f4ae53f",
+          "scene_geometry_matches_state": true
+        },
+        {
+          "file": "tick-1320.svg",
+          "sha256": "bb21c5f8316f7a7c71d98bbc37f259fd485c6a6142085f199cf4637b46d1dfda",
+          "scene_geometry_matches_state": true
+        },
+        {
+          "file": "tick-1440.svg",
+          "sha256": "1e8717d1f5549c274240e0f0779c9858f6178c09eab5e5fba898977903df03c6",
+          "scene_geometry_matches_state": true
+        }
+      ]
+    },
+    "leptos": {
+      "build": "pass",
+      "strict_clippy": "pass",
+      "exit_code": 0,
+      "records": 13,
+      "baseline_identical": true,
+      "final_tick": 1440,
+      "artifacts": [
+        {
+          "file": "tick-0120.svg",
+          "sha256": "e7350e6fe31e45c48d94392ed42d3b02c4bcfe51abe5f6399e0debf32519728b",
+          "scene_geometry_matches_state": true
+        },
+        {
+          "file": "tick-0240.svg",
+          "sha256": "7ccf7ce2541d42b45bd0e5cdccf0611a032016b699331ed00cd70acdab57f6e8",
+          "scene_geometry_matches_state": true
+        },
+        {
+          "file": "tick-0480.svg",
+          "sha256": "32ab90f0eb7b464425436a6ab1e2ae29bf8f688199eac1328a7125be51d0e64d",
+          "scene_geometry_matches_state": true
+        },
+        {
+          "file": "tick-0600.svg",
+          "sha256": "4910adff5f62ee04b8b1d2ccf88eb50eb3ae5d53dec2259b6006eb4c3f4ae53f",
+          "scene_geometry_matches_state": true
+        },
+        {
+          "file": "tick-1320.svg",
+          "sha256": "bb21c5f8316f7a7c71d98bbc37f259fd485c6a6142085f199cf4637b46d1dfda",
+          "scene_geometry_matches_state": true
+        },
+        {
+          "file": "tick-1440.svg",
+          "sha256": "1e8717d1f5549c274240e0f0779c9858f6178c09eab5e5fba898977903df03c6",
+          "scene_geometry_matches_state": true
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "platform": "Omarchy ARM64",
+  "date": "2026-11-12",
+  "runs": [
+    {
+      "adapter": "fyrox",
+      "exit": 0,
+      "finalTick": 1440,
+      "telemetryRecords": 13,
+      "baselineIdentical": true,
+      "inspectedTicks": [
+        480,
+        1440
+      ],
+      "frames": [
+        {
+          "file": "tick-0120.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "ba293bc489fd5c4b5265bf3a74f41f9024e17ddc0e9907b597bfb9107e55d648"
+        },
+        {
+          "file": "tick-0240.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "4475d2d0a8961a8c341e36b2df72e04b3008d7b9aa44b1517b3d4bac74f8d047"
+        },
+        {
+          "file": "tick-0480.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "6596ff12e9f71ae165a9508804a86027a6fe1499810a174a31d6329589226ebd"
+        },
+        {
+          "file": "tick-0600.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "86dafcd7b53b362fd4d98ba9651203e49eda63211dd7dd1a9c0f8f6f2905a70d"
+        },
+        {
+          "file": "tick-1320.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "0fe6b4ee7286fa6bfb3b75e56b7ea2c157193a37584ffd86737de9fa4a40fb31"
+        },
+        {
+          "file": "tick-1440.png",
+          "width": 1474,
+          "height": 1864,
+          "sha256": "b988a60fdb4556fcd161f73bca5f30f01c3af1703acbe7361c3c167b4114665f"
+        }
+      ]
+    },
+    {
+      "adapter": "Blue Engine headless",
+      "exit": 0,
+      "finalTick": 1440,
+      "telemetryRecords": 13,
+      "baselineIdentical": true,
+      "inspectedTicks": [
+        480,
+        1440
+      ],
+      "frames": [
+        {
+          "file": "tick-0120.png",
+          "width": 1024,
+          "height": 640,
+          "sha256": "3d2a8573f17e732dcd792672eb612472913bd659f8c86cb26ee5310bf705e719"
+        },
+        {
+          "file": "tick-0240.png",
+          "width": 1024,
+          "height": 640,
+          "sha256": "580417bd8a049a6a4b36835551ddc77c89ef7a0c64cc634d2d607d822f8c4c80"
+        },
+        {
+          "file": "tick-0480.png",
+          "width": 1024,
+          "height": 640,
+          "sha256": "9f2011c6ea10e8bb4f78e06218138372ec5d303c2994b4f4c7c2618bd1fe197f"
+        },
+        {
+          "file": "tick-0600.png",
+          "width": 1024,
+          "height": 640,
+          "sha256": "a64b764795927018f446cb573c70cdd19e249f777e7abb6417f08805822af07a"
+        },
+        {
+          "file": "tick-1320.png",
+          "width": 1024,
+          "height": 640,
+          "sha256": "788c9cb5f0486f14110f4fb38f67f2aea9eb4ae1893ad961100b7625d39be7e6"
+        },
+        {
+          "file": "tick-1440.png",
+          "width": 1024,
+          "height": 640,
+          "sha256": "4e41896de5249a683a7d9f3cd97dc69f64d8e16a5c02e95b5cfcca7eea4771f7"
+        }
+      ]
+    }
+  ],
+  "boundary": "Fyrox own UI render target; Blue Engine supported offscreen headless renderer. No native keyboard/compositor/smooth-motion QA."
+}

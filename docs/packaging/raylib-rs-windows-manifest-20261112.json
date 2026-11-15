@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "adapter": "raylib-rs",
+  "platform": "win32",
+  "architecture": "x64",
+  "binary_sha256": "0ee91a7e54aa3780c538e1e9d7aeff97dd30fdcd36cfffc4d40b95f8f3935ade",
+  "archive_sha256": "3b9f16f24d9c94c984c203f7fa494a62713e8cf6830486bbb504ff69b7f4a1ec",
+  "archive_bytes": 1881934,
+  "extracted_binary_matches": true
+}

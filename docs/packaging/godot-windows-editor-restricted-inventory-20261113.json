@@ -1,0 +1,9 @@
+[
+  {
+    "component": "CA certificates",
+    "declared_part_license": "MPL-2.0",
+    "files": [
+      "thirdparty/certs/ca-certificates.crt"
+    ]
+  }
+]

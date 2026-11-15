@@ -1,0 +1,7 @@
+# ggez keypad Enter: Windows check, 2026-11-13
+
+At checkpoint `0865d978672a9244a0c0aa1b4c53e5ed1c075717`, the ggez adapter source Git blob was `5e33dc07b04a31b59014eef284938095579f94cb`. Windows MSVC stable Rust 1.99.1 passed all 10 locked, offline release tests, including the synthetic key-code regression for keypad start, resume and restart, repeat and unfocused input. These tests do not establish operating-system or physical keypad delivery.
+
+A locked offline release build succeeded; executable SHA-256 was `b1a5ee2a800e503a7e85b02d91ef539182df35fb7a6494c991b24128ada3a2e0`. An app-owned scripted run exited 0 with empty stderr and all 13 telemetry records matching `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`. It generated six captures. The inspected tick 480 capture shows the paused court, prompt, paddles, ball and 0–1 score; its SHA-256 was `6e6604e95ca012dcaa2e1f0cc541fbbaf77396e3080062fb2e89f24c1808beed`. Logs and captures are retained in the sibling workspace directory `ggez-keypad-windows-20261113`, along with the preserved previous test binary and, where present, previous executable.
+
+The scripted replay does not exercise keypad input. Native and physical keypad delivery, accessibility input, full interactive gameplay, clean-machine installation, dependency notice review and release qualification remain unverified. This result does not establish compliance with the project's license restrictions.

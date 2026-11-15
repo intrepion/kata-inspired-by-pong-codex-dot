@@ -1,0 +1,7 @@
+# Windows ggez winner-message recheck
+
+At checkpoint `5095cb6d2475bbc4c522784a1514084eeb1a149b`, `experiments/ggez/src/main.rs` Git blob `c3ffa2f11e2beb8afb392a2ca5049ad0d8255158`, Windows MSVC stable Rust 1.99.1 passed all eight locked offline release tests. The winner-message test drives a winning score for each side, verifies the corresponding status string and verifies restart clears it. This is adapter/model evidence, not a rendered winner screen.
+
+A fresh locked offline release build produced executable SHA-256 `1d849fab5e0841f1252d4889c5573c531b3d3a9b0218354b0359deadf9243937`. A scripted run exited 0 with empty stderr, all 13 parsed telemetry records matching `docs/evidence/rust-core-contact-timing-model-20261112.jsonl`, and six app-owned PNG captures. The tick 480 capture was inspected and shows the paused court and prompt; the standard replay does not reach game over, so winner rendering remains unverified. The first capture attempt exited 101 because the requested capture directory already existed; the successful retry used a new directory. Both logs and captures remain in sibling workspace directory `ggez-winner-windows-20261113`, with prior binary/test artifacts copied to its `prior` subdirectory before reusing `target-ggez-restart-windows-20261113`.
+
+No native key delivery, physical input, full interactive match, clean-machine installation or release qualification is claimed.

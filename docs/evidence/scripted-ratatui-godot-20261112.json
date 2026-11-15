@@ -1,0 +1,130 @@
+{
+  "platform": "Omarchy ARM64",
+  "date": "2026-11-12",
+  "godotVersion": "4.5.1.stable.official.f62fdbde1",
+  "runs": [
+    {
+      "adapter": "ratatui",
+      "exit": 0,
+      "finalTick": 1440,
+      "baselineIdentical": true,
+      "telemetryRecords": 13,
+      "evidence": "TestBackend cells/text, NOT screenshots",
+      "files": [
+        {
+          "file": "tick-0120.json",
+          "bytes": 351831,
+          "sha256": "4a2c12de645dc9ecf32c166fc545eddff3c3e68d7c6b355d4f0c0325e19939a2"
+        },
+        {
+          "file": "tick-0120.txt",
+          "bytes": 3629,
+          "sha256": "9bdd8ee13b81fe5b4757f22e3c336ccdcb8dcb53cb44fa24c4aa9ceac8a75be4"
+        },
+        {
+          "file": "tick-0240.json",
+          "bytes": 351812,
+          "sha256": "384394afd1c2bc7a36b14d518e5592ccf6659ce4177abc07264088f28b7477a5"
+        },
+        {
+          "file": "tick-0240.txt",
+          "bytes": 3621,
+          "sha256": "308a8506cdeac3243af62d6a7272af8e4b44140ac8da658ce9dd2f01970810cf"
+        },
+        {
+          "file": "tick-0480.json",
+          "bytes": 351827,
+          "sha256": "5ee852f54329c0c5df03f8ef47d02dc69ed40731124714e6ab3be3c9852e172e"
+        },
+        {
+          "file": "tick-0480.txt",
+          "bytes": 3629,
+          "sha256": "ee362c1eb620fddd579050ba158d483fa829117be3437034a59fb71b7312c0a7"
+        },
+        {
+          "file": "tick-0600.json",
+          "bytes": 351823,
+          "sha256": "677bb76f8f46a36a5d74c33137a1dbc4d5e74cc1dd0acf334547d83894ce5cfb"
+        },
+        {
+          "file": "tick-0600.txt",
+          "bytes": 3625,
+          "sha256": "f2b74295c28fd4ed892404c0bdc79f677b37ba32141fe47e59c3840340840b91"
+        },
+        {
+          "file": "tick-1320.json",
+          "bytes": 351825,
+          "sha256": "631af1a0d0fad8775eeb96c2dba2d6aa72c335b522a2c2b9a705ec2bd8dab224"
+        },
+        {
+          "file": "tick-1320.txt",
+          "bytes": 3623,
+          "sha256": "229f1f271bbcb16e677012beabb9b79f2d77be7085475cfe4ef18e757198d52e"
+        },
+        {
+          "file": "tick-1440.json",
+          "bytes": 351831,
+          "sha256": "26c10062261eda083fba1ca1cca5e20827ab28c126ab6058cef35ae9118443f6"
+        },
+        {
+          "file": "tick-1440.txt",
+          "bytes": 3629,
+          "sha256": "84c8dc0a32d60391d124817aa3c42f4b835d7f485e3464b6fb03bd32a90edd69"
+        }
+      ]
+    },
+    {
+      "adapter": "godot",
+      "exit": 0,
+      "finalTick": 1440,
+      "baselineIdentical": true,
+      "telemetryRecords": 13,
+      "evidence": "Godot own viewport PNGs after frame_post_draw",
+      "files": [
+        {
+          "file": "tick-0120.png",
+          "bytes": 52956,
+          "sha256": "596fcb5ff63fcab82b9bd98af687a2d4400e95aaaa076161545e98c8bf866574",
+          "width": 1474,
+          "height": 949
+        },
+        {
+          "file": "tick-0240.png",
+          "bytes": 51803,
+          "sha256": "2546b64b512455af37f66d6334c7507fed09cd1b88d817d71dac1327192f7f4f",
+          "width": 1474,
+          "height": 949
+        },
+        {
+          "file": "tick-0480.png",
+          "bytes": 69307,
+          "sha256": "e57c01fbfcdf45b45ad03c5e7bd55b187870be8887a67fd38e7d6b927ddd06b9",
+          "width": 1474,
+          "height": 949
+        },
+        {
+          "file": "tick-0600.png",
+          "bytes": 51816,
+          "sha256": "b52682498b329626f34f0b3a59beb73609086fca47eabaf87267d2fd2fee3982",
+          "width": 1474,
+          "height": 949
+        },
+        {
+          "file": "tick-1320.png",
+          "bytes": 52909,
+          "sha256": "dffdd5c9e0f3c390ae4fa4508eab9e97efd11c4fbd50fca8b4b8d8ffc27373d1",
+          "width": 1474,
+          "height": 949
+        },
+        {
+          "file": "tick-1440.png",
+          "bytes": 52905,
+          "sha256": "6a98db9e1f85dd3a9fdb00121dfcb373392715df6a4409c8e2969915d71ca9d6",
+          "width": 1474,
+          "height": 949
+        }
+      ]
+    }
+  ],
+  "boundary": "No real input, terminal glyph display, compositor or smooth-motion QA."
+}

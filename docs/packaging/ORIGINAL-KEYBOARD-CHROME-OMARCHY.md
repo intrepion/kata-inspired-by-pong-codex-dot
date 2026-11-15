@@ -1,0 +1,7 @@
+# Original browser game keyboard check — Omarchy, 2026-11-13
+
+At checkpoint `e9069dcad35d9b2cf1af71ddaf212dbee807be44`, the original game was served from the repository's localhost-only server and opened in Chrome through supported browser controls. After clicking Start, a 700 ms automated W press moved the player paddle upward in the visible court; a 700 ms S press moved it downward. A later observation showed the paddle stationary after release. The match reached a displayed 0–1 score. Space on the page changed the visible status to Paused; a second Space returned it to the rally. These are bounded live browser interactions, not scripted model replay or physical keyboard input; no movement-speed claim is made.
+
+The source `game.ts` SHA-256 was `0a94c3226118d9a0ed47cfd889a595c2b5902022a0cac5e3f61523f17e487d4d` and served `game.js` SHA-256 `ef226fff881ea0bc720eefd1665e27f92dc46b166f9bf88a4e68167638121912`. Git showed no changes to the browser source, generated JavaScript, tests or build configuration since the [pinned-build cross-check](ORIGINAL-BLUR-CLICK-OMARCHY-CROSSCHECK.md) at `8ed5039880e56edc7aef7561eb981f7c98935839`; no rebuild or new unit-test run is claimed here. The local server was stopped after testing.
+
+An earlier address-bar focus attempt in the same task did not produce an observable pause and does not establish a real browser blur transition. Held-input behavior across actual focus loss, touch, accessibility devices, other browsers, a full match and release qualification remain open. Prior evidence is retained.

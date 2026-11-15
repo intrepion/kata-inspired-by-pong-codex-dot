@@ -1,0 +1,163 @@
+{
+  "archives": [
+    {
+      "archive": "libaddr2line-fbc53bd7e939c40a.rlib",
+      "origin": "rust-target-sysroot"
+    },
+    {
+      "archive": "libadler2-ea504e6f0bf199e3.rlib",
+      "origin": "rust-target-sysroot"
+    },
+    {
+      "archive": "liballoc-2a15898a1908f5f8.rlib",
+      "origin": "rust-target-sysroot"
+    },
+    {
+      "archive": "libcompiler_builtins-29674cca14587d3c.rlib",
+      "origin": "rust-target-sysroot"
+    },
+    {
+      "archive": "libcore-449a01f40d1a104f.rlib",
+      "origin": "rust-target-sysroot"
+    },
+    {
+      "archive": "libgimli-e3b7dec0551dc03e.rlib",
+      "origin": "rust-target-sysroot"
+    },
+    {
+      "archive": "libminiz_oxide-64f68d4ec41595bd.rlib",
+      "origin": "rust-target-sysroot"
+    },
+    {
+      "archive": "libobject-c14ca92ccb7c8149.rlib",
+      "origin": "rust-target-sysroot"
+    },
+    {
+      "archive": "libpanic_unwind-792f49a867dfa2d6.rlib",
+      "origin": "rust-target-sysroot"
+    },
+    {
+      "archive": "librustc_demangle-0cc128964db6791d.rlib",
+      "origin": "rust-target-sysroot"
+    },
+    {
+      "archive": "libstd-11eee8f7a063bd8a.rlib",
+      "origin": "rust-target-sysroot"
+    },
+    {
+      "archive": "libstd_detect-855cfcb660b3bf4c.rlib",
+      "origin": "rust-target-sysroot"
+    },
+    {
+      "archive": "libc.a",
+      "origin": "rust-target-sysroot"
+    },
+    {
+      "archive": "libunwind.a",
+      "origin": "rust-target-sysroot"
+    },
+    {
+      "archive": "libcassowary-b6479355c245a20e.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "libcompact_str-d5f184dfec59fd11.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "libcrossterm-470c82eca78e2f68.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "liberrno-9b0cc8f9ac063bd9.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "libfdeflate-db497b4fa51b77c4.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "libflate2-cd7e58ff64c50959.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "libitoa-a7460c9a88d24ecf.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "liblog-464dbe097420bc93.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "libminiz_oxide-3ac8f890fede0ff6.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "libmio-b0c406dfa0e2d0d4.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "libparking_lot-7a970491915f0d1f.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "libparking_lot_core-118a9d306c67bed7.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "libpng-e592965fb5f074c5.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "libpong_core-210f4c5568ac1c64.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "libpong_scenario-399803a0c78a72b4.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "libratatui-3bba7636b4158baa.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "librustix-a4fb98ac4fbdafcf.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "libserde_json-443d7303ba3b26ca.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "libsignal_hook-e1338687958c54ac.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "libsignal_hook_mio-d6c61355e2876fc5.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "libsignal_hook_registry-9a175a632a995edc.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "libunicode_segmentation-8746445a79aa0961.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "libunicode_width-044e378608b539c7.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "libunicode_width-d3b223e89a6f8b8c.rlib",
+      "origin": "cargo-target"
+    },
+    {
+      "archive": "libzmij-4ae43d21bd0d7882.rlib",
+      "origin": "cargo-target"
+    }
+  ],
+  "binary_sha256": "e8fa5dea2c0a8724142dcb14ab639f67885507b10e5a59121234d7539bbdb1da",
+  "link_map_sha256": "d26cedb28004ab7735a1ede1584de5fd3fab03037c91f66366fdbdd03f27b3cd",
+  "scope": "Archives named in linker map; not a complete component license inventory"
+}
