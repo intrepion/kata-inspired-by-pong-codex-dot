@@ -1,4 +1,8 @@
 [workspace]
 resolver = "2"
+exclude = ["vendor/macroquad"]
 members = ["crates/pong-benchmark", "crates/pong-scenario", "crates/pong-core", "crates/pong-wasm", "clients/macroquad", "clients/bevy"]
 default-members = ["crates/pong-core", "crates/pong-wasm", "clients/macroquad"]
+
+[patch.crates-io]
+macroquad = { path = "vendor/macroquad" }
