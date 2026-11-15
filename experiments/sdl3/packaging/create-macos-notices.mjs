@@ -6,6 +6,7 @@ import {auditedSourceComments, buildNoticeBundle} from '../../../scripts/packagi
 import {selectCargoMetadata} from './selected-cargo-metadata.mjs';
 import {appendSdlMathNotices} from './sdl3-math-notices.mjs';
 import {appendSdlKhronosNotices} from './sdl3-khronos-notices.mjs';
+import {appendSdlHidapiCredit} from './sdl3-hidapi-credit.mjs';
 
 const root = resolve(fileURLToPath(new URL('../../..', import.meta.url)));
 const input = JSON.parse(readFileSync(0, 'utf8'));
@@ -26,6 +27,8 @@ result.index.packages.find(p => p.name === 'sdl3-src' && p.version === '3.4.20')
 // These notices cover compiled SDL static-archive sources. They are
 // supplemental even when an object is not retained in the final executable.
 appendSdlMathNotices(result, dirname(source[0].manifest_path));
+// Preserve the upstream source's own attribution without asserting final linkage.
+appendSdlHidapiCredit(result, dirname(source[0].manifest_path));
 // Header dependency records document compilation, not final-binary linkage.
 appendSdlKhronosNotices(result, dirname(source[0].manifest_path),
   resolve(root, 'scripts/packaging/audited-notices/gl-rs-LICENSE.txt'));
