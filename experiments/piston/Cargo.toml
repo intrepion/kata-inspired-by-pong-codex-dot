@@ -10,3 +10,6 @@ pong-core = { path = "../../crates/pong-core" }
 piston_window = "=0.148.0"
 wgpu = "=29.0.4"
 pong-benchmark = { path = "../../crates/pong-benchmark" }
+
+[patch.crates-io]
+objc2-foundation = { path = "../../vendor/objc2-foundation-0.2.2" }
