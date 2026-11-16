@@ -6,18 +6,78 @@ use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 use std::{
     error::Error,
     ffi::{CStr, CString},
+    rc::Rc,
 };
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
+#[cfg(target_os = "macos")]
+fn mac_surface_extensions(display: raw_window_handle::RawDisplayHandle) -> Result<Vec<*const std::ffi::c_char>> {
+    match display {
+        raw_window_handle::RawDisplayHandle::AppKit(_) => Ok(vec![
+            ash::khr::surface::NAME.as_ptr(),
+            ash::ext::metal_surface::NAME.as_ptr(),
+        ]),
+        _ => Err("Expected an AppKit display handle".into()),
+    }
+}
+
+#[cfg(all(test, target_os = "macos"))]
+mod mac_surface_tests {
+    use super::*;
+    use raw_window_handle::{AppKitDisplayHandle, RawDisplayHandle, WindowsDisplayHandle};
+
+    #[test]
+    fn extensions_match_appkit_and_reject_other_display_handles() {
+        let extensions = mac_surface_extensions(RawDisplayHandle::AppKit(AppKitDisplayHandle::new())).unwrap();
+        assert_eq!(extensions, vec![ash::khr::surface::NAME.as_ptr(), ash::ext::metal_surface::NAME.as_ptr()]);
+        assert!(mac_surface_extensions(RawDisplayHandle::Windows(WindowsDisplayHandle::new())).is_err());
+    }
+}
+
 /// Separates actual present requests from swapchain recovery with no presentation.
 pub struct DrawOutcome {
     pub resize: bool,
     pub presented: bool,
+}
+// Owns partially initialized Vulkan objects until Renderer takes over.
+// Handles are recorded immediately after creation, so every fallible step
+// destroys only objects that exist and in dependency order.
+struct InitGuard {
+    armed: bool,
+    instance: ash::Instance,
+    surface_api: ash::khr::surface::Instance,
+    surface: Option<vk::SurfaceKHR>,
+    device: Option<ash::Device>,
+    pool: Option<vk::CommandPool>,
+    acquired: Option<vk::Semaphore>,
+    finished: Option<vk::Semaphore>,
+    #[cfg(target_os = "macos")]
+    metal_layer: Option<raw_window_metal::Layer>,
+}
+impl Drop for InitGuard {
+    fn drop(&mut self) {
+        if !self.armed { return; }
+        unsafe {
+            if let Some(device) = &self.device {
+                if let Some(x) = self.finished { device.destroy_semaphore(x, None); }
+                if let Some(x) = self.acquired { device.destroy_semaphore(x, None); }
+                if let Some(x) = self.pool { device.destroy_command_pool(x, None); }
+                device.destroy_device(None);
+            }
+            if let Some(surface) = self.surface { self.surface_api.destroy_surface(surface, None); }
+            self.instance.destroy_instance(None);
+        }
+        // metal_layer remains retained until after surface destruction.
+    }
 }
 pub struct Renderer {
     _entry: Entry,
     instance: ash::Instance,
     surface_api: ash::khr::surface::Instance,
     surface: vk::SurfaceKHR,
+    #[cfg(target_os = "macos")]
+    _metal_layer: raw_window_metal::Layer,
+    // Retain the native window until after the Vulkan surface is destroyed.
+    _window: Rc<winit::window::Window>,
     physical: vk::PhysicalDevice,
     device: ash::Device,
     queue: vk::Queue,
@@ -38,13 +98,16 @@ pub struct Renderer {
     finished: vk::Semaphore,
 }
 impl Renderer {
-    pub unsafe fn new(window: &winit::window::Window, capture_enabled: bool) -> Result<Self> {
+    pub unsafe fn new(window: Rc<winit::window::Window>, capture_enabled: bool) -> Result<Self> {
         let entry=Entry::load().map_err(|e|format!("Vulkan loader unavailable ({e}). On macOS install/configure the official Vulkan SDK with MoltenVK; on Windows/Linux install a Vulkan-capable driver."))?;
         let name = CString::new("Pong ash")?;
         let app = vk::ApplicationInfo::default()
             .application_name(&name)
             .api_version(vk::API_VERSION_1_0);
         let display = window.display_handle()?.as_raw();
+        #[cfg(target_os = "macos")]
+        let mut extensions = mac_surface_extensions(display)?;
+        #[cfg(not(target_os = "macos"))]
         let mut extensions = ash_window::enumerate_required_extensions(display)?.to_vec();
         let supported = entry.enumerate_instance_extension_properties(None)?;
         let portability = supported.iter().any(|e| {
@@ -72,14 +135,43 @@ impl Renderer {
                 .flags(flags),
             None,
         )?;
-        let surface = ash_window::create_surface(
-            &entry,
-            &instance,
-            display,
-            window.window_handle()?.as_raw(),
-            None,
-        )?;
         let surface_api = ash::khr::surface::Instance::new(&entry, &instance);
+        let mut init = InitGuard {
+            armed: true,
+            instance: instance.clone(),
+            surface_api: ash::khr::surface::Instance::new(&entry, &instance),
+            surface: None,
+            device: None,
+            pool: None,
+            acquired: None,
+            finished: None,
+            #[cfg(target_os = "macos")]
+            metal_layer: None,
+        };
+        #[cfg(target_os = "macos")]
+        let surface = {
+            let handle = match window.window_handle()?.as_raw() {
+                raw_window_handle::RawWindowHandle::AppKit(handle) => handle,
+                _ => return Err("Expected an AppKit window handle".into()),
+            };
+            // Called by winit's main-thread resumed handler. The NSView remains
+            // alive while Renderer and its Vulkan surface exist.
+            init.metal_layer = Some(raw_window_metal::Layer::from_ns_view(handle.ns_view));
+            let layer = init.metal_layer.as_ref().unwrap();
+            // Vulkan only consumes the opaque pointer; do not create a Rust
+            // reference to the foreign Objective-C object.
+            let info = vk::MetalSurfaceCreateInfoEXT {
+                p_layer: layer.as_ptr().as_ptr().cast::<vk::CAMetalLayer>(),
+                ..Default::default()
+            };
+            ash::ext::metal_surface::Instance::new(&entry, &instance)
+                .create_metal_surface(&info, None)?
+        };
+        #[cfg(not(target_os = "macos"))]
+        let surface = ash_window::create_surface(
+            &entry, &instance, display, window.window_handle()?.as_raw(), None,
+        )?;
+        init.surface = Some(surface);
         let mut selected = None;
         for p in instance.enumerate_physical_devices()? {
             for (index, q) in instance
@@ -131,6 +223,7 @@ impl Renderer {
                 .enabled_extension_names(&device_ext),
             None,
         )?;
+        init.device = Some(device.clone());
         let queue = device.get_device_queue(family, 0);
         let swap_api = ash::khr::swapchain::Device::new(&instance, &device);
         let pool = device.create_command_pool(
@@ -139,6 +232,7 @@ impl Renderer {
                 .flags(vk::CommandPoolCreateFlags::RESET_COMMAND_BUFFER),
             None,
         )?;
+        init.pool = Some(pool);
         let cmd = device.allocate_command_buffers(
             &vk::CommandBufferAllocateInfo::default()
                 .command_pool(pool)
@@ -146,12 +240,20 @@ impl Renderer {
                 .command_buffer_count(1),
         )?[0];
         let acquired = device.create_semaphore(&vk::SemaphoreCreateInfo::default(), None)?;
+        init.acquired = Some(acquired);
         let finished = device.create_semaphore(&vk::SemaphoreCreateInfo::default(), None)?;
+        init.finished = Some(finished);
+        #[cfg(target_os = "macos")]
+        let metal_layer = init.metal_layer.take().expect("Metal layer initialized");
+        init.armed = false;
         let mut r = Self {
             _entry: entry,
             instance,
             surface_api,
             surface,
+            #[cfg(target_os = "macos")]
+            _metal_layer: metal_layer,
+            _window: window.clone(),
             physical,
             device,
             queue,

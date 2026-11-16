@@ -98,7 +98,7 @@ impl ApplicationHandler for Frontend {
             )
             .unwrap(),
         );
-        match unsafe { renderer::Renderer::new(&w, self.capture_enabled) } {
+        match unsafe { renderer::Renderer::new(w.clone(), self.capture_enabled) } {
             Ok(r) => self.renderer = Some(r),
             Err(e) => {
                 eprintln!("Cannot initialize Vulkan: {e}");
