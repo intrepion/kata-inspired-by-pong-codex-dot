@@ -12,3 +12,6 @@ pollster="=0.4.0"
 bytemuck={version="1",features=["derive"]}
 pong-core={path="../../crates/pong-core"}
 pong-scenario = { path = "../../crates/pong-scenario" }
+
+[patch.crates-io]
+objc2-foundation = { path = "../../vendor/objc2-foundation-0.2.2" }
