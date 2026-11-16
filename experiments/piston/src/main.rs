@@ -1,4 +1,4 @@
-use piston_window::graphics::{clear, ellipse, rectangle, Transformed};
+use piston_window::graphics::{clear, rectangle, Transformed};
 
 use piston_window::*;
 use pong_core::*;
@@ -448,6 +448,71 @@ mod control_tests {
         }
     }
 }
+#[cfg(test)]
+mod court_clip_tests {
+    use super::*;
+    use piston_window::graphics::{self, DrawState, Ellipse, Graphics, ImageSize};
+
+    struct Texture;
+    impl ImageSize for Texture { fn get_size(&self) -> (u32, u32) { (1, 1) } }
+    #[derive(Default)]
+    struct Recording { ellipses: Vec<(Option<[u32; 4]>, [f64; 4])>, rectangles: Vec<Option<[u32; 4]>> }
+    impl Graphics for Recording {
+        type Texture = Texture;
+        fn clear_color(&mut self, _: [f32; 4]) {}
+        fn clear_stencil(&mut self, _: u8) {}
+        fn tri_list<F>(&mut self, d: &DrawState, _: &[f32; 4], _f: F) where F: FnMut(&mut dyn FnMut(&[[f32; 2]])) { self.rectangles.push(d.scissor); }
+        fn tri_list_c<F>(&mut self, _: &DrawState, _: F) where F: FnMut(&mut dyn FnMut(&[[f32; 2]], &[[f32; 4]])) {}
+        fn tri_list_uv<F>(&mut self, _: &DrawState, _: &[f32; 4], _: &Texture, _: F) where F: FnMut(&mut dyn FnMut(&[[f32; 2]], &[[f32; 2]])) {}
+        fn tri_list_uv_c<F>(&mut self, _: &DrawState, _: &Texture, _: F) where F: FnMut(&mut dyn FnMut(&[[f32; 2]], &[[f32; 2]], &[[f32; 4]])) {}
+        fn ellipse<R: Into<graphics::types::Rectangle>>(&mut self, _: &Ellipse, rect: R, d: &DrawState, _: graphics::math::Matrix2d) { self.ellipses.push((d.scissor, rect.into())); }
+    }
+
+    #[test]
+    fn framebuffer_scissor_handles_hidpi_fractional_and_invalid_sizes() {
+        assert_eq!(court_scissor([900., 500.], [900, 500]), Some([0, 0, 900, 500]));
+        assert_eq!(court_scissor([1000., 500.], [2000, 1000]), Some([100, 0, 1800, 1000]));
+        assert_eq!(court_scissor([900., 600.], [1800, 1200]), Some([0, 100, 1800, 1000]));
+        assert_eq!(court_scissor([1000., 500.], [1600, 900]), Some([80, 0, 1440, 900]));
+        for size in [[0., 500.], [-1., 500.], [f64::NAN, 500.], [900., f64::INFINITY]] { assert_eq!(court_scissor(size, [1000, 500]), None); }
+        assert_eq!(court_scissor([900., 500.], [0, 500]), None);
+        for (w, h) in [(1001., 501.), (320., 731.), (1921., 1081.)] {
+            for fb in [[1502, 752], [503, 281], [2880, 1800]] {
+                let [x,y,cw,ch] = court_scissor([w,h],fb).unwrap();
+                let scale = (w/900_f64).min(h/500_f64);
+                let left=(w-900.*scale)*0.5*fb[0] as f64/w;
+                let right=(w+900.*scale)*0.5*fb[0] as f64/w;
+                let top=(h-500.*scale)*0.5*fb[1] as f64/h;
+                let bottom=(h+500.*scale)*0.5*fb[1] as f64/h;
+                assert!(x as f64+1e-9>=left && (x+cw) as f64<=right+1e-9);
+                assert!(y as f64+1e-9>=top && (y+ch) as f64<=bottom+1e-9);
+                assert!(x+cw<=fb[0] && y+ch<=fb[1]);
+            }
+        }
+    }
+
+    #[test]
+    fn ball_clips_at_all_four_edges_using_actual_framebuffer() {
+        let vp=graphics::Viewport { rect:[0,0,2000,1000], draw_size:[2000,1000], window_size:[1000.,500.] };
+        for (x,y) in [(-BALL/2.,250.),(W+BALL/2.,250.),(450.,-BALL/2.),(450.,H+BALL/2.)] {
+            let mut game=Game::new(42);game.ball.x=x;game.ball.y=y;
+            let mut recording=Recording::default();
+            draw_scene(graphics::Context::new_viewport(vp),&mut recording,&game,[1600,900]);
+            assert_eq!(recording.ellipses,vec![(Some([80,0,1440,900]),[(x-BALL) as f64,(y-BALL) as f64,(BALL*2.) as f64,(BALL*2.) as f64])]);
+            assert!(!recording.rectangles.is_empty());
+            assert!(recording.rectangles.iter().all(Option::is_none));
+        }
+    }
+
+    #[test]
+    fn unsupported_offset_viewport_does_not_draw_unclipped_ball() {
+        let vp=graphics::Viewport { rect:[1,0,1999,1000], draw_size:[2000,1000], window_size:[1000.,500.] };
+        let mut recording=Recording::default();
+        draw_scene(graphics::Context::new_viewport(vp),&mut recording,&Game::new(42),[2000,1000]);
+        assert!(recording.ellipses.is_empty());
+    }
+}
+
 fn main() {
     let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     let mut window: PistonWindow = WindowSettings::new(
@@ -516,7 +581,8 @@ fn main() {
                 last_title = title;
             }
         }
-        window.draw_2d(&e, |c, g, _| draw_scene(c, g, &game));
+        let framebuffer = [window.surface_config.width, window.surface_config.height];
+        window.draw_2d(&e, |c, g, _| draw_scene(c, g, &game, framebuffer));
         if let Some(args) = e.render_args() {
             if benchmarking {
                 let frames = benchmark.get_or_insert_with(|| {
@@ -537,10 +603,29 @@ fn main() {
     }
 }
 
+// Wgpu maps the context's normalized coordinates to the actual render target.
+// Use surface dimensions, not event draw_size, which can differ during resize.
+fn court_scissor(size: [f64; 2], framebuffer: [u32; 2]) -> Option<[u32; 4]> {
+    if size.iter().any(|v| !v.is_finite() || *v <= 0.) || framebuffer.contains(&0) {
+        return None;
+    }
+    let scale = (size[0] / W as f64).min(size[1] / H as f64);
+    let left = (size[0] - W as f64 * scale) / 2.;
+    let top = (size[1] - H as f64 * scale) / 2.;
+    let xs = framebuffer[0] as f64 / size[0];
+    let ys = framebuffer[1] as f64 / size[1];
+    let x0 = (left * xs).ceil().clamp(0., framebuffer[0] as f64) as u32;
+    let y0 = (top * ys).ceil().clamp(0., framebuffer[1] as f64) as u32;
+    let x1 = ((left + W as f64 * scale) * xs).floor().clamp(0., framebuffer[0] as f64) as u32;
+    let y1 = ((top + H as f64 * scale) * ys).floor().clamp(0., framebuffer[1] as f64) as u32;
+    (x1 > x0 && y1 > y0).then_some([x0, y0, x1.saturating_sub(x0), y1.saturating_sub(y0)])
+}
+
 fn draw_scene<G: piston_window::graphics::Graphics>(
     c: piston_window::graphics::Context,
     g: &mut G,
     game: &Game,
+    framebuffer: [u32; 2],
 ) {
     clear([0.047, 0.129, 0.118, 1.], g);
     let size = c.get_view_size();
@@ -571,17 +656,28 @@ fn draw_scene<G: piston_window::graphics::Graphics>(
             g,
         );
     }
-    ellipse(
-        [1.; 4],
-        [
-            (game.ball.x - BALL) as f64,
-            (game.ball.y - BALL) as f64,
-            (BALL * 2.) as f64,
-            (BALL * 2.) as f64,
-        ],
-        t,
-        g,
-    );
+    // The convenience ellipse function uses a default DrawState and drops scissor.
+    // RenderArgs provides a full-frame viewport; skip the ball for other layouts.
+    if let Some(viewport) = c.viewport {
+        if viewport.rect[0] == 0 && viewport.rect[1] == 0
+            && u32::try_from(viewport.rect[2]).ok() == Some(viewport.draw_size[0])
+            && u32::try_from(viewport.rect[3]).ok() == Some(viewport.draw_size[1])
+        {
+            if let Some(clip) = court_scissor(size, framebuffer) {
+                piston_window::graphics::Ellipse::new([1.; 4]).draw(
+                    [
+                        (game.ball.x - BALL) as f64,
+                        (game.ball.y - BALL) as f64,
+                        (BALL * 2.) as f64,
+                        (BALL * 2.) as f64,
+                    ],
+                    &c.draw_state.scissor(clip),
+                    t,
+                    g,
+                );
+            }
+        }
+    }
     // Score bars avoid platform-dependent font files; full numeric score/status in title.
     for (side, n) in game.scores.iter().enumerate() {
         for i in 0..*n {
@@ -634,10 +730,11 @@ fn capture(
         view_formats: &[],
     });
     let view = texture.create_view(&Default::default());
+    let framebuffer = [window.surface_config.width, window.surface_config.height];
     let (_, commands) = window
         .g2d
         .draw(&window.surface_config, &view, args.viewport(), |c, g| {
-            draw_scene(c, g, game)
+            draw_scene(c, g, game, framebuffer)
         });
     window.queue.submit([commands]);
     let mut encoder = window.device.create_command_encoder(&Default::default());
