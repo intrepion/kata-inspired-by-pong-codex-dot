@@ -1,0 +1,94 @@
+# Review candidate: browser builds are read-only. An explicit main-branch
+# dispatch may create a new draft, never publish or update an existing release.
+# Do not publish the draft while its uploader is running.
+name: Draft release build candidate
+on:
+  workflow_dispatch:
+    inputs:
+      create_draft:
+        description: Create a new browser-only draft; do not publish it during upload
+        required: true
+        default: false
+        type: boolean
+      source_sha:
+        description: Full commit SHA to build (must equal this main-branch run)
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  browser:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    outputs:
+      archive_sha256: ${{ steps.package.outputs.archive_sha256 }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24'
+      - name: Verify exact source
+        env:
+          REQUESTED_SHA: ${{ inputs.source_sha }}
+          EVENT_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$REQUESTED_SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$REQUESTED_SHA" == "$EVENT_SHA" ]]
+          [[ "$(git rev-parse HEAD)" == "$EVENT_SHA" ]]
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm test
+      - name: Verify generated browser source
+        run: git diff --exit-code -- game.js
+      - name: Test and create browser archive
+        id: package
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          python3 -m unittest discover -s scripts/release -p 'test_*.py'
+          python3 scripts/release/package_browser.py --source "$GITHUB_WORKSPACE" --output "$RUNNER_TEMP/pong-release/pong-typescript-browser.zip" --sha "$SOURCE_SHA"
+          cd "$RUNNER_TEMP/pong-release"
+          sha256sum pong-typescript-browser.zip > SHA256SUMS
+          echo "archive_sha256=$(cut -d' ' -f1 SHA256SUMS)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: pong-browser-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pong-release/
+          if-no-files-found: error
+          retention-days: 7
+
+  draft_browser:
+    # Opt-in and main-only; no tag event or pull request can reach this job.
+    if: inputs.create_draft && github.ref == 'refs/heads/main'
+    needs: browser
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: pong-browser-draft-${{ github.repository }}
+      cancel-in-progress: false
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Retrieve only this run's build artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ github.run_id }}
+          ARTIFACT_NAME: pong-browser-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+        run: gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY" --name "$ARTIFACT_NAME" --dir "$RUNNER_TEMP/pong-browser-inbox"
+      - name: Create new draft and attach validated browser files
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_DIGEST: ${{ needs.browser.outputs.archive_sha256 }}
+        run: |
+          python3 scripts/release/draft_browser_upload.py --artifacts "$RUNNER_TEMP/pong-browser-inbox" --sha "$GITHUB_SHA" --run-id "$GITHUB_RUN_ID" --attempt "$GITHUB_RUN_ATTEMPT" --expected-digest "$EXPECTED_DIGEST"
