@@ -13,3 +13,5 @@ pong-benchmark = { path = "../../crates/pong-benchmark" }
 
 [patch.crates-io]
 ultraviolet = { path = "../../vendor/ultraviolet-0.10.0" }
+
+objc2-foundation = { path = "../../vendor/objc2-foundation-0.2.2" }
