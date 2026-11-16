@@ -14,3 +14,7 @@ pong-scenario = { path = "../../crates/pong-scenario" }
 default = ["windowed"]
 windowed = ["blue_engine/window"]
 capture-headless = ["blue_engine/headless"]
+
+[patch.crates-io]
+objc2-foundation = { path = "../../vendor/objc2-foundation-0.2.2" }
+blue_engine_core = { path = "../../vendor/blue_engine_core-0.10.0" }
