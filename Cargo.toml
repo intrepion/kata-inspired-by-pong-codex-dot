@@ -6,3 +6,5 @@ default-members = ["crates/pong-core", "crates/pong-wasm", "clients/macroquad"]
 
 [patch.crates-io]
 macroquad = { path = "vendor/macroquad" }
+
+objc2-foundation = { path = "vendor/objc2-foundation-0.2.2" }
