@@ -21,3 +21,4 @@ web-sys = { version = "0.3", features = ["Location", "MouseEvent", "UiEvent"] }
 
 [patch.crates-io]
 dirs-sys = { path = "../../vendor/dirs-sys-dioxus" }
+glib = { path = "../../vendor/glib-0.18.5" }
