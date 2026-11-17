@@ -1,0 +1,10 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+import {pathToFileURL} from 'node:url';
+import {resolve} from 'node:path';
+const [repo,metadata,out]=process.argv.slice(2);
+if (!repo || !metadata || !out) throw Error('expected repo, metadata and output prefix');
+const {buildNoticeBundle}=await import(pathToFileURL(resolve(repo,'scripts/packaging/notice-bundle.mjs')).href);
+const result=buildNoticeBundle(JSON.parse(readFileSync(metadata,'utf8').replace(/^\uFEFF/,'')),resolve(repo),{platform:'Windows'});
+writeFileSync(out+'.txt',result.text,{flag:'wx'});
+writeFileSync(out+'.json',JSON.stringify(result.index,null,2)+'\n',{flag:'wx'});
+console.log('packages',result.index.packages.length,'missing',result.index.missing_notice_files.join(','));

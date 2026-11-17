@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "rust_release": "1.99.1",
+  "rust_commit": "58cf8f9c35b355199727627d07ae34a4e2846d67",
+  "host": "x86_64-pc-windows-msvc",
+  "target": "x86_64-pc-windows-msvc",
+  "llvm_source": "1b9c0d5ff9bbe7634aead059efe6b11a7eeba145",
+  "llvm_credits_git_blob": "6964eba020b8aa7a08629b249e3b9aea3ce3e448",
+  "unicode_license_git_blob": "622fc9da0783e955a379e4f3adcc92dd63acb085",
+  "unicode_header_note": "Excerpt only; its blob is not the full upstream data-file blob. See unicode/PROVENANCE.txt.",
+  "source_evidence": "Copied from independently reviewed 637d5a archives, verified by SHA-256; Rust and Unicode provenance retained in the input texts. Compiler version matching does not authenticate a fresh binary or prove linked routines.",
+  "files": {
+    "rust/Apache-2.0.txt": "074e6e32c86a4c0ef8b3ed25b721ca23aca83df277cd88106ef7177c354615ff",
+    "rust/COPYRIGHT-library.html": "5647be074c8edf7339fd863055923a8fc80bc5610a8d4661ec3b767b9d392c27",
+    "rust/MIT.txt": "b85dcd3e453d05982552c52b5fc9e0bdd6d23c6f8e844b984a88af32570b0cc0",
+    "rust/README.txt": "a51ea5a152a8a885e481e5e0024c48b5eba998b2dd91db2adc3d02f84c231ab7",
+    "rust/compiler-runtime/LICENSE.txt": "ab6eec6caf0fa5775e411c7a8bc6a45c4ef2956b0980b157ab74fc5cd62a928b",
+    "rust/compiler-runtime/LLVM-PINNED-PROVENANCE.txt": "590bee86e1656df8b66a324c9994d0ace56bad6107747bc57c710fe727d90688",
+    "rust/compiler-runtime/LLVM-compiler-rt-CREDITS-current.txt": "a9901f47a089da41e4690682d00ce4cedaa2baf41fedbe79beee366d43ac2461",
+    "rust/compiler-runtime/README-review.txt": "bd48badc85d34048ffe82a0b16cb3c84990e421e11d2b0cdd6acb49aa181fe64",
+    "rust/compiler-runtime/README.md": "b889f895239e65ecf1be6cfeaa55acaf4523b994dbd259f752697febc83d6629",
+    "rust/compiler-runtime/compiler-builtins/Cargo.toml": "d89e31fed70f2cad9c6e91b787bf4c0fb680c631196b2a7215c81745aaf7fb7e",
+    "rust/compiler-runtime/libm/LICENSE.txt": "3823dda7cf046602f4b4e77ec8e227863dc4736037cc85bb33d9f19febe16bb7",
+    "unicode/EastAsianWidth-15.1.0-header.txt": "492473983def5e82097723c5ec6ec74b707dadd9121b458f5b73ff1ee0674b26",
+    "unicode/PROVENANCE.txt": "d81220bc550cc18e960ae26a6a676e3d24a9ca8eb1a7ab30deb79ba8097080be",
+    "unicode/UNICODE-LICENSE-2023.txt": "9ba0dc030e14ab692310b5395ea4f3a4921bcdbc1b9dbcebb1f81d83eb08f4e6"
+  }
+}
