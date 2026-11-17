@@ -1,0 +1,27 @@
+UNICODE ATTRIBUTION - CONSERVATIVE REFERENCE MATERIAL
+
+The selected Windows Cargo metadata includes unicode-ident 1.0.27,
+unicode-segmentation 1.13.3, unicode-truncate 1.1.0, and unicode-width
+0.1.14 and 0.2.0. The package's Cargo notice bundle includes their shipped
+notices; unicode-ident's declared license includes Unicode-3.0, and its own
+LICENSE-UNICODE appears in that bundle.
+
+Both unicode-width source packages' generator scripts name Unicode 15.1.0 and
+retrieve Unicode data. EastAsianWidth-15.1.0-header.txt preserves the first
+five lines of the Unicode Consortium's upstream 15.1 data file from repository
+commit ccc86e576dcadf94ef9f86969e7b5cb51e432ddc, Git blob
+02df4df475cbee3353c4721c148f1706f7c202eb. Source:
+https://github.com/unicode-org/unicodetools/blob/ccc86e576dcadf94ef9f86969e7b5cb51e432ddc/unicodetools/data/ucd/15.1.0/EastAsianWidth.txt
+
+UNICODE-LICENSE-2023.txt is the Unicode Consortium's complete repository
+license at commit 0a889ad7ec6e88086a326546e778a1dced300af1, Git blob
+622fc9da0783e955a379e4f3adcc92dd63acb085. Source:
+https://github.com/unicode-org/unicodetools/blob/0a889ad7ec6e88086a326546e778a1dced300af1/LICENSE
+It is included conservatively; the exact terms applicable to every Unicode data
+input at its time of release have not been established by this comparison.
+
+The generator evidence does not establish exact data-file provenance, that the
+generated tables were linked into this executable, or complete license coverage.
+The independently reviewed macOS supplement was unavailable for comparison;
+this notice does not claim to reproduce it. Further source-specific attribution
+and legal review remain open.

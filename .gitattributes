@@ -1,0 +1,2 @@
+/scripts/release/windows/inputs-manifest.json -text
+/scripts/release/windows/inputs/** -text
