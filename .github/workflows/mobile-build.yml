@@ -1,0 +1,87 @@
+name: Native Pong mobile builds
+
+on:
+  pull_request:
+    paths:
+      - 'experiments/native-kotlin/**'
+      - 'experiments/native-swift/**'
+      - 'scenarios/smoke-v1.txt'
+      - '.github/workflows/mobile-build.yml'
+      - '.github/workflows/actions.lock'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  android:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build debug APK and test
+        working-directory: experiments/native-kotlin
+        run: |
+          set -euo pipefail
+          export JAVA_HOME="$JAVA_HOME_21_X64"
+          export PATH="$JAVA_HOME/bin:$PATH"
+          test -d "$ANDROID_HOME/platforms/android-35"
+          test -x "$ANDROID_HOME/build-tools/36.0.0/apksigner"
+          ./gradlew --no-daemon --console=plain :app:assembleDebug :app:testDebugUnitTest
+      - name: Verify APK notice assets and record checksum
+        working-directory: experiments/native-kotlin
+        run: |
+          set -euo pipefail
+          apk=app/build/outputs/apk/debug/app-debug.apk
+          assets=app/src/main/assets/notices
+          test "$(unzip -Z1 "$apk" | grep -c '^assets/notices/[^/]*\.txt$')" -eq 6
+          for file in APACHE-2.0.txt BOOST-1.0.txt KOTLIN-COPYRIGHT.txt PONG-MIT.txt THIRD-PARTY-NOTICES.txt THREETENBP-BSD-3-CLAUSE.txt; do
+            unzip -p "$apk" "assets/notices/$file" | cmp - "$assets/$file"
+          done
+          unzip -p "$apk" assets/scenarios/smoke-v1.txt | cmp - ../../scenarios/smoke-v1.txt
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify "$apk"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          {
+            printf 'Source: %s\n\n' "$GITHUB_SHA"
+            sha256sum "$apk"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  ios:
+    runs-on: macos-26
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build unsigned simulator app and test the Swift package
+        working-directory: experiments/native-swift
+        run: |
+          set -euo pipefail
+          archive="$RUNNER_TEMP/xcodegen-2.46.0.zip"
+          curl --proto '=https' --proto-redir '=https' --fail --location --silent --show-error --retry 3 \
+            -o "$archive" https://github.com/yonaskolb/XcodeGen/releases/download/2.46.0/xcodegen.zip
+          printf '%s  %s\n' '4d9e34b62172d645eed6457cac13fc222569974098ef4ee9c3368bedf0196806' "$archive" | shasum -a 256 -c -
+          unzip -q "$archive" -d "$RUNNER_TEMP/xcodegen-2.46.0"
+          "$RUNNER_TEMP/xcodegen-2.46.0/xcodegen/bin/xcodegen" generate
+          swift test --scratch-path "$RUNNER_TEMP/pong-swiftpm"
+          xcodebuild -project PongNativeSwift.xcodeproj -scheme PongNativeSwift \
+            -destination 'generic/platform=iOS Simulator' -configuration Debug \
+            -derivedDataPath "$RUNNER_TEMP/pong-ios" CODE_SIGNING_ALLOWED=NO build
+      - name: Verify simulator build and record checksum
+        run: |
+          set -euo pipefail
+          products="$RUNNER_TEMP/pong-ios/Build/Products/Debug-iphonesimulator"
+          xcrun vtool -show-build "$products/PongNativeSwift.app/PongNativeSwift" | grep -F IOSSIMULATOR
+          cmp scenarios/smoke-v1.txt "$products/PongNativeSwift.app/smoke-v1.txt"
+          tar -C "$products" -czf "$RUNNER_TEMP/PongNativeSwift-simulator.tar.gz" PongNativeSwift.app
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          {
+            printf 'Source: %s\n\n' "$GITHUB_SHA"
+            shasum -a 256 "$RUNNER_TEMP/PongNativeSwift-simulator.tar.gz"
+          } >> "$GITHUB_STEP_SUMMARY"
