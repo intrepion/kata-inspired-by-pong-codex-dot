@@ -1,0 +1,35 @@
+Pong for Android — license and attribution notices
+
+Pong application code: MIT; see PONG-MIT.txt.
+
+Kotlin Standard Library (org.jetbrains.kotlin:kotlin-stdlib:2.2.10)
+Apache License 2.0; see APACHE-2.0.txt and the upstream
+KOTLIN-COPYRIGHT.txt. The published source archive also contains individual
+source headers, including 2010-2025 JetBrains s.r.o. and Kotlin Programming
+Language contributors. Version-specific sources and license inventory:
+https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/2.2.10/kotlin-stdlib-2.2.10-sources.jar
+https://github.com/JetBrains/kotlin/blob/v2.2.10/license/README.md
+
+Material credited by that inventory and present in the shared or JVM sources:
+- Collections derived from GWT, (C) 2007-08 Google Inc. (Apache License 2.0).
+- Time code derived from ThreeTen Backport; see THREETENBP-BSD-3-CLAUSE.txt.
+- Unsigned comparison code derived from Guava’s UnsignedLongs,
+  Copyright 2011 The Guava Authors (Apache License 2.0).
+- Math code derived from Boost special math functions,
+  Copyright Eric Ford & Hubert Holin 2001; see BOOST-1.0.txt.
+The exact GWT and Guava license files supplied by Kotlin 2.2.10 match
+APACHE-2.0.txt byte for byte.
+
+JetBrains Java Annotations (org.jetbrains:annotations:13.0)
+Apache License 2.0; see APACHE-2.0.txt. The published source archive supplies
+these copyright lines:
+Copyright 2000-2013 JetBrains s.r.o.
+Copyright 2000-2012 JetBrains s.r.o.
+Copyright 2000-2009 JetBrains s.r.o.
+Copyright 2006 Sascha Weinreuter
+https://repo.maven.apache.org/maven2/org/jetbrains/annotations/13.0/annotations-13.0-sources.jar
+https://repo.maven.apache.org/maven2/org/jetbrains/annotations/13.0/annotations-13.0.pom
+
+These notices cover the pinned Android runtime dependency graph, including
+the Kotlin component credits identified above. They do not cover dependencies
+used only for building or testing that are not distributed with the app.
