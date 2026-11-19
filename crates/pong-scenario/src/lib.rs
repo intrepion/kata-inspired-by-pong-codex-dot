@@ -46,6 +46,21 @@ impl Scenario {
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
+fn capture_directory_arg(args: &[String], enabled: bool) -> Result<Option<&str>, &'static str> {
+    let Some(index) = args.iter().position(|arg| arg == "--scripted-captures") else {
+        return Ok(None);
+    };
+    if !enabled {
+        return Err("--scripted-captures requires --scripted-test");
+    }
+    args.get(index + 1)
+        .map(String::as_str)
+        .filter(|arg| !arg.is_empty() && !arg.starts_with('-'))
+        .map(Some)
+        .ok_or("--scripted-captures requires a new directory path; prefix dash-leading names with ./")
+}
+
 /// Shared native demo clock and checkpoint policy. Rendering stays in adapters.
 #[cfg(not(target_arch = "wasm32"))]
 pub struct Demo {
@@ -58,16 +73,12 @@ pub struct Demo {
 #[cfg(not(target_arch = "wasm32"))]
 impl Demo {
     pub fn from_args() -> Option<Self> {
-        let args: Vec<_> = std::env::args().collect();
+        let args: Vec<_> = std::env::args().skip(1).collect();
         let enabled = args.iter().any(|a| a == "--scripted-test");
-        let directory = args
-            .iter()
-            .position(|a| a == "--scripted-captures")
-            .map(|i| {
-                assert!(enabled, "--scripted-captures requires --scripted-test");
-                let p = std::path::PathBuf::from(
-                    args.get(i + 1).expect("missing NEW capture directory"),
-                );
+        let directory = capture_directory_arg(&args, enabled)
+            .unwrap_or_else(|message| panic!("{message}"))
+            .map(|arg| {
+                let p = std::path::PathBuf::from(arg);
                 std::fs::create_dir(&p).expect("create NEW capture directory");
                 p
             });
@@ -140,5 +151,48 @@ impl Demo {
             .flat_map(|p| [(p >> 16) as u8, (p >> 8) as u8, *p as u8])
             .collect();
         writer.write_image_data(&bytes).expect("write PNG pixels");
+    }
+}
+
+#[cfg(all(test, not(target_arch = "wasm32")))]
+mod capture_args_tests {
+    use super::capture_directory_arg;
+
+    fn parse(args: &[&str]) -> Result<Option<String>, &'static str> {
+        let args: Vec<_> = args.iter().map(|arg| arg.to_string()).collect();
+        let enabled = args.iter().any(|arg| arg == "--scripted-test");
+        capture_directory_arg(&args, enabled).map(|path| path.map(str::to_owned))
+    }
+
+    #[test]
+    fn rejects_missing_empty_and_option_values() {
+        for args in [
+            &["--scripted-test", "--scripted-captures"][..],
+            &["--scripted-test", "--scripted-captures", ""],
+            &["--scripted-captures", "--scripted-test"],
+            &["--scripted-test", "--scripted-captures", "-v"],
+        ] {
+            assert!(parse(args).is_err(), "unexpected success for {args:?}");
+        }
+    }
+
+    #[test]
+    fn accepts_explicit_dash_leading_and_normal_paths() {
+        for path in ["./--captures", "captures"] {
+            assert_eq!(
+                parse(&["--scripted-captures", path, "--scripted-test"]),
+                Ok(Some(path.to_owned()))
+            );
+        }
+    }
+
+    #[test]
+    fn captures_are_optional_but_require_scripted_test() {
+        assert_eq!(parse(&[]), Ok(None));
+        assert_eq!(parse(&["--scripted-test"]), Ok(None));
+        assert_eq!(
+            parse(&["--scripted-captures", "captures"]),
+            Err("--scripted-captures requires --scripted-test")
+        );
     }
 }
