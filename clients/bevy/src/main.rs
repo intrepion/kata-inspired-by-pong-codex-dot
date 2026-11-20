@@ -1,7 +1,8 @@
 //! Bevy owns input and presentation; pong-core owns all gameplay.
-use bevy::render::view::screenshot::{save_to_disk, Screenshot};
+use bevy::input::{ButtonState, keyboard::KeyboardInput};
+use bevy::render::view::screenshot::{Screenshot, save_to_disk};
 use bevy::{prelude::*, window::PrimaryWindow};
-use pong_core::{Game, State, BALL, H, PADDLE_H, PADDLE_W, W, WIN};
+use pong_core::{BALL, Game, H, PADDLE_H, PADDLE_W, State, W, WIN};
 use pong_scenario::Demo;
 
 fn benchmark_args(args: &[String]) -> bool {
@@ -28,26 +29,36 @@ struct Replay {
 #[derive(Resource, Default)]
 struct MovementGate {
     suppressed: [bool; 4],
+    pending: [bool; 4],
     was_playing: bool,
 }
 impl MovementGate {
     fn finish_frame(&mut self, state: State) {
         self.was_playing &= state == State::Playing;
+        if !self.was_playing {
+            self.pending = [false; 4];
+        }
     }
 }
 fn restart_game(game: &mut Game, gate: &mut MovementGate) {
     game.start();
-    gate.was_playing = false;
+    gate.finish_frame(State::Ready);
 }
-fn movement_axis(state: State, gate: &mut MovementGate, held: [bool; 4]) -> f32 {
+fn active_movement(state: State, gate: &mut MovementGate, held: [bool; 4]) -> [bool; 4] {
     let playing = state == State::Playing;
     let suppress = !playing || !gate.was_playing;
     gate.was_playing = playing;
     for (blocked, down) in gate.suppressed.iter_mut().zip(held) {
         *blocked = down && (suppress || *blocked);
     }
-    let active = std::array::from_fn::<_, 4, _>(|i| held[i] && !gate.suppressed[i]);
+    std::array::from_fn(|i| held[i] && !gate.suppressed[i])
+}
+fn axis_for(active: [bool; 4]) -> f32 {
     (active[2] || active[3]) as u8 as f32 - (active[0] || active[1]) as u8 as f32
+}
+#[cfg(test)]
+fn movement_axis(state: State, gate: &mut MovementGate, held: [bool; 4]) -> f32 {
+    axis_for(active_movement(state, gate, held))
 }
 #[derive(Resource)]
 struct Match(Game);
@@ -180,7 +191,8 @@ fn input_and_simulation(
     mut replay: ResMut<Replay>,
     mut benchmark: ResMut<Benchmark>,
     keys: Res<ButtonInput<KeyCode>>,
-    windows: Query<&Window, With<PrimaryWindow>>,
+    mut keyboard: MessageReader<KeyboardInput>,
+    windows: Query<(Entity, &Window), With<PrimaryWindow>>,
     mut game: ResMut<Match>,
     mut clock: ResMut<Clock>,
     mut movement: ResMut<MovementGate>,
@@ -204,12 +216,16 @@ fn input_and_simulation(
         }
         return;
     }
-    let Ok(window) = windows.single() else {
+    let Ok((window_entity, window)) = windows.single() else {
+        keyboard.clear();
+        movement.finish_frame(State::Ready);
+        clock.0 = 0.;
         return;
     };
     if !window.focused {
+        keyboard.clear();
         game.0.pause();
-        movement.was_playing = false;
+        movement.finish_frame(State::Paused);
         clock.0 = 0.;
         return;
     }
@@ -220,17 +236,43 @@ fn input_and_simulation(
         keys.just_pressed(KeyCode::Enter),
         keys.just_pressed(KeyCode::Space),
     );
-    let input = movement_axis(
+    let bindings = [
+        KeyCode::ArrowUp,
+        KeyCode::KeyW,
+        KeyCode::ArrowDown,
+        KeyCode::KeyS,
+    ];
+    let capture = !changed && game.0.state == State::Playing && movement.was_playing;
+    // Keep at most one pending press per binding until a physics tick.
+    // Typed events let us ignore OS repeats even when Bevy's held snapshot is empty.
+    for event in keyboard.read() {
+        if !capture || event.window != window_entity {
+            continue;
+        }
+        let Some(i) = bindings.iter().position(|key| *key == event.key_code) else {
+            continue;
+        };
+        match event.state {
+            ButtonState::Released => movement.suppressed[i] = false,
+            ButtonState::Pressed if !event.repeat && keys.just_pressed(event.key_code) => {
+                movement.pending[i] |= !movement.suppressed[i];
+            }
+            ButtonState::Pressed => {}
+        }
+    }
+    let held = active_movement(
         game.0.state,
         &mut movement,
-        [
-            keys.pressed(KeyCode::ArrowUp),
-            keys.pressed(KeyCode::KeyW),
-            keys.pressed(KeyCode::ArrowDown),
-            keys.pressed(KeyCode::KeyS),
-        ],
+        bindings.map(|key| keys.pressed(key)),
     );
-    advance_live_frame(&mut game.0, &mut clock.0, changed, time.delta_secs(), input);
+    advance_live_frame(
+        &mut game.0,
+        &mut clock.0,
+        changed,
+        time.delta_secs(),
+        held,
+        &mut movement.pending,
+    );
     movement.finish_frame(game.0.state);
 }
 
@@ -258,10 +300,18 @@ fn apply_live_actions(
     restart || before != game.state
 }
 
-fn advance_live_frame(game: &mut Game, clock: &mut f32, changed: bool, elapsed: f32, input: f32) {
+fn advance_live_frame(
+    game: &mut Game,
+    clock: &mut f32,
+    changed: bool,
+    elapsed: f32,
+    held: [bool; 4],
+    pending: &mut [bool; 4],
+) {
     if changed || game.state != State::Playing {
         // Bevy's update delta covers the time before this frame's input actions.
         *clock = 0.;
+        *pending = [false; 4];
         return;
     }
     if !elapsed.is_finite() {
@@ -270,7 +320,9 @@ fn advance_live_frame(game: &mut Game, clock: &mut f32, changed: bool, elapsed: 
     const DT: f32 = 1. / 120.;
     *clock += elapsed.clamp(0., 0.1);
     while *clock >= DT && game.state == State::Playing {
-        game.step(DT, input);
+        // Consume buffered presses on the first actual tick, not the next render.
+        let taps = std::mem::take(pending);
+        game.step(DT, axis_for(std::array::from_fn(|i| held[i] || taps[i])));
         *clock -= DT;
     }
     if game.state != State::Playing {
@@ -411,17 +463,44 @@ mod input_tests {
             assert_eq!(game.state, state);
             let player = game.player;
             let serve = game.serve;
-            advance_live_frame(&mut game, &mut clock, changed, 0.1, 1.);
+            advance_live_frame(
+                &mut game,
+                &mut clock,
+                changed,
+                0.1,
+                [false, false, true, false],
+                &mut movement.pending,
+            );
             assert_eq!((game.player, game.serve, clock), (player, serve, 0.));
             if state == State::Playing {
-                advance_live_frame(&mut game, &mut clock, false, 0.004, 1.);
+                advance_live_frame(
+                    &mut game,
+                    &mut clock,
+                    false,
+                    0.004,
+                    [false, false, true, false],
+                    &mut movement.pending,
+                );
                 assert_eq!(game.player, player);
-                advance_live_frame(&mut game, &mut clock, false, 0.006, 1.);
+                advance_live_frame(
+                    &mut game,
+                    &mut clock,
+                    false,
+                    0.006,
+                    [false, false, true, false],
+                    &mut movement.pending,
+                );
                 assert!(game.player > player);
             }
         }
         // Enter during an active match is a no-op and must not discard time.
-        assert!(!apply_live_actions(&mut game, &mut movement, false, true, false));
+        assert!(!apply_live_actions(
+            &mut game,
+            &mut movement,
+            false,
+            true,
+            false
+        ));
     }
 
     #[test]
@@ -519,3 +598,185 @@ mod active_restart_tests {
 #[cfg(test)]
 #[path = "presentation_tests.rs"]
 mod presentation_tests;
+
+#[cfg(test)]
+mod quick_tap_audit {
+    use super::*;
+    use bevy::input::{InputPlugin, keyboard::Key};
+    use std::time::Duration;
+
+    fn world() -> (App, Entity) {
+        let mut game = Game::new(42);
+        game.start();
+        let mut app = App::new();
+        app.add_plugins(InputPlugin)
+            .insert_resource(Time::<()>::default())
+            .insert_resource(Replay {
+                demo: None,
+                pending: None,
+            })
+            .insert_resource(Benchmark {
+                enabled: false,
+                frames: None,
+                done: false,
+                scenario: Default::default(),
+            })
+            .insert_resource(Match(game))
+            .insert_resource(Clock::default())
+            .insert_resource(MovementGate::default())
+            .add_systems(Update, input_and_simulation);
+        let window = app
+            .world_mut()
+            .spawn((
+                PrimaryWindow,
+                Window {
+                    focused: true,
+                    ..Default::default()
+                },
+            ))
+            .id();
+        app.update();
+        (app, window)
+    }
+    fn event(app: &mut App, window: Entity, key_code: KeyCode, state: ButtonState, repeat: bool) {
+        let logical_key = match key_code {
+            KeyCode::ArrowUp => Key::ArrowUp,
+            KeyCode::ArrowDown => Key::ArrowDown,
+            KeyCode::KeyW => Key::Character("w".into()),
+            KeyCode::KeyR => Key::Character("r".into()),
+            KeyCode::Space => Key::Space,
+            _ => unreachable!(),
+        };
+        app.world_mut().write_message(KeyboardInput {
+            key_code,
+            logical_key,
+            state,
+            text: None,
+            repeat,
+            window,
+        });
+    }
+
+    fn key(app: &mut App, window: Entity, state: ButtonState) {
+        event(app, window, KeyCode::ArrowUp, state, false);
+    }
+
+    fn tap(app: &mut App, window: Entity, key: KeyCode) {
+        for state in [ButtonState::Pressed, ButtonState::Released] {
+            event(app, window, key, state, false);
+        }
+    }
+    fn next(app: &mut App, micros: u64) -> f32 {
+        app.world_mut()
+            .resource_mut::<Time>()
+            .advance_by(Duration::from_micros(micros));
+        app.update();
+        app.world().resource::<Match>().0.player
+    }
+    #[test]
+    fn quick_taps_survive_zero_tick_and_only_move_once() {
+        for span_frames in [false, true] {
+            let (mut app, window) = world();
+            let start = app.world().resource::<Match>().0.player;
+            key(&mut app, window, ButtonState::Pressed);
+            if span_frames {
+                assert_eq!(next(&mut app, 4_000), start);
+            }
+            key(&mut app, window, ButtonState::Released);
+            if !span_frames {
+                assert_eq!(next(&mut app, 4_000), start);
+                let keys = app.world().resource::<ButtonInput<KeyCode>>();
+                assert!(keys.just_pressed(KeyCode::ArrowUp));
+                assert!(!keys.pressed(KeyCode::ArrowUp));
+            }
+            let observed = next(&mut app, 22_000);
+            let (mut held, window) = world();
+            assert_eq!(next(&mut held, 4_000), start);
+            key(&mut held, window, ButtonState::Pressed);
+            let held_pos = next(&mut held, 22_000);
+            let (mut single, window) = world();
+            key(&mut single, window, ButtonState::Pressed);
+            let intended = next(&mut single, 9_000);
+            eprintln!(
+                "span_frames={span_frames}; start={start}; quick_tap={observed}; one_step={intended}; three_held_steps={held_pos}"
+            );
+            assert_eq!(observed, intended);
+            assert_eq!(next(&mut app, 25_000), intended);
+            assert!(held_pos < intended && intended < start);
+            assert!((start - held_pos - 3.0 * (start - intended)).abs() < 0.0001);
+        }
+    }
+
+    #[test]
+    fn aliases_coalesce_and_opposites_cancel_at_first_tick() {
+        let (mut app, window) = world();
+        let start = next(&mut app, 0);
+        tap(&mut app, window, KeyCode::ArrowUp);
+        tap(&mut app, window, KeyCode::KeyW);
+        assert_eq!(next(&mut app, 4_000), start);
+        let moved = next(&mut app, 22_000);
+        let (mut single, window_single) = world();
+        key(&mut single, window_single, ButtonState::Pressed);
+        assert_eq!(moved, next(&mut single, 9_000));
+        let (mut app, window) = world();
+        tap(&mut app, window, KeyCode::ArrowUp);
+        assert_eq!(next(&mut app, 4_000), start);
+        tap(&mut app, window, KeyCode::ArrowDown);
+        assert_eq!(next(&mut app, 22_000), start);
+        assert_eq!(next(&mut app, 25_000), start);
+    }
+
+    #[test]
+    fn repeat_is_not_a_new_tap_but_a_held_key_keeps_moving() {
+        let (mut app, window) = world();
+        let start = next(&mut app, 0);
+        event(
+            &mut app,
+            window,
+            KeyCode::ArrowUp,
+            ButtonState::Pressed,
+            true,
+        );
+        key(&mut app, window, ButtonState::Released);
+        assert_eq!(next(&mut app, 9_000), start);
+        key(&mut app, window, ButtonState::Pressed);
+        assert!(next(&mut app, 9_000) < start);
+        event(
+            &mut app,
+            window,
+            KeyCode::ArrowUp,
+            ButtonState::Pressed,
+            true,
+        );
+        key(&mut app, window, ButtonState::Released);
+        let current = app.world().resource::<Match>().0.player;
+        assert_eq!(next(&mut app, 25_000), current);
+    }
+
+    #[test]
+    fn pause_restart_and_focus_loss_drop_unconsumed_taps() {
+        for transition in ["pause", "restart", "focus"] {
+            let (mut app, window) = world();
+            let start = next(&mut app, 0);
+            tap(&mut app, window, KeyCode::ArrowUp);
+            assert_eq!(next(&mut app, 4_000), start);
+            match transition {
+                "pause" => tap(&mut app, window, KeyCode::Space),
+                "restart" => tap(&mut app, window, KeyCode::KeyR),
+                "focus" => app.world_mut().get_mut::<Window>(window).unwrap().focused = false,
+                _ => unreachable!(),
+            }
+            assert_eq!(next(&mut app, 22_000), start);
+            if transition == "focus" {
+                app.world_mut().get_mut::<Window>(window).unwrap().focused = true;
+            }
+            if transition != "restart" {
+                tap(&mut app, window, KeyCode::Space);
+                assert_eq!(next(&mut app, 22_000), start);
+            }
+            assert_eq!(next(&mut app, 25_000), start);
+            tap(&mut app, window, KeyCode::ArrowUp);
+            assert!(next(&mut app, 22_000) < start);
+        }
+    }
+}
