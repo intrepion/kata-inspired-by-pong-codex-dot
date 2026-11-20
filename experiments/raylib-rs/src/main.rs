@@ -106,6 +106,32 @@ fn lose_focus(game: &mut Game, movement: &mut MovementGate, accumulator: &mut f3
     game.pause();
     *accumulator = 0.;
 }
+fn step_live_frame(
+    game: &mut Game,
+    accumulator: &mut f32,
+    before: State,
+    restarted: bool,
+    elapsed: f32,
+    axis: f32,
+) {
+    if restarted || before != game.state || game.state != State::Playing {
+        // The polling callback reports time from before this frame's actions.
+        *accumulator = 0.;
+        return;
+    }
+    if !elapsed.is_finite() {
+        return;
+    }
+    let step = 1. / 120.;
+    *accumulator += elapsed.clamp(0., 0.1);
+    while *accumulator >= step && game.state == State::Playing {
+        game.step(step, axis);
+        *accumulator -= step;
+    }
+    if game.state != State::Playing {
+        *accumulator = 0.;
+    }
+}
 fn main() {
     let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     let (mut window, thread) = raylib::init()
@@ -139,6 +165,7 @@ fn main() {
             let pressed = actions.sample(keys.map(|key| window.is_key_down(key)), keys.map(|key| window.is_key_pressed(key)));
             let (restart_pressed, pause_pressed, quit_pressed) = action_flags(pressed);
             if quit_pressed { break; }
+            let state_before_actions = game.state;
             if restart_pressed {
                 restart(&mut game, &mut movement);
             }
@@ -153,11 +180,10 @@ fn main() {
                 ],
                 pause_pressed,
             );
-            accumulator += window.get_frame_time().min(0.1);
-            while accumulator >= 1.0 / 120.0 {
-                game.step(1.0 / 120.0, axis);
-                accumulator -= 1.0 / 120.0;
-            }
+            step_live_frame(
+                &mut game, &mut accumulator, state_before_actions, restart_pressed,
+                window.get_frame_time(), axis,
+            );
             movement.finish_frame(game.state);
         }
         if benchmarking {
@@ -565,5 +591,35 @@ mod tests {
         assert_eq!(viewport(1800.0, 1072.0), (2.0, 0.0, 0.0));
         assert_eq!(viewport(1000.0, 536.0), (1.0, 50.0, 0.0));
         assert_eq!(viewport(900.0, 736.0), (1.0, 0.0, 100.0));
+    }
+
+    #[test]
+    fn live_actions_drop_elapsed_and_remainder_then_fresh_time_steps() {
+        let mut game = Game::new(42);
+        let mut movement = MovementGate::default();
+        let mut accumulator = 0.004;
+        for (pause_pressed, restart_pressed, expected) in [
+            (true, false, State::Playing),
+            (true, false, State::Paused),
+            (true, false, State::Playing),
+            (false, true, State::Playing),
+        ] {
+            let before = game.state;
+            if restart_pressed {
+                restart(&mut game, &mut movement);
+            }
+            movement_with_pause(&mut game, &mut movement, [false; 4], pause_pressed);
+            assert_eq!(game.state, expected);
+            let player = game.player;
+            let serve = game.serve;
+            step_live_frame(&mut game, &mut accumulator, before, restart_pressed, 0.1, 1.);
+            assert_eq!((game.player, game.serve, accumulator), (player, serve, 0.));
+            if game.state == State::Playing {
+                step_live_frame(&mut game, &mut accumulator, State::Playing, false, 0.004, 1.);
+                assert_eq!(game.player, player);
+                step_live_frame(&mut game, &mut accumulator, State::Playing, false, 0.006, 1.);
+                assert!(game.player > player);
+            }
+        }
     }
 }
