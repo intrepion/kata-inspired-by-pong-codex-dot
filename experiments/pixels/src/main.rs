@@ -30,6 +30,7 @@ use winit::{
 #[derive(Default)]
 struct MovementInput {
     held: [bool; 4],
+    pending: [bool; 2],
 }
 impl MovementInput {
     fn key(&mut self, key: KeyCode, pressed: bool) {
@@ -40,13 +41,29 @@ impl MovementInput {
             KeyCode::KeyS => 3,
             _ => return,
         };
+        let first = binding / 2 * 2;
+        if pressed && !self.held[first] && !self.held[first + 1] {
+            self.pending[binding / 2] = true;
+        }
         self.held[binding] = pressed;
     }
     fn axis(&self) -> f32 {
         (self.held[2] || self.held[3]) as u8 as f32 - (self.held[0] || self.held[1]) as u8 as f32
     }
+    fn step(&mut self, game: &mut Game) {
+        let pending = std::mem::take(&mut self.pending);
+        let axis = if pending == [false; 2] {
+            self.axis()
+        } else {
+            (pending[1] || self.held[2] || self.held[3]) as u8 as f32
+                - (pending[0] || self.held[0] || self.held[1]) as u8 as f32
+        };
+        game.step(1.0 / 120.0, axis);
+    }
+
     fn clear(&mut self) {
         self.held = [false; 4];
+        self.pending = [false; 2];
     }
 }
 fn handle_key(
@@ -208,7 +225,7 @@ impl ApplicationHandler for App {
                         }
                         self.scenario.advance(&mut self.game);
                     } else {
-                        self.game.step(1.0 / 120.0, self.movement.axis());
+                        self.movement.step(&mut self.game);
                     }
                     self.acc -= 1.0 / 120.0;
                 }
@@ -813,5 +830,106 @@ mod movement_tests {
         assert_eq!(input.axis(), 0.);
         input.key(KeyCode::KeyW, false);
         assert_eq!(input.axis(), 0.);
+    }
+}
+
+#[cfg(test)]
+mod quick_tap_audit {
+    use super::*;
+    const STEP: f32 = 1.0 / 120.0;
+    fn sample(game: &mut Game, movement: &mut MovementInput, acc: &mut f32, elapsed: f32) {
+        *acc += elapsed.min(0.1);
+        // Same fixed-step held-axis sampling as live RedrawRequested (not replay/benchmark).
+        while *acc >= STEP {
+            movement.step(game);
+            *acc -= STEP;
+        }
+    }
+    #[test]
+    fn held_control_advances_every_catch_up_step() {
+        let mut game = Game::new(42); game.start();
+        let mut expected = game.clone();
+        let mut movement = MovementInput::default();
+        let mut acc = 0.;
+        handle_focused_key(&mut game, &mut movement, true, KeyCode::KeyW, true, false);
+        sample(&mut game, &mut movement, &mut acc, 3.25 * STEP);
+        for _ in 0..3 { expected.step(STEP, -1.); }
+        assert_eq!(game.player, expected.player);
+    }
+    #[test]
+    fn released_before_first_step_should_move_once_on_catch_up() {
+        let mut lost = Vec::new();
+        for (key, axis) in [(KeyCode::KeyW, -1.), (KeyCode::ArrowUp, -1.),
+                            (KeyCode::KeyS, 1.), (KeyCode::ArrowDown, 1.)] {
+            let mut game = Game::new(42); game.start();
+            let mut expected = game.clone();
+            expected.step(STEP, axis);
+            let initial = game.player;
+            let mut movement = MovementInput::default();
+            let mut last = Instant::now();
+            let now = last;
+            let mut acc = 0.;
+            for pressed in [true, false] {
+                handle_live_key(&mut game, &mut movement, true, key, pressed, false, &mut acc, &mut last, now);
+            }
+            sample(&mut game, &mut movement, &mut acc, 0.25 * STEP);
+            assert_eq!(game.player, initial);
+            sample(&mut game, &mut movement, &mut acc, 3. * STEP);
+            if game.player != expected.player { lost.push((key, game.player, expected.player)); }
+            let settled = game.player;
+            sample(&mut game, &mut movement, &mut acc, STEP);
+            assert_eq!(game.player, settled);
+        }
+        assert!(lost.is_empty(), "{lost:?}");
+    }
+
+    #[test]
+    fn aliases_do_not_enqueue_a_tail_and_opposites_cancel() {
+        let mut game = Game::new(42);
+        game.start();
+        let mut movement = MovementInput::default();
+        let mut acc = 0.;
+        handle_focused_key(&mut game, &mut movement, true, KeyCode::KeyW, true, false);
+        sample(&mut game, &mut movement, &mut acc, STEP);
+        let settled = game.player;
+        for (key, pressed) in [(KeyCode::ArrowUp, true), (KeyCode::KeyW, false),
+                               (KeyCode::ArrowUp, false)] {
+            handle_focused_key(&mut game, &mut movement, true, key, pressed, false);
+        }
+        sample(&mut game, &mut movement, &mut acc, STEP);
+        for key in [KeyCode::KeyW, KeyCode::KeyS] {
+            for pressed in [true, false] {
+                handle_focused_key(&mut game, &mut movement, true, key, pressed, false);
+            }
+        }
+        sample(&mut game, &mut movement, &mut acc, STEP);
+        assert_eq!(game.player, settled);
+    }
+
+    #[test]
+    fn transitions_discard_pending_taps_and_repeat_cannot_requeue() {
+        for transition in 0..3 {
+            let mut game = Game::new(42);
+            game.start();
+            let initial = game.player;
+            let mut movement = MovementInput::default();
+            let mut acc = 0.;
+            let mut last = Instant::now();
+            let now = last;
+            for pressed in [true, false] {
+                handle_focused_key(&mut game, &mut movement, true, KeyCode::KeyW, pressed, false);
+            }
+            match transition {
+                0 => handle_live_focus(&mut game, &mut movement, false, &mut acc, &mut last, now),
+                1 => { handle_focused_key(&mut game, &mut movement, true, KeyCode::Space, true, false); }
+                _ => { handle_focused_key(&mut game, &mut movement, true, KeyCode::KeyR, true, false); }
+            }
+            if game.state == State::Paused {
+                handle_focused_key(&mut game, &mut movement, true, KeyCode::Space, true, false);
+            }
+            handle_focused_key(&mut game, &mut movement, true, KeyCode::KeyW, true, true);
+            sample(&mut game, &mut movement, &mut acc, 3.25 * STEP);
+            assert_eq!(game.player, initial, "transition={transition}");
+        }
     }
 }
