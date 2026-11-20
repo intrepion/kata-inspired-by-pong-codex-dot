@@ -24,16 +24,15 @@ const notices = JSON.parse(cp.execFileSync(process.execPath, [path.join(__dirnam
 const selected = metadata.packages.filter(p => p.name === 'sdl3-sys');
 if (selected.length !== 1 || fs.realpathSync(selected[0].manifest_path) !== fs.realpathSync(vendored)) throw Error('expected the scoped vendored sdl3-sys');
 const target = fs.mkdtempSync(path.join(os.tmpdir(), 'pong-sdl3-macos-build-'));
-const env = {...process.env, CARGO_TARGET_DIR:target};
-cp.execFileSync('cargo', ['build', '--release', '--offline', '--locked', '--target', 'aarch64-apple-darwin', '--manifest-path', manifest], {env, stdio:'inherit'});
+const env = {...process.env, CARGO_TARGET_DIR:target, CARGO_BUILD_BUILD_DIR:target};
+const messages = cp.execFileSync('cargo', ['build', '--release', '--offline', '--locked',
+  '--message-format=json-render-diagnostics', '--target', 'aarch64-apple-darwin',
+  '--manifest-path', manifest], {env, encoding:'utf8', stdio:['ignore','pipe','inherit'], maxBuffer:32*1024*1024});
 const sourceAfterBuild = verifySourceManifest(root, path.join(root, 'SOURCE-MANIFEST.json'));
 if (!sourceAfterBuild.bytes.equals(source.bytes)) throw Error('Source manifest changed during build');
 verifyGeneratedManifest(root, sourceAfterBuild.bytes);
 const release = path.join(target, 'aarch64-apple-darwin/release');
-const build = path.join(release, 'build');
-const caches = fs.readdirSync(build).filter(n => n.startsWith('sdl3-sys-')).map(n => path.join(build,n,'out/build/CMakeCache.txt')).filter(fs.existsSync);
-if (caches.length !== 1) throw Error('expected one SDL CMake cache in the fresh target');
-const cache = fs.readFileSync(caches[0], 'utf8');
+const cache = require('./cargo-sdl-cache.cjs')(messages, selected[0].id, release);
 for (const [key,value] of [['SDL_HIDAPI_LIBUSB','OFF'],['SDL_HIDAPI','ON'],['SDL_HIDAPI_JOYSTICK','ON'],['SDL_JOYSTICK','ON']]) {
   if (!cache.split(/\r?\n/).includes(key+':BOOL='+value)) throw Error('unexpected SDL configuration: '+key);
 }
