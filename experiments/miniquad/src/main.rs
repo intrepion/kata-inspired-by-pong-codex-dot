@@ -235,8 +235,19 @@ fn glyph(c: char) -> [u8; 7] {
         _ => unreachable!("unsupported status glyph"),
     }
 }
+// Preserve the normal design and raise the small-window glyph floor without clipping.
+fn hud_cell(scale: f32, normal: f32, cap: f32) -> f32 {
+    if scale.is_finite() && scale > 0. {
+        (1.5 / scale).clamp(normal, cap)
+    } else {
+        normal
+    }
+}
+fn text_width(text: &str, cell: f32) -> f32 {
+    (text.len() as f32 * 6. - 1.) * cell
+}
 fn status_text(v: &mut Vec<Vertex>, text: &str, y: f32, scale: f32) {
-    let x = W / 2. - (text.len() as f32 * 6. - 1.) * scale / 2.;
+    let x = W / 2. - text_width(text, scale) / 2.;
     text_at(v, text, x, y, scale);
 }
 fn text_at(v: &mut Vec<Vertex>, text: &str, x: f32, y: f32, scale: f32) {
@@ -257,47 +268,51 @@ fn text_at(v: &mut Vec<Vertex>, text: &str, x: f32, y: f32, scale: f32) {
         }
     }
 }
-fn score_label_vertices(v: &mut Vec<Vertex>) {
-    text_at(v, "YOU", 354., 42., 2.);
-    text_at(v, "CPU", 510., 42., 2.);
-}
-fn game_over_vertices(game: &Game, v: &mut Vec<Vertex>) {
-    if game.state == State::Over {
-        // Cover the court behind both lines before drawing the winner and hint.
-        rect(v, W / 2., H / 2. - 6., 220., 84., [0.025, 0.04, 0.09]);
-        let winner = if game.scores[0] > game.scores[1] {
-            "YOU WIN"
-        } else {
-            "CPU WINS"
-        };
-        status_text(v, winner, H / 2. - 34., 4.);
-        status_text(v, "ENTER TO RESTART", H / 2. + 8., 2.);
+fn score_label_vertices(v: &mut Vec<Vertex>, scale: f32) {
+    let cell = hud_cell(scale, 2., 6.);
+    for (label, center) in [("YOU", 371.), ("CPU", 527.)] {
+        text_at(v, label, center - text_width(label, cell) / 2., 42., cell);
     }
 }
-fn state_vertices(game: &Game, v: &mut Vec<Vertex>) {
+const PANEL: [f32; 3] = [0.025, 0.04, 0.09];
+fn state_panel(v: &mut Vec<Vertex>, width: f32, top: f32, bottom: f32) {
+    rect(v, W / 2., (top + bottom) / 2., width, bottom - top, PANEL);
+}
+fn game_over_vertices(game: &Game, v: &mut Vec<Vertex>, scale: f32) {
+    if game.state == State::Over {
+        let winner = if game.scores[0] > game.scores[1] { "YOU WIN" } else { "CPU WINS" };
+        let hint = "ENTER TO RESTART";
+        let winner_cell = hud_cell(scale, 4., 8.);
+        let hint_cell = hud_cell(scale, 2., 6.);
+        let winner_top = H / 2. - 6. - 7. * winner_cell;
+        let hint_top = H / 2. + 8.;
+        let width = 220_f32.max(text_width(winner, winner_cell).max(text_width(hint, hint_cell)) + 16.);
+        state_panel(v, width, (H / 2. - 48.).min(winner_top - 8.),
+            (H / 2. + 36.).max(hint_top + 7. * hint_cell + 8.));
+        status_text(v, winner, winner_top, winner_cell);
+        status_text(v, hint, hint_top, hint_cell);
+    }
+}
+fn state_vertices(game: &Game, v: &mut Vec<Vertex>, scale: f32) {
+    let cell = hud_cell(scale, 2., 6.);
     match game.state {
-        State::Ready => {
-            rect(v, W / 2., H / 2. - 65., 240., 82., [0.025, 0.04, 0.09]);
-            // A play triangle made from horizontal bars, above the centered ball.
-            for (i, width) in [8., 16., 24., 16., 8.].into_iter().enumerate() {
-                rect(
-                    v,
-                    W / 2. - 12. + width / 2.,
-                    H / 2. - 86. + i as f32 * 8.,
-                    width,
-                    8.,
-                    [1., 1., 1.],
-                );
+        State::Ready | State::Paused => {
+            let hint = if game.state == State::Ready { "ENTER TO START" } else { "SPACE TO RESUME" };
+            let top = H / 2. - 40.;
+            state_panel(v, 240_f32.max(text_width(hint, cell) + 16.), H / 2. - 106.,
+                (H / 2. - 24.).max(top + 7. * cell + 5.));
+            if game.state == State::Ready {
+                for (i, width) in [8., 16., 24., 16., 8.].into_iter().enumerate() {
+                    rect(v, W / 2. - 12. + width / 2., H / 2. - 86. + i as f32 * 8.,
+                        width, 8., [1., 1., 1.]);
+                }
+            } else {
+                rect(v, W / 2. - 14., H / 2. - 70., 8., 40., [1., 1., 1.]);
+                rect(v, W / 2. + 14., H / 2. - 70., 8., 40., [1., 1., 1.]);
             }
-            status_text(v, "ENTER TO START", H / 2. - 40., 2.);
+            status_text(v, hint, top, cell);
         }
-        State::Paused => {
-            rect(v, W / 2., H / 2. - 65., 240., 82., [0.025, 0.04, 0.09]);
-            rect(v, W / 2. - 14., H / 2. - 70., 8., 40., [1., 1., 1.]);
-            rect(v, W / 2. + 14., H / 2. - 70., 8., 40., [1., 1., 1.]);
-            status_text(v, "SPACE TO RESUME", H / 2. - 40., 2.);
-        }
-        State::Over => game_over_vertices(game, v),
+        State::Over => game_over_vertices(game, v, scale),
         State::Playing => {}
     }
 }
@@ -341,14 +356,14 @@ impl EventHandler for App {
         );
         // Draw a zero for empty groups and retain pips for positive scores.
         score_vertices(&mut v, self.game.scores);
-        score_label_vertices(&mut v);
-        state_vertices(&self.game, &mut v);
+        let (w, h) = window::screen_size();
+        let s = (w / W).min(h / H);
+        score_label_vertices(&mut v, s);
+        state_vertices(&self.game, &mut v, s);
         self.ctx
             .buffer_update(self.bindings.vertex_buffers[0], BufferSource::slice(&v));
         self.ctx
             .begin_default_pass(PassAction::clear_color(0.025, 0.04, 0.09, 1.));
-        let (w, h) = window::screen_size();
-        let s = (w / W).min(h / H);
         self.ctx.apply_viewport(
             ((w - W * s) / 2.) as i32,
             ((h - H * s) / 2.) as i32,
@@ -510,11 +525,11 @@ mod tests {
     fn game_over_message_distinguishes_winner_and_clears_on_restart() {
         let mut game = Game::new(42);
         let mut vertices = Vec::new();
-        game_over_vertices(&game, &mut vertices);
+        game_over_vertices(&game, &mut vertices, 1.);
         assert!(vertices.is_empty());
         game.state = State::Over;
         game.scores = [7, 2];
-        game_over_vertices(&game, &mut vertices);
+        game_over_vertices(&game, &mut vertices, 1.);
         assert_eq!(vertices[0].color, [0.025, 0.04, 0.09]);
         assert_eq!(vertices[5].color, [0.025, 0.04, 0.09]);
         assert_eq!(vertices[6].color, [1., 1., 1.]);
@@ -523,17 +538,41 @@ mod tests {
         assert!(player_count > 0 && player_count < 4096);
         vertices.clear();
         game.scores = [2, 7];
-        game_over_vertices(&game, &mut vertices);
+        game_over_vertices(&game, &mut vertices, 1.);
         assert_ne!(vertices.len(), player_count);
         vertices.clear();
         game.start();
-        game_over_vertices(&game, &mut vertices);
+        game_over_vertices(&game, &mut vertices, 1.);
         assert!(vertices.is_empty());
+    }
+    #[test]
+    fn viewport_hud_cells_and_state_backings_stay_readable_and_on_court() {
+        for scale in [0.25, 1., 2.] {
+            let small = hud_cell(scale, 2., 6.);
+            assert!(small * scale >= 1.5);
+            assert_eq!(small, if scale < 1. { 6. } else { 2. });
+            let mut game = Game::new(42);
+            for state in [State::Ready, State::Paused, State::Over] {
+                game.state = state;
+                for scores in [[7, 2], [2, 7]] {
+                    game.scores = scores;
+                    let mut vertices = Vec::new();
+                    state_vertices(&game, &mut vertices, scale);
+                    let [left, top] = vertices[0].pos;
+                    let [right, bottom] = vertices[2].pos;
+                    assert!([-1., 1.].windows(2).all(|r| left >= r[0] && bottom >= r[0] && right <= r[1] && top <= r[1]));
+                    for Vertex { pos: [x, y], .. } in &vertices[6..] {
+                        assert!(*x >= left - 1e-6 && *x <= right + 1e-6);
+                        assert!(*y >= bottom - 1e-6 && *y <= top + 1e-6);
+                    }
+                }
+            }
+        }
     }
     #[test]
     fn score_labels_and_full_winner_court_fit_vertex_buffer() {
         let mut vertices = Vec::new();
-        score_label_vertices(&mut vertices);
+        score_label_vertices(&mut vertices, 1.);
         assert!(!vertices.is_empty());
         assert!(vertices.iter().any(|v| v.pos[0] < 0.));
         assert!(vertices.iter().any(|v| v.pos[0] > 0.));
@@ -544,7 +583,7 @@ mod tests {
         for scores in [[7, 2], [2, 7]] {
             game.scores = scores;
             let mut state = Vec::new();
-            state_vertices(&game, &mut state);
+            state_vertices(&game, &mut state, 1.);
             assert!(scene_vertices + vertices.len() + state.len() < 4096);
         }
     }
@@ -552,15 +591,15 @@ mod tests {
     fn ready_and_paused_indicators_are_distinct_and_absent_during_play() {
         let mut game = Game::new(42);
         let mut vertices = Vec::new();
-        state_vertices(&game, &mut vertices);
+        state_vertices(&game, &mut vertices, 1.);
         let ready = vertices.len();
         assert!(ready > 0);
         vertices.clear();
         game.start();
-        state_vertices(&game, &mut vertices);
+        state_vertices(&game, &mut vertices, 1.);
         assert!(vertices.is_empty());
         game.pause();
-        state_vertices(&game, &mut vertices);
+        state_vertices(&game, &mut vertices, 1.);
         assert!(vertices.len() > 18);
         assert_ne!(ready, vertices.len());
     }
