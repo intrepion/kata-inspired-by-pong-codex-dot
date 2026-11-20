@@ -25,6 +25,7 @@ struct Pong {
     scenario: pong_scenario::Scenario,
     game: Game,
     keys: HashSet<VirtualKeyCode>,
+    pending: [bool; 2],
     suppressed: HashSet<VirtualKeyCode>,
     focused: bool,
     accumulator: f32,
@@ -41,6 +42,7 @@ impl Pong {
             scenario: pong_scenario::Scenario::default(),
             game: Game::new(pong_scenario::SEED),
             keys: HashSet::new(),
+            pending: [false; 2],
             suppressed: HashSet::new(),
             focused: true,
             accumulator: 0.,
@@ -49,6 +51,14 @@ impl Pong {
             pending_capture: None,
         }
     }
+    fn held_directions(&self) -> [bool; 2] {
+        let active = |key| self.keys.contains(&key) && !self.suppressed.contains(&key);
+        [
+            active(VirtualKeyCode::W) || active(VirtualKeyCode::Up),
+            active(VirtualKeyCode::S) || active(VirtualKeyCode::Down),
+        ]
+    }
+
     fn event(&mut self, event: BEvent) -> bool {
         match event {
             BEvent::CloseRequested => return true,
@@ -56,6 +66,7 @@ impl Pong {
                 self.focused = focused;
                 self.keys.clear();
                 self.suppressed.clear();
+                self.pending = [false; 2];
                 self.game.pause();
                 self.discard_frame_time = true;
                 self.accumulator = 0.;
@@ -64,6 +75,7 @@ impl Pong {
                 self.game.pause();
                 self.keys.clear();
                 self.suppressed.clear();
+                self.pending = [false; 2];
                 self.discard_frame_time = true;
                 self.accumulator = 0.;
             }
@@ -73,6 +85,7 @@ impl Pong {
                     self.suppressed.remove(&key);
                     return false;
                 }
+                let held_before = self.held_directions();
                 if !self.focused || !self.keys.insert(key) {
                     return false;
                 }
@@ -104,6 +117,7 @@ impl Pong {
                 match key {
                     VirtualKeyCode::Escape | VirtualKeyCode::Q => return true,
                     VirtualKeyCode::Space => {
+                        self.pending = [false; 2];
                         if matches!(self.game.state, State::Ready | State::Over) {
                             self.game.start()
                         } else {
@@ -126,9 +140,17 @@ impl Pong {
                         self.accumulator = 0.;
                     }
                     VirtualKeyCode::R => {
+                        self.pending = [false; 2];
                         self.game.start();
                         self.discard_frame_time = true;
                         self.accumulator = 0.;
+                    }
+                    _ if self.game.state == State::Playing => {
+                        // Retain at most one unsampled press per direction; aliases coalesce.
+                        let held_after = self.held_directions();
+                        for direction in 0..2 {
+                            self.pending[direction] |= !held_before[direction] && held_after[direction];
+                        }
                     }
                     _ => {}
                 }
@@ -146,6 +168,7 @@ impl Pong {
     }
     fn advance(&mut self, seconds: f32) {
         if !self.focused || self.game.state != State::Playing {
+            self.pending = [false; 2];
             self.accumulator = 0.;
             return;
         }
@@ -153,12 +176,11 @@ impl Pong {
             return;
         }
         self.accumulator += seconds.clamp(0., 0.1);
-        let active = |key| self.keys.contains(&key) && !self.suppressed.contains(&key);
-        let up = active(VirtualKeyCode::W) || active(VirtualKeyCode::Up);
-        let down = active(VirtualKeyCode::S) || active(VirtualKeyCode::Down);
+        let [up, down] = self.held_directions();
         while self.accumulator >= 1. / 120. {
-            self.game
-                .step(1. / 120., down as u8 as f32 - up as u8 as f32);
+            let [tap_up, tap_down] = std::mem::take(&mut self.pending);
+            let axis = (down || tap_down) as u8 as f32 - (up || tap_up) as u8 as f32;
+            self.game.step(1. / 120., axis);
             self.accumulator -= 1. / 120.;
         }
     }
@@ -413,6 +435,66 @@ mod tests {
             pressed,
         }
     }
+    #[test]
+    fn quick_tap_survives_zero_step_and_moves_during_only_one_catchup_step() {
+        let mut p = Pong::new();
+        p.game.start();
+        let start = p.game.player;
+        p.event(key(VirtualKeyCode::W, true));
+        p.event(key(VirtualKeyCode::W, false));
+        p.advance_live_frame(0.004);
+        assert_eq!(p.game.player, start);
+        p.advance_live_frame(0.022);
+        assert!((start - p.game.player - 470. / 120.).abs() < 0.001,
+                "expected exactly one movement step, got {}", start - p.game.player);
+        let after = p.game.player;
+        p.advance_live_frame(0.026);
+        assert_eq!(p.game.player, after);
+    }
+
+    #[test]
+    fn catchup_holds_movement_and_aliases_do_not_queue_a_tail() {
+        let mut p = Pong::new();
+        p.game.start();
+        let start = p.game.player;
+        p.event(key(VirtualKeyCode::W, true));
+        p.event(key(VirtualKeyCode::W, true));
+        p.advance_live_frame(0.026);
+        assert!((start - p.game.player - 3. * 470. / 120.).abs() < 0.001);
+        p.event(key(VirtualKeyCode::Up, true));
+        p.event(key(VirtualKeyCode::W, false));
+        p.event(key(VirtualKeyCode::Up, false));
+        let stopped = p.game.player;
+        p.advance_live_frame(0.026);
+        assert_eq!(p.game.player, stopped);
+    }
+
+    #[test]
+    fn opposing_taps_cancel_and_actions_discard_queued_movement() {
+        let mut p = Pong::new();
+        p.game.start();
+        for direction in [VirtualKeyCode::W, VirtualKeyCode::S] {
+            p.event(key(direction, true));
+            p.event(key(direction, false));
+        }
+        p.advance_live_frame(0.026);
+        assert_eq!(p.game.player, H / 2.);
+        for transition in [
+            key(VirtualKeyCode::Space, true),
+            key(VirtualKeyCode::R, true),
+            BEvent::Focused { focused: false },
+        ] {
+            let mut p = Pong::new();
+            p.game.start();
+            p.event(key(VirtualKeyCode::W, true));
+            p.event(key(VirtualKeyCode::W, false));
+            p.advance_live_frame(0.004);
+            p.event(transition);
+            assert_eq!(p.pending, [false; 2]);
+            assert_eq!(p.accumulator, 0.);
+        }
+    }
+
     #[test]
     fn live_actions_do_not_consume_pre_action_frame_time() {
         let mut p = Pong::new();
