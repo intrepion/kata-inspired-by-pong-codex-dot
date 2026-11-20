@@ -6,6 +6,7 @@ pub struct Model {
     pub down: bool,
     last: Instant,
     accumulator: f32,
+    pending: [bool; 2], // One unsampled press per direction.
     held: std::collections::HashSet<String>,
     suppressed: std::collections::HashSet<String>,
 }
@@ -17,6 +18,7 @@ impl Default for Model {
             down: false,
             last: Instant::now(),
             accumulator: 0.,
+            pending: [false; 2],
             held: Default::default(),
             suppressed: Default::default(),
         }
@@ -33,8 +35,9 @@ impl Model {
         self.accumulator += dt.clamp(0., 0.1);
         while self.accumulator >= 1. / 120. {
             let was_playing = self.game.state == State::Playing;
-            self.game
-                .step(1. / 120., self.down as i32 as f32 - self.up as i32 as f32);
+            let [up, down] = std::mem::take(&mut self.pending);
+            let axis = (self.down || down) as i32 - (self.up || up) as i32;
+            self.game.step(1. / 120., axis as f32);
             self.accumulator -= 1. / 120.;
             if was_playing && self.game.state == State::Over {
                 self.suppress_movement();
@@ -51,6 +54,7 @@ impl Model {
         self.up = false;
         self.down = false;
         self.accumulator = 0.;
+        self.pending = [false; 2];
     }
     pub fn blur(&mut self) {
         self.up = false;
@@ -58,6 +62,7 @@ impl Model {
         self.held.clear();
         self.suppressed.clear();
         self.game.pause();
+        self.pending = [false; 2];
         self.accumulator = 0.;
         self.last = Instant::now();
     }
@@ -88,6 +93,7 @@ impl Model {
         }
         // Each direction may have several physical bindings held at once.
         // Releasing one binding must not release the others.
+        let (was_up, was_down) = (self.up, self.down);
         self.up = ["w", "up"]
             .iter()
             .any(|key| self.held.contains(*key) && !self.suppressed.contains(*key));
@@ -95,6 +101,10 @@ impl Model {
             .iter()
             .any(|key| self.held.contains(*key) && !self.suppressed.contains(*key));
         let previous_state = self.game.state;
+        if pressed && previous_state == State::Playing {
+            self.pending[0] |= !was_up && self.up;
+            self.pending[1] |= !was_down && self.down;
+        }
         match key {
             "enter" if pressed => {
                 if self.game.state == State::Paused {
@@ -117,6 +127,7 @@ impl Model {
             _ => {}
         }
         if previous_state != self.game.state || (key == "r" && pressed) {
+            self.pending = [false; 2];
             self.accumulator = 0.;
             self.last = Instant::now();
         }
@@ -458,5 +469,80 @@ mod restart_clock_regression {
         m.key("r",true);
         assert_eq!(m.last,old,"held restart must not reset clock again");
         assert_eq!(m.accumulator,0.004);
+    }
+}
+
+#[cfg(test)]
+mod quick_tap_tests {
+    use super::*;
+
+    const STEP: f32 = 1. / 120.;
+    fn playing() -> Model {
+        let mut model = Model::default();
+        model.key("Enter", true);
+        model.key("Enter", false);
+        model
+    }
+    fn tap(model: &mut Model, key: &str) {
+        model.key(key, true);
+        model.key(key, false);
+    }
+    #[test]
+    fn taps_wait_for_one_step_in_either_direction() {
+        for (key, direction) in [("w", -1.), ("Up", -1.), ("s", 1.), ("Down", 1.)] {
+            let mut model = playing();
+            let mut held = playing();
+            held.key(key, true);
+            held.advance(STEP);
+            tap(&mut model, key);
+            model.advance(STEP / 2.);
+            assert_eq!(model.game.player, H / 2.);
+            model.advance(STEP / 2.);
+            assert!((model.game.player - H / 2.) * direction > 0.);
+            assert_eq!(model.game.player, held.game.player);
+            model.advance(STEP);
+            assert_eq!(model.game.player, held.game.player);
+        }
+    }
+    #[test]
+    fn aliases_coalesce_repeat_is_inert_and_opposites_cancel() {
+        let mut model = playing();
+        tap(&mut model, "s");
+        tap(&mut model, "Down");
+        let mut one = playing();
+        tap(&mut one, "s");
+        model.advance(STEP);
+        one.advance(STEP);
+        assert_eq!(model.game.player, one.game.player);
+        tap(&mut model, "w");
+        tap(&mut model, "Down");
+        model.advance(2. * STEP);
+        assert_eq!(model.game.player, one.game.player);
+        model.key("s", true);
+        model.advance(STEP);
+        let held = model.game.player;
+        model.key("s", true);
+        model.key("Down", true);
+        model.key("s", false);
+        model.key("Down", false);
+        model.advance(STEP);
+        assert_eq!(model.game.player, held);
+    }
+    #[test]
+    fn focus_pause_and_restart_discard_unsampled_taps() {
+        for action in ["Escape", "space", "r"] {
+            let mut model = playing();
+            tap(&mut model, "s");
+            model.advance(STEP / 2.);
+            tap(&mut model, action);
+            if model.game.state == State::Paused {
+                tap(&mut model, "Enter");
+            }
+            model.advance(2. * STEP);
+            assert_eq!(model.game.player, H / 2., "{action}");
+            tap(&mut model, "s");
+            model.advance(STEP);
+            assert!(model.game.player > H / 2., "{action}");
+        }
     }
 }
