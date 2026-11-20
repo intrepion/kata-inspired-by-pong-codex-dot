@@ -10,6 +10,7 @@ struct Vertex {
 #[derive(Default)]
 struct MovementInput {
     held: [bool; 4],
+    pending: [bool; 2],
 }
 impl MovementInput {
     fn key(&mut self, key: KeyCode, pressed: bool) {
@@ -20,13 +21,26 @@ impl MovementInput {
             KeyCode::S => 3,
             _ => return,
         };
+        let dir = binding / 2;
+        // At most one unsampled press per direction; held aliases don't add a tail.
+        if pressed && !self.held[2 * dir] && !self.held[2 * dir + 1] {
+            self.pending[dir] = true;
+        }
         self.held[binding] = pressed;
     }
     fn axis(&self) -> f32 {
         (self.held[2] || self.held[3]) as u8 as f32 - (self.held[0] || self.held[1]) as u8 as f32
     }
+    fn step_axis(&mut self) -> f32 {
+        let [up, down] = std::mem::take(&mut self.pending);
+        if !up && !down {
+            return self.axis();
+        }
+        (self.held[2] || self.held[3] || down) as u8 as f32
+            - (self.held[0] || self.held[1] || up) as u8 as f32
+    }
     fn clear(&mut self) {
-        self.held = [false; 4];
+        *self = Self::default();
     }
 }
 // Keep the application action boundary testable without constructing a GPU window.
@@ -316,6 +330,14 @@ fn state_vertices(game: &Game, v: &mut Vec<Vertex>, scale: f32) {
         State::Playing => {}
     }
 }
+fn advance_live(acc: &mut f32, movement: &mut MovementInput, mut step: impl FnMut(f32, f32)) {
+    const DT: f32 = 1. / 120.;
+    while *acc >= DT {
+        step(DT, movement.step_axis());
+        *acc -= DT;
+    }
+}
+
 impl EventHandler for App {
     fn update(&mut self) {
         let now = Instant::now();
@@ -325,17 +347,17 @@ impl EventHandler for App {
             self.acc += (now - self.last).as_secs_f32().min(0.1);
         }
         self.last = now;
-        while self.acc >= 1. / 120. {
-            if self.benchmarking {
+        if self.benchmarking {
+            while self.acc >= 1. / 120. {
                 if self.scenario.finished() {
                     self.scenario = pong_scenario::Scenario::default();
                     self.game = Game::new(pong_scenario::SEED);
                 }
                 self.scenario.advance(&mut self.game);
-            } else {
-                self.game.step(1. / 120., self.movement.axis());
+                self.acc -= 1. / 120.;
             }
-            self.acc -= 1. / 120.;
+        } else {
+            advance_live(&mut self.acc, &mut self.movement, |dt, axis| self.game.step(dt, axis));
         }
     }
     fn draw(&mut self) {
@@ -873,4 +895,69 @@ mod control_tests {
         assert_eq!(game.state, State::Playing);
         assert!(control_key(&mut game, KeyCode::Escape, false));
     }
+}
+
+
+#[cfg(test)]
+mod quick_tap_tests {
+    use super::*;
+    #[test]
+    fn quick_tap_survives_a_zero_step_update() {
+        let mut game = Game::new(42);
+        game.start();
+        let mut movement = MovementInput::default();
+        handle_key_down(&mut game, &mut movement, KeyCode::W, false);
+        movement.key(KeyCode::W, false);
+        let mut acc = 0.004;
+        let mut axes = Vec::new();
+        advance_live(&mut acc, &mut movement, |_, axis| axes.push(axis));
+        assert!(axes.is_empty());
+        acc += 0.022;
+        advance_live(&mut acc, &mut movement, |_, axis| axes.push(axis));
+        assert_eq!(axes, [-1., 0., 0.]);
+    }
+
+    #[test]
+    fn hold_repeats_aliases_and_opposites_keep_their_existing_meaning() {
+        let mut game = Game::new(42);
+        game.start();
+        let mut movement = MovementInput::default();
+        handle_key_down(&mut game, &mut movement, KeyCode::W, false);
+        let mut acc = 0.026;
+        let mut axes = Vec::new();
+        advance_live(&mut acc, &mut movement, |_, axis| axes.push(axis));
+        assert_eq!(axes, [-1., -1., -1.]);
+        handle_key_down(&mut game, &mut movement, KeyCode::Up, false);
+        movement.key(KeyCode::W, false);
+        assert_eq!(movement.step_axis(), -1.);
+        movement.key(KeyCode::Up, false);
+        handle_key_down(&mut game, &mut movement, KeyCode::Up, true);
+        assert_eq!(movement.step_axis(), 0.);
+        for key in [KeyCode::W, KeyCode::Up, KeyCode::S, KeyCode::Down] {
+            handle_key_down(&mut game, &mut movement, key, false);
+            movement.key(key, false);
+        }
+        assert_eq!(movement.step_axis(), 0., "opposite taps cancel");
+        assert_eq!(movement.step_axis(), 0., "no remaining pulse");
+    }
+
+    #[test]
+    fn transitions_discard_pending_taps() {
+        for action in [Some(KeyCode::Space), Some(KeyCode::R), None] {
+            let mut game = Game::new(42);
+            game.start();
+            let mut movement = MovementInput::default();
+            handle_key_down(&mut game, &mut movement, KeyCode::W, false);
+            movement.key(KeyCode::W, false);
+            if let Some(action) = action {
+                handle_key_down(&mut game, &mut movement, action, false);
+            } else {
+                // Same pause and clear used by the minimized/focus-loss callback.
+                game.pause();
+                movement.clear();
+            }
+            assert_eq!(movement.step_axis(), 0., "{action:?}");
+        }
+    }
+
 }
