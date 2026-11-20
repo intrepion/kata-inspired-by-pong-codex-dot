@@ -28,6 +28,7 @@ struct Pong {
     suppressed: HashSet<VirtualKeyCode>,
     focused: bool,
     accumulator: f32,
+    discard_frame_time: bool,
     demo: Option<pong_scenario::Demo>,
     pending_capture: Option<std::path::PathBuf>,
 }
@@ -43,6 +44,7 @@ impl Pong {
             suppressed: HashSet::new(),
             focused: true,
             accumulator: 0.,
+            discard_frame_time: false,
             demo: None,
             pending_capture: None,
         }
@@ -55,12 +57,14 @@ impl Pong {
                 self.keys.clear();
                 self.suppressed.clear();
                 self.game.pause();
+                self.discard_frame_time = true;
                 self.accumulator = 0.;
             }
             BEvent::Resized { .. } => {
                 self.game.pause();
                 self.keys.clear();
                 self.suppressed.clear();
+                self.discard_frame_time = true;
                 self.accumulator = 0.;
             }
             BEvent::KeyboardInput { key, pressed, .. } => {
@@ -118,10 +122,12 @@ impl Pong {
                                 }
                             }
                         }
+                        self.discard_frame_time = true;
                         self.accumulator = 0.;
                     }
                     VirtualKeyCode::R => {
                         self.game.start();
+                        self.discard_frame_time = true;
                         self.accumulator = 0.;
                     }
                     _ => {}
@@ -130,6 +136,13 @@ impl Pong {
             _ => {}
         }
         false
+    }
+    fn advance_live_frame(&mut self, seconds: f32) {
+        // The event queue precedes the update, but frame_time_ms precedes the events.
+        if std::mem::take(&mut self.discard_frame_time) {
+            return;
+        }
+        self.advance(seconds);
     }
     fn advance(&mut self, seconds: f32) {
         if !self.focused || self.game.state != State::Playing {
@@ -238,7 +251,7 @@ impl GameState for Pong {
                 self.accumulator -= pong_scenario::STEP;
             }
         } else {
-            self.advance(ctx.frame_time_ms / 1000.);
+            self.advance_live_frame(ctx.frame_time_ms / 1000.);
         }
         ctx.set_active_console(0);
         ctx.cls_bg(court_color());
@@ -398,6 +411,30 @@ mod tests {
             key: k,
             scan_code: 0,
             pressed,
+        }
+    }
+    #[test]
+    fn live_actions_do_not_consume_pre_action_frame_time() {
+        let mut p = Pong::new();
+        for (k, state) in [
+            (VirtualKeyCode::Space, State::Playing),
+            (VirtualKeyCode::Space, State::Paused),
+            (VirtualKeyCode::Space, State::Playing),
+            (VirtualKeyCode::R, State::Playing),
+        ] {
+            p.accumulator = 0.004;
+            p.event(key(k, true));
+            p.event(key(k, false));
+            assert_eq!(p.game.state, state);
+            let serve = p.game.serve;
+            p.advance_live_frame(0.1);
+            assert_eq!((p.game.serve, p.accumulator), (serve, 0.));
+            if state == State::Playing {
+                p.advance_live_frame(0.004);
+                assert_eq!(p.game.serve, serve);
+                p.advance_live_frame(0.006);
+                assert!(p.game.serve < serve);
+            }
         }
     }
     #[test]

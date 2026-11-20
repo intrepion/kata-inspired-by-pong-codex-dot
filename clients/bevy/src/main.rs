@@ -213,22 +213,13 @@ fn input_and_simulation(
         clock.0 = 0.;
         return;
     }
-    if keys.just_pressed(KeyCode::KeyR) {
-        restart_game(&mut game.0, &mut movement);
-        clock.0 = 0.;
-    }
-    if keys.just_pressed(KeyCode::Enter) {
-        match game.0.state {
-            State::Ready | State::Over => game.0.start(),
-            State::Paused => game.0.toggle_pause(),
-            State::Playing => {}
-        }
-        clock.0 = 0.;
-    }
-    if keys.just_pressed(KeyCode::Space) {
-        game.0.toggle_pause();
-        clock.0 = 0.;
-    }
+    let changed = apply_live_actions(
+        &mut game.0,
+        &mut movement,
+        keys.just_pressed(KeyCode::KeyR),
+        keys.just_pressed(KeyCode::Enter),
+        keys.just_pressed(KeyCode::Space),
+    );
     let input = movement_axis(
         game.0.state,
         &mut movement,
@@ -239,18 +230,52 @@ fn input_and_simulation(
             keys.pressed(KeyCode::KeyS),
         ],
     );
-    if game.0.state != State::Playing {
-        clock.0 = 0.;
+    advance_live_frame(&mut game.0, &mut clock.0, changed, time.delta_secs(), input);
+    movement.finish_frame(game.0.state);
+}
+
+fn apply_live_actions(
+    game: &mut Game,
+    movement: &mut MovementGate,
+    restart: bool,
+    enter: bool,
+    space: bool,
+) -> bool {
+    let before = game.state;
+    if restart {
+        restart_game(game, movement);
+    }
+    if enter {
+        match game.state {
+            State::Ready | State::Over => game.start(),
+            State::Paused => game.toggle_pause(),
+            State::Playing => {}
+        }
+    }
+    if space {
+        game.toggle_pause();
+    }
+    restart || before != game.state
+}
+
+fn advance_live_frame(game: &mut Game, clock: &mut f32, changed: bool, elapsed: f32, input: f32) {
+    if changed || game.state != State::Playing {
+        // Bevy's update delta covers the time before this frame's input actions.
+        *clock = 0.;
         return;
     }
-    // Fixed simulation steps and a bounded catch-up window prevent focus/resize stalls from tunnelling.
-    const DT: f32 = 1. / 120.;
-    clock.0 += time.delta_secs().min(0.1);
-    while clock.0 >= DT {
-        game.0.step(DT, input);
-        clock.0 -= DT;
+    if !elapsed.is_finite() {
+        return;
     }
-    movement.finish_frame(game.0.state);
+    const DT: f32 = 1. / 120.;
+    *clock += elapsed.clamp(0., 0.1);
+    while *clock >= DT && game.state == State::Playing {
+        game.step(DT, input);
+        *clock -= DT;
+    }
+    if game.state != State::Playing {
+        *clock = 0.;
+    }
 }
 
 fn present(
@@ -370,6 +395,35 @@ mod benchmark_tests {
 #[cfg(test)]
 mod input_tests {
     use super::*;
+    #[test]
+    fn live_actions_do_not_consume_pre_action_frame_time() {
+        let mut game = Game::new(42);
+        let mut movement = MovementGate::default();
+        let mut clock = 0.004;
+        for (restart, enter, space, state) in [
+            (false, true, false, State::Playing),
+            (false, false, true, State::Paused),
+            (false, false, true, State::Playing),
+            (true, false, false, State::Playing),
+        ] {
+            let changed = apply_live_actions(&mut game, &mut movement, restart, enter, space);
+            assert!(changed);
+            assert_eq!(game.state, state);
+            let player = game.player;
+            let serve = game.serve;
+            advance_live_frame(&mut game, &mut clock, changed, 0.1, 1.);
+            assert_eq!((game.player, game.serve, clock), (player, serve, 0.));
+            if state == State::Playing {
+                advance_live_frame(&mut game, &mut clock, false, 0.004, 1.);
+                assert_eq!(game.player, player);
+                advance_live_frame(&mut game, &mut clock, false, 0.006, 1.);
+                assert!(game.player > player);
+            }
+        }
+        // Enter during an active match is a no-op and must not discard time.
+        assert!(!apply_live_actions(&mut game, &mut movement, false, true, false));
+    }
+
     #[test]
     fn first_playing_sample_and_focus_loss_suppress_keys_independently() {
         let mut gate = MovementGate::default();
