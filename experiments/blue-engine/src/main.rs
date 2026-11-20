@@ -55,6 +55,51 @@ fn sample_movement(state: State, gate: &mut MovementGate, held: [bool; 4], enter
 #[cfg(any(feature = "windowed", test))]
 fn restart(game: &mut Game, gate: &mut MovementGate) { gate.was_playing = false; game.start(); }
 #[cfg(any(feature = "windowed", test))]
+fn apply_live_actions(
+    game: &mut Game,
+    movement: &mut MovementGate,
+    actions: [bool; 5],
+) -> bool {
+    let before = game.state;
+    if actions[0] || actions[4] {
+        if game.state == State::Paused {
+            game.toggle_pause();
+        } else if game.state != State::Playing {
+            game.start();
+        }
+    }
+    if actions[1] {
+        restart(game, movement);
+    }
+    if actions[2] {
+        game.toggle_pause();
+    }
+    if actions[3] {
+        game.pause();
+    }
+    actions[1] || before != game.state
+}
+#[cfg(any(feature = "windowed", test))]
+fn step_live_frame(game: &mut Game, accumulator: &mut f32, changed: bool, elapsed: f32, axis: f32) {
+    if changed || game.state != State::Playing {
+        // The polling callback reports time from before this frame's actions.
+        *accumulator = 0.;
+        return;
+    }
+    if !elapsed.is_finite() {
+        return;
+    }
+    let step = 1. / 120.;
+    *accumulator += elapsed.clamp(0., 0.1);
+    while *accumulator >= step && game.state == State::Playing {
+        game.step(step, axis);
+        *accumulator -= step;
+    }
+    if game.state != State::Playing {
+        *accumulator = 0.;
+    }
+}
+#[cfg(any(feature = "windowed", test))]
 fn status_label(game: &Game) -> &'static str {
     match game.state {
         State::Ready => "Ready", State::Playing => "Playing", State::Paused => "Paused",
@@ -358,17 +403,10 @@ fn main() -> Result<(), blue_engine::error::Error> {
             let was_playing = game.state == State::Playing;
             let keys = [KeyCode::Enter, KeyCode::KeyR, KeyCode::Space, KeyCode::Escape, KeyCode::NumpadEnter];
             let actions = action_gate.sample(keys.map(|key| input.key_held(key)), keys.map(|key| input.key_pressed(key)));
-            if actions[0] || actions[4] {
-                if game.state == State::Paused { game.toggle_pause(); }
-                else if game.state != State::Playing { game.start(); }
-            }
-            if actions[1] { restart(&mut game, &mut movement_gate); }
-            if actions[2] { game.toggle_pause(); }
-            if actions[3] { game.pause(); }
+            let changed = apply_live_actions(&mut game, &mut movement_gate, actions);
             let held = [input.key_held(KeyCode::KeyW), input.key_held(KeyCode::ArrowUp), input.key_held(KeyCode::KeyS), input.key_held(KeyCode::ArrowDown)];
             let axis = sample_movement(game.state, &mut movement_gate, held, was_playing && game.state == State::Paused);
-            accumulator += dt;
-            while accumulator >= 1. / 120. { game.step(1. / 120., axis); accumulator -= 1. / 120.; }
+            step_live_frame(&mut game, &mut accumulator, changed, dt, axis);
             movement_gate.finish_frame(game.state);
         }
         }
@@ -479,6 +517,34 @@ mod benchmark_tests {
 #[cfg(test)]
 mod input_tests {
     use super::*;
+    #[test]
+    fn live_actions_drop_elapsed_and_remainder_then_fresh_time_steps() {
+        let mut game = Game::new(42);
+        let mut movement = MovementGate::default();
+        let mut accumulator = 0.004;
+        for (key, expected) in [
+            (0, State::Playing),
+            (2, State::Paused),
+            (2, State::Playing),
+            (1, State::Playing),
+        ] {
+            let mut actions = [false; 5];
+            actions[key] = true;
+            let changed = apply_live_actions(&mut game, &mut movement, actions);
+            assert!(changed);
+            assert_eq!(game.state, expected);
+            let player = game.player;
+            let serve = game.serve;
+            step_live_frame(&mut game, &mut accumulator, changed, 0.1, 1.);
+            assert_eq!((game.player, game.serve, accumulator), (player, serve, 0.));
+            if game.state == State::Playing {
+                step_live_frame(&mut game, &mut accumulator, false, 0.004, 1.);
+                assert_eq!(game.player, player);
+                step_live_frame(&mut game, &mut accumulator, false, 0.006, 1.);
+                assert!(game.player > player);
+            }
+        }
+    }
     #[test]
     fn hint_geometry_updates_on_first_frame_and_state_transitions_only() {
         let mut previous = None;
