@@ -13,6 +13,7 @@ struct Frontend {
     focused: bool,
     app: App,
     movement_held: [bool; 4],
+    pending_movement: [bool; 2],
     benchmarking: bool,
     benchmark: Option<pong_benchmark::Frames>,
     benchmark_done: bool,
@@ -35,12 +36,28 @@ impl Frontend {
             KeyCode::ArrowDown => 3,
             _ => return,
         };
+        let pair = index / 2 * 2;
+        if pressed && !self.movement_held[pair] && !self.movement_held[pair + 1] {
+            self.pending_movement[index / 2] = true;
+        }
         self.movement_held[index] = pressed;
         self.app.up = self.movement_held[0] || self.movement_held[1];
         self.app.down = self.movement_held[2] || self.movement_held[3];
     }
+    fn tick_live(&mut self, elapsed: f32) {
+        let (up, down) = (self.app.up, self.app.down);
+        let pending = &mut self.pending_movement;
+        self.app.tick_with_axis(elapsed, || {
+            let [tap_up, tap_down] = std::mem::take(pending);
+            (down || tap_down) as u8 as f32 - (up || tap_up) as u8 as f32
+        });
+        if self.app.game.state != pong_low_level_common::State::Playing {
+            self.pending_movement = [false; 2];
+        }
+    }
     fn clear_movement(&mut self) {
         self.movement_held = [false; 4];
+        self.pending_movement = [false; 2];
         self.app.blur();
     }
     fn handle_focused_key(
@@ -162,7 +179,7 @@ impl ApplicationHandler for Frontend {
                             self.accumulator -= pong_scenario::STEP;
                         }
                     } else {
-                        self.app.tick(elapsed);
+                        self.tick_live(elapsed);
                     }
                 }
                 let w = self.window.as_ref().unwrap();
@@ -477,5 +494,84 @@ mod transition_clock_adapter_test {
         assert_eq!(f.app.game.player,250.);
         f.app.tick(1./60.);
         assert!(f.app.game.player>250.);
+    }
+}
+
+#[cfg(test)]
+mod quick_tap_tests {
+    use super::*;
+    const STEP: f32 = 1. / 120.;
+
+    #[test]
+    fn quick_press_then_release_survives_zero_step_and_moves_once_on_catch_up() {
+        let mut lost = Vec::new();
+        for (key, axis) in [(KeyCode::KeyW, -1.), (KeyCode::ArrowUp, -1.),
+                            (KeyCode::KeyS, 1.), (KeyCode::ArrowDown, 1.)] {
+            let mut f = Frontend::default();
+            f.app.game.start();
+            let initial = f.app.game.player;
+            let mut expected = f.app.game.clone();
+            expected.step(STEP, axis);
+            f.handle_focused_key(true, key, true, false);
+            f.handle_focused_key(true, key, false, false);
+            f.tick_live(0.25 * STEP);
+            assert_eq!(f.app.game.player, initial);
+            f.tick_live(3. * STEP);
+            if f.app.game.player != expected.player {
+                lost.push((key, f.app.game.player, expected.player));
+            }
+            let settled = f.app.game.player;
+            f.tick_live(STEP);
+            assert_eq!(f.app.game.player, settled);
+        }
+        assert!(lost.is_empty(), "{lost:?}");
+    }
+}
+
+#[cfg(test)]
+mod quick_tap_guard_tests {
+    use super::*;
+    const STEP: f32 = 1. / 120.;
+
+    #[test]
+    fn held_keys_continue_and_aliases_do_not_create_a_tail() {
+        let mut f = Frontend::default();
+        f.app.game.start();
+        let mut expected = f.app.game.clone();
+        f.handle_key(KeyCode::KeyW, true, false);
+        f.tick_live(3.25 * STEP);
+        for _ in 0..3 { expected.step(STEP, -1.); }
+        assert_eq!(f.app.game.player, expected.player);
+        f.handle_key(KeyCode::ArrowUp, true, false);
+        f.handle_key(KeyCode::KeyW, false, false);
+        f.handle_key(KeyCode::ArrowUp, false, false);
+        f.tick_live(STEP);
+        assert_eq!(f.app.game.player, expected.player);
+    }
+
+    #[test]
+    fn opposed_taps_cancel_and_transitions_clear_pending_movement() {
+        let mut f = Frontend::default();
+        f.app.game.start();
+        let origin = f.app.game.player;
+        for key in [KeyCode::KeyW, KeyCode::KeyS] {
+            f.handle_key(key, true, false);
+            f.handle_key(key, false, false);
+        }
+        f.tick_live(STEP);
+        assert_eq!(f.app.game.player, origin);
+        for transition in [None, Some(KeyCode::Space), Some(KeyCode::KeyR)] {
+            f.handle_key(KeyCode::KeyW, true, false);
+            f.handle_key(KeyCode::KeyW, false, false);
+            if let Some(key) = transition { f.handle_key(key, true, false); }
+            else { f.clear_movement(); }
+            if f.app.game.state == pong_low_level_common::State::Paused {
+                f.handle_key(KeyCode::Space, true, false);
+            }
+            f.handle_key(KeyCode::KeyW, true, true);
+            f.tick_live(STEP);
+            f.tick_live(3.25 * STEP);
+            assert_eq!(f.app.game.player, origin);
+        }
     }
 }
