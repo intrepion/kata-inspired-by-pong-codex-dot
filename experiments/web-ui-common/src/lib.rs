@@ -20,6 +20,9 @@ pub struct Session {
     held: [bool; 4], // Arrow and W/S keyboard bindings have independent identities.
     pointers: [HashSet<i32>; 2],
     button_keys: [[bool; 2]; 2],
+    pending_held: [bool; 4],
+    pending_pointers: [HashSet<i32>; 2],
+    pending_button_keys: [[bool; 2]; 2],
     accumulator: f64,
     demo: Option<Replay>,
 }
@@ -49,6 +52,9 @@ impl Default for Session {
             held: [false; 4],
             pointers: Default::default(),
             button_keys: [[false; 2]; 2],
+            pending_held: [false; 4],
+            pending_pointers: Default::default(),
+            pending_button_keys: [[false; 2]; 2],
             accumulator: 0.0,
             demo: None,
         };
@@ -65,15 +71,19 @@ impl Session {
         }
         match key {
             "ArrowUp" if !pressed || (!repeat && self.game.state == State::Playing) => {
+                self.pending_held[0] |= pressed && !self.held[0];
                 self.held[0] = pressed
             }
             "w" | "W" if !pressed || (!repeat && self.game.state == State::Playing) => {
+                self.pending_held[1] |= pressed && !self.held[1];
                 self.held[1] = pressed
             }
             "ArrowDown" if !pressed || (!repeat && self.game.state == State::Playing) => {
+                self.pending_held[2] |= pressed && !self.held[2];
                 self.held[2] = pressed
             }
             "s" | "S" if !pressed || (!repeat && self.game.state == State::Playing) => {
+                self.pending_held[3] |= pressed && !self.held[3];
                 self.held[3] = pressed
             }
             "Enter" if pressed && !repeat => self.start(),
@@ -84,17 +94,29 @@ impl Session {
     /// On-screen movement controls are separate from keyboard bindings.
     pub fn movement_button(&mut self, direction: Direction, pointer_id: i32, pressed: bool) {
         if self.demo.is_none() {
-            let pointers = &mut self.pointers[match direction {
+            let direction = match direction {
                 Direction::Up => 0,
                 Direction::Down => 1,
-            }];
+            };
+            let pointers = &mut self.pointers[direction];
             if pressed {
-                if self.game.state == State::Playing {
-                    pointers.insert(pointer_id);
+                if self.game.state == State::Playing && pointers.insert(pointer_id) {
+                    self.pending_pointers[direction].insert(pointer_id);
                 }
             } else {
                 pointers.remove(&pointer_id);
             }
+        }
+    }
+    /// A canceled active pointer does not leave a tap queued. A leave after
+    /// a normal pointer-up is not cancellation of the completed tap.
+    pub fn movement_button_cancel(&mut self, direction: Direction, pointer_id: i32) {
+        let direction = match direction {
+            Direction::Up => 0,
+            Direction::Down => 1,
+        };
+        if self.pointers[direction].remove(&pointer_id) {
+            self.pending_pointers[direction].remove(&pointer_id);
         }
     }
     /// Keyboard activation of a focused movement button has its own ownership.
@@ -115,6 +137,8 @@ impl Session {
             Direction::Down => 1,
         };
         if self.demo.is_none() && (!pressed || (!repeat && self.game.state == State::Playing)) {
+            self.pending_button_keys[direction][index] |=
+                pressed && !self.button_keys[direction][index];
             self.button_keys[direction][index] = pressed;
         }
     }
@@ -124,6 +148,7 @@ impl Session {
             Direction::Down => 1,
         };
         self.button_keys[direction] = [false; 2];
+        self.pending_button_keys[direction] = [false; 2];
     }
     /// A non-pointer button activation moves once; pointer holds use their own path.
     pub fn movement_button_activate(&mut self, direction: Direction) {
@@ -138,13 +163,22 @@ impl Session {
             );
         }
     }
+    fn clear_pending(&mut self) {
+        self.pending_held = [false; 4];
+        self.pending_pointers.iter_mut().for_each(HashSet::clear);
+        self.pending_button_keys = [[false; 2]; 2];
+    }
+    fn clear_movement(&mut self) {
+        self.held = [false; 4];
+        self.button_keys = [[false; 2]; 2];
+        self.pointers.iter_mut().for_each(HashSet::clear);
+        self.clear_pending();
+    }
     pub fn start(&mut self) {
         if self.demo.is_some() {
             return;
         }
-        self.held = [false; 4];
-        self.button_keys = [[false; 2]; 2];
-        self.pointers.iter_mut().for_each(HashSet::clear);
+        self.clear_movement();
         self.game.start();
         self.accumulator = 0.0;
     }
@@ -159,9 +193,7 @@ impl Session {
             return;
         }
         self.game.pause();
-        self.held = [false; 4];
-        self.button_keys = [[false; 2]; 2];
-        self.pointers.iter_mut().for_each(HashSet::clear);
+        self.clear_movement();
         self.accumulator = 0.0;
     }
     pub fn toggle_pause(&mut self) {
@@ -184,6 +216,7 @@ impl Session {
             })
     }
     pub fn enable_demo(&mut self) {
+        self.clear_movement();
         self.game = Game::new(pong_scenario::SEED);
         self.accumulator = 0.0;
         let mut replay = Replay::default();
@@ -219,18 +252,21 @@ impl Session {
             return;
         }
         while self.accumulator >= 1.0 / 120.0 {
-            self.game.step(
-                1.0 / 120.0,
-                (self.held[2]
-                    || self.held[3]
-                    || !self.pointers[1].is_empty()
-                    || self.button_keys[1].iter().any(|v| *v)) as u8 as f32
-                    - (self.held[0]
-                        || self.held[1]
-                        || !self.pointers[0].is_empty()
-                        || self.button_keys[0].iter().any(|v| *v)) as u8
-                        as f32,
-            );
+            let active = |d: usize| {
+                let first = d * 2;
+                self.held[first..first + 2].iter().any(|v| *v)
+                    || self.pending_held[first..first + 2].iter().any(|v| *v)
+                    || !self.pointers[d].is_empty()
+                    || !self.pending_pointers[d].is_empty()
+                    || self.button_keys[d].iter().any(|v| *v)
+                    || self.pending_button_keys[d].iter().any(|v| *v)
+            };
+            let axis = active(1) as u8 as f32 - active(0) as u8 as f32;
+            self.clear_pending();
+            self.game.step(1.0 / 120.0, axis);
+            if self.game.state != State::Playing {
+                self.clear_movement();
+            }
             self.accumulator -= 1.0 / 120.0;
         }
     }
@@ -301,6 +337,60 @@ pub const CSS:&str="body{margin:0;background:#080f19;color:#eef6ff;font:16px sys
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn completed_taps_survive_a_zero_step_frame_and_move_once_in_catch_up() {
+        for source in 0..3 {
+            for direction in [Direction::Up, Direction::Down] {
+                let mut session = Session::default();
+                session.start();
+                let origin = session.game.player;
+                let key = if matches!(direction, Direction::Up) { "w" } else { "s" };
+                let mut expected = session.game.clone();
+                expected.step(1. / 120., if matches!(direction, Direction::Up) { -1. } else { 1. });
+                for pressed in [true, false] {
+                    match source {
+                        0 => session.key(key, pressed, false),
+                        1 => session.movement_button(direction, 7, pressed),
+                        _ => session.movement_button_key(direction, "Enter", pressed, false),
+                    }
+                }
+                session.tick(0.25 / 120.);
+                assert_eq!(session.game.player, origin, "source={source}: zero steps");
+                session.tick(3. / 120.);
+                assert_eq!(session.game.player, expected.player, "source={source}: exactly one move");
+                session.tick(1. / 120.);
+                assert_eq!(session.game.player, expected.player, "source={source}: no drift");
+            }
+        }
+    }
+    #[test]
+    fn cancellation_clears_only_its_owner_and_normal_up_survives_leave() {
+        let mut session = Session::default();
+        session.start();
+        let origin = session.game.player;
+        session.movement_button(Direction::Up, 7, true);
+        session.movement_button_cancel(Direction::Up, 7);
+        session.movement_button_key(Direction::Down, " ", true, false);
+        session.movement_button_blur(Direction::Down);
+        session.tick(1. / 120.);
+        assert_eq!(session.game.player, origin);
+
+        session.movement_button(Direction::Up, 7, true);
+        session.movement_button(Direction::Up, 8, true);
+        session.movement_button_cancel(Direction::Up, 7);
+        session.movement_button(Direction::Up, 8, false);
+        session.movement_button_cancel(Direction::Up, 8);
+        session.tick(1. / 120.);
+        assert!(session.game.player < origin);
+
+        session.key("w", true, false);
+        session.key("w", false, false);
+        session.focus_left(false);
+        session.toggle_pause();
+        let paused_at = session.game.player;
+        session.tick(3. / 120.);
+        assert_eq!(session.game.player, paused_at);
+    }
     #[test]
     fn readable_status_tracks_scores_and_all_states() {
         let mut s = Session::default();
@@ -556,9 +646,12 @@ mod tests {
         let mut s = Session::default();
         s.start();
         s.key("s", true, false);
+        s.tick(1. / 120.);
+        let released_at = s.game.player;
+        assert!(released_at > 250.);
         s.key("S", false, false);
         s.tick(0.05);
-        assert_eq!(s.game.player, 250.);
+        assert_eq!(s.game.player, released_at);
         s.enable_demo();
         s.movement_button(Direction::Up, 1, true);
         assert_eq!(s.held, [false; 4]);
