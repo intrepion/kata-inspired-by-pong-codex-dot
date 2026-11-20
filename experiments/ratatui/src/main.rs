@@ -33,6 +33,7 @@ fn action_key(key: KeyCode) -> KeyCode {
 #[derive(Default)]
 struct Input {
     held: [bool; 4], // Up, W, Down, S: aliases release independently.
+    pending: [bool; 2], // At most one unsampled press per direction.
     latched: f32,
 }
 impl Input {
@@ -46,6 +47,15 @@ impl Input {
         } else {
             self.latched
         }
+    }
+    fn step_axis(&mut self, releases: bool) -> f32 {
+        if !releases || self.pending == [false; 2] {
+            return self.axis(releases);
+        }
+        // Consume only on a simulation step. Aliases coalesce; opposed input cancels.
+        let [up, down] = std::mem::take(&mut self.pending);
+        (down || self.held[2] || self.held[3]) as u8 as f32
+            - (up || self.held[0] || self.held[1]) as u8 as f32
     }
     fn key(&mut self, key: KeyEvent, releases: bool) {
         let binding = match key.code {
@@ -62,7 +72,13 @@ impl Input {
         if let Some(binding) = binding {
             if releases {
                 match key.kind {
-                    KeyEventKind::Press => self.held[binding] = true,
+                    KeyEventKind::Press => {
+                        let pair = binding / 2 * 2;
+                        if !self.held[pair] && !self.held[pair + 1] {
+                            self.pending[binding / 2] = true;
+                        }
+                        self.held[binding] = true;
+                    }
                     KeyEventKind::Release => self.held[binding] = false,
                     KeyEventKind::Repeat => {} // A repeat cannot re-arm a cleared binding.
                 }
@@ -100,6 +116,12 @@ fn too_small(width: u16, height: u16) -> bool { width < 50 || height < 18 }
 // Time preceding a start, pause, focus loss, or resize belongs to the old state.
 fn add_frame_elapsed(acc: &mut f32, elapsed: f32, transitioned: bool) {
     if transitioned { *acc = 0.; } else { *acc += elapsed.min(0.1); }
+}
+fn step_live(game: &mut Game, input: &mut Input, releases: bool, acc: &mut f32, dt: f32) {
+    while *acc >= dt {
+        game.step(dt, input.step_axis(releases));
+        *acc -= dt;
+    }
 }
 fn draw(f: &mut Frame, g: &Game, releases: bool) {
     let a = f.area();
@@ -326,10 +348,7 @@ fn main() -> io::Result<()> {
             input.clear();
             acc = 0.;
         }
-        while acc >= dt {
-            g.step(dt, input.axis(releases));
-            acc -= dt;
-        }
+        step_live(&mut g, &mut input, releases, &mut acc, dt);
         term.draw(|f| draw(f, &g, releases))?;
         std::thread::sleep(Duration::from_millis(16));
     }
@@ -341,6 +360,96 @@ mod tests {
     fn key(c: KeyCode, k: KeyEventKind) -> KeyEvent {
         KeyEvent::new_with_kind(c, KeyModifiers::NONE, k)
     }
+    #[test]
+    fn release_aware_tap_waits_for_first_physics_step() {
+        let mut input = Input::default();
+        let mut game = Game::new(42);
+        game.start();
+        let start = game.player;
+        let dt = 1. / 120.;
+        let mut acc = dt / 2.;
+
+        input.key(key(KeyCode::Char('w'), KeyEventKind::Press), true);
+        input.key(key(KeyCode::Char('W'), KeyEventKind::Release), true);
+        step_live(&mut game, &mut input, true, &mut acc, dt);
+        assert_eq!(game.player, start);
+
+        acc += dt / 2.;
+        step_live(&mut game, &mut input, true, &mut acc, dt);
+        assert!(game.player < start, "a complete tap must move on the next step");
+        let after_tap = game.player;
+
+        acc += dt;
+        step_live(&mut game, &mut input, true, &mut acc, dt);
+        assert_eq!(game.player, after_tap, "a released tap moves only once");
+    }
+
+    #[test]
+    fn release_aware_held_aliases_and_repeats_do_not_add_tail_movement() {
+        let mut input = Input::default();
+        input.key(key(KeyCode::Up, KeyEventKind::Press), true);
+        assert_eq!(input.step_axis(true), -1.);
+        assert_eq!(input.step_axis(true), -1., "in-step input stays held");
+        input.key(key(KeyCode::Char('w'), KeyEventKind::Press), true);
+        input.key(key(KeyCode::Up, KeyEventKind::Release), true);
+        input.key(key(KeyCode::Char('W'), KeyEventKind::Repeat), true);
+        assert_eq!(input.step_axis(true), -1., "the other alias stays held");
+        input.key(key(KeyCode::Char('W'), KeyEventKind::Release), true);
+        input.key(key(KeyCode::Char('w'), KeyEventKind::Repeat), true);
+        assert_eq!(input.step_axis(true), 0., "a repeat cannot re-arm movement");
+
+        input.key(key(KeyCode::Up, KeyEventKind::Press), true);
+        assert_eq!(input.step_axis(true), -1.);
+        input.key(key(KeyCode::Char('w'), KeyEventKind::Press), true);
+        input.key(key(KeyCode::Up, KeyEventKind::Release), true);
+        input.key(key(KeyCode::Char('W'), KeyEventKind::Release), true);
+        assert_eq!(input.step_axis(true), 0., "an alias cannot re-arm a held direction");
+    }
+
+    #[test]
+    fn release_aware_unsampled_taps_coalesce_and_opposites_cancel() {
+        let mut input = Input::default();
+        for binding in [KeyCode::Down, KeyCode::Char('s'), KeyCode::Down] {
+            input.key(key(binding, KeyEventKind::Press), true);
+            input.key(key(binding, KeyEventKind::Release), true);
+        }
+        assert_eq!(input.step_axis(true), 1.);
+        assert_eq!(input.step_axis(true), 0.);
+        for binding in [KeyCode::Up, KeyCode::Down] {
+            input.key(key(binding, KeyEventKind::Press), true);
+            input.key(key(binding, KeyEventKind::Release), true);
+        }
+        assert_eq!(input.step_axis(true), 0., "opposite taps cancel");
+        assert_eq!(input.step_axis(true), 0., "nothing remains queued");
+    }
+
+    #[test]
+    fn clear_and_stop_discard_an_unsampled_tap() {
+        for stop in [false, true] {
+            let mut input = Input::default();
+            input.key(key(KeyCode::Up, KeyEventKind::Press), true);
+            input.key(key(KeyCode::Up, KeyEventKind::Release), true);
+            if stop {
+                input.key(key(KeyCode::Char('x'), KeyEventKind::Press), true);
+            } else {
+                // The live loop also uses clear on pause, restart, focus loss and resize.
+                input.clear();
+            }
+            assert_eq!(input.step_axis(true), 0.);
+        }
+    }
+
+    #[test]
+    fn latched_release_still_moves_on_every_step_until_stop() {
+        let mut input = Input::default();
+        input.key(key(KeyCode::Down, KeyEventKind::Press), false);
+        input.key(key(KeyCode::Down, KeyEventKind::Release), false);
+        assert_eq!(input.step_axis(false), 1.);
+        assert_eq!(input.step_axis(false), 1.);
+        input.key(key(KeyCode::Char('x'), KeyEventKind::Press), false);
+        assert_eq!(input.step_axis(false), 0.);
+    }
+
     #[test]
     fn stop_release_and_repeat_do_not_cancel_new_movement() {
         for releases in [true, false] {
