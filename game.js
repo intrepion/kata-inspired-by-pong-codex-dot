@@ -9,6 +9,7 @@ function createPointerButtons() {
         press(id, dir) { held.set(id, dir); },
         release(id) { held.delete(id); },
         clear() { held.clear(); },
+        owns(id) { return held.has(id); },
         has(dir) { return [...held.values()].includes(dir); },
         axis() {
             const directions = [...held.values()];
@@ -20,19 +21,53 @@ function createPointerButtons() {
 function createControls() {
     const keys = new Set(), buttons = createPointerButtons();
     let dragOwner = null;
+    // One unsampled activation per direction. Null means its owner released normally.
+    const pending = new Map();
+    const held = (dir) => buttons.has(dir)
+        || (dir === -1 ? keys.has('arrowup') || keys.has('w') : keys.has('arrowdown') || keys.has('s'));
+    const direction = (key) => key === 'arrowup' || key === 'w' ? -1 :
+        key === 'arrowdown' || key === 's' ? 1 : 0;
     return {
-        keyDown(key, repeat) { if (!repeat)
-            keys.add(key.toLowerCase()); },
+        keyDown(key, repeat) {
+            key = key.toLowerCase();
+            const dir = direction(key);
+            if (repeat || !dir)
+                return;
+            if (!held(dir) && !pending.has(dir))
+                pending.set(dir, 'movement:' + key);
+            keys.add(key);
+        },
         keyUp(key) { keys.delete(key.toLowerCase()); },
-        buttonDown(id, dir) { buttons.press(id, dir); },
-        buttonUp(id) { buttons.release(id); },
+        buttonDown(id, dir) {
+            if (!held(dir) && !pending.has(dir))
+                pending.set(dir, id);
+            buttons.press(id, dir);
+        },
+        buttonHeld(id) { return buttons.owns(id); },
+        buttonUp(id) {
+            buttons.release(id);
+            for (const [dir, owner] of pending)
+                if (owner === id)
+                    pending.set(dir, null);
+        },
+        buttonCancel(id) {
+            buttons.release(id);
+            for (const [dir, owner] of pending)
+                if (owner === id)
+                    pending.delete(dir);
+        },
         dragDown(id) { if (dragOwner === null)
             dragOwner = id; return dragOwner === id; },
         dragUp(id) { if (dragOwner === id)
             dragOwner = null; },
         dragAllowed(id) { return dragOwner === id; },
-        suspend() { keys.clear(); buttons.clear(); dragOwner = null; },
-        axis() { return Number(buttons.has(1) || keys.has('arrowdown') || keys.has('s')) - Number(buttons.has(-1) || keys.has('arrowup') || keys.has('w')); }
+        suspend() { keys.clear(); buttons.clear(); pending.clear(); dragOwner = null; },
+        axis() { return Number(held(1)) - Number(held(-1)); },
+        stepAxis() {
+            const axis = Number(held(1) || pending.has(1)) - Number(held(-1) || pending.has(-1));
+            pending.clear();
+            return axis;
+        }
     };
 }
 function createGame(random = Math.random) {
@@ -123,7 +158,7 @@ function createFrameLoop(game) {
     return {
         reset() { last = null; accumulator = 0; },
         advance(timestamp, input = 0) {
-            if (!Number.isFinite(timestamp) || !Number.isFinite(input))
+            if (!Number.isFinite(timestamp) || (typeof input !== 'function' && !Number.isFinite(input)))
                 return;
             if (last === null) {
                 last = timestamp;
@@ -134,7 +169,7 @@ function createFrameLoop(game) {
             accumulator += Math.min((timestamp - last) / 1000, .1);
             last = timestamp;
             while (accumulator + 1e-12 >= step) {
-                game.step(step, input);
+                game.step(step, typeof input === 'function' ? input() : input);
                 accumulator = Math.max(0, accumulator - step);
             }
         }
@@ -336,14 +371,19 @@ if (typeof document !== 'undefined') {
             e.stopPropagation();
             controls.buttonUp(`key:${id}:${e.key}`);
         });
-        el.addEventListener('blur', () => { controls.buttonUp(`key:${id}: `); controls.buttonUp(`key:${id}:Enter`); });
+        el.addEventListener('blur', () => { controls.buttonCancel(`key:${id}: `); controls.buttonCancel(`key:${id}:Enter`); });
         // Non-pointer activation (including an assistive-technology click) moves one bounded increment.
         el.addEventListener('click', e => {
             if (!demoRequested && game.state === 'playing' && e.detail === 0)
                 game.player = clamp(game.player + dir * 32, PADDLE_H / 2, H - PADDLE_H / 2);
         });
-        for (const event of ['pointerup', 'pointercancel', 'lostpointercapture'])
-            el.addEventListener(event, e => { controls.buttonUp(e.pointerId); });
+        el.addEventListener('pointerup', e => controls.buttonUp(e.pointerId));
+        el.addEventListener('pointercancel', e => controls.buttonCancel(e.pointerId));
+        el.addEventListener('lostpointercapture', e => {
+            // A normal pointerup is followed by lostpointercapture, not a cancellation.
+            if (controls.buttonHeld(e.pointerId))
+                controls.buttonCancel(e.pointerId);
+        });
     }
     canvas.addEventListener('pointerdown', e => {
         if (!demoRequested && game.state === 'playing' && e.pointerType !== 'mouse') {
@@ -368,7 +408,7 @@ if (typeof document !== 'undefined') {
         if (demoRequested)
             replay?.frame(t);
         else
-            loop.advance(t, controls.axis());
+            loop.advance(t, controls.stepAxis);
         draw();
         sync();
         if (replay && replay.manifest.captures.includes(replay.tick) && !captures.some(c => c.tick === replay.tick))

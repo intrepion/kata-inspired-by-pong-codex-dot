@@ -29,7 +29,7 @@ interface Game {
 }
 interface FrameLoop {
     reset(): void;
-    advance(timestamp: number, input?: number): void;
+    advance(timestamp: number, input?: number | (() => number)): void;
 }
 // The simulation uses seconds and court coordinates so its pace is frame-rate independent.
 const W = 900, H = 500, PADDLE_H = 90, PADDLE_W = 12, BALL = 8, WIN = 7;
@@ -41,6 +41,7 @@ function createPointerButtons() {
         press(id: number | string, dir: -1 | 1) { held.set(id, dir); },
         release(id: number | string) { held.delete(id); },
         clear() { held.clear(); },
+        owns(id: number | string) { return held.has(id); },
         has(dir: -1 | 1) { return [...held.values()].includes(dir); },
         axis() {
             const directions = [...held.values()];
@@ -52,16 +53,44 @@ function createPointerButtons() {
 function createControls() {
     const keys = new Set<string>(), buttons = createPointerButtons();
     let dragOwner: number | null = null;
+    // One unsampled activation per direction. Null means its owner released normally.
+    const pending = new Map<-1 | 1, number | string | null>();
+    const held = (dir: -1 | 1) => buttons.has(dir)
+        || (dir === -1 ? keys.has('arrowup') || keys.has('w') : keys.has('arrowdown') || keys.has('s'));
+    const direction = (key: string) => key === 'arrowup' || key === 'w' ? -1 :
+        key === 'arrowdown' || key === 's' ? 1 : 0;
     return {
-        keyDown(key: string, repeat: boolean) { if (!repeat) keys.add(key.toLowerCase()); },
+        keyDown(key: string, repeat: boolean) {
+            key = key.toLowerCase();
+            const dir = direction(key);
+            if (repeat || !dir) return;
+            if (!held(dir) && !pending.has(dir)) pending.set(dir, 'movement:' + key);
+            keys.add(key);
+        },
         keyUp(key: string) { keys.delete(key.toLowerCase()); },
-        buttonDown(id: number | string, dir: -1 | 1) { buttons.press(id, dir); },
-        buttonUp(id: number | string) { buttons.release(id); },
+        buttonDown(id: number | string, dir: -1 | 1) {
+            if (!held(dir) && !pending.has(dir)) pending.set(dir, id);
+            buttons.press(id, dir);
+        },
+        buttonHeld(id: number | string) { return buttons.owns(id); },
+        buttonUp(id: number | string) {
+            buttons.release(id);
+            for (const [dir, owner] of pending) if (owner === id) pending.set(dir, null);
+        },
+        buttonCancel(id: number | string) {
+            buttons.release(id);
+            for (const [dir, owner] of pending) if (owner === id) pending.delete(dir);
+        },
         dragDown(id: number) { if (dragOwner === null) dragOwner = id; return dragOwner === id; },
         dragUp(id: number) { if (dragOwner === id) dragOwner = null; },
         dragAllowed(id: number) { return dragOwner === id; },
-        suspend() { keys.clear(); buttons.clear(); dragOwner = null; },
-        axis() { return Number(buttons.has(1) || keys.has('arrowdown') || keys.has('s')) - Number(buttons.has(-1) || keys.has('arrowup') || keys.has('w')); }
+        suspend() { keys.clear(); buttons.clear(); pending.clear(); dragOwner = null; },
+        axis() { return Number(held(1)) - Number(held(-1)); },
+        stepAxis() {
+            const axis = Number(held(1) || pending.has(1)) - Number(held(-1) || pending.has(-1));
+            pending.clear();
+            return axis;
+        }
     };
 }
 function createGame(random: () => number = Math.random): Game {
@@ -140,7 +169,7 @@ function createFrameLoop(game: Game): FrameLoop {
     return {
         reset() { last = null; accumulator = 0; },
         advance(timestamp, input = 0) {
-            if (!Number.isFinite(timestamp) || !Number.isFinite(input))
+            if (!Number.isFinite(timestamp) || (typeof input !== 'function' && !Number.isFinite(input)))
                 return;
             if (last === null) {
                 last = timestamp;
@@ -151,7 +180,7 @@ function createFrameLoop(game: Game): FrameLoop {
             accumulator += Math.min((timestamp - last) / 1000, .1);
             last = timestamp;
             while (accumulator + 1e-12 >= step) {
-                game.step(step, input);
+                game.step(step, typeof input === 'function' ? input() : input);
                 accumulator = Math.max(0, accumulator - step);
             }
         }
@@ -271,13 +300,17 @@ if (typeof document !== 'undefined') {
         el.addEventListener('keyup', e => { if (e.key !== ' ' && e.key !== 'Enter') return;
             e.preventDefault(); e.stopPropagation(); controls.buttonUp(`key:${id}:${e.key}`);
         });
-        el.addEventListener('blur', () => { controls.buttonUp(`key:${id}: `); controls.buttonUp(`key:${id}:Enter`); });
+        el.addEventListener('blur', () => { controls.buttonCancel(`key:${id}: `); controls.buttonCancel(`key:${id}:Enter`); });
         // Non-pointer activation (including an assistive-technology click) moves one bounded increment.
         el.addEventListener('click', e => { if (!demoRequested && game.state === 'playing' && e.detail === 0)
             game.player = clamp(game.player + dir * 32, PADDLE_H / 2, H - PADDLE_H / 2);
         });
-        for (const event of ['pointerup', 'pointercancel', 'lostpointercapture'] as const)
-            el.addEventListener(event, e => { controls.buttonUp(e.pointerId); });
+        el.addEventListener('pointerup', e => controls.buttonUp(e.pointerId));
+        el.addEventListener('pointercancel', e => controls.buttonCancel(e.pointerId));
+        el.addEventListener('lostpointercapture', e => {
+            // A normal pointerup is followed by lostpointercapture, not a cancellation.
+            if (controls.buttonHeld(e.pointerId)) controls.buttonCancel(e.pointerId);
+        });
     }
     canvas.addEventListener('pointerdown', e => { if (!demoRequested && game.state === 'playing' && e.pointerType !== 'mouse') {
         if (controls.dragDown(e.pointerId)) canvas.setPointerCapture(e.pointerId);
@@ -290,7 +323,7 @@ if (typeof document !== 'undefined') {
         game.player = clamp((e.clientY - rect.top) / rect.height * H, PADDLE_H / 2, H - PADDLE_H / 2);
     } });
     function draw() { ctx.fillStyle = '#153f37'; ctx.fillRect(0, 0, W, H); ctx.strokeStyle = '#a8e6bb30'; ctx.lineWidth = 2; ctx.setLineDash([12, 16]); ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke(); ctx.setLineDash([]); ctx.strokeStyle = '#a8e6bb25'; ctx.beginPath(); ctx.arc(W / 2, H / 2, 70, 0, Math.PI * 2); ctx.stroke(); ctx.fillStyle = '#d9ffae'; ctx.fillRect(32, game.player - PADDLE_H / 2, PADDLE_W, PADDLE_H); ctx.fillStyle = '#e3f3e7'; ctx.fillRect(W - 44, game.cpu - PADDLE_H / 2, PADDLE_W, PADDLE_H); ctx.beginPath(); ctx.arc(game.ball.x, game.ball.y, BALL, 0, Math.PI * 2); ctx.fill(); }
-    function frame(t: number) { if(demoRequested) replay?.frame(t); else loop.advance(t, controls.axis()); draw(); sync();
+    function frame(t: number) { if(demoRequested) replay?.frame(t); else loop.advance(t, controls.stepAxis); draw(); sync();
         if(replay && replay.manifest.captures.includes(replay.tick) && !captures.some(c=>c.tick===replay!.tick)) captures.push({tick:replay.tick,png:canvas.toDataURL('image/png')});
         if(replay?.finished) {
             if(!exported) { exported=true; const evidence={kind:'original TS state and own Canvas2D; not Rust-identical or desktop QA',reports:replay.reports,actions:replay.actions,captures};
