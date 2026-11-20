@@ -49,6 +49,12 @@ impl Default for App {
 }
 impl App {
     pub fn tick(&mut self, seconds: f32) {
+        let axis = self.down as u8 as f32 - self.up as u8 as f32;
+        self.tick_with_axis(seconds, || axis);
+    }
+
+    /// Sample input once per simulation step, never on a zero-step frame.
+    pub fn tick_with_axis(&mut self, seconds: f32, mut axis: impl FnMut() -> f32) {
         if !seconds.is_finite() {
             return;
         }
@@ -59,8 +65,7 @@ impl App {
         }
         self.acc += seconds.clamp(0., 0.1);
         while self.acc >= 1. / 120. {
-            self.game
-                .step(1. / 120., self.down as u8 as f32 - self.up as u8 as f32);
+            self.game.step(1. / 120., axis());
             self.acc -= 1. / 120.;
         }
     }
