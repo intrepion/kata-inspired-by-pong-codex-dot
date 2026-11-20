@@ -4,10 +4,21 @@ use pong_core::{Game, State, BALL, H, PADDLE_H, PADDLE_W, W};
 struct MovementGate {
     suppressed: [bool; 4],
     was_playing: bool,
+    held: [bool; 2],
+    pending: [bool; 2],
 }
 impl MovementGate {
     fn finish_frame(&mut self, state: State) {
         self.was_playing &= state == State::Playing;
+        if !self.was_playing {
+            self.held = [false; 2];
+            self.pending = [false; 2];
+        }
+    }
+
+    fn step_axis(&mut self) -> f32 {
+        let [up, down] = std::mem::take(&mut self.pending);
+        (self.held[1] || down) as u8 as f32 - (self.held[0] || up) as u8 as f32
     }
 }
 fn restart_game(game: &mut Game, gate: &mut MovementGate) {
@@ -39,21 +50,55 @@ fn apply_timed_actions(game: &mut Game, movement: &mut MovementGate, lost_focus:
     apply_frame_actions(game, movement, lost_focus, actions);
     if lost_focus || before != game.state || actions[1] {
         *accumulator = 0.;
+        movement.pending = [false; 2];
         0.
     } else {
         elapsed.min(0.1)
     }
 }
-fn movement_axis(game: &Game, gate: &mut MovementGate, held: [bool; 4], lost_focus: bool) -> f32 {
+fn sample_movement(
+    game: &Game,
+    gate: &mut MovementGate,
+    held: [bool; 4],
+    pressed: [bool; 4],
+    lost_focus: bool,
+) {
     let playing = game.state == State::Playing;
     let suppress = lost_focus || !playing || !gate.was_playing;
     gate.was_playing = playing;
     for (blocked, down) in gate.suppressed.iter_mut().zip(held) {
         *blocked = down && (suppress || *blocked);
     }
-    let active = std::array::from_fn::<_, 4, _>(|i| held[i] && !gate.suppressed[i]);
-    (active[2] || active[3]) as u8 as f32 - (active[0] || active[1]) as u8 as f32
+    if suppress {
+        gate.pending = [false; 2];
+    }
+    // One unsampled press per direction. A held alias cannot queue a trailing step.
+    for dir in 0..2 {
+        let indices = dir * 2..dir * 2 + 2;
+        if !suppress && !gate.held[dir] &&
+            indices.clone().any(|i| pressed[i] && !gate.suppressed[i])
+        {
+            gate.pending[dir] = true;
+        }
+        gate.held[dir] = indices.into_iter().any(|i| held[i] && !gate.suppressed[i]);
+    }
 }
+
+#[cfg(test)]
+fn movement_axis(game: &Game, gate: &mut MovementGate, held: [bool; 4], lost_focus: bool) -> f32 {
+    sample_movement(game, gate, held, [false; 4], lost_focus);
+    gate.held[1] as u8 as f32 - gate.held[0] as u8 as f32
+}
+
+fn advance_live(acc: &mut f32, elapsed: f32, gate: &mut MovementGate, mut step: impl FnMut(f32, f32)) {
+    const DT: f32 = 1. / 120.;
+    *acc += elapsed;
+    while *acc >= DT {
+        step(DT, gate.step_axis());
+        *acc -= DT;
+    }
+}
+
 #[derive(Default)]
 struct FocusEvents {
     lost: bool,
@@ -111,17 +156,6 @@ async fn main() {
                 is_key_pressed(KeyCode::KpEnter),
             ], &mut accumulator, get_frame_time());
         }
-        let input = movement_axis(
-            &g,
-            &mut movement,
-            [
-                is_key_down(KeyCode::Up),
-                is_key_down(KeyCode::W),
-                is_key_down(KeyCode::Down),
-                is_key_down(KeyCode::S),
-            ],
-            lost_focus,
-        );
         if benchmarking {
             accumulator += get_frame_time().min(0.1);
             while accumulator >= pong_scenario::STEP {
@@ -135,11 +169,9 @@ async fn main() {
         } else if let Some(demo) = &mut demo {
             demo.advance(&mut g, get_frame_time());
         } else {
-            accumulator += live_elapsed;
-            while accumulator >= 1. / 120. {
-                g.step(1. / 120., input);
-                accumulator -= 1. / 120.;
-            }
+            let keys = [KeyCode::Up, KeyCode::W, KeyCode::Down, KeyCode::S];
+            sample_movement(&g, &mut movement, keys.map(is_key_down), keys.map(is_key_pressed), lost_focus);
+            advance_live(&mut accumulator, live_elapsed, &mut movement, |dt, axis| g.step(dt, axis));
             movement.finish_frame(g.state);
         }
         clear_background(Color::from_hex(0x0c211e));
@@ -422,6 +454,70 @@ mod active_restart_tests {
             movement_axis(&game, &mut gate, held, false);
             held[i] = true;
             assert_ne!(movement_axis(&game, &mut gate, held, false), 0.);
+        }
+    }
+}
+
+
+#[cfg(test)]
+mod quick_tap_tests {
+    use super::*;
+
+    fn playing() -> (Game, MovementGate) {
+        let mut game = Game::new(42);
+        let mut gate = MovementGate::default();
+        game.start();
+        sample_movement(&game, &mut gate, [false; 4], [false; 4], false);
+        (game, gate)
+    }
+
+    #[test]
+    fn a_press_released_before_sampling_survives_a_zero_step_frame() {
+        let (game, mut gate) = playing();
+        let mut acc = 0.;
+        let mut axes = Vec::new();
+        // Backend press survives keyup through the frame, but the held bit is false.
+        sample_movement(&game, &mut gate, [false; 4], [true, false, false, false], false);
+        advance_live(&mut acc, 0.004, &mut gate, |_, axis| axes.push(axis));
+        assert!(axes.is_empty());
+
+        sample_movement(&game, &mut gate, [false; 4], [false; 4], false);
+        advance_live(&mut acc, 0.022, &mut gate, |_, axis| axes.push(axis));
+        assert_eq!(axes, [-1., 0., 0.]);
+    }
+
+    #[test]
+    fn held_input_survives_catch_up_and_its_alias_adds_no_tail() {
+        let (game, mut gate) = playing();
+        let mut acc = 0.;
+        let mut axes = Vec::new();
+        let up = [true, false, false, false];
+        sample_movement(&game, &mut gate, up, up, false);
+        advance_live(&mut acc, 0.026, &mut gate, |_, axis| axes.push(axis));
+        assert_eq!(axes, [-1., -1., -1.]);
+        let w = [false, true, false, false];
+        sample_movement(&game, &mut gate, [false; 4], w, false);
+        assert_eq!(gate.step_axis(), 0.);
+    }
+
+    #[test]
+    fn opposing_taps_cancel_and_pause_restart_or_focus_discard_unsampled_pulses() {
+        let (game, mut gate) = playing();
+        sample_movement(&game, &mut gate, [false; 4], [true; 4], false);
+        assert_eq!(gate.step_axis(), 0.);
+        assert_eq!(gate.step_axis(), 0.);
+        for (actions, lost_focus) in [
+            ([false, false, true, false, false], false),
+            ([false, true, false, false, false], false),
+            ([false; 5], true),
+        ] {
+            let (mut game, mut gate) = playing();
+            sample_movement(&game, &mut gate, [false; 4], [true, false, false, false], false);
+            let mut acc = 0.004;
+            apply_timed_actions(&mut game, &mut gate, lost_focus, actions, &mut acc, 0.004);
+            sample_movement(&game, &mut gate, [false; 4], [false; 4], lost_focus);
+            assert_eq!(acc, 0.);
+            assert_eq!(gate.step_axis(), 0., "{actions:?} {lost_focus}");
         }
     }
 }
