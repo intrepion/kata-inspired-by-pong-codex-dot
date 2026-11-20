@@ -535,6 +535,146 @@ mod court_clip_tests {
     }
 }
 
+#[derive(Default)]
+struct LiveInput {
+    held: [bool; 4],
+    pending: [bool; 2],
+    pressed: std::collections::HashSet<Key>,
+}
+
+impl LiveInput {
+    fn event(&mut self, game: &mut Game, focused: &mut bool, event: &Event,
+             clock: &mut UpdateClock, now: Instant) {
+        if let Some(Button::Keyboard(key)) = event.press_args() {
+            let before = game.state;
+            let held_before = self.directions();
+            if focused_key_press(game, &mut self.held, &mut self.pressed, *focused, key) {
+                clock.reset(now);
+                if key == Key::R || game.state != before {
+                    self.pending = [false; 2];
+                }
+            }
+            // Fold fresh direction presses into one pulse each until physics samples them.
+            let held_after = self.directions();
+            for direction in 0..2 {
+                self.pending[direction] |= !held_before[direction] && held_after[direction];
+            }
+        }
+        if let Some(Button::Keyboard(key)) = event.release_args() {
+            key_release(&mut self.held, &mut self.pressed, key);
+        }
+        if let Some(now_focused) = event.focus_args() {
+            *focused = now_focused;
+            if !*focused {
+                game.pause();
+                *self = Self::default();
+                clock.reset(now);
+            }
+        }
+    }
+
+    fn directions(&self) -> [bool; 2] {
+        [self.held[0] || self.held[1], self.held[2] || self.held[3]]
+    }
+
+    fn step_axis(&mut self) -> f32 {
+        let [up, down] = self.directions();
+        let [tap_up, tap_down] = std::mem::take(&mut self.pending);
+        (down || tap_down) as u8 as f32 - (up || tap_up) as u8 as f32
+    }
+}
+
+#[cfg(test)]
+mod quick_tap_tests {
+    use super::*;
+
+    fn key_event(key: Key, state: ButtonState) -> Event {
+        Event::Input(Input::Button(ButtonArgs {
+            state, button: Button::Keyboard(key), scancode: None,
+        }), None)
+    }
+
+    #[test]
+    fn quick_tap_moves_on_first_physics_step_after_zero_step_update() {
+        let time = Instant::now();
+        let mut clock = UpdateClock::new(time);
+        let mut game = Game::new(42);
+        let mut input = LiveInput::default();
+        let mut focused = true;
+        game.start();
+        for state in [ButtonState::Press, ButtonState::Release] {
+            input.event(&mut game, &mut focused, &key_event(Key::W, state), &mut clock, time);
+        }
+        assert_eq!(clock.steps(0.004), 0);
+        let sampled: Vec<_> = (0..clock.steps(0.022)).map(|_| input.step_axis()).collect();
+        assert_eq!(sampled, [-1., 0., 0.]);
+    }
+
+    #[test]
+    fn held_input_moves_each_step_and_aliases_do_not_queue_a_tail() {
+        let now = Instant::now();
+        let mut clock = UpdateClock::new(now);
+        let mut game = Game::new(42);
+        let mut input = LiveInput::default();
+        let mut focused = true;
+        game.start();
+        for (key, state) in [(Key::W, ButtonState::Press), (Key::W, ButtonState::Press)] {
+            input.event(&mut game, &mut focused, &key_event(key, state), &mut clock, now);
+        }
+        let sampled: Vec<_> = (0..clock.steps(0.026)).map(|_| input.step_axis()).collect();
+        assert_eq!(sampled, [-1., -1., -1.]);
+        for (key, state) in [
+            (Key::Up, ButtonState::Press),
+            (Key::W, ButtonState::Release),
+            (Key::Up, ButtonState::Release),
+        ] {
+            input.event(&mut game, &mut focused, &key_event(key, state), &mut clock, now);
+        }
+        assert_eq!(input.step_axis(), 0.);
+    }
+
+    #[test]
+    fn pause_restart_and_focus_loss_discard_pending_pulses() {
+        for action in [
+            key_event(Key::Space, ButtonState::Press),
+            key_event(Key::R, ButtonState::Press),
+            Event::Input(Input::Focus(false), None),
+        ] {
+            let now = Instant::now();
+            let mut clock = UpdateClock::new(now);
+            let mut game = Game::new(42);
+            let mut input = LiveInput::default();
+            let mut focused = true;
+            game.start();
+            for state in [ButtonState::Press, ButtonState::Release] {
+                input.event(&mut game, &mut focused, &key_event(Key::W, state), &mut clock, now);
+            }
+            assert_eq!(clock.steps(0.004), 0);
+            input.event(&mut game, &mut focused, &action, &mut clock, now);
+            assert_eq!(clock.steps(0.004), 0);
+            assert_eq!(input.step_axis(), 0.);
+        }
+    }
+
+    #[test]
+    fn opposite_quick_taps_cancel() {
+        let now = Instant::now();
+        let mut clock = UpdateClock::new(now);
+        let mut game = Game::new(42);
+        let mut input = LiveInput::default();
+        let mut focused = true;
+        game.start();
+        for key in [Key::W, Key::S] {
+            for state in [ButtonState::Press, ButtonState::Release] {
+                input.event(&mut game, &mut focused, &key_event(key, state), &mut clock, now);
+            }
+        }
+        assert_eq!(input.step_axis(), 0.);
+        assert_eq!(input.step_axis(), 0.);
+    }
+
+}
+
 fn main() {
     let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     let mut window: PistonWindow = WindowSettings::new(
@@ -550,30 +690,13 @@ fn main() {
     let mut scenario = pong_scenario::Scenario::default();
     let mut benchmark: Option<pong_benchmark::Frames> = None;
     let mut demo = pong_scenario::Demo::from_args();
-    let mut held = [false; 4];
-    let mut pressed = std::collections::HashSet::new();
+    let mut input = LiveInput::default();
     let mut clock = UpdateClock::new(Instant::now());
     let mut last_title = String::new();
     let mut focused = true;
     while let Some(e) = window.next() {
         if demo.is_none() && !benchmarking {
-            if let Some(Button::Keyboard(key)) = e.press_args() {
-                if focused_key_press(&mut game, &mut held, &mut pressed, focused, key) {
-                    clock.reset(Instant::now());
-                }
-            }
-            if let Some(Button::Keyboard(key)) = e.release_args() {
-                key_release(&mut held, &mut pressed, key);
-            }
-            if let Some(now_focused) = e.focus_args() {
-                focused = now_focused;
-                if !focused {
-                    game.pause();
-                    held = [false; 4];
-                    pressed.clear();
-                    clock.reset(Instant::now());
-                }
-            }
+            input.event(&mut game, &mut focused, &e, &mut clock, Instant::now());
         }
         if e.update_args().is_some() {
             let elapsed = clock.elapsed(Instant::now());
@@ -588,10 +711,7 @@ fn main() {
                         }
                         scenario.advance(&mut game);
                     } else {
-                        game.step(
-                            1. / 120.,
-                            (held[2] || held[3]) as u8 as f32 - (held[0] || held[1]) as u8 as f32,
-                        );
+                        game.step(1. / 120., input.step_axis());
                     }
                 }
             }
