@@ -49,10 +49,20 @@ fn court_message(game: &Game) -> Option<&'static str> {
     }
 }
 
+const MOVEMENT_KEYS: [KeyboardKey; 4] = [
+    KeyboardKey::KEY_UP, KeyboardKey::KEY_W, KeyboardKey::KEY_DOWN, KeyboardKey::KEY_S,
+];
+fn record_movement_press(key_code: u32, pressed: &mut [bool; 4]) {
+    if let Some(i) = MOVEMENT_KEYS.iter().position(|key| *key as u32 == key_code) {
+        pressed[i] = true;
+    }
+}
 #[derive(Default)]
 struct MovementGate {
     suppressed: [bool; 4],
     was_playing: bool,
+    held: [bool; 2],
+    pending: [bool; 2],
 }
 #[derive(Default)]
 struct ActionGate { suppressed: [bool; 5], resample: bool }
@@ -68,19 +78,45 @@ impl ActionGate {
     }
 }
 impl MovementGate {
+    fn next_axis(&mut self) -> f32 {
+        let [up, down] = std::mem::take(&mut self.pending);
+        (self.held[1] || down) as u8 as f32 - (self.held[0] || up) as u8 as f32
+    }
+    fn sample_live(&mut self, game: &mut Game, held: [bool; 4],
+                   fresh: [bool; 4], pause_pressed: bool) {
+        let active = game.state == State::Playing && self.was_playing && !pause_pressed;
+        let was_held = self.held;
+        let blocked = self.suppressed;
+        movement_with_pause(game, self, held, pause_pressed);
+        if active {
+            let accepted = |i: usize| fresh[i] && !blocked[i] && !self.suppressed[i];
+            for (direction, previously_held) in was_held.into_iter().enumerate() {
+                let i = direction * 2;
+                self.pending[direction] |= !previously_held && (accepted(i) || accepted(i + 1));
+            }
+        } else {
+            self.pending = [false; 2];
+        }
+    }
     fn finish_frame(&mut self, state: State) {
         self.was_playing &= state == State::Playing;
+        if !self.was_playing {
+            self.pending = [false; 2];
+            self.held = [false; 2];
+        }
     }
     fn axis(&mut self, held: [bool; 4], entering_pause: bool) -> f32 {
         for (blocked, down) in self.suppressed.iter_mut().zip(held) {
             *blocked = down && (entering_pause || *blocked);
         }
         let active = std::array::from_fn::<_, 4, _>(|i| held[i] && !self.suppressed[i]);
-        (active[2] || active[3]) as u8 as f32 - (active[0] || active[1]) as u8 as f32
+        self.held = [active[0] || active[1], active[2] || active[3]];
+        self.held[1] as u8 as f32 - self.held[0] as u8 as f32
     }
 }
 fn restart(game: &mut Game, movement: &mut MovementGate) {
     movement.was_playing = false;
+    movement.pending = [false; 2];
     game.start();
 }
 fn movement_with_pause(
@@ -103,6 +139,7 @@ fn movement_with_pause(
 }
 fn lose_focus(game: &mut Game, movement: &mut MovementGate, accumulator: &mut f32) {
     movement.was_playing = false;
+    movement.pending = [false; 2];
     game.pause();
     *accumulator = 0.;
 }
@@ -112,7 +149,7 @@ fn step_live_frame(
     before: State,
     restarted: bool,
     elapsed: f32,
-    axis: f32,
+    mut axis: impl FnMut() -> f32,
 ) {
     if restarted || before != game.state || game.state != State::Playing {
         // The polling callback reports time from before this frame's actions.
@@ -125,7 +162,7 @@ fn step_live_frame(
     let step = 1. / 120.;
     *accumulator += elapsed.clamp(0., 0.1);
     while *accumulator >= step && game.state == State::Playing {
-        game.step(step, axis);
+        game.step(step, axis());
         *accumulator -= step;
     }
     if game.state != State::Playing {
@@ -169,20 +206,20 @@ fn main() {
             if restart_pressed {
                 restart(&mut game, &mut movement);
             }
-            let axis = movement_with_pause(
+            let mut fresh = [false; 4];
+            // GLFW queues fresh presses even when a release already cleared the snapshot.
+            while let Some(key_code) = window.get_key_pressed_number() {
+                record_movement_press(key_code, &mut fresh);
+            }
+            movement.sample_live(
                 &mut game,
-                &mut movement,
-                [
-                    window.is_key_down(KeyboardKey::KEY_UP),
-                    window.is_key_down(KeyboardKey::KEY_W),
-                    window.is_key_down(KeyboardKey::KEY_DOWN),
-                    window.is_key_down(KeyboardKey::KEY_S),
-                ],
+                MOVEMENT_KEYS.map(|key| window.is_key_down(key)),
+                fresh,
                 pause_pressed,
             );
             step_live_frame(
                 &mut game, &mut accumulator, state_before_actions, restart_pressed,
-                window.get_frame_time(), axis,
+                window.get_frame_time(), || movement.next_axis(),
             );
             movement.finish_frame(game.state);
         }
@@ -612,14 +649,96 @@ mod tests {
             assert_eq!(game.state, expected);
             let player = game.player;
             let serve = game.serve;
-            step_live_frame(&mut game, &mut accumulator, before, restart_pressed, 0.1, 1.);
+            step_live_frame(&mut game, &mut accumulator, before, restart_pressed, 0.1, || 1.);
             assert_eq!((game.player, game.serve, accumulator), (player, serve, 0.));
             if game.state == State::Playing {
-                step_live_frame(&mut game, &mut accumulator, State::Playing, false, 0.004, 1.);
+                step_live_frame(&mut game, &mut accumulator, State::Playing, false, 0.004, || 1.);
                 assert_eq!(game.player, player);
-                step_live_frame(&mut game, &mut accumulator, State::Playing, false, 0.006, 1.);
+                step_live_frame(&mut game, &mut accumulator, State::Playing, false, 0.006, || 1.);
                 assert!(game.player > player);
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod quick_tap_tests {
+    use super::*;
+    const STEP: f32 = 1. / 120.;
+
+    fn frame(game: &mut Game, gate: &mut MovementGate, acc: &mut f32,
+             held: [bool; 4], queue: &[KeyboardKey], elapsed: f32) {
+        let mut fresh = [false; 4];
+        for key in queue { record_movement_press(*key as u32, &mut fresh); }
+        gate.sample_live(game, held, fresh, false);
+        step_live_frame(game, acc, State::Playing, false, elapsed, || gate.next_axis());
+        gate.finish_frame(game.state);
+    }
+    #[test]
+    fn held_motion_aliases_and_opposing_queued_taps() {
+        let mut game = Game::new(42);
+        game.start();
+        let mut movement = MovementGate::default();
+        let mut acc = 0.;
+        frame(&mut game, &mut movement, &mut acc, [false; 4], &[], 0.);
+        let start = game.player;
+        frame(&mut game, &mut movement, &mut acc, [false; 4],
+              &[KeyboardKey::KEY_UP, KeyboardKey::KEY_W, KeyboardKey::KEY_S], STEP);
+        assert_eq!(game.player, start);
+        let mut expected = game.clone();
+        for _ in 0..3 { expected.step(STEP, -1.); }
+        frame(&mut game, &mut movement, &mut acc, [true, false, false, false],
+              &[KeyboardKey::KEY_UP], 3.25 * STEP);
+        assert_eq!(game.player, expected.player);
+        frame(&mut game, &mut movement, &mut acc, [false; 4],
+              &[KeyboardKey::KEY_W], STEP);
+        assert_eq!(game.player, expected.player, "alias must not leave a tail");
+    }
+
+    #[test]
+    fn pending_taps_do_not_survive_transitions() {
+        for transition in 0..3 {
+            let mut game = Game::new(42);
+            game.start();
+            let mut movement = MovementGate::default();
+            let mut acc = 0.;
+            frame(&mut game, &mut movement, &mut acc, [false; 4], &[], 0.);
+            frame(&mut game, &mut movement, &mut acc, [false; 4], &[KeyboardKey::KEY_W], 0.);
+            match transition {
+                0 => lose_focus(&mut game, &mut movement, &mut acc),
+                1 => movement.sample_live(&mut game, [false; 4], [false; 4], true),
+                _ => restart(&mut game, &mut movement),
+            }
+            if game.state == State::Paused {
+                movement.sample_live(&mut game, [false; 4], [false; 4], true);
+            }
+            let before = game.player;
+            frame(&mut game, &mut movement, &mut acc, [false; 4], &[], 3.25 * STEP);
+            assert_eq!(game.player, before);
+        }
+    }
+
+    #[test]
+    fn released_queued_taps_move_once_after_zero_step_frame() {
+        let mut lost = Vec::new();
+        for (key, expected_axis) in [(KeyboardKey::KEY_UP, -1.), (KeyboardKey::KEY_W, -1.),
+                                     (KeyboardKey::KEY_DOWN, 1.), (KeyboardKey::KEY_S, 1.)] {
+            let mut game = Game::new(42);
+            game.start();
+            let mut movement = MovementGate::default();
+            let mut acc = 0.;
+            let origin = game.player;
+            let mut expected = game.clone();
+            expected.step(STEP, expected_axis);
+            frame(&mut game, &mut movement, &mut acc, [false; 4], &[], 0.);
+            frame(&mut game, &mut movement, &mut acc, [false; 4], &[key], 0.25 * STEP);
+            assert_eq!(game.player, origin);
+            frame(&mut game, &mut movement, &mut acc, [false; 4], &[], 3. * STEP);
+            if game.player != expected.player { lost.push((key, game.player, expected.player)); }
+            let settled = game.player;
+            frame(&mut game, &mut movement, &mut acc, [false; 4], &[], STEP);
+            assert_eq!(game.player, settled);
+        }
+        assert!(lost.is_empty(), "{lost:?}");
     }
 }
