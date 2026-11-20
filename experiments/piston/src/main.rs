@@ -67,7 +67,7 @@ fn text_cells(message: &str, left: f64, top: f64, cell: f64) -> Vec<[f64; 4]> {
     result
 }
 fn small_text_cell(scale: f64) -> f64 {
-    if scale > 0.0 { (1.0 / scale).clamp(2.0, 8.0) } else { 2.0 }
+    if scale.is_finite() && scale > 0.0 { (1.5 / scale).clamp(2.0, 8.0) } else { 2.0 }
 }
 fn score_owner_cells(scale: f64) -> Vec<[f64; 4]> {
     let cell = small_text_cell(scale);
@@ -206,6 +206,28 @@ mod control_tests {
         let cells = score_owner_cells(scale);
         assert!(!cells.is_empty());
         assert!(cells.iter().all(|cell| cell[2] * scale >= 1.0 && cell[3] * scale >= 1.0));
+    }
+    #[test]
+    fn viewport_bumps_small_text_and_keeps_backing_clear_of_indicator() {
+        let game = Game::new(42);
+        for size in [[225., 125.], [900., 500.], [1800., 1000.]] {
+            let scale = (size[0] / W as f64).min(size[1] / H as f64);
+            let cell = small_text_cell(scale);
+            assert!(cell * scale >= 1.5);
+            assert_eq!(cell, if scale < 1. { 6. } else { 2. });
+            let owners = score_owner_cells(scale);
+            assert!(owners.iter().all(|[x, y, w, h]| *x >= 0. && *y >= 0.
+                && x+w <= W as f64 && y+h <= H as f64));
+            let indicator = indicator_backing(&game).unwrap();
+            for state in [State::Ready, State::Paused, State::Over] {
+                let [left, top, width, height] = hint_backing(state, scale).unwrap();
+                assert!(left >= 0. && left+width <= W as f64 && top+height <= H as f64);
+                assert!(top > indicator[1]+indicator[3]);
+                for [x, y, w, h] in hint_cells(state, scale) {
+                    assert!(x >= left && x+w <= left+width && y >= top && y+h <= top+height);
+                }
+            }
+        }
     }
     #[test]
     fn court_labels_identify_scores_and_actions_without_title() {
