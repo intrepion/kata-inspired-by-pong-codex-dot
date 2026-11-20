@@ -1,6 +1,7 @@
 import test from 'node:test';import assert from 'node:assert/strict';
 import{mkdtempSync,readFileSync,readdirSync,writeFileSync,mkdirSync,rmSync,existsSync}from'node:fs';
-import{tmpdir}from'node:os';import{join}from'node:path';import{spawnSync}from'node:child_process';
+import{tmpdir}from'node:os';
+import{createHash}from'node:crypto';import{join}from'node:path';import{spawnSync}from'node:child_process';
 import{packagePortable}from'./linux-portable.mjs';
 const linux=process.platform==='linux',rev='a'.repeat(40);
 function sandbox(t){const p=mkdtempSync(join(tmpdir(),'pong-portable-unit-'));t.after(()=>rmSync(p,{recursive:true,force:true}));return p;}
@@ -46,3 +47,43 @@ test('rejects truncated, non-ELF and wrong-format executables before output',{sk
 });
 
 test('excluded adapters are rejected before staging',{skip:!linux},t=>{const root=sandbox(t);for(const adapter of ['tauri','yew-tauri','leptos-tauri','fyrox','gpui','slint']){const out=join(root,adapter);assert.throws(()=>packagePortable(adapter,'/bin/true',out,rev),/Unsupported adapter/);assert.equal(existsSync(out),false);}});
+
+test('archived executable and all reported hashes use the verified staged bytes',{skip:!linux},t=>{
+ const root=sandbox(t),input='/bin/true',out=join(root,'output'),unpack=join(root,'unpack');
+ const r=packagePortable('ratatui',input,out,rev);
+ mkdirSync(unpack);assert.equal(spawnSync('tar',['-xzf',r.archive,'-C',unpack]).status,0);
+ const stage=join(unpack,readdirSync(unpack)[0]),archived=readFileSync(join(stage,'pong-ratatui'));
+ const hash=createHash('sha256').update(archived).digest('hex');
+ assert.deepEqual(archived,readFileSync(input));
+ assert.equal(r.binary_sha256,hash);
+ assert.match(readFileSync(join(stage,'BUILD-INFO.txt'),'utf8'),new RegExp('^binary_sha256='+hash+'$','m'));
+ assert.equal(spawnSync('sha256sum',['-c','SHA256SUMS'],{cwd:stage}).status,0);
+ assert.deepEqual(readdirSync(root).sort(),['output','unpack']);
+});
+test('rejects a truncated executable file and leaves no staged output',{skip:!linux},t=>{
+ const root=sandbox(t),binary=join(root,'incomplete'),out=join(root,'output');
+ const complete=readFileSync('/bin/true');
+ const incomplete=complete.subarray(0,Math.floor(complete.length/2));
+ writeFileSync(binary,incomplete,{mode:0o755});
+ assert.throws(()=>packagePortable('ratatui',binary,out,rev),/ELF format or architecture verification failed/);
+ assert.deepEqual(readdirSync(root),['incomplete']);
+ assert.deepEqual(readFileSync(binary),incomplete);
+});
+
+for(const [kind,flags,valid] of [
+ ['dynamic-pie',['-fPIE','-pie'],true],
+ ['static-pie',['-static-pie'],true],
+ ['shared-library',['-shared','-fPIC'],false],
+]){
+ test(kind+' ELF classification',{skip:!linux},t=>{
+  const root=sandbox(t),source=join(root,'main.c'),binary=join(root,kind),out=join(root,'out');
+  writeFileSync(source,'int main(void) { return 0; }\n');
+  const result=spawnSync('cc',[...flags,source,'-o',binary],{encoding:'utf8'});
+  if(result.error?.code==='ENOENT'||(kind==='static-pie'&&result.status!==0)){
+   t.skip('native cc/linker support is unavailable for '+kind);return;
+  }
+  assert.equal(result.status,0,result.stderr);
+  if(valid) assert.equal(existsSync(packagePortable('ratatui',binary,out,rev).archive),true);
+  else {assert.throws(()=>packagePortable('ratatui',binary,out,rev),/not an ELF executable or PIE/);assert.equal(existsSync(out),false);}
+ });
+}
