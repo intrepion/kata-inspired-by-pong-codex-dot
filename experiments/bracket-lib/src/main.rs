@@ -1,4 +1,5 @@
 //! Graphical CP437 tile renderer. Not a terminal application.
+use bracket_embedding::prelude::EMBED;
 use bracket_lib::prelude::*;
 use pong_core::{Game, State, BALL, H, PADDLE_H, PADDLE_W, W};
 use std::collections::HashSet;
@@ -356,9 +357,24 @@ fn main() -> BError {
     #[cfg(target_os = "linux")]
     configure_backend();
     let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
-    let ctx = BTermBuilder::simple(COLS, ROWS + TOP)?
-        .with_font("vga8x16.png", 8, 16)
-        .with_simple_console_no_bg(COLS, (ROWS + TOP) / 2, "vga8x16.png")
+    {
+        let mut assets = EMBED.lock();
+        assets.add_resource(
+            "resources/pong-court8x8.png".into(),
+            include_bytes!("../assets/pong-court8x8.png"),
+        );
+        assets.add_resource(
+            "resources/pong-header8x16.png".into(),
+            include_bytes!("../assets/pong-header8x16.png"),
+        );
+    }
+    let ctx = BTermBuilder::new()
+        .with_dimensions(COLS, ROWS + TOP)
+        .with_tile_dimensions(8, 8)
+        .with_font("pong-court8x8.png", 8, 8)
+        .with_simple_console(COLS, ROWS + TOP, "pong-court8x8.png")
+        .with_font("pong-header8x16.png", 8, 16)
+        .with_simple_console_no_bg(COLS, (ROWS + TOP) / 2, "pong-header8x16.png")
         .with_title("Pong bracket-lib")
         .with_fps_cap(60.)
         .with_automatic_console_resize(false)

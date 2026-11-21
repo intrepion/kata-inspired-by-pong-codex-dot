@@ -82,8 +82,6 @@ dependencies = [
 [[package]]
 name = "bracket-embedding"
 version = "0.8.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c1cb6747f25903066109a619e3d580ef5ff7b3ffc281fa51ece473e1396e2298"
 dependencies = [
  "lazy_static",
  "parking_lot 0.12.5",
@@ -1326,6 +1324,7 @@ version = "0.1.0"
 name = "pong-bracket-lib"
 version = "0.1.0"
 dependencies = [
+ "bracket-embedding",
  "bracket-lib",
  "pong-benchmark",
  "pong-core",
