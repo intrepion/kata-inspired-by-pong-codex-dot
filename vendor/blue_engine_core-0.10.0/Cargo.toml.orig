@@ -1,4 +1,4 @@
-# Local modification: pin the wgpu dependency to 29.0.4. See PATCH-PROVENANCE.txt.
+# Local modifications: pin wgpu to 29.0.4 and disable the AVIF image codec. See PATCH-PROVENANCE.txt.
 [package]
 name = "blue_engine_core"
 version = "0.10.0"
@@ -29,7 +29,7 @@ glam_fast_math = ["glam/fast-math"]
 [dependencies]
 winit = { version = "0.30.12", features = ["rwh_06"], optional = true }
 wgpu = { version = "=29.0.4" }
-image = { version = "0.25.9" }
+image = { version = "0.25.9", default-features = false, features = ["rayon", "bmp", "dds", "exr", "ff", "gif", "hdr", "ico", "jpeg", "png", "pnm", "qoi", "tga", "tiff", "webp"] }
 pollster = "0.4.0"
 bytemuck = { version = "1.24.0", features = ["derive"] }
 downcast = "0.11.0"
