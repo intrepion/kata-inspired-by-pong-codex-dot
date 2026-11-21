@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "none",
+    "module": "es2020",
+    "moduleDetection": "legacy",
     "lib": [
       "ES2020",
       "DOM"
