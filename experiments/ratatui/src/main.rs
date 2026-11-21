@@ -225,10 +225,12 @@ fn scripted_cells(args: &[String]) -> io::Result<()> {
     });
     let mut demo = pong_scenario::Demo::new(directory);
     let mut game = Game::new(42);
-    let mut term = Terminal::new(ratatui::backend::TestBackend::new(100, 30))?;
+    let mut term = Terminal::new(ratatui::backend::TestBackend::new(100, 30))
+        .expect("infallible in-memory test terminal");
     while !demo.finished() {
         demo.advance(&mut game, pong_scenario::STEP);
-        term.draw(|f| draw(f, &game, false))?;
+        term.draw(|f| draw(f, &game, false))
+            .expect("infallible in-memory draw");
         if let Some(path) = demo.capture_path() {
             let buffer = term.backend().buffer();
             std::fs::write(
