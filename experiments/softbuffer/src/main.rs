@@ -1,5 +1,12 @@
 use pong_low_level_common::App;
-use std::{num::NonZeroU32, rc::Rc, time::Instant};
+#[cfg(not(target_os = "macos"))]
+use std::rc::Rc;
+use std::{num::NonZeroU32, time::Instant};
+#[cfg(target_os = "macos")]
+mod appkit;
+#[cfg(target_os = "macos")]
+use appkit::KeyCode;
+#[cfg(not(target_os = "macos"))]
 use winit::{
     application::ApplicationHandler,
     event::{ElementState, WindowEvent},
@@ -18,7 +25,9 @@ struct Frontend {
     benchmark: Option<pong_benchmark::Frames>,
     bench_scenario: pong_scenario::Scenario,
     bench_accumulator: f32,
+    #[cfg(not(target_os = "macos"))]
     window: Option<Rc<Window>>,
+    #[cfg(not(target_os = "macos"))]
     surface: Option<softbuffer::Surface<Rc<Window>, Rc<Window>>>,
     last: Option<Instant>,
 }
@@ -100,7 +109,30 @@ impl Frontend {
         }
         false
     }
+    fn advance_frame(&mut self) {
+        let now = Instant::now();
+        let elapsed = self
+            .last
+            .replace(now)
+            .map_or(0., |t| (now - t).as_secs_f32());
+        if self.benchmarking {
+            self.bench_accumulator += elapsed.clamp(0., 0.1);
+            while self.bench_accumulator >= pong_scenario::STEP {
+                if self.bench_scenario.finished() {
+                    self.bench_scenario = pong_scenario::Scenario::default();
+                    self.app.game = pong_low_level_common::Game::new(pong_scenario::SEED);
+                }
+                self.bench_scenario.advance(&mut self.app.game);
+                self.bench_accumulator -= pong_scenario::STEP;
+            }
+        } else if let Some(demo) = &mut self.demo {
+            demo.advance(&mut self.app.game, elapsed);
+        } else {
+            self.tick_live(elapsed);
+        }
+    }
 }
+#[cfg(not(target_os = "macos"))]
 impl ApplicationHandler for Frontend {
     fn resumed(&mut self, el: &ActiveEventLoop) {
         if self.window.is_some() {
@@ -145,26 +177,7 @@ impl ApplicationHandler for Frontend {
                 }
             }
             WindowEvent::RedrawRequested => {
-                let now = Instant::now();
-                let elapsed = self
-                    .last
-                    .replace(now)
-                    .map_or(0., |t| (now - t).as_secs_f32());
-                if self.benchmarking {
-                    self.bench_accumulator += elapsed.clamp(0., 0.1);
-                    while self.bench_accumulator >= pong_scenario::STEP {
-                        if self.bench_scenario.finished() {
-                            self.bench_scenario = pong_scenario::Scenario::default();
-                            self.app.game = pong_low_level_common::Game::new(pong_scenario::SEED);
-                        }
-                        self.bench_scenario.advance(&mut self.app.game);
-                        self.bench_accumulator -= pong_scenario::STEP;
-                    }
-                } else if let Some(demo) = &mut self.demo {
-                    demo.advance(&mut self.app.game, elapsed);
-                } else {
-                    self.tick_live(elapsed);
-                }
+                self.advance_frame();
                 let w = self.window.as_ref().unwrap();
                 let size = w.inner_size();
                 if let (Some(width), Some(height)) =
@@ -224,6 +237,7 @@ fn benchmark_args(args: &[String]) -> bool {
     );
     enabled
 }
+#[cfg(not(target_os = "macos"))]
 fn main() {
     let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
     EventLoop::new()
@@ -234,6 +248,16 @@ fn main() {
             ..Frontend::default()
         })
         .unwrap();
+}
+
+#[cfg(target_os = "macos")]
+fn main() {
+    let benchmarking = benchmark_args(&std::env::args().collect::<Vec<_>>());
+    appkit::run(Frontend {
+        demo: pong_scenario::Demo::from_args(),
+        benchmarking,
+        ..Frontend::default()
+    });
 }
 
 #[cfg(test)]
@@ -429,14 +453,14 @@ mod transition_clock_adapter_test {
     use super::*;
     #[test]
     fn focused_restart_discards_stale_frame_then_advances() {
-        let mut f=Frontend::default();
-        f.handle_focused_key(true,KeyCode::KeyR,true,false);
-        f.handle_focused_key(true,KeyCode::KeyS,true,false);
+        let mut f = Frontend::default();
+        f.handle_focused_key(true, KeyCode::KeyR, true, false);
+        f.handle_focused_key(true, KeyCode::KeyS, true, false);
         assert!(f.app.down);
         f.app.tick(0.1);
-        assert_eq!(f.app.game.player,250.);
-        f.app.tick(1./60.);
-        assert!(f.app.game.player>250.);
+        assert_eq!(f.app.game.player, 250.);
+        f.app.tick(1. / 60.);
+        assert!(f.app.game.player > 250.);
     }
 }
 
@@ -445,7 +469,11 @@ mod combined_clock_candidate_tests {
     use super::*;
     use pong_low_level_common::State;
     fn redraw(f: &mut Frontend, elapsed: f32) {
-        let elapsed = if f.last.replace(Instant::now()).is_some() { elapsed } else { 0. };
+        let elapsed = if f.last.replace(Instant::now()).is_some() {
+            elapsed
+        } else {
+            0.
+        };
         f.app.tick(elapsed);
     }
     #[test]
@@ -484,7 +512,12 @@ mod combined_clock_candidate_tests {
     #[test]
     fn stale_time_is_discarded_once_for_start_resume_and_restart() {
         let mut f = Frontend::default();
-        for key in [KeyCode::Space, KeyCode::Space, KeyCode::Space, KeyCode::KeyR] {
+        for key in [
+            KeyCode::Space,
+            KeyCode::Space,
+            KeyCode::Space,
+            KeyCode::KeyR,
+        ] {
             f.last = Some(Instant::now());
             f.handle_focused_key(true, key, true, false);
             assert!(f.last.is_none());
@@ -508,8 +541,12 @@ mod quick_tap_tests {
     #[test]
     fn quick_press_then_release_survives_zero_step_and_moves_once_on_catch_up() {
         let mut lost = Vec::new();
-        for (key, axis) in [(KeyCode::KeyW, -1.), (KeyCode::ArrowUp, -1.),
-                            (KeyCode::KeyS, 1.), (KeyCode::ArrowDown, 1.)] {
+        for (key, axis) in [
+            (KeyCode::KeyW, -1.),
+            (KeyCode::ArrowUp, -1.),
+            (KeyCode::KeyS, 1.),
+            (KeyCode::ArrowDown, 1.),
+        ] {
             let mut f = Frontend::default();
             f.app.game.start();
             let initial = f.app.game.player;
@@ -543,7 +580,9 @@ mod quick_tap_guard_tests {
         let mut expected = f.app.game.clone();
         f.handle_key(KeyCode::KeyW, true, false);
         f.tick_live(3.25 * STEP);
-        for _ in 0..3 { expected.step(STEP, -1.); }
+        for _ in 0..3 {
+            expected.step(STEP, -1.);
+        }
         assert_eq!(f.app.game.player, expected.player);
         f.handle_key(KeyCode::ArrowUp, true, false);
         f.handle_key(KeyCode::KeyW, false, false);
@@ -566,8 +605,11 @@ mod quick_tap_guard_tests {
         for transition in [None, Some(KeyCode::Space), Some(KeyCode::KeyR)] {
             f.handle_key(KeyCode::KeyW, true, false);
             f.handle_key(KeyCode::KeyW, false, false);
-            if let Some(key) = transition { f.handle_key(key, true, false); }
-            else { f.clear_movement(); }
+            if let Some(key) = transition {
+                f.handle_key(key, true, false);
+            } else {
+                f.clear_movement();
+            }
             if f.app.game.state == pong_low_level_common::State::Paused {
                 f.handle_key(KeyCode::Space, true, false);
             }
