@@ -13,3 +13,4 @@ pong-benchmark = { path = "../../crates/pong-benchmark" }
 
 [patch.crates-io]
 objc2-foundation = { path = "../../vendor/objc2-foundation-0.2.2" }
+piston2d-wgpu_graphics = { path = "../../vendor/piston2d-wgpu_graphics-0.14.0" }

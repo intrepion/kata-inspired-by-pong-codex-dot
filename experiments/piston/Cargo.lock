@@ -925,7 +925,6 @@ dependencies = [
  "qoi",
  "ravif",
  "rayon",
- "rgb",
  "tiff",
  "zune-core",
  "zune-jpeg",
@@ -1830,8 +1829,6 @@ dependencies = [
 [[package]]
 name = "piston2d-wgpu_graphics"
 version = "0.14.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4980a32ebcb703405312b1b460a6fe729f8a46fbc53017805f82c457e2444a7e"
 dependencies = [
  "bytemuck",
  "image",
