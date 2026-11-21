@@ -5,6 +5,7 @@ members = ["crates/pong-benchmark", "crates/pong-scenario", "crates/pong-core", 
 default-members = ["crates/pong-core", "crates/pong-wasm", "clients/macroquad"]
 
 [patch.crates-io]
+bevy_core_pipeline = { path = "vendor/bevy_core_pipeline-0.20.1" }
 objc-rs = { path = "vendor/objc-rs-0.2.8" }
 macroquad = { path = "vendor/macroquad" }
 

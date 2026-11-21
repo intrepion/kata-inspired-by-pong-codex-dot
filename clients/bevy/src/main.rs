@@ -86,6 +86,23 @@ fn main() {
     } else {
         seed
     };
+    // Prefer Direct3D 12 on Windows while honoring an explicit backend override.
+    let plugins = DefaultPlugins;
+    #[cfg(target_os = "windows")]
+    let plugins = {
+        use bevy::render::{
+            settings::{Backends, WgpuSettings},
+            RenderPlugin,
+        };
+        plugins.set(RenderPlugin {
+            render_creation: WgpuSettings {
+                backends: Some(Backends::from_env().unwrap_or(Backends::DX12)),
+                ..default()
+            }
+            .into(),
+            ..default()
+        })
+    };
     App::new()
         .insert_resource(Benchmark {
             enabled: benchmarking,
@@ -101,7 +118,7 @@ fn main() {
         .insert_resource(Clock::default())
         .insert_resource(MovementGate::default())
         .insert_resource(ClearColor(Color::srgb(0.035, 0.08, 0.075)))
-        .add_plugins(DefaultPlugins.set(WindowPlugin {
+        .add_plugins(plugins.set(WindowPlugin {
             primary_window: Some(Window {
                 title: "Rallylight - Bevy / shared Rust core".into(),
                 resolution: (1000, 720).into(),
@@ -123,7 +140,11 @@ fn setup(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    commands.spawn(Camera2d);
+    commands.spawn((
+        Camera2d,
+        bevy::render::view::Tonemapping::Linear,
+        bevy::render::view::DebandDither::Disabled,
+    ));
     commands.spawn((
         Mesh2d(meshes.add(Rectangle::new(W, H))),
         MeshMaterial2d(materials.add(Color::srgb(0.082, 0.247, 0.216))),

@@ -621,8 +621,6 @@ dependencies = [
 [[package]]
 name = "bevy_core_pipeline"
 version = "0.20.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2463cf477b683bfe8567c43142295d00ed980f8e2a293c0a69e2f9e10e9c0aaf"
 dependencies = [
  "bevy_app",
  "bevy_asset",
@@ -3728,6 +3726,7 @@ name = "pong-bevy"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "bevy_core_pipeline",
  "pong-benchmark",
  "pong-core",
  "pong-scenario",
