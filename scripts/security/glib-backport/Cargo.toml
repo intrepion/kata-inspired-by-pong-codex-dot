@@ -1,8 +1,0 @@
-[package]
-name = "pong-glib-backport-regression"
-version = "0.1.0"
-edition = "2021"
-license = "MIT"
-[workspace]
-[dependencies]
-glib = { path = "../../../vendor/glib-0.18.5" }
