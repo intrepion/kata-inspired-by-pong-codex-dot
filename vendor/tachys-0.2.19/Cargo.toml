@@ -94,10 +94,6 @@ version = "0.1"
 [dependencies.either_of]
 version = "0.1.9"
 
-[dependencies.erased]
-version = "0.1"
-default-features = true
-
 [dependencies.futures]
 version = "0.3"
 default-features = true
