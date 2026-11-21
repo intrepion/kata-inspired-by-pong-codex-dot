@@ -1,10 +1,9 @@
-param([ValidateSet('yew','leptos','dioxus')][string]$Name='yew')
+param([ValidateSet('leptos')][string]$Name='leptos')
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
 $target=if($env:CARGO_TARGET_DIR){$env:CARGO_TARGET_DIR}else{Join-Path $root 'target-web-frameworks'}
 $bindgen=if($env:WASM_BINDGEN){$env:WASM_BINDGEN}else{'wasm-bindgen'}
 $argsList=@('build','--locked','--manifest-path',"$root/experiments/$Name/Cargo.toml",'--target','wasm32-unknown-unknown','--target-dir',$target,'-j','2')
-if($Name -eq 'dioxus'){$argsList+=@('--no-default-features','--features','web')}
 & cargo @argsList
 if($LASTEXITCODE -ne 0){throw 'Rust WASM build failed'}
 $dist=Join-Path $root "experiments/$Name/dist"
