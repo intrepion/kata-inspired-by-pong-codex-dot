@@ -4,6 +4,22 @@ spec=importlib.util.spec_from_file_location('windows_package',Path(__file__).wit
 p=importlib.util.module_from_spec(spec); spec.loader.exec_module(p)
 
 class PackagingTests(unittest.TestCase):
+    def test_exact_toolchain_and_reviewed_manifest(self):
+        source = Path(__file__).with_name('inputs-manifest.json')
+        data = source.read_bytes()
+        reviewed = p.reviewed_manifest(data)
+        self.assertEqual(p.TOOLCHAIN, reviewed['rust_release'] + '-' + reviewed['host'])
+        self.assertEqual(p.TOOLCHAIN, '1.100.0-x86_64-pc-windows-msvc')
+        stale = data.replace(b'1.100.0', b'1.99.1', 1)
+        with self.assertRaisesRegex(ValueError, 'manifest changed'):
+            p.reviewed_manifest(stale)
+        old = 'release: 1.99.1\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\nhost: x86_64-pc-windows-msvc\n'
+        with self.assertRaisesRegex(ValueError, 'compiler identity'):
+            p.verify_compiler(old, reviewed)
+        notices=p.verified_inputs(reviewed, source.parent/'inputs', 'sdl3')
+        self.assertIn('notices/rust/COPYRIGHT-library.html', notices)
+        self.assertNotIn('notices/unicode/EastAsianWidth-15.1.0-header.txt', notices)
+
     def test_pe_machine_and_format(self):
         b=bytearray(154); b[:2]=b'MZ'; struct.pack_into('<I',b,0x3c,128); b[128:132]=b'PE\0\0'; struct.pack_into('<HHIIIHH',b,132,0x8664,0,0,0,0,2,2); struct.pack_into('<H',b,152,0x20b)
         p.verify_pe_x64(b)

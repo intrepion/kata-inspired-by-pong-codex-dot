@@ -1,17 +1,11 @@
 RUST TOOLCHAIN NOTICES
 
-The accompanying COPYRIGHT-library.html is copied from the installed Rust
-1.99.1 x86_64-pc-windows-msvc toolchain. It identifies Rust Standard Library
-copyright holders and lists license terms and exceptions for the release's
-in-tree and upstream source. It is a broad source inventory: inclusion here does
-not establish that every entry is present in the executable.
+COPYRIGHT-library.html is the installed Rust 1.100.0 x86_64-pc-windows-msvc
+distribution's standard-library notice inventory. The adjacent MIT and Apache
+texts are byte-identical to this distribution's general license files. The MIT
+template is not a standalone attribution statement. See COPYRIGHT-library.html
+for the actual in-tree notices. The inventory does not show which routines are
+retained by a particular executable.
 
-MIT.txt and Apache-2.0.txt are the same toolchain's general license texts.
-MIT.txt includes placeholder copyright fields and is not a standalone statement
-of Rust attribution. See COPYRIGHT-library.html, including its in-tree-file
-entries, for the Rust Project's actual notices; do not fill in placeholders by
-guessing. Retain that document alongside the license texts.
-
-The PDB matching the executable has public Rust standard-library symbols, but
-the exact set of retained runtime code and nested notices is not established.
-These notices do not establish legal clearance.
+Toolchain source: https://github.com/rust-lang/rust/tree/0ef1bc386059596dada8fb65b50425aab2ea637a
+See compiler-runtime/ for source and distribution provenance.

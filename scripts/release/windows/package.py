@@ -6,10 +6,16 @@ HERE=Path(__file__).resolve().parent
 COMMIT='637d5a16f3ccdb357b397639ffe1a147bb107cb0'
 TREE='26b8283885ebfce73eade8d3be672cf5dcfbffea'
 TARGET='x86_64-pc-windows-msvc'
-TOOLCHAIN='stable-x86_64-pc-windows-msvc'
-MANIFEST_SHA256='c3b3952f7f2b93160c750cc5f70e1defd238d85af702f198077c88b190f4fef5'
+TOOLCHAIN='1.100.0-x86_64-pc-windows-msvc'
+MANIFEST_SHA256='93bc7a6123d1d9f35646e1832526a919e781dbeaaa3e8902622bd01477a9d126'
 
 def sha(data): return hashlib.sha256(data).hexdigest()
+
+def reviewed_manifest(data):
+    if sha(data)!=MANIFEST_SHA256: raise ValueError('reviewed supplement manifest changed')
+    manifest=json.loads(data)
+    if manifest['target']!=TARGET: raise ValueError('supplement target mismatch')
+    return manifest
 
 def verify_pe_x64(data):
     if len(data)<64 or data[:2]!=b'MZ': raise ValueError('binary is not a PE executable')
@@ -87,9 +93,7 @@ def main():
     p=argparse.ArgumentParser(); p.add_argument('--game',required=True,choices=('softbuffer','ratatui')); p.add_argument('--repo',required=True,type=Path); p.add_argument('--binary',required=True,type=Path); p.add_argument('--notice-index',required=True,type=Path); p.add_argument('--notice-text',required=True,type=Path); p.add_argument('--output',required=True,type=Path); p.add_argument('--target',required=True); p.add_argument('--forbid',action='append',required=True,help='specific workspace/home path or fragment to reject; repeat as needed'); args=p.parse_args()
     if args.target!=TARGET or any(len(x)<4 for x in args.forbid): raise ValueError('wrong target or insufficient privacy marker')
     manifest_bytes=(HERE/'inputs-manifest.json').read_bytes()
-    if sha(manifest_bytes)!=MANIFEST_SHA256: raise ValueError('reviewed supplement manifest changed')
-    manifest=json.loads(manifest_bytes)
-    if manifest['target']!=TARGET: raise ValueError('supplement target mismatch')
+    manifest=reviewed_manifest(manifest_bytes)
     def git(*cmd): return subprocess.check_output(['git','-C',str(args.repo),*cmd],text=True).strip()
     if git('rev-parse','HEAD')!=COMMIT or git('rev-parse','HEAD^{tree}')!=TREE or git('status','--porcelain=v1','--untracked-files=no'):
         raise ValueError('repository is not the pinned commit and tree with clean tracked files')

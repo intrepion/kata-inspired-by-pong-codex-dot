@@ -12,7 +12,7 @@ import sys
 import tomllib
 
 from native_source import CONFIG, prepare, sha
-from package import TARGET, TOOLCHAIN, verify_compiler, verify_pe_x64
+from package import TARGET, TOOLCHAIN, reviewed_manifest, verified_inputs, verify_compiler, verify_pe_x64
 
 HEX = re.compile(r"[0-9a-f]{40}")
 REGISTRY = "registry+https://github.com/rust-lang/crates.io-index"
@@ -114,7 +114,10 @@ def run(args):
             env.update(CARGO_HOME=str(cargo_home), RUSTUP_TOOLCHAIN=TOOLCHAIN,
                        CARGO_NET_OFFLINE="true", CARGO_INCREMENTAL="0")
             identity = subprocess.check_output(["rustc", "-Vv"], env=env, cwd=scratch, text=True)
-            verify_compiler(identity, json.loads((scratch / "scripts/release/windows/inputs-manifest.json").read_bytes()))
+            inputs = scratch / "scripts/release/windows"
+            reviewed = reviewed_manifest((inputs / "inputs-manifest.json").read_bytes())
+            verify_compiler(identity, reviewed)
+            verified_inputs(reviewed, inputs / "inputs", args.kind)
             env["CL"] = f"/experimental:deterministic /pathmap:{crate}=/pong-{kind}-source"
             rust_roots = [out, cargo_home]
             env["CARGO_ENCODED_RUSTFLAGS"] = "\x1f".join(
