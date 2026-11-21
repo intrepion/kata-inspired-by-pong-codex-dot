@@ -19,7 +19,7 @@ struct MovementGate {
     held: [bool; 2],
     pending: [bool; 2],
 }
-#[cfg(any(feature = "windowed", test))]
+#[cfg(feature = "windowed")]
 const MOVEMENT_KEYS: [KeyCode; 4] = [KeyCode::KeyW, KeyCode::ArrowUp, KeyCode::KeyS, KeyCode::ArrowDown];
 #[cfg(any(feature = "windowed", test))]
 #[derive(Default)]
@@ -725,7 +725,7 @@ mod input_tests {
 
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "windowed"))]
 mod quick_tap_tests {
     use super::*;
     const STEP: f32 = 1. / 120.;

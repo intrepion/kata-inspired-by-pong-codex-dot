@@ -5,3 +5,5 @@ Upstream: blue_engine_core 0.10.0, Apache-2.0. The crates.io archive SHA-256 is 
 This vendor tree is based on a scoped reconstruction of Pong main dde35e1c6ce64811240ad4cc46ff47d94179beec, not a full checkout. Relative to the upstream crate, Cargo.toml and Cargo.toml.orig pin wgpu 29.0.4. src/definition.rs adapts wgpu descriptors; src/engine.rs adapts desktop event-loop ownership, error propagation and its doctest; src/prelude/primitive_shapes.rs marks a tuple description as text; src/render.rs adapts rendering, acquisition and size handling; src/window.rs handles startup, capabilities, resize and terminal errors. The retained upstream files and license are otherwise unchanged.
 
 The implementation is a local source-testing candidate: GUI/GPU behavior, Android and other-platform runtime behavior and complete distribution notices remain unverified.
+
+Pong-specific release dependency trial: disable only the AVIF image codec, retaining Rayon and all other prior default codecs from image 0.25.9. The bundled default texture is PNG; this scoped copy is not a replacement for general AVIF use in upstream Blue Engine.
