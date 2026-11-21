@@ -1,0 +1,10 @@
+Source: published crates.io package piston2d-wgpu_graphics 0.14.0.
+SHA-256: 4980a32ebcb703405312b1b460a6fe729f8a46fbc53017805f82c457e2444a7e.
+The package is dual-licensed MIT OR Apache-2.0; both upstream texts are preserved.
+Pong's Piston experiment patches this dependency locally to avoid the default
+AVIF encoder dependency path while preserving Rayon and the other default image
+formats in resolved image 0.25.10. The upstream image requirement remains
+0.25.1. Only the generated Cargo.toml dependency features were amended;
+the original manifest and all shipped Rust, shaders and examples are unmodified.
+The upstream example/development Cargo.lock is not needed downstream and is
+omitted. Pong's experiment owns its separate integration lock.
