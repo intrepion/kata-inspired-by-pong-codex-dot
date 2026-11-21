@@ -1,18 +1,13 @@
 LLVM COMPILER-RT CREDITS - TOOLCHAIN SOURCE PIN
 
-Rust 1.99.1 reports source commit 58cf8f9c35b355199727627d07ae34a4e2846d67.
-That commit records src/llvm-project as a rust-lang/llvm-project submodule at
-1b9c0d5ff9bbe7634aead059efe6b11a7eeba145. Its compiler-rt/CREDITS.TXT is Git
-blob 6964eba020b8aa7a08629b249e3b9aea3ce3e448, byte-identical to the included
-LLVM-compiler-rt-CREDITS-current.txt. Its name records its original retrieval;
-the content is also verified against the pinned toolchain LLVM source snapshot.
+Rust 1.100.0 reports source commit 0ef1bc386059596dada8fb65b50425aab2ea637a.
+That source pins src/llvm-project to 0a5579eb649d3634a9c30ac873300cc2944fa070.
+Its compiler-rt/CREDITS.TXT is Git blob 6964eba020b8aa7a08629b249e3b9aea3ce3e448,
+byte-identical to the included LLVM-compiler-rt-CREDITS-current.txt. The name
+records the prior retrieval, not a floating main reference.
 
-Rust source submodule record:
-https://github.com/rust-lang/rust/tree/58cf8f9c35b355199727627d07ae34a4e2846d67/src/llvm-project
-Pinned credits:
-https://github.com/rust-lang/llvm-project/blob/1b9c0d5ff9bbe7634aead059efe6b11a7eeba145/compiler-rt/CREDITS.TXT
+https://github.com/rust-lang/rust/tree/0ef1bc386059596dada8fb65b50425aab2ea637a/src/llvm-project
+https://github.com/rust-lang/llvm-project/blob/0a5579eb649d3634a9c30ac873300cc2944fa070/compiler-rt/CREDITS.TXT
 
-This pin identifies the compiler toolchain source snapshot, not necessarily
-the historical compiler-rt revision from which each compiler-builtins routine
-was derived. Final binary retention and any source-specific attribution remain
-unverified.
+This source association does not establish derivation or retention for each
+individual compiler-builtins routine.
