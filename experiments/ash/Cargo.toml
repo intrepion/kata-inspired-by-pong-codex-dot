@@ -6,11 +6,16 @@ license = "MIT"
 [workspace]
 [dependencies]
 pong-low-level-common = { path = "../low-level-common" }
-winit = "=0.30.13"
 ash = "0.38"
 raw-window-handle = "0.6"
 pong-scenario = { path = "../../crates/pong-scenario" }
 pong-benchmark = { path = "../../crates/pong-benchmark" }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+winit = { version = "=0.30.13", default-features = false, features = ["rwh_06", "x11"] }
+
+[target.'cfg(not(target_os = "linux"))'.dependencies]
+winit = "=0.30.13"
 
 [target.'cfg(not(target_os = "macos"))'.dependencies]
 ash-window = "0.13"
