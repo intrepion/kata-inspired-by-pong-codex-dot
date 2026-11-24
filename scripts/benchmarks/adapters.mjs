@@ -4,7 +4,7 @@ export const adapters = Object.freeze({
   'blue-engine': {presentation:'native window only; headless excluded', renderer:'Blue Engine wgpu (runtime driver unqueried)', pacing:'existing AutoVsync; update callback before renderer submission, object upload precedes callback'},
   bevy: {presentation:'native window', renderer:'Bevy renderer (runtime driver unqueried)', pacing:'existing defaults; main-world Last callback before render-subapp, not GPU timing'},
   'bracket-lib': {presentation:'graphical tile window, not terminal', renderer:'bracket-lib OpenGL CP437 tiles (runtime driver unqueried)', pacing:'existing 60fps cap; sampled after tick tile recording before framework rendering'},
-  wgpu: {presentation:'native window', renderer:'raw wgpu surface (runtime driver unqueried)', pacing:'existing winit Poll/default surface config; sampled after successful surface present request only'},
+  wgpu: {presentation:'native window', renderer:'raw wgpu surface (runtime receipt reported by app)', pacing:'existing winit Poll/default surface config; sampled after successful surface present request only'},
   piston: {presentation:'native window', renderer:'Piston wgpu draw submission (driver unqueried)', pacing:'existing 120UPS/default render pacing; sampled after draw_2d on render events only'},
   miniquad: {presentation:'native window', renderer:'Miniquad GPU (backend enum reported; driver unqueried)', pacing:'existing Miniquad defaults; sampled after commit_frame in draw callback'},
   pixels: {presentation:'native window', renderer:'pixels CPU raster plus wgpu presentation (runtime driver unqueried)', pacing:'existing winit Poll; sampled after successful pixels.render returns'},
@@ -28,8 +28,11 @@ export function parseArguments(args) {
     positional.splice(profileIndex,2);
     if(!['debug','release'].includes(profile)) throw Error('Unsupported benchmark profile');
   }
+  const requireWgpuReceipt=positional.includes('--require-wgpu-receipt');
+  if(requireWgpuReceipt) positional.splice(positional.indexOf('--require-wgpu-receipt'),1);
+  if(requireWgpuReceipt && adapter!=='wgpu') throw Error('Receipt qualification requires --adapter wgpu');
   if(!Object.hasOwn(adapters, adapter)) throw Error('Unsupported benchmark adapter');
-  if(positional.length !== 4 || positional.some(x=>!x || x.startsWith('--'))) throw Error('usage: run.mjs BINARY NEW.json BACKEND NOTES [--adapter macroquad|softbuffer|sdl3|raylib|pixels|miniquad|piston|wgpu|bracket-lib|bevy|blue-engine|ash] [--profile release|debug]');
+  if(positional.length !== 4 || positional.some(x=>!x || x.startsWith('--'))) throw Error('usage: run.mjs BINARY NEW.json BACKEND NOTES [--adapter macroquad|softbuffer|sdl3|raylib|pixels|miniquad|piston|wgpu|bracket-lib|bevy|blue-engine|ash] [--profile release|debug] [--require-wgpu-receipt]');
   const [binary, output, backend, notes] = positional;
-  return {binary, output, backend, notes, adapter, profile, ...adapters[adapter]};
+  return {binary, output, backend, notes, adapter, profile, ...(requireWgpuReceipt?{requireWgpuReceipt}:{}), ...adapters[adapter]};
 }
