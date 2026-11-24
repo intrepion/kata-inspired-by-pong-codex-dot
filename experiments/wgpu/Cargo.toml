@@ -6,12 +6,23 @@ edition="2021"
 [workspace]
 [dependencies]
 pong-benchmark = { path = "../../crates/pong-benchmark" }
-wgpu="=29.0.4"
-winit="=0.30.13"
 pollster="=0.4.0"
 bytemuck={version="1",features=["derive"]}
 pong-core={path="../../crates/pong-core"}
 pong-scenario = { path = "../../crates/pong-scenario" }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+wgpu = { version = "=30.0.2", default-features = false, features = ["std", "vulkan", "wgsl"] }
+winit = { version = "=0.30.13", default-features = false, features = ["rwh_06", "x11"] }
+
+[target.'cfg(target_os = "windows")'.dependencies]
+wgpu = { version = "=30.0.2", default-features = false, features = ["std", "parking_lot", "dx12", "wgsl"] }
+
+[target.'cfg(not(any(target_os = "windows", target_os = "linux")))'.dependencies]
+wgpu = "=30.0.2"
+
+[target.'cfg(not(target_os = "linux"))'.dependencies]
+winit = "=0.30.13"
 
 [patch.crates-io]
 objc2-foundation = { path = "../../vendor/objc2-foundation-0.2.2" }

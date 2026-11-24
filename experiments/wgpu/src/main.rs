@@ -152,7 +152,10 @@ impl ApplicationHandler for App {
             )
             .unwrap(),
         );
-        self.renderer = Some(pollster::block_on(Renderer::new(w.clone())));
+        self.renderer = Some(pollster::block_on(Renderer::new(
+            w.clone(),
+            self.benchmarking,
+        )));
         self.focused = w.has_focus();
         self.window = Some(w);
         self.last = Instant::now();

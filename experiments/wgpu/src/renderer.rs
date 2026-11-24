@@ -21,10 +21,39 @@ pub struct Renderer {
     uniform: wgpu::Buffer,
     bind: wgpu::BindGroup,
 }
+// Rust debug strings are not JSON for all control characters.
+fn json_string(value: &str) -> String {
+    use std::fmt::Write;
+    let mut quoted = String::from("\"");
+    for c in value.chars() {
+        match c {
+            '"' => quoted.push_str("\\\""),
+            '\\' => quoted.push_str("\\\\"),
+            '\0'..='\u{001f}' => write!(quoted, "\\u{:04x}", u32::from(c)).unwrap(),
+            _ => quoted.push(c),
+        }
+    }
+    quoted.push('"');
+    quoted
+}
 impl Renderer {
-    pub async fn new(window: Arc<Window>) -> Self {
+    pub async fn new(window: Arc<Window>, benchmarking: bool) -> Self {
         let size = window.inner_size();
-        let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
+        let descriptor = wgpu::InstanceDescriptor::new_without_display_handle();
+        #[cfg(target_os = "windows")]
+        let descriptor = {
+            // Use one Windows backend; never silently fall back.
+            let mut descriptor = descriptor;
+            descriptor.backends = wgpu::Backends::DX12;
+            descriptor
+        };
+        #[cfg(target_os = "linux")]
+        let descriptor = {
+            let mut descriptor = descriptor;
+            descriptor.backends = wgpu::Backends::VULKAN;
+            descriptor
+        };
+        let instance = wgpu::Instance::new(descriptor);
         let surface = instance.create_surface(window).unwrap();
         let adapter = instance
             .request_adapter(&wgpu::RequestAdapterOptions {
@@ -33,6 +62,21 @@ impl Renderer {
             })
             .await
             .unwrap();
+        #[cfg(target_os = "linux")]
+        {
+            let info = adapter.get_info();
+            assert_eq!(info.backend, wgpu::Backend::Vulkan);
+            if std::env::var("PONG_WGPU_REPORT_BACKEND").as_deref() == Ok("1") {
+                eprintln!(
+                    "PONG_WGPU_LINUX_ADAPTER backend={:?} device_type={:?} name={} driver={} driver_info={}",
+                    info.backend,
+                    info.device_type,
+                    json_string(&info.name),
+                    json_string(&info.driver),
+                    json_string(&info.driver_info),
+                );
+            }
+        }
         let (device, queue) = adapter
             .request_device(&wgpu::DeviceDescriptor::default())
             .await
@@ -41,7 +85,17 @@ impl Renderer {
             .get_default_config(&adapter, size.width.max(1), size.height.max(1))
             .unwrap();
         // Ask the surface capability API; never assume presentation textures can be read.
-        if surface
+        #[cfg(target_os = "windows")]
+        let capture_format_supported = true;
+        #[cfg(not(target_os = "windows"))]
+        let capture_format_supported = matches!(
+            config.format,
+            wgpu::TextureFormat::Bgra8Unorm
+                | wgpu::TextureFormat::Bgra8UnormSrgb
+                | wgpu::TextureFormat::Rgba8Unorm
+                | wgpu::TextureFormat::Rgba8UnormSrgb
+        );
+        if capture_format_supported && surface
             .get_capabilities(&adapter)
             .usages
             .contains(wgpu::TextureUsages::COPY_SRC)
@@ -49,6 +103,26 @@ impl Renderer {
             config.usage |= wgpu::TextureUsages::COPY_SRC;
         }
         surface.configure(&device, &config);
+        if benchmarking {
+            let info = adapter.get_info();
+            println!(
+                "PONG_BENCHMARK_BACKEND {{\"schema\":1,\"name\":{},\"vendor\":{},\"device\":{},\"device_type\":\"{:?}\",\"backend\":\"{:?}\",\"driver\":{},\"driver_info\":{},\"configured_present_mode\":\"{:?}\"}}",
+                json_string(&info.name),
+                info.vendor,
+                info.device,
+                info.device_type,
+                info.backend,
+                json_string(&info.driver),
+                json_string(&info.driver_info),
+                config.present_mode,
+            );
+        } else if std::env::var("PONG_WGPU_REPORT_BACKEND").as_deref() == Ok("1") {
+            let info = adapter.get_info();
+            eprintln!(
+                "PONG_WGPU_DIAGNOSTIC backend={:?} device_type={:?} configured_present_mode={:?} format={:?}",
+                info.backend, info.device_type, config.present_mode, config.format,
+            );
+        }
         let uniform = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("court state"),
             contents: bytemuck::cast_slice(&[0.0f32; 12]),
@@ -129,7 +203,11 @@ impl Renderer {
     /// True only when a surface frame was submitted and present requested.
     pub fn render(&mut self, g: &Game, capture: Option<&std::path::Path>) -> Result<bool, String> {
         if capture.is_some() && !self.config.usage.contains(wgpu::TextureUsages::COPY_SRC) {
-            return Err("Surface does not support app-owned COPY_SRC capture".into());
+            #[cfg(target_os = "windows")]
+            let message = "Surface does not support app-owned COPY_SRC capture";
+            #[cfg(not(target_os = "windows"))]
+            let message = "Surface does not support app-owned RGBA8/BGRA8 COPY_SRC capture";
+            return Err(message.into());
         }
         let data = [
             g.player,
@@ -247,7 +325,7 @@ impl Renderer {
             rx.recv_timeout(std::time::Duration::from_secs(1))
                 .map_err(|e| e.to_string())?
                 .map_err(|e| e.to_string())?;
-            let bytes = buffer.get_mapped_range(..);
+            let bytes = buffer.get_mapped_range(..).map_err(|e| e.to_string())?;
             let bgra = matches!(
                 self.config.format,
                 wgpu::TextureFormat::Bgra8Unorm | wgpu::TextureFormat::Bgra8UnormSrgb
@@ -267,7 +345,7 @@ impl Renderer {
             drop(bytes);
             buffer.unmap();
         }
-        frame.present();
+        self.queue.present(frame);
         Ok(true)
     }
 }

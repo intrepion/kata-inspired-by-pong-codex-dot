@@ -1,7 +1,7 @@
 // Explicit publication allowlist. Original runner output stays local.
 import {readFileSync, writeFileSync} from 'node:fs';
 import {pathToFileURL} from 'node:url';
-import {validSample} from './run.mjs';
+import {validSample, wgpuReceiptStatus, WGPU_HARDWARE_CANDIDATE} from './run.mjs';
 const sampleNumbers = ['schema','warmup_seconds','nominal_measure_seconds','samples','sampled_seconds','mean_ms','p50_ms','p95_ms','p99_ms','max_ms','width','height'];
 export function publicReport(raw) {
   if(raw?.schema!==1 || raw.protocol!=='pong-frame-callback-v1' || !Array.isArray(raw.runs)) throw Error('Unsupported benchmark report');
@@ -15,7 +15,15 @@ export function publicReport(raw) {
     unmeasured:['GPU time','displayed FPS','CPU utilization','peak memory','startup latency','power','thermal state'],runs:[]};
   for(const run of raw.runs) {
     if(!Number.isInteger(run.iteration) || typeof run.valid!=='boolean') throw Error('Malformed run');
-    const output={iteration:run.iteration,exit:Number.isInteger(run.exit)?run.exit:null,valid:run.valid,sample:null};
+    // The private receipt stays private, but a strict failure must not turn into
+    // a public timing pass by losing the receipt fields. Old strict records lack
+    // a qualification profile and are not eligible for public validity.
+    const strict=Object.hasOwn(raw,'wgpu_receipt_profile') || Object.hasOwn(run,'wgpu_receipt_status');
+    const receiptEligible=!strict || (raw.adapter==='wgpu' &&
+      ['windows_dx12','non_windows_native'].includes(raw.wgpu_receipt_profile) &&
+      run.wgpu_receipt_status===WGPU_HARDWARE_CANDIDATE &&
+      wgpuReceiptStatus(run.reported_backend,true,raw.wgpu_receipt_profile)===WGPU_HARDWARE_CANDIDATE);
+    const output={iteration:run.iteration,exit:Number.isInteger(run.exit)?run.exit:null,valid:run.valid && receiptEligible,sample:null};
     if(run.valid && (run.exit!==0 || run.signal!=null || run.error!=null || run.parse_errors?.sample!=null || run.parse_errors?.backend!=null || !validSample(run.sample))) throw Error('Run marked valid failed execution or measurement validation');
     if(run.sample) {
       const s=run.sample;

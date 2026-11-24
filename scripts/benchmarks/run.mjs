@@ -24,15 +24,37 @@ export function validSample(s) {
     close(s.p50_ms,percentile(0.5)) && close(s.p95_ms,percentile(0.95)) &&
     close(s.p99_ms,percentile(0.99)) && close(s.max_ms,sorted.at(-1));
 }
+const backends = new Set(['Noop','Vulkan','Metal','Dx12','Gl','BrowserWebGpu']);
+const deviceTypes = new Set(['Other','IntegratedGpu','DiscreteGpu','VirtualGpu','Cpu']);
+const presentModes = new Set(['AutoVsync','AutoNoVsync','Fifo','FifoRelaxed','Immediate','Mailbox']);
+const u32 = value => Number.isInteger(value) && value>=0 && value<=0xffffffff;
+export const WGPU_HARDWARE_CANDIDATE = 'hardware_candidate_unverified_host';
+export const wgpuHostProfile = platform => platform==='win32'?'windows_dx12':'non_windows_native';
+export function wgpuReceiptStatus(receipt, beforeSample, profile=wgpuHostProfile(process.platform)) {
+  const typed=beforeSample && receipt && !Array.isArray(receipt) && receipt.schema===1 &&
+    ['name','driver','driver_info'].every(k=>typeof receipt[k]==='string') &&
+    ['vendor','device'].every(k=>u32(receipt[k])) &&
+    backends.has(receipt.backend) && deviceTypes.has(receipt.device_type) &&
+    presentModes.has(receipt.configured_present_mode);
+  if(!typed) return 'missing_or_invalid';
+  if(!['Vulkan','Metal','Dx12','Gl'].includes(receipt.backend) ||
+     !['IntegratedGpu','DiscreteGpu'].includes(receipt.device_type)) return 'not_hardware_candidate';
+  if(profile==='windows_dx12' && receipt.backend!=='Dx12') return 'unexpected_backend';
+  if(!['windows_dx12','non_windows_native'].includes(profile)) return 'missing_or_invalid';
+  return WGPU_HARDWARE_CANDIDATE;
+}
 export function runPilot(options, binaryArguments = ['--benchmark']) {
-  const {binary, output, backend, notes, adapter, presentation, renderer, pacing, profile = 'unverified'} = options;
+  const {binary, output, backend, notes, adapter, presentation, renderer, pacing, profile = 'unverified', requireWgpuReceipt = false} = options;
+  if(requireWgpuReceipt && adapter!=='wgpu') throw Error('Receipt qualification requires raw wgpu');
   if(!['release','debug','unverified'].includes(profile)) throw Error('Unsupported benchmark profile');
   if (existsSync(output)) throw Error('Refusing to overwrite results');
   const command = (exe,args) => { const r=spawnSync(exe,args,{encoding:'utf8',timeout:5000}); return r.status===0?r.stdout.trim():null; };
   const discoveredRoot=command('git',['-C',repositoryRoot,'rev-parse','--show-toplevel']);
   let sameRepository=false;
   try { sameRepository=!!discoveredRoot && relative(realpathSync(repositoryRoot),realpathSync(discoveredRoot))===''; } catch {}
+  const qualificationProfile=requireWgpuReceipt?wgpuHostProfile(process.platform):null;
   const result = {schema:1, started_utc:new Date().toISOString(), protocol:'pong-frame-callback-v1', adapter, presentation, renderer, pacing, backend, notes,
+    ...(requireWgpuReceipt?{wgpu_receipt_profile:qualificationProfile}:{}),
     git_revision:sameRepository?command('git',['-C',repositoryRoot,'rev-parse','HEAD']):null, working_tree:sameRepository?command('git',['-C',repositoryRoot,'status','--porcelain']):null, rustc:command('rustc',['-Vv']),
     profile, provenance_limit:'Profile is caller supplied or unverified; checkout revision does not prove binary source.', binary_sha256:createHash('sha256').update(readFileSync(binary)).digest('hex'),
     host:{hostname:os.hostname(),os:os.type(),release:os.release(),architecture:os.arch(),cpu:os.cpus()[0]?.model,cpu_count:os.cpus().length,memory_bytes:os.totalmem()},
@@ -51,16 +73,21 @@ export function runPilot(options, binaryArguments = ['--benchmark']) {
     let sample=null,reported_backend=null;
     try { if(raw_sample!==null) sample=JSON.parse(raw_sample); } catch(e) { parse_errors.sample=e.message; }
     try { if(raw_backend!==null) reported_backend=JSON.parse(raw_backend); } catch(e) { parse_errors.backend=e.message; }
+    const receiptStatus=requireWgpuReceipt?wgpuReceiptStatus(reported_backend,
+      backendLines.length===1 && sampleLines.length===1 && lines.indexOf(backendLine)<lines.indexOf(line),qualificationProfile):null;
     result.runs.push({iteration:i+1,exit:r.status,signal:r.signal??null,error:r.error?.message??null,load_before:before,load_after:os.loadavg(),stderr:r.stderr,reported_backend,sample,parse_errors,
+      ...(requireWgpuReceipt?{wgpu_receipt_status:receiptStatus}:{}),
       raw_sample:parse_errors.sample?raw_sample:null,raw_backend:parse_errors.backend?raw_backend:null,
-      valid:r.status===0 && !parse_errors.sample && !parse_errors.backend && validSample(sample)});
+      valid:r.status===0 && !parse_errors.sample && !parse_errors.backend && validSample(sample) &&
+        (!requireWgpuReceipt || receiptStatus===WGPU_HARDWARE_CANDIDATE)});
     writeFileSync(output,JSON.stringify(result,null,2)+'\n',{flag:i===0?'wx':'w'});
     if(r.status!==0) break;
   }
   return result;
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-const result = runPilot(parseArguments(process.argv.slice(2)));
+const options = parseArguments(process.argv.slice(2));
+const result = runPilot(options);
 console.log(JSON.stringify(result.runs.map(({iteration,valid,sample})=>({iteration,valid,samples:sample?.samples,p50:sample?.p50_ms,p95:sample?.p95_ms,p99:sample?.p99_ms})),null,2));
 if(result.runs.length!==3 || result.runs.some(r=>!r.valid)) process.exitCode=1;
 
