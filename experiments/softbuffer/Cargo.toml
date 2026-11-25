@@ -10,11 +10,17 @@ edition = "2021"
 appkit-native-qa = []
 [dependencies]
 pong-low-level-common = { path = "../low-level-common" }
-softbuffer = "0.4"
 pong-scenario = { path = "../../crates/pong-scenario" }
 pong-benchmark = { path = "../../crates/pong-benchmark" }
 
-[target.'cfg(not(target_os = "macos"))'.dependencies]
+[target.'cfg(not(target_os = "linux"))'.dependencies]
+softbuffer = "0.4"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+softbuffer = { version = "0.4", default-features = false, features = ["x11", "x11-dlopen"] }
+winit = { version = "=0.30.13", default-features = false, features = ["rwh_06", "x11"] }
+
+[target.'cfg(not(any(target_os = "macos", target_os = "linux")))'.dependencies]
 winit = "=0.30.13"
 
 [target.'cfg(target_os = "macos")'.dependencies]
