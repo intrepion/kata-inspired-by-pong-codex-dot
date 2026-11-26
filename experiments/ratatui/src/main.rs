@@ -30,11 +30,15 @@ fn action_key(key: KeyCode) -> KeyCode {
         other => other,
     }
 }
+// Terminal transports without key-up get at most ~117 ms per press or repeat.
+const PRESS_ONLY_STEPS: u8 = 14;
+
 #[derive(Default)]
 struct Input {
     held: [bool; 4], // Up, W, Down, S: aliases release independently.
     pending: [bool; 2], // At most one unsampled press per direction.
-    latched: f32,
+    press_only_axis: f32,
+    press_only_steps: u8,
 }
 impl Input {
     fn clear(&mut self) {
@@ -45,12 +49,17 @@ impl Input {
             (self.held[2] || self.held[3]) as u8 as f32
                 - (self.held[0] || self.held[1]) as u8 as f32
         } else {
-            self.latched
+            if self.press_only_steps > 0 { self.press_only_axis } else { 0. }
         }
     }
     fn step_axis(&mut self, releases: bool) -> f32 {
-        if !releases || self.pending == [false; 2] {
-            return self.axis(releases);
+        if !releases {
+            let axis = self.axis(false);
+            self.press_only_steps = self.press_only_steps.saturating_sub(1);
+            return axis;
+        }
+        if self.pending == [false; 2] {
+            return self.axis(true);
         }
         // Consume only on a simulation step. Aliases coalesce; opposed input cancels.
         let [up, down] = std::mem::take(&mut self.pending);
@@ -63,10 +72,6 @@ impl Input {
             KeyCode::Char('w' | 'W') => Some(1),
             KeyCode::Down => Some(2),
             KeyCode::Char('s' | 'S') => Some(3),
-            KeyCode::Char('x' | 'X') => {
-                if key.kind == KeyEventKind::Press { self.clear(); }
-                None
-            }
             _ => None,
         };
         if let Some(binding) = binding {
@@ -82,8 +87,12 @@ impl Input {
                     KeyEventKind::Release => self.held[binding] = false,
                     KeyEventKind::Repeat => {} // A repeat cannot re-arm a cleared binding.
                 }
-            } else if key.kind == KeyEventKind::Press {
-                self.latched = if binding < 2 { -1. } else { 1. };
+            } else if key.kind == KeyEventKind::Press
+                || (key.kind == KeyEventKind::Repeat
+                    && self.press_only_steps > 0
+                    && self.press_only_axis == if binding < 2 { -1. } else { 1. }) {
+                self.press_only_axis = if binding < 2 { -1. } else { 1. };
+                self.press_only_steps = PRESS_ONLY_STEPS;
             }
         }
     }
@@ -123,7 +132,7 @@ fn step_live(game: &mut Game, input: &mut Input, releases: bool, acc: &mut f32, 
         *acc -= dt;
     }
 }
-fn draw(f: &mut Frame, g: &Game, releases: bool) {
+fn draw(f: &mut Frame, g: &Game, _releases: bool) {
     let a = f.area();
     if too_small(a.width, a.height) {
         f.render_widget(
@@ -134,11 +143,7 @@ fn draw(f: &mut Frame, g: &Game, releases: bool) {
         );
         return;
     }
-    let help = if releases {
-        "Hold ↑/↓ or W/S · X stop · Space pause/start\nR restart · Q quit"
-    } else {
-        "LATCHED INPUT: ↑/W up · ↓/S down · X STOP\nSpace pause/start · R restart · Q quit"
-    };
+    let help = "↑/↓ or W/S move · Space pause/start\nR restart · Q quit";
     let status = match g.state {
         State::Ready => "Ready",
         State::Playing => "Playing",
@@ -242,6 +247,12 @@ fn scripted_cells(args: &[String]) -> io::Result<()> {
     }
     Ok(())
 }
+fn enhanced_keyboard_flags() -> KeyboardEnhancementFlags {
+    KeyboardEnhancementFlags::DISAMBIGUATE_ESCAPE_CODES
+        | KeyboardEnhancementFlags::REPORT_EVENT_TYPES
+        | KeyboardEnhancementFlags::REPORT_ALL_KEYS_AS_ESCAPE_CODES
+}
+
 fn main() -> io::Result<()> {
     let args: Vec<_> = std::env::args().collect();
     if args.iter().any(|a| a == "--scripted-test") {
@@ -255,8 +266,9 @@ fn main() -> io::Result<()> {
     );
 
     // Query before starting any event reader: the probe itself consumes a terminal response.
-    let enhanced = terminal::supports_keyboard_enhancement().unwrap_or(false);
-    let releases = cfg!(windows) || enhanced;
+    let force_press_only = args.iter().any(|a| a == "--press-only-input");
+    let enhanced = !force_press_only && terminal::supports_keyboard_enhancement().unwrap_or(false);
+    let releases = !force_press_only && (cfg!(windows) || enhanced);
     let old = std::panic::take_hook();
     std::panic::set_hook(Box::new(move |info| {
         restore(enhanced);
@@ -269,10 +281,7 @@ fn main() -> io::Result<()> {
     if enhanced {
         execute!(
             stdout(),
-            PushKeyboardEnhancementFlags(
-                KeyboardEnhancementFlags::DISAMBIGUATE_ESCAPE_CODES
-                    | KeyboardEnhancementFlags::REPORT_EVENT_TYPES
-            )
+            PushKeyboardEnhancementFlags(enhanced_keyboard_flags())
         )?;
     }
     let mut term = Terminal::new(CrosstermBackend::new(stdout()))?;
@@ -425,45 +434,37 @@ mod tests {
         assert_eq!(input.step_axis(true), 0., "nothing remains queued");
     }
 
+
+
     #[test]
-    fn clear_and_stop_discard_an_unsampled_tap() {
-        for stop in [false, true] {
+    fn press_only_reverses_and_expires_then_rearms_in_either_direction() {
+        for (up, down) in [(KeyCode::Up, KeyCode::Down), (KeyCode::Char('w'), KeyCode::Char('s'))] {
             let mut input = Input::default();
-            input.key(key(KeyCode::Up, KeyEventKind::Press), true);
-            input.key(key(KeyCode::Up, KeyEventKind::Release), true);
-            if stop {
-                input.key(key(KeyCode::Char('x'), KeyEventKind::Press), true);
-            } else {
-                // The live loop also uses clear on pause, restart, focus loss and resize.
-                input.clear();
-            }
-            assert_eq!(input.step_axis(true), 0.);
+            input.key(key(up, KeyEventKind::Press), false);
+            assert_eq!(input.step_axis(false), -1.);
+            input.key(key(down, KeyEventKind::Press), false);
+            assert_eq!(input.step_axis(false), 1.);
+            input.key(key(up, KeyEventKind::Repeat), false);
+            for _ in 1..PRESS_ONLY_STEPS { assert_eq!(input.step_axis(false), 1.); }
+            assert_eq!(input.step_axis(false), 0.);
+            input.key(key(down, KeyEventKind::Repeat), false);
+            assert_eq!(input.step_axis(false), 0.);
+            input.key(key(down, KeyEventKind::Press), false);
+            assert_eq!(input.step_axis(false), 1.);
+            input.clear();
+            assert_eq!(input.step_axis(false), 0.);
         }
     }
 
     #[test]
-    fn latched_release_still_moves_on_every_step_until_stop() {
+    fn clearing_discards_an_unsampled_released_tap() {
         let mut input = Input::default();
-        input.key(key(KeyCode::Down, KeyEventKind::Press), false);
-        input.key(key(KeyCode::Down, KeyEventKind::Release), false);
-        assert_eq!(input.step_axis(false), 1.);
-        assert_eq!(input.step_axis(false), 1.);
-        input.key(key(KeyCode::Char('x'), KeyEventKind::Press), false);
-        assert_eq!(input.step_axis(false), 0.);
+        input.key(key(KeyCode::Up, KeyEventKind::Press), true);
+        input.key(key(KeyCode::Up, KeyEventKind::Release), true);
+        input.clear();
+        assert_eq!(input.step_axis(true), 0.);
     }
 
-    #[test]
-    fn stop_release_and_repeat_do_not_cancel_new_movement() {
-        for releases in [true, false] {
-            for kind in [KeyEventKind::Release, KeyEventKind::Repeat] {
-                let mut input = Input::default();
-                input.key(key(KeyCode::Char('x'), KeyEventKind::Press), releases);
-                input.key(key(KeyCode::Char('w'), KeyEventKind::Press), releases);
-                input.key(key(KeyCode::Char('x'), kind), releases);
-                assert_eq!(input.axis(releases), -1., "{kind:?}, releases={releases}");
-            }
-        }
-    }
     #[test]
     fn action_letters_are_case_insensitive() {
         for (lower, upper) in [('r', 'R'), ('q', 'Q'), ('c', 'C')] {
@@ -472,6 +473,11 @@ mod tests {
         assert_eq!(action_key(KeyCode::Esc), KeyCode::Esc);
         assert_eq!(action_key(KeyCode::Char(' ')), KeyCode::Char(' '));
     }
+    #[test]
+    fn enhancement_requests_releases_for_printable_movement_keys() {
+        assert_eq!(enhanced_keyboard_flags().bits(), 0b1011);
+    }
+
     #[test]
     fn release_stops_and_opposites_cancel() {
         let mut i = Input::default();
@@ -502,30 +508,6 @@ mod tests {
         input.key(key(KeyCode::Char('w'), KeyEventKind::Press), true);
         input.key(key(KeyCode::Char('W'), KeyEventKind::Release), true);
         assert_eq!(input.axis(true), 0.);
-    }
-    #[test]
-    fn fallback_repeat_cannot_rearm_after_stop_or_clear() {
-        for (binding, axis) in [(KeyCode::Up,-1.),(KeyCode::Char('w'),-1.),(KeyCode::Down,1.),(KeyCode::Char('s'),1.)] {
-            for stop in [true,false] {
-                let mut input=Input::default();
-                input.key(key(binding,KeyEventKind::Press),false);
-                assert_eq!(input.axis(false),axis);
-                if stop { input.key(key(KeyCode::Char('x'),KeyEventKind::Press),false); } else { input.clear(); }
-                assert_eq!(input.axis(false),0.);
-                input.key(key(binding,KeyEventKind::Repeat),false);
-                assert_eq!(input.axis(false),0.,"repeat rearmed {binding:?} after stop={stop}");
-                input.key(key(binding,KeyEventKind::Press),false);
-                assert_eq!(input.axis(false),axis,"fresh press failed for {binding:?}");
-            }
-        }
-    }
-    #[test]
-    fn fallback_explicit_stop() {
-        let mut i = Input::default();
-        i.key(key(KeyCode::Up, KeyEventKind::Press), false);
-        assert_eq!(i.axis(false), -1.);
-        i.key(key(KeyCode::Char('x'), KeyEventKind::Press), false);
-        assert_eq!(i.axis(false), 0.);
     }
     #[test]
     fn enhanced_repeat_cannot_restore_movement_after_pause() {
@@ -578,7 +560,7 @@ mod tests {
                 .iter()
                 .map(|c| c.symbol())
                 .collect::<String>();
-            assert!(text.contains(if w < 50 { "too small" } else { "LATCHED INPUT" }));
+            assert!(text.contains(if w < 50 { "too small" } else { "W/S move" }));
         }
     }
 }
@@ -648,7 +630,7 @@ mod minimum_help_test {
                 let mut term = Terminal::new(ratatui::backend::TestBackend::new(50,18)).unwrap();
                 term.draw(|frame| draw(frame, &game, releases)).unwrap();
                 let text = cell_text(term.backend().buffer()).to_ascii_lowercase();
-                for label in ["x stop", "space pause/start", "r restart", "q quit"] {
+                for label in ["w/s move", "space pause/start", "r restart", "q quit"] {
                     assert!(text.contains(label), "{label} missing in release mode {releases}, state {state:?}:\n{text}");
                 }
             }
